@@ -18,8 +18,7 @@ import {
   StickyNote,
   CheckSquare,
   Clock,
-  Compass,
-  Sparkles
+  Compass
 } from 'lucide-react';
 import { playSound } from '../utils/sound';
 import { WidgetType } from '../types';
@@ -31,7 +30,6 @@ interface Props {
   onToggleEditMode: () => void;
   onOpenWallpaperModal: () => void;
   onOpenSpotlight: () => void;
-  onOpenFormShowcase: () => void;
   onResetLayout: () => void;
   isFocusMode: boolean;
   onToggleFocusMode: () => void;
@@ -46,7 +44,6 @@ export const TopBar: React.FC<Props> = ({
   onToggleEditMode,
   onOpenWallpaperModal,
   onOpenSpotlight,
-  onOpenFormShowcase,
   onResetLayout,
   isFocusMode,
   onToggleFocusMode,
@@ -107,13 +104,6 @@ export const TopBar: React.FC<Props> = ({
               <div className="px-3 py-1 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                 macOS Sonoma 桌面
               </div>
-              <button
-                onClick={onOpenFormShowcase}
-                className="w-full text-left px-3 py-1.5 hover:bg-[#007AFF] hover:text-white flex items-center justify-between rounded-lg mx-0.5 transition-colors"
-              >
-                <span>关于此主页 & UI 规范</span>
-                <span className="text-[10px] opacity-70">⌘I</span>
-              </button>
               <div className="my-1 border-t border-slate-200/50 dark:border-slate-700/50" />
               <button
                 onClick={onOpenWallpaperModal}
@@ -208,7 +198,6 @@ export const TopBar: React.FC<Props> = ({
                 { type: 'clock', name: '时钟日历', icon: Clock, color: 'text-purple-500' },
                 { type: 'shortcuts', name: '快捷导航', icon: Compass, color: 'text-emerald-500' },
                 { type: 'control-center', name: '控制中心', icon: Sliders, color: 'text-blue-500' },
-                { type: 'form-showcase', name: 'Apple UI 表单', icon: Sparkles, color: 'text-indigo-500' },
               ].map((item) => {
                 const IconComponent = item.icon;
                 return (
@@ -241,18 +230,6 @@ export const TopBar: React.FC<Props> = ({
           title="切换动态/静态壁纸"
         >
           <ImageIcon size={14} />
-        </button>
-
-        {/* Apple UI Form Specs Showcase Modal Button */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onOpenFormShowcase();
-          }}
-          className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-[#007AFF]"
-          title="Apple UI 表单规范展示"
-        >
-          <Sliders size={14} />
         </button>
 
         {/* Dark Mode Toggle */}

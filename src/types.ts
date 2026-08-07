@@ -5,8 +5,7 @@ export type WidgetType =
   | 'clock'
   | 'shortcuts'
   | 'control-center'
-  | 'icon-grid'
-  | 'form-showcase';
+  | 'icon-grid';
 
 export type WidgetSize = 'sm' | 'md' | 'lg' | 'wide' | 'tall' | 'large' | 'icon';
 
@@ -33,7 +32,6 @@ export const WIDGET_SIZE_OPTIONS: Record<WidgetType, WidgetSize[]> = {
   tasks: ['sm', 'md', 'wide', 'large'],
   clock: ['sm', 'md', 'wide', 'large'],
   'control-center': ['sm', 'md'],
-  'form-showcase': ['sm', 'md', 'wide', 'large'],
 };
 
 // Props shared by every widget component. `editing` reflects whether the
@@ -126,18 +124,4 @@ export interface SystemStatus {
   memoryUsage: number;
   soundEnabled: boolean;
   isLayoutLocked: boolean;
-}
-
-export interface FormDemoState {
-  singleInput: string;
-  multiText: string;
-  selectValue: string;
-  checkboxVal: boolean;
-  toggleVal: boolean;
-  radioVal: string;
-  numberVal: number;
-  sliderVal: number;
-  segmentedVal: string;
-  // State simulation toggles for form review:
-  simulatedState: 'default' | 'hover' | 'focus' | 'disabled' | 'error';
 }

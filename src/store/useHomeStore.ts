@@ -56,8 +56,7 @@ const WIDGET_TITLE_MAP: Record<WidgetType, string> = {
   clock: '时钟日历',
   shortcuts: '快捷导航',
   'control-center': '控制中心',
-  'icon-grid': '图标导航',
-  'form-showcase': 'Apple UI 表单',
+  'icon-grid': '图标',
 };
 
 export const useHomeStore = create<HomeState>()(

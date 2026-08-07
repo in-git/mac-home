@@ -15,7 +15,6 @@ import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { IconWidget } from '../widgets/IconWidget';
-import { AppleFormShowcase } from './AppleFormShowcase';
 import {
   Maximize2,
   Minimize2,
@@ -87,8 +86,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return <ShortcutsWidget />;
       case 'icon-grid':
         return <IconWidget editing={isEditMode} />;
-      case 'form-showcase':
-        return <AppleFormShowcase />;
       default:
         return null;
     }

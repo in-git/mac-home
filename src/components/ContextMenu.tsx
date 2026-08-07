@@ -12,7 +12,6 @@ import {
   Trash2,
   Maximize2,
   AppWindow,
-  Sparkles,
   Sliders,
   CloudSun,
   CheckSquare,
@@ -48,7 +47,6 @@ interface ContextMenuProps {
   onToggleFocusMode: () => void;
   onOpenWallpaper: () => void;
   onOpenSpotlight: () => void;
-  onOpenFormShowcase: () => void;
   onResetLayout: () => void;
 }
 
@@ -68,7 +66,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onToggleFocusMode,
   onOpenWallpaper,
   onOpenSpotlight,
-  onOpenFormShowcase,
   onResetLayout
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -120,7 +117,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     { type: 'shortcuts', name: '快捷导航', icon: <Compass size={14} className="text-emerald-500" /> },
     { type: 'icon-grid', name: '图标', icon: <AppWindow size={14} className="text-pink-500" /> },
     { type: 'control-center', name: '控制中心', icon: <Sliders size={14} className="text-blue-500" /> },
-    { type: 'form-showcase', name: 'Apple UI 表单', icon: <Sparkles size={14} className="text-indigo-500" /> },
   ];
 
   return (
@@ -324,19 +320,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         </button>
 
         <div className="my-1 border-t border-black/5 dark:border-white/10" />
-
-        {/* Apple UI Form Showcase */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onOpenFormShowcase();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center space-x-2 text-left transition-colors"
-        >
-          <Sliders size={14} className="text-indigo-500" />
-          <span>Apple UI 表单规范</span>
-        </button>
 
         {/* Reset Layout */}
         <button

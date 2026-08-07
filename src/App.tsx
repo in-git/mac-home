@@ -6,7 +6,6 @@ import { MuuriDashboard } from './components/MuuriDashboard';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { WallpaperModal } from './components/WallpaperModal';
 import { SpotlightModal } from './components/SpotlightModal';
-import { AppleFormShowcase } from './components/AppleFormShowcase';
 import { useHomeStore } from './store/useHomeStore';
 
 export default function App() {
@@ -33,7 +32,6 @@ export default function App() {
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
-  const [isFormShowcaseModalOpen, setIsFormShowcaseModalOpen] = useState<boolean>(false);
 
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] = useState<ContextMenuPosition | null>(null);
@@ -83,7 +81,6 @@ export default function App() {
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaperModal={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
-        onOpenFormShowcase={() => setIsFormShowcaseModalOpen(true)}
         onResetLayout={resetLayout}
         isFocusMode={isFocusMode}
         onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
@@ -128,7 +125,6 @@ export default function App() {
         onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
         onOpenWallpaper={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
-        onOpenFormShowcase={() => setIsFormShowcaseModalOpen(true)}
         onResetLayout={resetLayout}
       />
 
