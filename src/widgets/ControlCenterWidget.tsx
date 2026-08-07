@@ -134,6 +134,40 @@ export const ControlCenterWidget: React.FC<Props> = ({
           />
         </div>
       </div>
+
+      {/* Font size: A (12/14/16) or B (13/15/17) */}
+      <div className="glass-panel p-3 rounded-2xl">
+        <div className="flex justify-between items-center mb-2">
+          <span className="flex items-center space-x-1 text-font-sm text-slate-500 font-medium">
+            <Sliders size={12} />
+            <span>字体大小</span>
+          </span>
+          <span className="text-font-sm text-slate-400 font-mono">
+            {fontVariant === 'A' ? '12/14/16' : '13/15/17'}
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {(['A', 'B'] as const).map((v) => {
+            const active = fontVariant === v;
+            return (
+              <button
+                key={v}
+                onClick={() => {
+                  playSound.playClick();
+                  setFontVariant(v);
+                }}
+                className={`py-2 rounded-xl border text-font-md font-bold transition-colors ${
+                  active
+                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
+                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
+                }`}
+              >
+                {v}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

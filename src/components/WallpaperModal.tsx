@@ -328,6 +328,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                           ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
                           : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
                       }`}
+                      style={isDarkMode ? { backgroundColor: '#000000' } : undefined}
                     >
                       <PresetLivePreview
                         presetId={preset.id}
