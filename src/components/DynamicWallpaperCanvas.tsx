@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { WallpaperConfig } from '../types';
-import { getWallpaperEffect, createParticles } from '../data/wallpaperEffects';
+import { getWallpaperEffect, createParticles, isWebglWallpaper } from '../data/wallpaperEffects';
+import MoltenMetalWallpaper from '../effects/MoltenMetal';
+import ThreadsWallpaper from '../effects/Threads';
 
 interface Props {
   wallpaper: WallpaperConfig;
@@ -64,7 +66,11 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode 
 
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none">
-      {wallpaper.type === 'dynamic' ? (
+      {wallpaper.type === 'dynamic' && wallpaper.dynamicPreset && isWebglWallpaper(wallpaper.dynamicPreset) ? (
+        <MoltenMetalWallpaper className="absolute inset-0" />
+      ) : wallpaper.dynamicPreset === 'threads' ? (
+        <ThreadsWallpaper className="absolute inset-0" />
+      ) : wallpaper.type === 'dynamic' ? (
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
       ) : wallpaper.imageUrl ? (
         <img

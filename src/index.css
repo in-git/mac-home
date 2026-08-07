@@ -1,4 +1,11 @@
 @import "tailwindcss";
+@import "@heroui/styles";
+
+/* Tailwind v4 defaults `dark:` to a media-query strategy (prefers-color-scheme).
+   This app toggles dark mode via a `.dark` class on <html>, so rebind the
+   `dark:` variant to that class — otherwise all dark: utilities silently no-op
+   and text stays black on a dark background. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {

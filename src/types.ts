@@ -77,7 +77,10 @@ export type DynamicPreset =
   | 'shooting-stars'
   | 'constellation'
   | 'breathing-orbs'
-  | 'floating-geometry';
+  | 'floating-geometry'
+  | 'tessellation'
+  | 'molten-metal'
+  | 'threads';
 
 export interface WallpaperConfig {
   type: WallpaperType;
