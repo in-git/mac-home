@@ -4,6 +4,7 @@ import { WallpaperConfig, DynamicPreset } from '../types';
 import { STATIC_WALLPAPERS } from '../data/presetData';
 import { playSound } from '../utils/sound';
 import { Modal } from './Modal';
+import { dynamicPresets } from '../data/wallpaperEffects';
 
 interface Props {
   isOpen: boolean;
@@ -20,32 +21,7 @@ export const WallpaperModal: React.FC<Props> = ({
 }) => {
   const [customUrl, setCustomUrl] = useState('');
 
-  const dynamicPresets: { id: DynamicPreset; name: string; desc: string; previewColor: string }[] = [
-    {
-      id: 'aurora',
-      name: 'Sonoma 极光流彩 (Aurora)',
-      desc: 'macOS 动态渐变与流光流动',
-      previewColor: 'from-purple-400 via-pink-400 to-blue-400',
-    },
-    {
-      id: 'day-night',
-      name: '时间天空 (Sky Shift)',
-      desc: '随真实时间变化日落与星空',
-      previewColor: 'from-amber-300 via-sky-400 to-indigo-600',
-    },
-    {
-      id: 'particles',
-      name: '禅意浮光 (Zen Particles)',
-      desc: '柔和浮动微粒与极致静谧',
-      previewColor: 'from-slate-300 to-blue-300',
-    },
-    {
-      id: 'mesh-wave',
-      name: '声浪波形 (Wave Spectrum)',
-      desc: '流畅正弦波形重叠流体',
-      previewColor: 'from-cyan-400 via-blue-500 to-indigo-500',
-    },
-  ];
+
 
   return (
     <Modal

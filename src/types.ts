@@ -8,16 +8,10 @@ export type WidgetType =
   | 'icon-grid';
 
 export type WidgetSize =
-  | 'sm'
-  | 'md'
-  | 'lg'
-  | 'wide'
-  | 'tall'
-  | 'large'
-  | 'icon-1-6'
-  | 'icon-1-8'
-  | 'icon-1-12'
-  | 'icon-1-16';
+  | 'sm'      // 1/4
+  | 'wide'    // 1/2
+  | 'large'   // 1:1
+  | 'icon-1-8'; // 1:8
 
 // Behaviour of an `icon-grid` widget. `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.
@@ -27,28 +21,9 @@ export type IconBehavior = 'link' | 'action';
 // shown in the UI (e.g. "1/2", "1:1"). Used for the size picker labels.
 export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
   sm: '1/4',
-  md: '1/3',
-  lg: '1/4',
   wide: '1/2',
-  tall: '1/3',
   large: '1:1',
-  'icon-1-6': '1/6',
-  'icon-1-8': '1/8',
-  'icon-1-12': '1/12',
-  'icon-1-16': '1:16',
-};
-
-// Each widget type exposes its own set of allowed sizes. This drives both the
-// right-click size picker and the size dropdown so that every component only
-// offers the sizes that make sense for it.
-export const WIDGET_SIZE_OPTIONS: Record<WidgetType, WidgetSize[]> = {
-  weather: ['wide', 'large'], // 1/2, 1:1
-  shortcuts: ['wide', 'md', 'large'], // 1/2, 1/3, 1:1
-  'icon-grid': ['icon-1-6', 'icon-1-8', 'icon-1-12', 'icon-1-16'], // 1/6, 1/8, 1/12, 1:16 (square 1:1)
-  'sticky-notes': ['sm', 'md', 'wide', 'large'],
-  tasks: ['md', 'wide', 'large'],
-  clock: ['sm', 'md', 'wide', 'large'],
-  'control-center': ['sm', 'md'],
+  'icon-1-8': '1:8',
 };
 
 // Props shared by every widget component. `editing` reflects whether the
@@ -74,7 +49,7 @@ export interface WidgetItem {
   iconGlyph?: string;
   iconLabel?: string;
   // Action callback resolved at runtime by id (see getWidgetAction in
-  // presetData). Functions are not serialized to localStorage, so this field is
+  // widgetConfig). Functions are not serialized to localStorage, so this field is
   // only meaningful for widgets sourced from code (INITIAL_WIDGETS).
   onAction?: () => void;
   iconHref?: string;
@@ -82,7 +57,21 @@ export interface WidgetItem {
 
 export type WallpaperType = 'dynamic' | 'static';
 
-export type DynamicPreset = 'aurora' | 'day-night' | 'particles' | 'mesh-wave';
+export type DynamicPreset =
+  | 'aurora'
+  | 'day-night'
+  | 'particles'
+  | 'mesh-wave'
+  | 'starfield'
+  | 'cyber-grid'
+  | 'quantum-glow'
+  | 'dual-sine'
+  | 'matrix-rain'
+  | 'pulse-rings'
+  | 'shooting-stars'
+  | 'constellation'
+  | 'breathing-orbs'
+  | 'floating-geometry';
 
 export interface WallpaperConfig {
   type: WallpaperType;

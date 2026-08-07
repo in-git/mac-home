@@ -15,7 +15,8 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
-import { WidgetType, WidgetSize, WidgetItem, WIDGET_SIZE_OPTIONS, WIDGET_SIZE_LABEL } from '../types';
+import { WidgetType, WidgetSize, WidgetItem, WIDGET_SIZE_LABEL } from '../types';
+import { getWidgetConfig } from '../data/widgetConfig';
 import { playSound } from '../utils/sound';
 
 export interface ContextMenuPosition {
@@ -128,7 +129,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             {/* Widget Size Switching */}
             <div className="px-2 py-1 text-[11px] text-slate-400 font-medium">调整尺寸</div>
             <div className="grid grid-cols-4 gap-1 px-1.5 mb-1.5">
-              {WIDGET_SIZE_OPTIONS[targetWidget.type].map((sz) => (
+              {getWidgetConfig(targetWidget.type).sizeOptions.map((sz) => (
                 <button
                   key={sz}
                   onClick={() => {

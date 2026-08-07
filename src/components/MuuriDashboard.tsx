@@ -3,10 +3,10 @@ import Muuri from 'muuri';
 import {
   WidgetItem,
   WidgetSize,
-  WIDGET_SIZE_OPTIONS,
   StickyNote as StickyNoteType,
   ReminderTask
 } from '../types';
+import { getWidgetConfig } from '../data/widgetConfig';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget } from '../widgets/WeatherWidget';
 import { TasksWidget } from '../widgets/TasksWidget';
@@ -15,7 +15,7 @@ import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { IconWidget } from '../widgets/IconWidget';
 import { Tooltip } from './Tooltip';
-import { getWidgetAction } from '../data/presetData';
+import { getWidgetAction } from '../data/widgetConfig';
 import {
   GripHorizontal,
   X,
@@ -60,7 +60,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
   // Cycle a widget through its available sizes on each click of the green dot.
   const cycleWidgetSize = (widget: WidgetItem) => {
-    const sizes = WIDGET_SIZE_OPTIONS[widget.type];
+    const sizes = getWidgetConfig(widget.type).sizeOptions;
     const currentIndex = sizes.indexOf(widget.size);
     const nextSize = sizes[(currentIndex + 1) % sizes.length];
     if (nextSize && nextSize !== widget.size) {
@@ -116,23 +116,13 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const getItemSizeClasses = (size: WidgetSize) => {
     switch (size) {
       case 'sm':
-        return 'w-full sm:w-1/2 lg:w-1/4';
-      case 'md':
-        return 'w-full sm:w-1/2 lg:w-1/3';
+        return 'w-full sm:w-1/2 lg:w-1/4'; // 1/4
       case 'wide':
-        return 'w-full lg:w-1/2';
-      case 'tall':
-        return 'w-full sm:w-1/2 lg:w-1/3';
+        return 'w-full lg:w-1/2'; // 1/2
       case 'large':
-        return 'w-full';
-      case 'icon-1-6':
-        return 'w-1/3 sm:w-1/4 md:w-1/6 aspect-[1/1]';
+        return 'w-full lg:w-1/2'; // 1:1
       case 'icon-1-8':
-        return 'w-1/4 sm:w-1/6 md:w-[12.5%] aspect-[1/1]';
-      case 'icon-1-12':
-        return 'w-1/4 sm:w-1/6 md:w-[12.5%] lg:w-[8.333%] aspect-[1/1]';
-      case 'icon-1-16':
-        return 'w-1/4 sm:w-1/6 md:w-[12.5%] lg:w-[8.333%] xl:w-[6.25%] aspect-[1/1]';
+        return 'w-1/4 sm:w-1/6 md:w-[12.5%] aspect-[1/1]'; // 1:8
       default:
         return 'w-full lg:w-1/2 ';
     }
@@ -380,6 +370,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                   if (isEditMode) return;
                   const target = e.target as HTMLElement;
                   if (target.closest('[data-no-drag]')) return;
+                  // Type-level default action (optional). Resolved & executed
+                  // centrally via WIDGET_CONFIG so the trigger lives in one place.
+                  if (executeWidgetAction(widget.type)) return;
                   const iconGrid = target.closest('[data-icon-grid]');
                   if (!iconGrid) return;
                   const kind = widget.iconType;

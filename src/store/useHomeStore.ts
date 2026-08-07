@@ -4,7 +4,6 @@ import {
   WidgetItem,
   WidgetType,
   WidgetSize,
-  WIDGET_SIZE_OPTIONS,
   WallpaperConfig,
   StickyNote as StickyNoteType,
   ReminderTask,
@@ -15,6 +14,7 @@ import {
   INITIAL_NOTES,
   INITIAL_TASKS,
 } from '../data/presetData';
+import { getWidgetConfig, canAddWidget } from '../data/widgetConfig';
 import { playSound } from '../utils/sound';
 
 // One-time migration from the previous per-key localStorage layout so existing
@@ -49,16 +49,6 @@ interface HomeState {
   updateWallpaper: (cfg: Partial<WallpaperConfig>) => void;
 }
 
-const WIDGET_TITLE_MAP: Record<WidgetType, string> = {
-  'sticky-notes': '便签笔记',
-  weather: '天气预报',
-  tasks: '实时提醒',
-  clock: '时钟日历',
-  shortcuts: '快捷导航',
-  'control-center': '控制中心',
-  'icon-grid': '图标',
-};
-
 export const useHomeStore = create<HomeState>()(
   persist(
     (set, get) => ({
@@ -72,16 +62,22 @@ export const useHomeStore = create<HomeState>()(
       addWidget: (type) => {
         playSound.playClick();
         const { widgets } = get();
-        const existing = widgets.find((w) => w.type === type);
-        if (existing) {
-          get().moveToTopWidget(existing.id);
+        const count = widgets.filter((w) => w.type === type).length;
+
+        if (!canAddWidget(type, count)) {
+          // Already at the cap for this type — bring the existing one to the top
+          // instead of adding a duplicate.
+          const existing = widgets.find((w) => w.type === type);
+          if (existing) get().moveToTopWidget(existing.id);
           return;
         }
+
+        const cfg = getWidgetConfig(type);
         const newWidget: WidgetItem = {
           id: `widget-${Date.now()}`,
           type,
-          title: WIDGET_TITLE_MAP[type],
-          size: WIDGET_SIZE_OPTIONS[type][0],
+          title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
+          size: cfg.defaultSize,
           showHeader: type !== 'icon-grid',
         };
         set({ widgets: [newWidget, ...widgets] });

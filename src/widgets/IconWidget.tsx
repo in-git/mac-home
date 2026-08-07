@@ -21,17 +21,11 @@ const DEFAULT_ICON = {
 // caption stay proportional — large 1/6 tile reads big, tiny 1/16 tile shrinks
 // both the icon and its text together.
 const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
-  'icon-1-6': { glyph: 'text-5xl', label: 'text-xs' },
   'icon-1-8': { glyph: 'text-4xl', label: 'text-[11px]' },
-  'icon-1-12': { glyph: 'text-2xl', label: 'text-[9px]' },
-  'icon-1-16': { glyph: 'text-lg', label: 'text-[8px]' },
   // Fallback sizes (non-icon tiles) — kept for type completeness; the icon-grid
   // widget only ever receives icon-* sizes.
   sm: { glyph: 'text-3xl', label: 'text-[10px]' },
-  md: { glyph: 'text-3xl', label: 'text-[10px]' },
-  lg: { glyph: 'text-3xl', label: 'text-[10px]' },
   wide: { glyph: 'text-3xl', label: 'text-[10px]' },
-  tall: { glyph: 'text-3xl', label: 'text-[10px]' },
   large: { glyph: 'text-3xl', label: 'text-[10px]' },
 };
 
@@ -39,7 +33,7 @@ interface IconWidgetProps {
   editing?: boolean;
   size?: WidgetSize;
   // `type` decides behaviour: `link` opens href, `action` triggers the handler
-  // resolved by `id` via getWidgetAction (see presetData). The actual click is
+  // resolved by `id` via getWidgetAction (see widgetConfig). The actual click is
   // handled by the parent widget-card (the custom onAction lives there), so this
   // component only renders the visual tile and exposes its behaviour via props.
   iconType?: IconBehavior;

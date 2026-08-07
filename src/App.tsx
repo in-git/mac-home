@@ -7,7 +7,7 @@ import { WallpaperModal } from './components/WallpaperModal';
 import { SpotlightModal } from './components/SpotlightModal';
 import { AddWidgetModal } from './components/AddWidgetModal';
 import { useHomeStore } from './store/useHomeStore';
-import { registerWidgetAction } from './data/presetData';
+import { registerWidgetAction } from './data/widgetConfig';
 
 export default function App() {
   // Persisted data + actions are handled by the zustand store.
@@ -177,6 +177,7 @@ export default function App() {
         isOpen={isAddWidgetModalOpen}
         onClose={() => setIsAddWidgetModalOpen(false)}
         onAddWidget={addWidget}
+        widgets={widgets}
       />
     </div>
   );
