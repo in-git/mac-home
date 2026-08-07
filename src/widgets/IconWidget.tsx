@@ -26,6 +26,7 @@ const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
   // Fallback sizes (non-icon tiles) — kept for type completeness; the icon-grid
   // widget only ever receives icon-* sizes.
   sm: { glyph: 'text-3xl', label: 'text-[10px]' },
+  third: { glyph: 'text-3xl', label: 'text-[10px]' },
   wide: { glyph: 'text-3xl', label: 'text-[10px]' },
   large: { glyph: 'text-3xl', label: 'text-[10px]' },
 };

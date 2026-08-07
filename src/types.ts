@@ -11,6 +11,7 @@ export type WidgetType =
 
 export type WidgetSize =
   | 'sm'      // 1/4
+  | 'third'   // 1/3
   | 'wide'    // 1/2
   | 'large'   // 1:1
   | 'icon-1-8'  // 1:8
@@ -24,6 +25,7 @@ export type IconBehavior = 'link' | 'action';
 // shown in the UI (e.g. "1/2", "1:1"). Used for the size picker labels.
 export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
   sm: '1/4',
+  third: '1/3',
   wide: '1/2',
   large: '1:1',
   'icon-1-8': '1:8',
@@ -92,6 +94,13 @@ export interface WallpaperConfig {
   gradient?: string;
   blur: number; // 0 to 20px
   brightness: number; // 50% to 120%
+  /** 以下为桌面主题滤镜参数（theme.options.ts 预设），缺省时视为中性值 */
+  contrast?: number; // 1 = 原始
+  saturation?: number; // 1 = 原始
+  hue?: number; // 色相旋转角度
+  sepia?: number; // 0 - 1
+  grayscale?: number; // 0 - 1
+  invert?: number; // 0 - 1
 }
 
 export type NoteColor = 'yellow' | 'mint' | 'pink' | 'lavender' | 'blue' | 'glass';

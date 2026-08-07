@@ -1,20 +1,30 @@
 import React, { useEffect, useRef } from 'react';
-import { WallpaperConfig } from '../types';
-import { getWallpaperEffect, createParticles, dynamicPresets } from '../data/wallpaperEffects';
+import {
+  createParticles,
+  dynamicPresets,
+  getWallpaperEffect,
+} from '../data/wallpaperEffects';
 import MoltenMetalWallpaper from '../effects/MoltenMetal';
-import { ThreadsWallpaper } from '../effects/Threads';
 import { PlasmaWaveWallpaper } from '../effects/PlasmaWave';
+import { ThreadsWallpaper } from '../effects/Threads';
+import { WallpaperConfig } from '../types';
+import { buildWallpaperFilter } from '../utils/wallpaperFilter';
 
 interface Props {
   wallpaper: WallpaperConfig;
   isDarkMode: boolean;
 }
 
-export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode }) => {
+export const DynamicWallpaperCanvas: React.FC<Props> = ({
+  wallpaper,
+  isDarkMode,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // 解析当前预设的有效深色模式：预设的 isDarkMode 配置优先，否则跟随全局。
-  const presetConfig = dynamicPresets.find((p) => p.id === wallpaper.dynamicPreset);
+  const presetConfig = dynamicPresets.find(
+    (p) => p.id === wallpaper.dynamicPreset,
+  );
   const effectiveDarkMode = presetConfig?.isDarkMode ?? isDarkMode;
 
   useEffect(() => {
@@ -51,7 +61,14 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode 
       time += 0.008;
       ctx.clearRect(0, 0, width, height);
 
-      effect.render({ ctx, width, height, time, isDarkMode: effectiveDarkMode, particles });
+      effect.render({
+        ctx,
+        width,
+        height,
+        time,
+        isDarkMode: effectiveDarkMode,
+        particles,
+      });
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -65,23 +82,52 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode 
   }, [wallpaper, effectiveDarkMode]);
 
   const filterStyle = {
-    backdropFilter: `blur(${wallpaper.blur}px) brightness(${wallpaper.brightness}%)`,
-    WebkitBackdropFilter: `blur(${wallpaper.blur}px) brightness(${wallpaper.brightness}%)`,
+    backdropFilter: buildWallpaperFilter({
+      blur: wallpaper.blur,
+      brightness: wallpaper.brightness,
+      contrast: wallpaper.contrast ?? 1,
+      saturation: wallpaper.saturation ?? 1,
+      hue: wallpaper.hue ?? 0,
+      sepia: wallpaper.sepia ?? 0,
+      grayscale: wallpaper.grayscale ?? 0,
+      invert: wallpaper.invert ?? 0,
+    }),
+    WebkitBackdropFilter: buildWallpaperFilter({
+      blur: wallpaper.blur,
+      brightness: wallpaper.brightness,
+      contrast: wallpaper.contrast ?? 1,
+      saturation: wallpaper.saturation ?? 1,
+      hue: wallpaper.hue ?? 0,
+      sepia: wallpaper.sepia ?? 0,
+      grayscale: wallpaper.grayscale ?? 0,
+      invert: wallpaper.invert ?? 0,
+    }),
   };
 
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none">
-      {wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === 'molten-metal' ? (
+      {wallpaper.type === 'dynamic' &&
+      wallpaper.dynamicPreset === 'molten-metal' ? (
         <MoltenMetalWallpaper className="absolute inset-0" />
-      ) : wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === 'threads' ? (
-        <ThreadsWallpaper className="absolute inset-0" color={effectiveDarkMode ? [0.6, 0.6, 0.7] : [1, 1, 1]} />
-      ) : wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === 'plasma-wave' ? (
+      ) : wallpaper.type === 'dynamic' &&
+        wallpaper.dynamicPreset === 'threads' ? (
+        <ThreadsWallpaper
+          className="absolute inset-0"
+          color={effectiveDarkMode ? [0.6, 0.6, 0.7] : [1, 1, 1]}
+        />
+      ) : wallpaper.type === 'dynamic' &&
+        wallpaper.dynamicPreset === 'plasma-wave' ? (
         <PlasmaWaveWallpaper
           className="absolute inset-0"
-          colors={effectiveDarkMode ? ['#A855F7', '#22D3EE'] : ['#C084FC', '#67E8F9']}
+          colors={
+            effectiveDarkMode ? ['#A855F7', '#22D3EE'] : ['#C084FC', '#67E8F9']
+          }
         />
       ) : wallpaper.type === 'dynamic' ? (
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
       ) : wallpaper.imageUrl ? (
         <img
           src={wallpaper.imageUrl}
@@ -91,13 +137,20 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode 
       ) : (
         <div
           className="absolute inset-0 w-full h-full transition-opacity duration-700"
-          style={{ background: wallpaper.gradient || 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)' }}
+          style={{
+            background:
+              wallpaper.gradient ||
+              'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
+          }}
         />
       )}
 
       {/* Overlay Filters */}
-      <div className="absolute inset-0 w-full h-full transition-[opacity,filter] duration-300" style={filterStyle} />
-      
+      <div
+        className="absolute inset-0 w-full h-full transition-[opacity,filter] duration-300"
+        style={filterStyle}
+      />
+
       {/* Soft Noise Grain Overlay for Apple Matte Finish */}
       <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
     </div>

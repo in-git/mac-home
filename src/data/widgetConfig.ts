@@ -59,7 +59,7 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     title: '实时提醒',
     maxInstances: 1,
     defaultSize: 'large',
-    sizeOptions: ['sm', 'wide', 'large'],
+    sizeOptions: ['sm', 'third', 'wide', 'large'],
     isAddable: true,
     glyph: '📋',
     label: '实时提醒',

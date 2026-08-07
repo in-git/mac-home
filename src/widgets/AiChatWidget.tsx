@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, Trash2, User, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
 import { playSound } from '../utils/sound';
+import { request, API_ENDPOINTS } from '../utils/request';
 
 export interface ChatMessage {
   id: string;
@@ -10,10 +11,14 @@ export interface ChatMessage {
   error?: boolean;
 }
 
-const DEFAULT_SYSTEM_PROMPT = '你是一个友好、有帮助的 AI 助手。';
-const API_PATH = '/public/ai/chat';
 
-export const AiChatWidget: React.FC = () => {
+// 后端地址由 src/utils/request.ts 统一拼接（baseURL + API_ENDPOINTS.aiChat）
+
+interface AiChatWidgetProps {
+  isDarkMode?: boolean;
+}
+
+export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -76,30 +81,25 @@ export const AiChatWidget: React.FC = () => {
       }));
 
     try {
-      const response = await fetch(API_PATH, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: model.trim() || undefined,
-          messages: apiMessages,
-        }),
+      // 使用统一封装的 request（遵循后端响应规范：自动解包 data、状态码处理、未授权跳登录）
+      const raw = await request.post<string>(API_ENDPOINTS.aiChat, {
+        model: model.trim() || undefined,
+        messages: apiMessages,
       });
 
-      if (!response.ok) {
-        throw new Error(`网络响应错误 HTTP ${response.status}`);
-      }
-
-      const resData = await response.json();
-      
-      // 根据文档：resData 为 CommonResult<String>，resData.data 是 JSON 字符串
+      // 根据文档：raw 即 CommonResult<String> 的 data 字段（ollama 响应的 JSON 字符串）
       let replyContent = '';
-      if (resData.code === 200 && resData.data) {
-        const ollamaResp = typeof resData.data === 'string' ? JSON.parse(resData.data) : resData.data;
-        replyContent = ollamaResp.message?.content || '未获取到回复内容';
+      if (typeof raw === 'string') {
+        try {
+          const ollamaResp = JSON.parse(raw);
+          replyContent = ollamaResp.message?.content || '未获取到回复内容';
+        } catch {
+          replyContent = raw || '未获取到回复内容';
+        }
+      } else if (raw && typeof raw === 'object') {
+        replyContent = (raw as any).message?.content || '未获取到回复内容';
       } else {
-        throw new Error(resData.message || 'AI 接口响应异常');
+        replyContent = '未获取到回复内容';
       }
 
       const assistantMsg: ChatMessage = {
@@ -126,7 +126,11 @@ export const AiChatWidget: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1">
+    <div
+      className={`h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 ${
+        isDarkMode ? 'bg-black' : ''
+      }`}
+    >
       {/* 顶部工具栏：标识与模型名/清空 */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10 shrink-0">
         <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">

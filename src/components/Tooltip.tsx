@@ -20,7 +20,7 @@ export function Tooltip({
   className = '',
 }: TooltipProps) {
   return (
-    <HeroTooltip className="inline-flex">
+    <HeroTooltip>
       <span className="inline-flex">{children}</span>
       <HeroTooltip.Content placement={placement} className={className}>
         {content}

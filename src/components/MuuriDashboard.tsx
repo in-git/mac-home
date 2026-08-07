@@ -85,7 +85,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       case 'weather':
         return <WeatherWidget />;
       case 'ai-chat':
-        return <AiChatWidget />;
+        return <AiChatWidget isDarkMode={isDarkMode} />;
       case 'tasks':
         return <TasksWidget tasks={tasks} onUpdateTasks={onUpdateTasks} />;
       case 'clock':
@@ -134,6 +134,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     switch (size) {
       case 'sm':
         return 'w-[25%]'; // 1/4
+      case 'third':
+        return 'w-[33.333%]'; // 1/3
       case 'wide':
         return 'w-[50%]'; // 1/2
       case 'large':

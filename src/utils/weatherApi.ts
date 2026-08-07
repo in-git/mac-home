@@ -32,6 +32,11 @@ const REVERSE_GEOCODING_API =
 /** 内存缓存，10 分钟内不重复请求 */
 const cache = new Map<string, { data: WeatherCondition; ts: number }>();
 const CACHE_TTL = 10 * 60 * 1000;
+/**
+ * 进行中请求去重：同一城市在请求未返回前再次调用时复用同一个 Promise。
+ * 避免 StrictMode（开发模式 effect 双执行）/ 重复挂载导致的同一城市重复请求。
+ */
+const inFlight = new Map<string, Promise<WeatherCondition>>();
 
 /** 城市搜索（中文友好） */
 export async function searchCity(query: string): Promise<CitySearchResult[]> {
@@ -135,52 +140,65 @@ export async function fetchWeather(
   const hit = cache.get(city.id);
   if (hit && Date.now() - hit.ts < CACHE_TTL) return hit.data;
 
-  const forecastUrl =
-    `${FORECAST_API}?latitude=${city.latitude}&longitude=${city.longitude}` +
-    '&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m,uv_index' +
-    '&hourly=temperature_2m,weather_code' +
-    '&daily=weather_code,temperature_2m_max,temperature_2m_min' +
-    '&timezone=auto&forecast_days=7';
-  const aqiUrl = `${AIR_QUALITY_API}?latitude=${city.latitude}&longitude=${city.longitude}&current=us_aqi&timezone=auto`;
+  // 同一城市已有请求在途时直接复用，避免重复网络请求
+  const pending = inFlight.get(city.id);
+  if (pending) return pending;
 
-  // AQI 接口失败不影响整体天气展示
-  const [forecastRes, aqiRes] = await Promise.allSettled([
-    fetch(forecastUrl),
-    fetch(aqiUrl),
-  ]);
+  const request = (async (): Promise<WeatherCondition> => {
+    const forecastUrl =
+      `${FORECAST_API}?latitude=${city.latitude}&longitude=${city.longitude}` +
+      '&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m,uv_index' +
+      '&hourly=temperature_2m,weather_code' +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min' +
+      '&timezone=auto&forecast_days=7';
+    const aqiUrl = `${AIR_QUALITY_API}?latitude=${city.latitude}&longitude=${city.longitude}&current=us_aqi&timezone=auto`;
 
-  if (forecastRes.status === 'rejected') throw new Error('天气数据获取失败');
-  const forecast = await forecastRes.value.json();
+    // AQI 接口失败不影响整体天气展示
+    const [forecastRes, aqiRes] = await Promise.allSettled([
+      fetch(forecastUrl),
+      fetch(aqiUrl),
+    ]);
 
-  let aqi = -1; // -1 表示无 AQI 数据
-  if (aqiRes.status === 'fulfilled') {
-    try {
-      const aqiData = await aqiRes.value.json();
-      const usAqi = aqiData?.current?.us_aqi;
-      if (typeof usAqi === 'number') aqi = Math.round(usAqi);
-    } catch {
-      // 忽略 AQI 解析失败
+    if (forecastRes.status === 'rejected') throw new Error('天气数据获取失败');
+    const forecast = await forecastRes.value.json();
+
+    let aqi = -1; // -1 表示无 AQI 数据
+    if (aqiRes.status === 'fulfilled') {
+      try {
+        const aqiData = await aqiRes.value.json();
+        const usAqi = aqiData?.current?.us_aqi;
+        if (typeof usAqi === 'number') aqi = Math.round(usAqi);
+      } catch {
+        // 忽略 AQI 解析失败
+      }
     }
+
+    const data: WeatherCondition = {
+      city: city.name,
+      country: city.country,
+      temp: Math.round(forecast.current.temperature_2m),
+      condition: mapWeatherCode(forecast.current.weather_code),
+      high: Math.round(forecast.daily.temperature_2m_max[0]),
+      low: Math.round(forecast.daily.temperature_2m_min[0]),
+      humidity: forecast.current.relative_humidity_2m,
+      windSpeed: Math.round(forecast.current.wind_speed_10m),
+      uvIndex: Math.round(forecast.current.uv_index ?? 0),
+      aqi,
+      aqiLabel: aqi >= 0 ? mapAqiLabel(aqi) : 'Good',
+      hourlyForecast: buildHourly(forecast.hourly),
+      dailyForecast: buildDaily(forecast.daily),
+    };
+
+    cache.set(city.id, { data, ts: Date.now() });
+    return data;
+  })();
+
+  inFlight.set(city.id, request);
+  try {
+    return await request;
+  } finally {
+    inFlight.delete(city.id);
   }
-
-  const data: WeatherCondition = {
-    city: city.name,
-    country: city.country,
-    temp: Math.round(forecast.current.temperature_2m),
-    condition: mapWeatherCode(forecast.current.weather_code),
-    high: Math.round(forecast.daily.temperature_2m_max[0]),
-    low: Math.round(forecast.daily.temperature_2m_min[0]),
-    humidity: forecast.current.relative_humidity_2m,
-    windSpeed: Math.round(forecast.current.wind_speed_10m),
-    uvIndex: Math.round(forecast.current.uv_index ?? 0),
-    aqi,
-    aqiLabel: aqi >= 0 ? mapAqiLabel(aqi) : 'Good',
-    hourlyForecast: buildHourly(forecast.hourly),
-    dailyForecast: buildDaily(forecast.daily),
-  };
-
-  cache.set(city.id, { data, ts: Date.now() });
-  return data;
 }
 
 /** 基于坐标生成稳定的城市 id */

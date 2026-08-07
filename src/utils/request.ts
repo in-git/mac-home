@@ -52,6 +52,14 @@ export class ApiError extends Error {
 /** 需要重新登录的状态码 */
 const UNAUTHORIZED_CODES = [401, 1011007, 1011008];
 
+/**
+ * 后端接口路径集中管理（仅 path，baseURL 由 request 统一拼接）。
+ * 新增业务接口请在此登记，组件层不要自己拼地址。
+ */
+export const API_ENDPOINTS = {
+  aiChat: '/public/ai/chat',
+} as const;
+
 /** 可自定义配置 */
 export interface RequestConfig {
   baseURL?: string;
@@ -68,7 +76,9 @@ const TOKEN_KEY = 'token';
 
 function createRequest(options: RequestConfig = {}) {
   const {
-    baseURL = import.meta.env?.VITE_API_BASE_URL ?? '/api',
+    // baseURL 仅含后端根地址（不含 /api 前缀），接口 path 由 API_ENDPOINTS 提供；
+    // 未配置环境变量时回退空串，即走同源相对路径。
+    baseURL = import.meta.env?.VITE_API_BASE_URL ?? '',
     getToken = () => localStorage.getItem(TOKEN_KEY),
     onUnauthorized = (code) => {
       console.warn(`[request] 未授权 (${code})，跳转登录页`);

@@ -20,6 +20,12 @@ export const DEFAULT_WALLPAPER: WallpaperConfig = {
   dynamicPreset: 'aurora',
   blur: 0,
   brightness: 100,
+  contrast: 1,
+  saturation: 1,
+  hue: 0,
+  sepia: 0,
+  grayscale: 0,
+  invert: 0,
   gradient: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
 };
 
