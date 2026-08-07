@@ -10,14 +10,7 @@ import {
   Unlock,
   RotateCcw,
   Trash2,
-  Maximize2,
   AppWindow,
-  Sliders,
-  CloudSun,
-  CheckSquare,
-  StickyNote,
-  Clock,
-  Compass,
   ArrowUp,
   Eye,
   EyeOff
@@ -35,7 +28,6 @@ interface ContextMenuProps {
   position: ContextMenuPosition | null;
   onClose: () => void;
   widgets: WidgetItem[];
-  onAddWidget: (type: WidgetType) => void;
   onDeleteWidget: (id: string) => void;
   onResizeWidget: (id: string, newSize: WidgetSize) => void;
   onMoveToTopWidget: (id: string) => void;
@@ -48,13 +40,13 @@ interface ContextMenuProps {
   onOpenWallpaper: () => void;
   onOpenSpotlight: () => void;
   onResetLayout: () => void;
+  onOpenAddWidget: () => void;
 }
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({
   position,
   onClose,
   widgets,
-  onAddWidget,
   onDeleteWidget,
   onResizeWidget,
   onMoveToTopWidget,
@@ -66,7 +58,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onToggleFocusMode,
   onOpenWallpaper,
   onOpenSpotlight,
-  onResetLayout
+  onResetLayout,
+  onOpenAddWidget
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -108,16 +101,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
   const adjustedX = Math.min(position.x, screenW - menuWidth - 10);
   const adjustedY = Math.min(position.y, screenH - menuHeight - 10);
-
-  const availableWidgetsList: { type: WidgetType; name: string; icon: React.ReactNode }[] = [
-    { type: 'weather', name: '天气预报', icon: <CloudSun size={14} className="text-sky-500" /> },
-    { type: 'tasks', name: '实时提醒', icon: <CheckSquare size={14} className="text-amber-500" /> },
-    { type: 'sticky-notes', name: '便签笔记', icon: <StickyNote size={14} className="text-yellow-500" /> },
-    { type: 'clock', name: '时钟日历', icon: <Clock size={14} className="text-purple-500" /> },
-    { type: 'shortcuts', name: '快捷导航', icon: <Compass size={14} className="text-emerald-500" /> },
-    { type: 'icon-grid', name: '图标', icon: <AppWindow size={14} className="text-pink-500" /> },
-    { type: 'control-center', name: '控制中心', icon: <Sliders size={14} className="text-blue-500" /> },
-  ];
 
   return (
     <AnimatePresence>
@@ -193,44 +176,21 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         ) : null}
 
         {/* Global Context Menu Options */}
-        {/* Add Widget Sub-list */}
-        <div className="group relative">
-          <div className="px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between cursor-pointer transition-colors">
-            <div className="flex items-center space-x-2">
-              <Plus size={14} className="text-[#007AFF]" />
-              <span>添加小组件...</span>
-            </div>
-            <span className="text-[10px] text-slate-400">›</span>
+        {/* Add Widget — opens the Add Widget modal directly */}
+        <button
+          onClick={() => {
+            playSound.playClick();
+            onOpenAddWidget();
+            onClose();
+          }}
+          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
+        >
+          <div className="flex items-center space-x-2">
+            <Plus size={14} className="text-[#007AFF]" />
+            <span>添加小组件...</span>
           </div>
-
-          {/* Flyout Submenu for Adding Widgets */}
-          <div className="hidden group-hover:block absolute left-full top-0 ml-1.5 w-48 p-1.5 rounded-2xl glass-panel bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl shadow-2xl border border-white/60 dark:border-white/15 space-y-0.5 z-50">
-            {availableWidgetsList.map((w) => {
-              const isAdded = widgets.some((item) => item.type === w.type);
-              return (
-                <button
-                  key={w.type}
-                  onClick={() => {
-                    playSound.playClick();
-                    onAddWidget(w.type);
-                    onClose();
-                  }}
-                  className={`w-full px-2 py-1.5 rounded-xl flex items-center justify-between text-left transition-colors ${
-                    isAdded
-                      ? 'opacity-60 hover:bg-black/5 dark:hover:bg-white/5'
-                      : 'hover:bg-black/5 dark:hover:bg-white/10 font-medium'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    {w.icon}
-                    <span>{w.name}</span>
-                  </div>
-                  {isAdded && <span className="text-[9px] text-slate-400">已添加</span>}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+          <span className="text-[10px] text-slate-400">›</span>
+        </button>
 
         {/* Change Wallpaper */}
         <button

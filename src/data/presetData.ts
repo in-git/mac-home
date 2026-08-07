@@ -24,9 +24,6 @@ export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-clock', type: 'clock', title: '时间 & 日历', size: 'md' },
   { id: 'widget-shortcuts', type: 'shortcuts', title: '快捷导航', size: 'md' },
   { id: 'widget-control', type: 'control-center', title: '控制中心', size: 'sm' },
-  // `icon-grid` widget — `iconType` decides behaviour:
-  //  link   → open iconHref in a new tab
-  //  action → trigger the onAction() callback resolved by id (see getWidgetAction)
   { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon-1-8', showHeader: false,
     iconType: 'link', iconGlyph: 'Globe', iconLabel: '官网', iconHref: 'https://www.apple.com' },
   { id: 'widget-add', type: 'icon-grid', title: '添加组件', size: 'icon-1-8', showHeader: false,

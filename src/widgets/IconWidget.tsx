@@ -1,6 +1,5 @@
 import { Globe, Plus, Link2, Rocket, type LucideIcon } from 'lucide-react';
 import { WidgetSize, IconBehavior } from '../types';
-import { getWidgetAction } from '../data/presetData';
 
 // Maps the `iconGlyph` string (a lucide icon name) to its component. Unknown
 // names fall back to the default icon so the tile never renders empty.
@@ -40,12 +39,12 @@ interface IconWidgetProps {
   editing?: boolean;
   size?: WidgetSize;
   // `type` decides behaviour: `link` opens href, `action` triggers the handler
-  // resolved by `id` via getWidgetAction (see presetData).
+  // resolved by `id` via getWidgetAction (see presetData). The actual click is
+  // handled by the parent widget-card (the custom onAction lives there), so this
+  // component only renders the visual tile and exposes its behaviour via props.
   iconType?: IconBehavior;
   iconGlyph?: string;
   iconLabel?: string;
-  // Widget id used to look up its action callback at click time.
-  id?: string;
   iconHref?: string;
 }
 
@@ -55,30 +54,13 @@ export function IconWidget({
   iconType,
   iconGlyph,
   iconLabel,
-  id,
   iconHref,
 }: IconWidgetProps) {
   const kind = iconType ?? DEFAULT_ICON.type;
   const glyphName = iconGlyph ?? DEFAULT_ICON.glyph;
   const label = iconLabel ?? DEFAULT_ICON.label;
-  const href = iconHref ?? DEFAULT_ICON.href;
   const typo = ICON_TYPOGRAPHY[size] ?? ICON_TYPOGRAPHY['icon-1-8'];
   const GlyphIcon = ICON_REGISTRY[glyphName] ?? Rocket;
-
-  const handleClick = () => {
-    // Action tiles (e.g. the "添加组件" entry) stay interactive even in edit
-    // mode so they can open their modal; plain link icons are inert while editing.
-    if (editing && kind !== 'action') return;
-    if (kind === 'action') {
-      // Resolve the handler by widget id so it survives a localStorage reload
-      // (functions are never serialized — only the id persists).
-      const action = id ? getWidgetAction(id) : undefined;
-      console.log('[IconWidget] action clicked', { id, label, glyphName, action });
-      action?.();
-    } else if (href) {
-      window.open(href, '_blank', 'noopener,noreferrer');
-    }
-  };
 
   const title =
     kind === 'action' ? `${label}（功能）` : `${label}（打开链接）`;
@@ -86,7 +68,8 @@ export function IconWidget({
   return (
     <button
       type="button"
-      onClick={handleClick}
+      // No onClick here — the click bubbles to the widget-card container, which
+      // owns the custom onAction event (resolved by id via getWidgetAction).
       disabled={editing && kind !== 'action'}
       title={title}
       className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 px-1 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"

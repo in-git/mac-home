@@ -62,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
             initial={{ scale: 0.92, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.92, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
             className={`w-full ${maxWidth} glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col`}
           >
             {title && (

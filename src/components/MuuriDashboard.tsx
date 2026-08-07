@@ -14,6 +14,8 @@ import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { IconWidget } from '../widgets/IconWidget';
+import { Tooltip } from './Tooltip';
+import { getWidgetAction } from '../data/presetData';
 import {
   GripHorizontal,
   X,
@@ -93,15 +95,16 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return <ShortcutsWidget />;
       case 'icon-grid': {
         return (
-          <IconWidget
-            editing={isEditMode}
-            size={widget.size}
-            iconType={widget.iconType}
-            iconGlyph={widget.iconGlyph}
-            iconLabel={widget.iconLabel}
-            id={widget.id}
-            iconHref={widget.iconHref}
-          />
+          <div data-icon-grid className="h-full w-full">
+            <IconWidget
+              editing={isEditMode}
+              size={widget.size}
+              iconType={widget.iconType}
+              iconGlyph={widget.iconGlyph}
+              iconLabel={widget.iconLabel}
+              iconHref={widget.iconHref}
+            />
+          </div>
         );
       }
       default:
@@ -259,12 +262,12 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         onUpdateWidgetOrder(reorderedWidgets);
       });
 
-    // Window resize layout adjustment
-    const handleResize = () => {
-      if (muuriInstanceRef.current) {
-        muuriInstanceRef.current.refreshItems().layout();
-      }
-    };
+      // Window resize layout adjustment
+      const handleResize = () => {
+        if (muuriInstanceRef.current) {
+          muuriInstanceRef.current.refreshItems().layout();
+        }
+      };
 
       window.addEventListener('resize', handleResize);
 
@@ -365,59 +368,93 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             >
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
-                <div className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}>
+                <div
+                className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
+                onClick={(e) => {
+                  // Custom onAction event: owned by the widget-card container, not
+                  // the inner icon button. When an icon-grid tile is clicked we
+                  // resolve its behaviour by id (action handler from presetData,
+                  // or a link to open). Clicks on header controls are marked
+                  // data-no-drag but still bubble here — we ignore those so the
+                  // green/red dot handlers remain authoritative.
+                  if (isEditMode) return;
+                  const target = e.target as HTMLElement;
+                  if (target.closest('[data-no-drag]')) return;
+                  const iconGrid = target.closest('[data-icon-grid]');
+                  if (!iconGrid) return;
+                  const kind = widget.iconType;
+                  if (kind === 'action') {
+                    const action = getWidgetAction(widget.id);
+                    console.log('[widget-card] action clicked', {
+                      id: widget.id,
+                      label: widget.iconLabel,
+                      glyphName: widget.iconGlyph,
+                      action,
+                    });
+                    action?.();
+                  } else if (widget.iconHref) {
+                    window.open(widget.iconHref, '_blank', 'noopener,noreferrer');
+                  }
+                }}
+              >
                   {/* Widget Card Title & Control Bar */}
                   {showHeader && (
-                  <div className="flex items-center justify-between mb-2">
-                    {/* Title (left) */}
-                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
-                      {widget.title}
-                    </span>
+                    <div className="flex items-center justify-between mb-2">
+                      {/* Title (left) */}
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
+                        {widget.title}
+                      </span>
 
-                    {/* Controls (right): window dots + drag handle */}
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1.5 items-center">
-                             {/* Green dot → left click cycles size, right click deletes */}
-                        <div
-                          data-no-drag
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            cycleWidgetSize(widget);
-                          }}
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onDeleteWidget(widget.id);
-                          }}
-                          className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-all cursor-pointer"
-                          title="左键切换比例，右键移除小组件"
-                        />
-                        {/* Red dot → delete */}
-                        <button
-                          data-no-drag
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDeleteWidget(widget.id);
-                          }}
-                          className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-all cursor-pointer"
-                          title="移除小组件"
-                        >
-                          <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
-                        </button>
-                   
-                      </div>
+                      {/* Controls (right): window dots + drag handle. Hidden by default,
+                        shown on card hover (the card uses the `group` class). */}
+                      <div className="flex items-center space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
+                        <div className="flex space-x-1.5 items-center">
+                          {/* Green dot → left click cycles size, right click deletes */}
+                          <Tooltip content="切换比例" placement="top">
+                            <div
+                              data-no-drag
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                cycleWidgetSize(widget);
+                              }}
+                              onContextMenu={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onDeleteWidget(widget.id);
+                              }}
+                              className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-all cursor-pointer"
+                            />
+                          </Tooltip>
+                          {/* Red dot → delete */}
+                          <Tooltip content="移除小组件" placement="top">
+                            <button
+                              data-no-drag
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteWidget(widget.id);
+                              }}
+                              className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-all cursor-pointer"
+                              title="移除小组件"
+                            >
+                              <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
+                            </button>
 
-                      {/* Drag Handle (only shown while editing) */}
-                      {isEditMode && (
-                      <div
-                        className="drag-handle p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
-                        title="按住拖拽排列位置 (Muuri Grid)"
-                      >
-                        <GripHorizontal size={14} />
+
+                          </Tooltip>
+
+                        </div>
+
+                        {/* Drag Handle (only shown while editing) */}
+                        {isEditMode && (
+                          <div
+                            className="drag-handle p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
+                            title="按住拖拽排列位置 (Muuri Grid)"
+                          >
+                            <GripHorizontal size={14} />
+                          </div>
+                        )}
                       </div>
-                      )}
                     </div>
-                  </div>
                   )}
 
                   {/* Inner Widget Component Content.

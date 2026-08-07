@@ -108,36 +108,38 @@ export default function App() {
         onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
       />
 
-      {/* Main Desktop Dashboard Container */}
-      <main
-        ref={mainRef}
-        className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {/* Muuri Grid Layout Engine */}
-        <MuuriDashboard
-          widgets={widgets}
-          onUpdateWidgetOrder={setWidgets}
-          onDeleteWidget={deleteWidget}
-          onResizeWidget={resizeWidget}
-          onContextMenuWidget={handleContextMenuWidget}
-          isEditMode={isEditMode}
-          notes={notes}
-          onUpdateNotes={updateNotes}
-          tasks={tasks}
-          onUpdateTasks={updateTasks}
-          isDarkMode={isDarkMode}
-          onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-          isFocusMode={isFocusMode}
-          onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
-        />
-      </main>
+      {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
+      <div className="flex-1 w-full overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        {/* Main Desktop Dashboard Container */}
+        <main
+          ref={mainRef}
+          className="max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12"
+        >
+          {/* Muuri Grid Layout Engine */}
+          <MuuriDashboard
+            widgets={widgets}
+            onUpdateWidgetOrder={setWidgets}
+            onDeleteWidget={deleteWidget}
+            onResizeWidget={resizeWidget}
+            onContextMenuWidget={handleContextMenuWidget}
+            isEditMode={isEditMode}
+            notes={notes}
+            onUpdateNotes={updateNotes}
+            tasks={tasks}
+            onUpdateTasks={updateTasks}
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+            isFocusMode={isFocusMode}
+            onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
+          />
+        </main>
+      </div>
 
       {/* Right Click Desktop & Widget Context Menu */}
       <ContextMenu
         position={contextMenuPos}
         onClose={() => setContextMenuPos(null)}
         widgets={widgets}
-        onAddWidget={addWidget}
         onDeleteWidget={deleteWidget}
         onResizeWidget={resizeWidget}
         onMoveToTopWidget={moveToTopWidget}
@@ -150,6 +152,7 @@ export default function App() {
         onOpenWallpaper={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
         onResetLayout={resetLayout}
+        onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
       />
 
       {/* Wallpaper Setting Modal */}

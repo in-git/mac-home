@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { WallpaperConfig } from '../types';
+import { getWallpaperEffect, createParticles } from '../data/wallpaperEffects';
 
 interface Props {
   wallpaper: WallpaperConfig;
