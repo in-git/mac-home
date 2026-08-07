@@ -135,3 +135,22 @@
 .dark .is-dragging .glass-panel {
   background-color: rgba(20, 20, 30, 0.55);
 }
+
+/* Edit-mode subtle looping wiggle so it's obvious the dashboard is unlocked.
+   Applied to the inner .glass-panel (not .muuri-item) so it never fights with
+   Muuri's positioning transform on the item wrapper. */
+@keyframes widget-wiggle {
+  0%, 100% { transform: rotate(0deg) translate(0, 0); }
+  25% { transform: rotate(-0.3deg) translate(-0.5px, 0.25px); }
+  75% { transform: rotate(0.3deg) translate(0.5px, -0.25px); }
+}
+
+.edit-wiggle {
+  animation: widget-wiggle 0.6s ease-in-out infinite;
+}
+
+/* Stop the wiggle on the card being dragged so it sits still while moving. */
+.muuri-item.muuri-item-dragging .glass-panel,
+.muuri-item.muuri-item-releasing .glass-panel {
+  animation: none !important;
+}

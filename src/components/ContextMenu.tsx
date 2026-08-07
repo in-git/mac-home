@@ -282,7 +282,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
         {/* Toggle Edit Mode */}
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             playSound.playClick();
             onToggleEditMode();
             onClose();

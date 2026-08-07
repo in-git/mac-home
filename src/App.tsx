@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { TopBar } from './components/TopBar';
 import { MuuriDashboard } from './components/MuuriDashboard';
@@ -28,6 +28,7 @@ export default function App() {
   });
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const mainRef = useRef<HTMLElement>(null);
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
@@ -64,8 +65,16 @@ export default function App() {
     });
   };
 
+  // Clicking outside the <main> area exits edit mode.
+  const handleRootClick = (e: React.MouseEvent) => {
+    if (isEditMode && mainRef.current && !mainRef.current.contains(e.target as Node)) {
+      setIsEditMode(false);
+    }
+  };
+
   return (
     <div
+      onClick={handleRootClick}
       onContextMenu={handleContextMenu}
       className="relative h-screen w-full flex flex-col overflow-y-hidden font-sans overflow-x-hidden selection:bg-[#007AFF] selection:text-white"
     >
@@ -87,7 +96,7 @@ export default function App() {
       />
 
       {/* Main Desktop Dashboard Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12 overflow-y-auto">
         {/* Muuri Grid Layout Engine */}
         <MuuriDashboard
           widgets={widgets}

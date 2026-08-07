@@ -104,11 +104,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       case 'tall':
         return 'w-full sm:w-1/2 lg:w-1/3';
       case 'large':
-        return 'w-full lg:w-1/2';
+        return 'w-full';
       case 'icon-1-8':
-        return 'w-1/4 sm:w-1/6 md:w-1/8 aspect-square';
+        return 'w-1/4 sm:w-1/6 md:w-1/8 aspect-[1/1]';
       case 'icon-1-6':
-        return 'w-1/4 sm:w-1/6 lg:w-1/6 aspect-square';
+        return 'w-1/4 sm:w-1/6 lg:w-1/6 aspect-[1/1]';
       default:
         return 'w-full lg:w-1/2 ';
     }
@@ -131,11 +131,18 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       const grid = new Muuri(containerRef.current, {
         items: '.muuri-item',
         dragEnabled: true,
-        dragHandle: '.drag-handle',
+        // Allow dragging from the whole card (so content can be dragged too),
+        // or from the explicit grip handle. Edit-mode gating is done below.
+        dragHandle: '.drag-handle, .widget-card',
         // Muuri 0.9.x has no runtime drag() API, so we gate dragging with a
-        // functional predicate that reads the live edit-mode ref.
-        dragStartPredicate: () => {
-          return !!isEditModeRef.current;
+        // functional predicate that reads the live edit-mode ref. Functional
+        // controls inside the header are excluded via [data-no-drag] so their
+        // clicks are never swallowed by a drag gesture.
+        dragStartPredicate: (_item, args: any) => {
+          if (!isEditModeRef.current) return false;
+          const target = args?.event?.target as HTMLElement | null;
+          if (target && target.closest('[data-no-drag]')) return false;
+          return true;
         },
         // Faster layout => less jank while sorting many heavy cards
         layoutDuration: 180,
@@ -242,6 +249,10 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
       cleanupRef.current = () => {
         window.removeEventListener('resize', handleResize);
+        if (resizeObserverRef.current) {
+          resizeObserverRef.current.disconnect();
+          resizeObserverRef.current = null;
+        }
         if (muuriInstanceRef.current) {
           muuriInstanceRef.current.destroy();
           muuriInstanceRef.current = null;
@@ -301,16 +312,24 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       if (muuriInstanceRef.current) {
         muuriInstanceRef.current.refreshItems().layout();
       }
+      // React re-renders recreate the .muuri-item DOM nodes, so re-subscribe
+      // the ResizeObserver to the fresh elements to keep height syncing alive.
+      if (containerRef.current && resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        containerRef.current
+          .querySelectorAll('.muuri-item')
+          .forEach((el) => resizeObserverRef.current!.observe(el));
+      }
     }, 50);
     return () => clearTimeout(timer);
   }, [widgets]);
 
   return (
-    <div className="w-full relative min-h-[500px]">
+    <div className="w-full relative h-full">
       {/* Muuri Container */}
       <div
         ref={containerRef}
-        className="muuri-grid relative w-full overflow-hidden"
+        className="muuri-grid relative w-full h-full "
       >
         {widgets.map((widget) => {
           const sizeClasses = getItemSizeClasses(widget.size);
@@ -325,7 +344,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             >
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
-                <div className="h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group">
+                <div className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}>
                   {/* Widget Card Title & Control Bar */}
                   {showHeader && (
                   <div className="flex items-center justify-between mb-2">
@@ -333,6 +352,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       {/* Drag Handle or Window Dots */}
                       <div className="flex space-x-1.5 items-center">
                         <button
+                          data-no-drag
                           onClick={(e) => {
                             e.stopPropagation();
                             onDeleteWidget(widget.id);
@@ -343,6 +363,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                           <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
                         </button>
                         <button
+                          data-no-drag
                           onClick={(e) => {
                             e.stopPropagation();
                             const sizeCycle = WIDGET_SIZE_OPTIONS[widget.type];
@@ -376,6 +397,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       )}
 
                       <button
+                        data-no-drag
                         onClick={(e) => {
                           e.stopPropagation();
                           const opts = WIDGET_SIZE_OPTIONS[widget.type];
@@ -390,6 +412,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       </button>
 
                       <button
+                        data-no-drag
                         onClick={(e) => {
                           e.stopPropagation();
                           onDeleteWidget(widget.id);
@@ -403,8 +426,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                   </div>
                   )}
 
-                  {/* Inner Widget Component Content */}
-                  <div className="flex-1 overflow-hidden pt-1">
+                  {/* Inner Widget Component Content.
+                      In edit mode the content is non-interactive (clicks are
+                      disabled) but the card is still draggable from this area
+                      because the event passes through to the .widget-card handle. */}
+                  <div className={`flex-1 overflow-hidden pt-1${isEditMode ? ' pointer-events-none' : ''}`}>
                     {renderWidgetContent(widget.type)}
                   </div>
                 </div>

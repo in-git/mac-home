@@ -112,7 +112,10 @@ export const TopBar: React.FC<Props> = ({
                 设置壁纸 (动态/静态)
               </button>
               <button
-                onClick={onToggleEditMode}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleEditMode();
+                }}
                 className="w-full text-left px-3 py-1.5 hover:bg-[#007AFF] hover:text-white flex items-center justify-between rounded-lg mx-0.5 transition-colors"
               >
                 <span>{isEditMode ? '锁定布局' : '自定义布局与大小'}</span>

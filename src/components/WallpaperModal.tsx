@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, Sparkles, Image as ImageIcon, Sliders, Check, Link as LinkIcon, RefreshCw } from 'lucide-react';
+import { Sparkles, Image as ImageIcon, Sliders, Check, Link as LinkIcon, RefreshCw } from 'lucide-react';
 import { WallpaperConfig, DynamicPreset } from '../types';
 import { STATIC_WALLPAPERS } from '../data/presetData';
 import { playSound } from '../utils/sound';
+import { Modal } from './Modal';
 
 interface Props {
   isOpen: boolean;
@@ -19,8 +19,6 @@ export const WallpaperModal: React.FC<Props> = ({
   onUpdateWallpaper,
 }) => {
   const [customUrl, setCustomUrl] = useState('');
-
-  if (!isOpen) return null;
 
   const dynamicPresets: { id: DynamicPreset; name: string; desc: string; previewColor: string }[] = [
     {
@@ -50,34 +48,15 @@ export const WallpaperModal: React.FC<Props> = ({
   ];
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-md">
-        <motion.div
-          initial={{ scale: 0.92, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.92, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="w-full max-w-2xl glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col"
-        >
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <ImageIcon size={18} className="text-[#007AFF]" />
-              <h2 className="text-base font-semibold">壁纸设置 (Dynamic & Static)</h2>
-            </div>
-            <button
-              onClick={() => {
-                playSound.playClick();
-                onClose();
-              }}
-              className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-            >
-              <X size={16} />
-            </button>
-          </div>
-
-          {/* Modal Body */}
-          <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="壁纸设置 (Dynamic & Static)"
+      icon={<ImageIcon size={18} className="text-[#007AFF]" />}
+      maxWidth="max-w-2xl"
+    >
+      {/* Modal Body */}
+      <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
             {/* Type Selector (Segmented Control) */}
             <div className="flex bg-black/5 dark:bg-white/10 p-1 rounded-xl">
               <button
@@ -291,8 +270,6 @@ export const WallpaperModal: React.FC<Props> = ({
               完成
             </button>
           </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+    </Modal>
   );
 };
