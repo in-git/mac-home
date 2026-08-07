@@ -1,4 +1,4 @@
-import { Globe, Plus, Link2, Rocket, type LucideIcon } from 'lucide-react';
+import { Globe, Plus, Link2, Rocket, Settings, type LucideIcon } from 'lucide-react';
 import { WidgetSize, IconBehavior } from '../types';
 
 // Maps the `iconGlyph` string (a lucide icon name) to its component. Unknown
@@ -7,6 +7,7 @@ const ICON_REGISTRY: Record<string, LucideIcon> = {
   Globe,
   Plus,
   Link2,
+  Settings,
 };
 
 // Fallback used only when an icon-grid widget provides no icon fields.

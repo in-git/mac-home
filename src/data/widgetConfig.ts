@@ -22,6 +22,10 @@ export interface WidgetTypeConfig {
   glyph: string;
   /** Human-readable label shown in the add-widget picker. */
   label: string;
+  /** Whether cards of this type render the title bar (header). Optional — when
+   *  omitted the header is shown by default. Icon-style types (e.g. icon-grid,
+   *  settings) set this to `false` to render as a bare desktop icon. */
+  showHeader?: boolean;
   /** Optional click handler invoked when the widget card is clicked (non-editing
    *  mode). Defined at the type level. Optional — omit to use no default action. */
   onAction?: () => void;
@@ -73,6 +77,15 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     glyph: '🕒',
     label: '时间 & 日历',
   },
+  'clock-mini': {
+    title: '时钟',
+    maxInstances: 1,
+    defaultSize: 'sm',
+    sizeOptions: ['sm', 'wide'],
+    isAddable: true,
+    glyph: '⏰',
+    label: '时钟',
+  },
   shortcuts: {
     title: '快捷导航',
     maxInstances: Infinity,
@@ -92,13 +105,14 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     label: '控制中心',
   },
   settings: {
-    title: '设置',
+    title: '系统设置',
     maxInstances: 1,
-    defaultSize: 'wide',
-    sizeOptions: ['wide', 'large'],
+    defaultSize: 'icon-1-8',
+    sizeOptions: ['icon-1-8', 'icon-1-16'],
     isAddable: true,
     glyph: '⚙️',
     label: '系统设置',
+    showHeader: false,
   },
   'icon-grid': {
     title: '图标',
@@ -108,6 +122,7 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     isAddable: false,
     glyph: '🧩',
     label: '图标',
+    showHeader: false,
   },
 };
 

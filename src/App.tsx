@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { AddWidgetModal } from './components/AddWidgetModal';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
@@ -85,14 +86,12 @@ export default function App() {
     });
   };
 
-  // Clicking empty space (anything that isn't a widget card) exits edit mode.
-  // Cards are wrapped in `.muuri-item` (with data-widget-id); clicks on them or
-  // their inner controls must NOT close edit mode.
+  // Clicking outside <main> (e.g. background/topbar/empty desktop margin outside main) exits edit mode.
   const handleRootClick = (e: React.MouseEvent) => {
     if (!isEditMode) return;
     const target = e.target as HTMLElement;
-    const onCard = target.closest('.muuri-item');
-    if (!onCard) {
+    const insideMain = mainRef.current?.contains(target);
+    if (!insideMain) {
       setIsEditMode(false);
     }
   };
@@ -122,7 +121,7 @@ export default function App() {
         {/* Main Desktop Dashboard Container */}
         <main
           ref={mainRef}
-          className="max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12"
+          className="relative max-w-7xl w-full mx-auto p-3 sm:p-6 pb-16"
         >
           {/* Muuri Grid Layout Engine */}
           <MuuriDashboard
@@ -137,6 +136,18 @@ export default function App() {
             isDarkMode={isDarkMode}
             onToggleDarkMode={() => setDarkMode(!isDarkMode)}
           />
+
+          {/* 右下角完成按钮（仅在编辑模式展示） */}
+          {isEditMode && (
+            <button
+              type="button"
+              onClick={() => setIsEditMode(false)}
+              className="fixed right-4 sm:right-6 bottom-5 z-40 flex items-center space-x-1.5 px-4 py-2 bg-[#007AFF] hover:bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-[12px] shadow-lg transition-all"
+            >
+              <Check size={14} strokeWidth={2.5} />
+              <span>完成</span>
+            </button>
+          )}
         </main>
       </div>
 

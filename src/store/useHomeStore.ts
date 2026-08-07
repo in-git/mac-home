@@ -85,7 +85,12 @@ export const useHomeStore = create<HomeState>()(
           type,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           size: cfg.defaultSize,
-          showHeader: type !== 'icon-grid',
+          // Header visibility is driven by the type-level config (default: shown).
+          showHeader: cfg.showHeader ?? true,
+          // icon 型组件补充图标字段：settings 以齿轮图标呈现，点击后弹窗显示设置
+          ...(type === 'settings'
+            ? { iconType: 'action', iconGlyph: 'Settings', iconLabel: '设置' }
+            : {}),
         };
         set({ widgets: [newWidget, ...widgets] });
       },

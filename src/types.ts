@@ -4,6 +4,7 @@ export type WidgetType =
   | 'search'
   | 'ai-chat'
   | 'clock'
+  | 'clock-mini'
   | 'shortcuts'
   | 'control-center'
   | 'settings'

@@ -1,5 +1,6 @@
 import {
   Check,
+  Download,
   Image as ImageIcon,
   Moon,
   Palette,
@@ -35,6 +36,8 @@ export const SettingsWidget: React.FC = () => {
   const setSoundEnabled = useHomeStore((s) => s.setSoundEnabled);
   const openWallpaper = useHomeStore((s) => s.openWallpaper);
   const resetLayout = useHomeStore((s) => s.resetLayout);
+  const widgets = useHomeStore((s) => s.widgets);
+  const notes = useHomeStore((s) => s.notes);
 
   const [justReset, setJustReset] = useState(false);
 
@@ -59,6 +62,27 @@ export const SettingsWidget: React.FC = () => {
     resetLayout();
     setJustReset(true);
     setTimeout(() => setJustReset(false), 1500);
+  };
+
+  // 导出布局：将当前组件顺序、尺寸与便签序列化为 JSON 下载
+  const handleExport = () => {
+    playSound.playClick();
+    const payload = {
+      app: 'macOS 主页',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      widgets,
+      notes,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `macos-home-layout-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -176,6 +200,15 @@ export const SettingsWidget: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Export layout */}
+      <button
+        onClick={handleExport}
+        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-[11px] font-medium"
+      >
+        <Download size={12} className="text-slate-500" />
+        <span className="text-slate-500">导出布局</span>
+      </button>
 
       {/* Reset */}
       <button

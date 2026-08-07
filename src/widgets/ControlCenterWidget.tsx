@@ -13,7 +13,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
 }) => {
   const [wifiEnabled, setWifiEnabled] = useState(true);
   const [btEnabled, setBtEnabled] = useState(true);
-  const [airdropEnabled, setAirdropEnabled] = useState(true);
   const [brightness, setBrightness] = useState(85);
   const [volume, setVolume] = useState(70);
 

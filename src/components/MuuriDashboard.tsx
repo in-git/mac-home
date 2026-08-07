@@ -9,6 +9,7 @@ import {
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { AiChatWidget } from '../widgets/AiChatWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
+import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { IconWidget } from '../widgets/IconWidget';
 import { SearchWidget } from '../widgets/SearchWidget';
@@ -63,11 +64,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const isEditModeRef = useRef(isEditMode);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  // 无头模态：当前以 fixed 居中放大的 widget id（null 表示普通网格状态）
+  // 无头模态：当前以 fixed 居中放大的 widget id（null 表示普通网格状态）。
+  // 仅便签与导航使用放大能力。
   const [expandedWidgetId, setExpandedWidgetId] = useState<string | null>(null);
+  // 设置弹窗：settings 以适中尺寸的模态框呈现（非放大）。
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
-  // Helper to render widget content
-  const renderWidgetContent = (widget: WidgetItem) => {
+  // Helper to render widget content. `inModal` 为 true 时用于无头模态（弹窗）：
+  // settings 在网格中显示为图标，在模态中渲染完整设置面板。
+  const renderWidgetContent = (widget: WidgetItem, inModal = false) => {
     switch (widget.type) {
       case 'search':
         return <SearchWidget />;
@@ -81,6 +86,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return <AiChatWidget isDarkMode={isDarkMode} />;
       case 'clock':
         return <ClockCalendarWidget />;
+      case 'clock-mini':
+        return <ClockWidget />;
       case 'control-center':
         return (
           <ControlCenterWidget
@@ -91,7 +98,22 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       case 'shortcuts':
         return <ShortcutsWidget />;
       case 'settings':
-        return <SettingsWidget />;
+        // 网格中：渲染为图标，点击后打开无头模态显示完整设置面板
+        if (inModal) return <SettingsWidget />;
+        return (
+          <div data-icon-grid className="h-full w-full">
+            <IconWidget
+              editing={isEditMode}
+              size={widget.size}
+              iconType={widget.iconType}
+              iconGlyph={widget.iconGlyph}
+              iconLabel={widget.iconLabel}
+              iconHref={widget.iconHref}
+              iconTextColor={widget.iconTextColor}
+              iconBgColor={widget.iconBgColor}
+            />
+          </div>
+        );
       case 'icon-grid': {
         return (
           <div data-icon-grid className="h-full w-full">
@@ -421,6 +443,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                     // Type-level default action (optional). Resolved & executed
                     // centrally via WIDGET_CONFIG so the trigger lives in one place.
                     if (executeWidgetAction(widget.type)) return;
+                    // settings 图标点击 → 打开适中尺寸设置弹窗（非放大）
+                    if (widget.type === 'settings') {
+                      setSettingsModalOpen(true);
+                      return;
+                    }
                     const iconGrid = target.closest('[data-icon-grid]');
                     if (!iconGrid) return;
                     const kind = widget.iconType;
@@ -470,8 +497,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                               className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
                             />
                           </Tooltip>
-                          {/* Yellow dot → toggle headless modal (fixed centered) */}
-                          {enableHeadlessModal && (
+                          {/* Yellow dot → toggle headless modal (fixed centered).
+                              放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
+                          {enableHeadlessModal &&
+                            (widget.type === 'sticky-notes' ||
+                              widget.type === 'shortcuts') && (
                             <Tooltip content="无头模态放大" placement="top">
                               <div
                                 data-no-drag
@@ -550,7 +580,29 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               >
                 {/* 无头：不渲染标题栏与控制栏 */}
                 <div className="flex-1 min-h-0">
-                  {renderWidgetContent(expandedWidget)}
+                  {renderWidgetContent(expandedWidget, true)}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+      {/* 设置弹窗：settings 以适中尺寸模态框呈现，点击外部遮罩或关闭按钮关闭 */}
+      {settingsModalOpen &&
+        (() => {
+          const settingsWidget = widgets.find((w) => w.type === 'settings');
+          if (!settingsWidget) return null;
+          return (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+              onClick={() => setSettingsModalOpen(false)}
+            >
+              <div
+                className="glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-full max-w-sm max-h-[90vh] flex flex-col overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex-1 min-h-0 overflow-y-auto">
+                  <SettingsWidget />
                 </div>
               </div>
             </div>
