@@ -359,7 +359,7 @@ export const WeatherWidget: React.FC = () => {
                   playSound.playClick();
                   selectCity(c.id);
                 }}
-                className={`px-2 py-0.5 rounded-md text-[11px] font-medium transition-colors whitespace-nowrap ${
+                className={`px-2 py-0.5 rounded-md text-font-sm font-medium transition-colors whitespace-nowrap ${
                   c.id === selectedId
                     ? 'bg-[#007AFF] text-white shadow-xs'
                     : 'bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20'
@@ -433,7 +433,7 @@ export const WeatherWidget: React.FC = () => {
                 >
                   <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
                     {r.name}
-                    <span className="text-[10px] text-slate-400 ml-1">
+                    <span className="text-font-sm text-slate-400 ml-1">
                       {r.admin1 ? `${r.admin1} · ` : ''}
                       {r.country}
                     </span>
@@ -444,7 +444,7 @@ export const WeatherWidget: React.FC = () => {
             </div>
           )}
           {searchQuery.trim() && !searching && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-20 glass-panel rounded-xl p-2.5 text-center text-[11px] text-slate-400">
+            <div className="absolute top-full left-0 right-0 mt-1 z-20 glass-panel rounded-xl p-2.5 text-center text-font-sm text-slate-400">
               未找到相关城市
             </div>
           )}
@@ -452,7 +452,7 @@ export const WeatherWidget: React.FC = () => {
       )}
 
       {error && (
-        <div className="mb-2 px-2.5 py-1 rounded-lg bg-amber-500/10 text-[10px] text-amber-600 dark:text-amber-400">
+        <div className="mb-2 px-2.5 py-1 rounded-lg bg-amber-500/10 text-font-sm text-amber-600 dark:text-amber-400">
           {error}
         </div>
       )}
@@ -466,7 +466,7 @@ export const WeatherWidget: React.FC = () => {
             {/* Current Temp */}
             <div className="glass-panel p-3.5 rounded-2xl flex flex-col justify-between bg-gradient-to-br from-blue-500/10 to-sky-400/10">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span className="text-font-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   实时天气
                 </span>
                 {getWeatherIcon(weather.condition, 24)}
@@ -479,7 +479,7 @@ export const WeatherWidget: React.FC = () => {
                   {CONDITION_TEXT[weather.condition] ?? weather.condition}
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+              <div className="flex items-center justify-between text-font-sm text-slate-500 font-medium">
                 <span>最高 {weather.high}°</span>
                 <span>最低 {weather.low}°</span>
               </div>
@@ -487,7 +487,7 @@ export const WeatherWidget: React.FC = () => {
 
             {/* Hourly Forecast Strip */}
             <div className="md:col-span-2 glass-panel p-3.5 rounded-2xl flex flex-col justify-between">
-              <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
+              <div className="text-font-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
                 逐小时预报
               </div>
               <div className="flex items-center justify-between overflow-x-auto no-scrollbar space-x-2 py-1">
@@ -496,7 +496,7 @@ export const WeatherWidget: React.FC = () => {
                     key={idx}
                     className="flex flex-col items-center shrink-0 min-w-[42px] space-y-1"
                   >
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-font-sm text-slate-400">
                       {item.time}
                     </span>
                     {getWeatherIcon(item.condition, 16)}
@@ -505,7 +505,7 @@ export const WeatherWidget: React.FC = () => {
                 ))}
               </div>
               {/* Weather Params Footer */}
-              <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/10 grid grid-cols-3 gap-2 text-[10px]">
+              <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/10 grid grid-cols-3 gap-2 text-font-sm">
                 <div className="flex items-center space-x-1 text-slate-500">
                   <Droplets size={12} className="text-blue-500" />
                   <span>湿度 {weather.humidity}%</span>
@@ -534,14 +534,14 @@ export const WeatherWidget: React.FC = () => {
                   key={idx}
                   className="p-1.5 rounded-xl bg-black/5 dark:bg-white/5 flex flex-col items-center justify-between"
                 >
-                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                  <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400">
                     {day.day}
                   </span>
                   <div className="my-1">
                     {getWeatherIcon(day.condition, 14)}
                   </div>
-                  <span className="text-[11px] font-bold">{day.high}°</span>
-                  <span className="text-[10px] text-slate-400">{day.low}°</span>
+                  <span className="text-font-sm font-bold">{day.high}°</span>
+                  <span className="text-font-sm text-slate-400">{day.low}°</span>
                 </div>
               ))}
             </div>

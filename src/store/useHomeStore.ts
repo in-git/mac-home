@@ -7,6 +7,8 @@ import {
 } from '../data/presetData';
 import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
 import {
+  FontVariant,
+  FontScale,
   StickyNote as StickyNoteType,
   WallpaperConfig,
   WidgetItem,
@@ -34,6 +36,9 @@ interface HomeState {
   isDarkMode: boolean;
   themeColor: string;
   soundEnabled: boolean;
+  // 字号方案：variant 决定三档基准（A: 12/14/16, B: 13/15/17），scale 决定当前档位
+  fontVariant: FontVariant;
+  fontScale: FontScale;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -49,6 +54,8 @@ interface HomeState {
   setDarkMode: (value: boolean) => void;
   setThemeColor: (color: string) => void;
   setSoundEnabled: (value: boolean) => void;
+  setFontVariant: (variant: FontVariant) => void;
+  setFontScale: (scale: FontScale) => void;
   openWallpaper: () => void;
 }
 
@@ -63,6 +70,8 @@ export const useHomeStore = create<HomeState>()(
         window.matchMedia('(prefers-color-scheme: dark)').matches,
       themeColor: '#007AFF',
       soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
+      fontVariant: 'A',
+      fontScale: 'base',
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -129,6 +138,8 @@ export const useHomeStore = create<HomeState>()(
       setDarkMode: (value) => set({ isDarkMode: value }),
       setThemeColor: (color) => set({ themeColor: color }),
       setSoundEnabled: (value) => set({ soundEnabled: value }),
+      setFontVariant: (variant) => set({ fontVariant: variant }),
+      setFontScale: (scale) => set({ fontScale: scale }),
       // Registered by App on mount so the store can open the wallpaper modal
       // without threading the setter through the whole component tree.
       openWallpaper: () => {},
@@ -143,6 +154,8 @@ export const useHomeStore = create<HomeState>()(
         isDarkMode: state.isDarkMode,
         themeColor: state.themeColor,
         soundEnabled: state.soundEnabled,
+        fontVariant: state.fontVariant,
+        fontScale: state.fontScale,
       }),
     },
   ),

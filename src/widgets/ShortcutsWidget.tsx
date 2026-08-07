@@ -15,7 +15,14 @@ import { INITIAL_SHORTCUTS } from '../data/presetData';
 import { QuickShortcut } from '../types';
 import { playSound } from '../utils/sound';
 
-export const ShortcutsWidget: React.FC = () => {
+interface ShortcutsWidgetProps {
+  /** 是否处于无头模态（放大）状态：网格区域填满模态高度，图标从左上开始流式排列 */
+  expanded?: boolean;
+}
+
+export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
+  expanded = false,
+}) => {
   const [shortcuts, setShortcuts] =
     useState<QuickShortcut[]>(INITIAL_SHORTCUTS);
   const [showAdd, setShowAdd] = useState(false);
@@ -43,20 +50,21 @@ export const ShortcutsWidget: React.FC = () => {
     'bg-slate-800 text-white',
   ];
 
-  const getIcon = (iconName: string) => {
+  // className 传百分比尺寸（如 w-[30%] h-[30%]）时，图标会随 group/icon 容器大小等比缩放
+  const getIcon = (iconName: string, className?: string) => {
     switch (iconName) {
       case 'Apple':
-        return <Apple size={18} />;
+        return <Apple size={18} className={className} />;
       case 'Github':
-        return <Github size={18} />;
+        return <Github size={18} className={className} />;
       case 'Palette':
-        return <Palette size={18} />;
+        return <Palette size={18} className={className} />;
       case 'Sparkles':
-        return <Sparkles size={18} />;
+        return <Sparkles size={18} className={className} />;
       case 'Compass':
-        return <Compass size={18} />;
+        return <Compass size={18} className={className} />;
       default:
-        return <StickyNote size={18} />;
+        return <StickyNote size={18} className={className} />;
     }
   };
 
@@ -94,7 +102,7 @@ export const ShortcutsWidget: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between text-xs p-1 text-slate-800 dark:text-slate-100">
+    <div className="h-full flex flex-col text-xs p-1 text-slate-800 dark:text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-2">
@@ -214,38 +222,42 @@ export const ShortcutsWidget: React.FC = () => {
       </Modal>
 
       {/* Grid of Shortcuts */}
-      {/* auto-fill grid so the column count adapts to how many items exist;
-          each cell is aspect-square (1:1) so all tiles stay square. */}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-3 my-2 overflow-y-auto max-h-52 pr-1">
-        {shortcuts.map((item) => (
-          <a
-            key={item.id}
-            href={item.url}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => playSound.playClick()}
-            className="group relative flex flex-col p-2  rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10 aspect-square"
-          >
-            <div
-              className={`group/icon relative w-full flex-1 aspect-square rounded-xl flex items-center justify-center shadow-sm ${
-                item.bgColor || 'bg-slate-800 text-white'
-              } transition-transform group-hover/icon:scale-105`}
+      {/* 容器查询实现响应式列数：一排最多 12 个，随容器宽度依次减少
+          （2 → 3 → 4 → 6 → 8 → 10 → 12），普通卡片窄、放大模态宽，自动适配。 */}
+      <div
+        className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
+      >
+        <div className="grid grid-cols-2 @xs:grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-8 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
+          {shortcuts.map((item) => (
+            <a
+              key={item.id}
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => playSound.playClick()}
+              className="group relative flex flex-col p-2  rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10 aspect-square"
             >
-              {getIcon(item.iconName)}
-            </div>
-            <span className="font-semibold text-[11px] truncate w-full mt-1 text-slate-800 dark:text-slate-100">
-              {item.title}
-            </span>
+              <div
+                className={`group/icon relative w-full flex-1 aspect-square rounded-xl flex items-center justify-center shadow-sm ${
+                  item.bgColor || 'bg-slate-800 text-white'
+                } transition-transform group-hover/icon:scale-105`}
+              >
+                {getIcon(item.iconName, 'w-[30%] h-[30%]')}
+              </div>
+              <span className="font-semibold text-[11px] truncate w-full mt-1 text-slate-800 dark:text-slate-100">
+                {item.title}
+              </span>
 
-            {/* Hover Delete — only when the ICON itself is hovered */}
-            <button
-              onClick={(e) => handleDelete(item.id, e)}
-              className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
-            >
-              <Trash2 size={11} />
-            </button>
-          </a>
-        ))}
+              {/* Hover Delete — only when the ICON itself is hovered */}
+              <button
+                onClick={(e) => handleDelete(item.id, e)}
+                className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
+              >
+                <Trash2 size={11} />
+              </button>
+            </a>
+          ))}
+        </div>
       </div>
 
       <div className="pt-2 border-t border-black/5 dark:border-white/10 flex justify-between items-center text-[10px] text-slate-400">

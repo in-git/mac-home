@@ -19,6 +19,12 @@
     --apple-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     --apple-radius: 18px;
     --apple-input-bg: rgba(0, 0, 0, 0.04);
+
+    /* 字号三档（由设置面板驱动，默认方案 A 的中档 14/??/??）。
+       实际值在 App 挂载时根据 fontVariant + fontScale 写入。 */
+    --font-sm: 12px;
+    --font-base: 14px;
+    --font-lg: 16px;
   }
 
   .dark {
@@ -160,4 +166,23 @@
 .muuri-item.muuri-item-dragging .glass-panel,
 .muuri-item.muuri-item-releasing .glass-panel {
   animation: none !important;
+}
+
+/* ===== 字号档位工具类 =====
+   映射到 CSS 变量 --font-sm / --font-base / --font-lg，由设置面板动态改写变量值，
+   从而实现全站统一缩放在两套方案（A: 12/14/16, B: 13/15/17）× 三档之间切换。 */
+@layer utilities {
+  .text-font-sm { font-size: var(--font-sm); line-height: 1.35; }
+  .text-font-base { font-size: var(--font-base); line-height: 1.4; }
+  .text-font-lg { font-size: var(--font-lg); line-height: 1.45; }
+}
+
+/* Redirect Tailwind's default text-size utilities to the font-scale variables so
+   existing `text-xs/sm/base/lg` usages also respond to the font settings without
+   touching every JSX file. Custom `text-[Npx]` arbitrary values keep their own size. */
+@layer base {
+  .text-xs { font-size: var(--font-sm) !important; line-height: 1.35; }
+  .text-sm { font-size: var(--font-base) !important; line-height: 1.4; }
+  .text-base { font-size: var(--font-lg) !important; line-height: 1.45; }
+  .text-lg { font-size: calc(var(--font-lg) + 2px) !important; line-height: 1.5; }
 }

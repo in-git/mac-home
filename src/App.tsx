@@ -9,6 +9,7 @@ import { TopBar } from './components/TopBar';
 import { WallpaperModal } from './components/WallpaperModal';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
+import { FONT_SCALE_PX } from './types';
 
 export default function App() {
   // Persisted data + actions are handled by the zustand store.
@@ -27,6 +28,8 @@ export default function App() {
   const setDarkMode = useHomeStore((s) => s.setDarkMode);
   const themeColor = useHomeStore((s) => s.themeColor);
   const setThemeColor = useHomeStore((s) => s.setThemeColor);
+  const fontVariant = useHomeStore((s) => s.fontVariant);
+  const fontScale = useHomeStore((s) => s.fontScale);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -40,7 +43,7 @@ export default function App() {
   const [contextMenuPos, setContextMenuPos] =
     useState<ContextMenuPosition | null>(null);
 
-  // Apply persisted dark mode + theme color to the document root.
+  // Apply persisted dark mode + theme color + font scale to the document root.
   useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
@@ -50,6 +53,16 @@ export default function App() {
     }
     root.style.setProperty('--accent', themeColor);
   }, [isDarkMode, themeColor]);
+
+  // Drive the three font-size CSS variables from the chosen font variant + scale.
+  // variant A → 12/14/16, variant B → 13/15/17; scale picks the active tier.
+  useEffect(() => {
+    const root = document.documentElement;
+    const tiers = FONT_SCALE_PX[fontVariant];
+    root.style.setProperty('--font-sm', `${tiers.sm}px`);
+    root.style.setProperty('--font-base', `${tiers.base}px`);
+    root.style.setProperty('--font-lg', `${tiers.lg}px`);
+  }, [fontVariant, fontScale]);
 
   // Register the "添加组件" action by widget id so IconWidget can resolve it at
   // click time via getWidgetAction('widget-add'), independent of localStorage.

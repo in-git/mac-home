@@ -1,3 +1,14 @@
+// 字号方案：两套基准（A: 12/14/16, B: 13/15/17），三档缩放（sm/base/lg）。
+export type FontVariant = 'A' | 'B';
+export type FontScale = 'sm' | 'base' | 'lg';
+
+// 每套方案的三档字号（px）：[小, 中, 大] 对应 sm/base/lg。
+//   A → 12 / 14 / 16，B → 13 / 15 / 17
+export const FONT_SCALE_PX: Record<FontVariant, Record<FontScale, { sm: number; base: number; lg: number }>> = {
+  A: { sm: { sm: 12, base: 14, lg: 16 }, base: { sm: 12, base: 14, lg: 16 }, lg: { sm: 12, base: 14, lg: 16 } },
+  B: { sm: { sm: 13, base: 15, lg: 17 }, base: { sm: 13, base: 15, lg: 17 }, lg: { sm: 13, base: 15, lg: 17 } },
+};
+
 export type WidgetType =
   | 'sticky-notes'
   | 'weather'

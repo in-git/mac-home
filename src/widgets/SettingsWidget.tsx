@@ -34,6 +34,10 @@ export const SettingsWidget: React.FC = () => {
   const setThemeColor = useHomeStore((s) => s.setThemeColor);
   const soundEnabled = useHomeStore((s) => s.soundEnabled);
   const setSoundEnabled = useHomeStore((s) => s.setSoundEnabled);
+  const fontVariant = useHomeStore((s) => s.fontVariant);
+  const setFontVariant = useHomeStore((s) => s.setFontVariant);
+  const fontScale = useHomeStore((s) => s.fontScale);
+  const setFontScale = useHomeStore((s) => s.setFontScale);
   const openWallpaper = useHomeStore((s) => s.openWallpaper);
   const resetLayout = useHomeStore((s) => s.resetLayout);
   const widgets = useHomeStore((s) => s.widgets);
@@ -198,6 +202,68 @@ export const SettingsWidget: React.FC = () => {
               )}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Font size: two variants (A: 12/14/16, B: 13/15/17) × three tiers */}
+      <div className="glass-panel p-2.5 rounded-2xl">
+        <div className="flex items-center space-x-1.5 text-[10px] text-slate-500 mb-1.5 font-medium">
+          <span className="text-[12px] leading-none">A</span>
+          <span>字体大小</span>
+        </div>
+
+        {/* Variant switch (A / B) */}
+        <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+          {(['A', 'B'] as const).map((v) => {
+            const active = fontVariant === v;
+            const sample = v === 'A' ? '12 / 14 / 16' : '13 / 15 / 17';
+            return (
+              <button
+                key={v}
+                onClick={() => {
+                  playSound.playClick();
+                  setFontVariant(v);
+                }}
+                className={`flex flex-col items-center justify-center py-1.5 rounded-xl border transition-colors ${
+                  active
+                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
+                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
+                }`}
+              >
+                <span className="text-[13px] font-bold">{v}</span>
+                <span className="text-[9px] font-mono opacity-80">{sample}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tier switch (小 / 中 / 大) */}
+        <div className="grid grid-cols-3 gap-1.5">
+          {(
+            [
+              { key: 'sm', label: '小' },
+              { key: 'base', label: '中' },
+              { key: 'lg', label: '大' },
+            ] as const
+          ).map((t) => {
+            const active = fontScale === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => {
+                  playSound.playClick();
+                  setFontScale(t.key);
+                }}
+                className={`py-1.5 rounded-xl border text-[11px] font-medium transition-colors ${
+                  active
+                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
+                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
