@@ -1,0 +1,23 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - heading "UI Vision" [level=1] [ref=e13]
+          - generic [ref=e14]: Apple HIG
+        - paragraph [ref=e15]: UI 提示词壁纸 • 4K 无限画廊
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - button "瀑布流" [ref=e18]
+          - button "等宽网格" [ref=e22]
+          - button "详细 Meta" [ref=e29]
+          - button "宽屏焦点" [ref=e34]
+        - button "批量操作" [ref=e41]
+        - generic [ref=e47]: 共 0 张
+  - generic [ref=e50]:
+    - generic [ref=e51]: "主题筛选:"
+    - button "全部作品" [ref=e54]
+  - main [ref=e55]:
+    - generic [ref=e56]:
+      - heading "未找到相关 UI 提示词壁纸" [level=3] [ref=e65]
+      - paragraph [ref=e66]: 尝试搜索其他关键词，例如 "iOS 18"、"VisionOS"、"深色模式" 或 "极简"。

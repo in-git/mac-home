@@ -1,0 +1,6 @@
+{
+  "name": "macOS Sonoma Desktop Homepage",
+  "description": "An Apple HIG compliant macOS style desktop home page featuring draggable widgets, sticky notes, weather, real-time task reminders, dynamic wallpapers, and full Apple HIG UI form components.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

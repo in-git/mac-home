@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --apple-bg: #F5F5F7;
+    --apple-text: #1D1D1F;
+    --apple-secondary: #86868B;
+    --apple-blue: #007AFF;
+    --apple-blue-hover: #0062CC;
+    --apple-card-bg: rgba(255, 255, 255, 0.65);
+    --apple-card-border: rgba(255, 255, 255, 0.4);
+    --apple-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --apple-radius: 18px;
+    --apple-input-bg: rgba(0, 0, 0, 0.04);
+  }
+
+  .dark {
+    --apple-bg: #000000;
+    --apple-text: #F5F5F7;
+    --apple-secondary: #98989D;
+    --apple-blue: #0A84FF;
+    --apple-blue-hover: #409CFF;
+    --apple-card-bg: rgba(28, 28, 30, 0.65);
+    --apple-card-border: rgba(255, 255, 255, 0.12);
+    --apple-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    --apple-input-bg: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    background-color: var(--apple-bg);
+    color: var(--apple-text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    overflow-x: hidden;
+  }
+}
+
+/* macOS Thin Elegant Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 145, 0.25);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 140, 145, 0.5);
+}
+
+/* Apple Frosted Glass Utilities */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .glass-panel {
+  background-color: rgba(30, 30, 32, 0.68);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-pill {
+  background-color: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .glass-pill {
+  background-color: rgba(45, 45, 48, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Form focus ring */
+.apple-focus-ring:focus-within,
+.apple-focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
+}
+
+/* Wallpaper Animations */
+@keyframes auroraShift {
+  0% { transform: scale(1) translate(0, 0) rotate(0deg); }
+  33% { transform: scale(1.1) translate(3%, 2%) rotate(2deg); }
+  66% { transform: scale(1.05) translate(-2%, 4%) rotate(-2deg); }
+  100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+}
+
+.aurora-bg {
+  animation: auroraShift 18s ease-in-out infinite alternate;
+}
+
+/* Muuri drag performance: promote dragging item & placeholder to their own
+   compositor layer so the heavy glass cards don't repaint on every frame. */
+.muuri-item.muuri-item-dragging,
+.muuri-item.muuri-item-releasing,
+.muuri-item-placeholder {
+  will-change: transform;
+  z-index: 30;
+}
+
+.muuri-item-placeholder .glass-panel {
+  background-color: rgba(0, 122, 255, 0.08);
+  border: 1px dashed rgba(0, 122, 255, 0.4);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* During an active drag, drop the backdrop-blur on every card. Recomputing
+   the blur filter each frame for 7 glass cards is the main source of drag lag.
+   Cards fall back to a solid translucent fill so the UI still looks glassy. */
+.is-dragging .glass-panel {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(255, 255, 255, 0.55);
+}
+.dark .is-dragging .glass-panel {
+  background-color: rgba(20, 20, 30, 0.55);
+}

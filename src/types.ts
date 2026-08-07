@@ -1,0 +1,110 @@
+export type WidgetType =
+  | 'sticky-notes'
+  | 'weather'
+  | 'tasks'
+  | 'clock'
+  | 'shortcuts'
+  | 'control-center'
+  | 'form-showcase';
+
+export type WidgetSize = 'sm' | 'md' | 'lg' | 'wide' | 'tall' | 'large';
+
+export interface WidgetItem {
+  id: string;
+  type: WidgetType;
+  title: string;
+  size: WidgetSize;
+  pinned?: boolean;
+  position?: { x: number; y: number };
+}
+
+export type WallpaperType = 'dynamic' | 'static';
+
+export type DynamicPreset = 'aurora' | 'day-night' | 'particles' | 'mesh-wave';
+
+export interface WallpaperConfig {
+  type: WallpaperType;
+  dynamicPreset?: DynamicPreset;
+  imageUrl?: string;
+  gradient?: string;
+  blur: number; // 0 to 20px
+  brightness: number; // 50% to 120%
+}
+
+export type NoteColor = 'yellow' | 'mint' | 'pink' | 'lavender' | 'blue' | 'glass';
+
+export interface StickyNote {
+  id: string;
+  title: string;
+  content: string;
+  color: NoteColor;
+  updatedAt: string;
+  pinned: boolean;
+  isChecklist?: boolean;
+  checklistItems?: { id: string; text: string; completed: boolean }[];
+}
+
+export type TaskPriority = 'low' | 'medium' | 'high';
+
+export interface ReminderTask {
+  id: string;
+  title: string;
+  notes?: string;
+  dueDate?: string; // YYYY-MM-DD
+  dueTime?: string; // HH:MM
+  completed: boolean;
+  priority: TaskPriority;
+  category: 'today' | 'scheduled' | 'work' | 'personal';
+  hasAlarm?: boolean;
+  alarmSound?: boolean;
+}
+
+export interface WeatherCondition {
+  city: string;
+  country: string;
+  temp: number; // Celsius
+  condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder';
+  high: number;
+  low: number;
+  humidity: number;
+  windSpeed: number;
+  uvIndex: number;
+  aqi: number; // Air Quality Index
+  aqiLabel: 'Excellent' | 'Good' | 'Moderate' | 'Unhealthy';
+  hourlyForecast: { time: string; temp: number; condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder' }[];
+  dailyForecast: { day: string; high: number; low: number; condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder' }[];
+}
+
+export interface QuickShortcut {
+  id: string;
+  title: string;
+  url: string;
+  iconName: string;
+  category: string;
+  bgColor?: string;
+}
+
+export interface SystemStatus {
+  isDarkMode: boolean;
+  isFocusMode: boolean;
+  volume: number;
+  brightness: number;
+  cpuUsage: number;
+  memoryUsage: number;
+  soundEnabled: boolean;
+  isLayoutLocked: boolean;
+}
+
+export interface FormDemoState {
+  singleInput: string;
+  multiText: string;
+  selectValue: string;
+  checkboxVal: boolean;
+  toggleVal: boolean;
+  radioVal: string;
+  numberVal: number;
+  sliderVal: number;
+  segmentedVal: string;
+  // State simulation toggles for form review:
+  simulatedState: 'default' | 'hover' | 'focus' | 'disabled' | 'error';
+}

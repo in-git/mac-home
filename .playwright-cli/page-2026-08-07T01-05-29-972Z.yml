@@ -1,0 +1,399 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - button "Apple 菜单" [ref=e7]
+      - generic [ref=e11]: macOS 主页
+      - button "标准" [ref=e12]
+    - button "聚焦搜索... ⌘K" [ref=e16] [cursor=pointer]:
+      - generic [ref=e20]: 聚焦搜索...
+      - generic [ref=e21]: ⌘K
+    - generic [ref=e22]:
+      - button "添加组件" [ref=e24]
+      - generic [ref=e27]: 上海 26°C
+      - button "锁定" [ref=e34]
+      - button "切换动态/静态壁纸" [ref=e39]
+      - button "Apple UI 表单规范展示" [ref=e44]
+      - button "切换深色模式" [ref=e46]
+      - generic [ref=e60]:
+        - generic [ref=e61]: 8月7日周五
+        - generic [ref=e62]: 09:05
+  - main [ref=e63]:
+    - generic [ref=e64]:
+      - generic:
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - button "移除小组件" [ref=e71] [cursor=pointer]
+                - button "切换尺寸" [ref=e75] [cursor=pointer]
+              - generic [ref=e82]: 天气预报
+            - generic [ref=e83]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e84]
+              - button "切换大小" [ref=e92]
+              - button "关闭" [ref=e98]
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e105]: 上海, 中国
+              - generic [ref=e110]:
+                - button "上海" [ref=e111]
+                - button "北京" [ref=e112]
+                - button "旧金山" [ref=e113]
+                - button "东京" [ref=e114]
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - generic [ref=e117]: 实时天气
+                - generic [ref=e125]:
+                  - generic [ref=e126]: 26°
+                  - generic [ref=e127]: 晴朗
+                - generic [ref=e128]:
+                  - generic [ref=e129]: 最高 29°
+                  - generic [ref=e130]: 最低 21°
+              - generic [ref=e131]:
+                - generic [ref=e132]: 逐小时预报
+                - generic [ref=e133]:
+                  - generic [ref=e134]:
+                    - generic [ref=e135]: 现在
+                    - generic [ref=e142]: 26°
+                  - generic [ref=e143]:
+                    - generic [ref=e144]: 17:00
+                    - generic [ref=e151]: 27°
+                  - generic [ref=e152]:
+                    - generic [ref=e153]: 18:00
+                    - generic [ref=e160]: 25°
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: 19:00
+                    - generic [ref=e165]: 24°
+                  - generic [ref=e166]:
+                    - generic [ref=e167]: 20:00
+                    - generic [ref=e170]: 23°
+                  - generic [ref=e171]:
+                    - generic [ref=e172]: 21:00
+                    - generic [ref=e175]: 22°
+                - generic [ref=e176]:
+                  - generic [ref=e177]: 湿度 58%
+                  - generic [ref=e182]: 风速 12 km/h
+                  - generic [ref=e188]: AQI 32 (Excellent)
+            - generic [ref=e194]:
+              - generic [ref=e195]:
+                - generic [ref=e196]: 今天
+                - generic [ref=e204]: 29°
+                - generic [ref=e205]: 21°
+              - generic [ref=e206]:
+                - generic [ref=e207]: 周五
+                - generic [ref=e211]: 28°
+                - generic [ref=e212]: 22°
+              - generic [ref=e213]:
+                - generic [ref=e214]: 周六
+                - generic [ref=e218]: 25°
+                - generic [ref=e219]: 20°
+              - generic [ref=e220]:
+                - generic [ref=e221]: 周日
+                - generic [ref=e229]: 27°
+                - generic [ref=e230]: 21°
+              - generic [ref=e231]:
+                - generic [ref=e232]: 周一
+                - generic [ref=e240]: 30°
+                - generic [ref=e241]: 23°
+        - generic [ref=e244]:
+          - generic [ref=e245]:
+            - generic [ref=e246]:
+              - generic [ref=e247]:
+                - button "移除小组件" [ref=e248] [cursor=pointer]
+                - button "切换尺寸" [ref=e252] [cursor=pointer]
+              - generic [ref=e259]: 实时提醒
+            - generic [ref=e260]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e261]
+              - button "切换大小" [ref=e269]
+              - button "关闭" [ref=e275]
+          - generic [ref=e280]:
+            - generic [ref=e281]:
+              - generic [ref=e282]: 提醒事项 (Reminders)
+              - generic [ref=e287]:
+                - generic [ref=e288]: 完成度 25%
+                - button "开启到期声音提醒" [ref=e292]
+            - generic [ref=e297]:
+              - button "今日" [ref=e298]
+              - button "已计划" [ref=e299]
+              - button "工作" [ref=e300]
+              - button "个人" [ref=e301]
+              - button "已完成" [ref=e302]
+            - generic [ref=e303]:
+              - textbox "添加新提醒事项..." [ref=e304]
+              - textbox [ref=e305]: 18:00
+              - combobox [ref=e306]:
+                - option "高优先级"
+                - option "中优先级" [selected]
+                - option "低优先级"
+              - button [ref=e307]
+            - generic [ref=e309]:
+              - generic [ref=e310]:
+                - generic [ref=e314] [cursor=pointer]:
+                  - generic [ref=e315]: 提交 UX 交互评估报告
+                  - generic [ref=e316]: 包含 Apple HIG 规范对比与控件表单细节测试
+                - generic [ref=e317]:
+                  - generic [ref=e318]: 高
+                  - generic [ref=e319]: 18:00
+                  - button [ref=e324]
+              - generic [ref=e328]:
+                - generic [ref=e332] [cursor=pointer]:
+                  - generic [ref=e333]: 团队每周产品对齐例会
+                  - generic [ref=e334]: "线上会议 Link: https://meet.google.com/xyz"
+                - generic [ref=e335]:
+                  - generic [ref=e336]: 中
+                  - generic [ref=e337]: 15:30
+                  - button [ref=e342]
+        - generic [ref=e348]:
+          - generic [ref=e349]:
+            - generic [ref=e350]:
+              - generic [ref=e351]:
+                - button "移除小组件" [ref=e352] [cursor=pointer]
+                - button "切换尺寸" [ref=e356] [cursor=pointer]
+              - generic [ref=e363]: 便签
+            - generic [ref=e364]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e365]
+              - button "切换大小" [ref=e373]
+              - button "关闭" [ref=e379]
+          - generic [ref=e384]:
+            - generic [ref=e385]:
+              - generic [ref=e386]:
+                - button "💡 设计理念 (Design Notes)" [ref=e387]
+                - button "📝 待办事项" [ref=e391]
+                - button "🎨 苹果UI规范要点" [ref=e393]
+              - button "新建便签" [ref=e395]
+            - generic [ref=e397]:
+              - generic [ref=e398]:
+                - textbox [ref=e399]: 💡 设计理念 (Design Notes)
+                - generic [ref=e400]:
+                  - button "固定便签" [ref=e401]
+                  - generic [ref=e404]:
+                    - button [ref=e405]
+                    - button [ref=e406]
+                    - button [ref=e407]
+                    - button [ref=e408]
+                    - button [ref=e409]
+                    - button [ref=e410]
+                  - button "删除便签" [ref=e411]
+              - textbox "键入随手记便签..." [ref=e416]: 遵循 Apple macOS Sonoma & iOS 人机交互规范。保持无边界毛玻璃、低饱和中性色与极其通透的 12px/18px 统一圆角。
+              - generic [ref=e417]:
+                - generic [ref=e418]: "更新时间: 10:30 AM"
+                - generic [ref=e422]: Apple Notes
+        - generic [ref=e425]:
+          - generic [ref=e426]:
+            - generic [ref=e427]:
+              - generic [ref=e428]:
+                - button "移除小组件" [ref=e429] [cursor=pointer]
+                - button "切换尺寸" [ref=e433] [cursor=pointer]
+              - generic [ref=e440]: 时间 & 日历
+            - generic [ref=e441]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e442]
+              - button "切换大小" [ref=e450]
+              - button "关闭" [ref=e456]
+          - generic [ref=e461]:
+            - generic [ref=e462]:
+              - generic [ref=e463]: 时间 & 日历
+              - button "数字时钟" [ref=e468]
+            - generic [ref=e471]:
+              - generic [ref=e472]: 09:05:29
+              - generic [ref=e473]: 2026年8月7日星期五
+            - generic [ref=e474]:
+              - generic [ref=e475]:
+                - generic [ref=e476]: 日
+                - generic [ref=e477]: 一
+                - generic [ref=e478]: 二
+                - generic [ref=e479]: 三
+                - generic [ref=e480]: 四
+                - generic [ref=e481]: 五
+                - generic [ref=e482]: 六
+              - generic [ref=e483]:
+                - generic [ref=e490]: "1"
+                - generic [ref=e491]: "2"
+                - generic [ref=e492]: "3"
+                - generic [ref=e493]: "4"
+                - generic [ref=e494]: "5"
+                - generic [ref=e495]: "6"
+                - generic [ref=e496]: "7"
+                - generic [ref=e497]: "8"
+                - generic [ref=e498]: "9"
+                - generic [ref=e499]: "10"
+                - generic [ref=e500]: "11"
+                - generic [ref=e501]: "12"
+                - generic [ref=e502]: "13"
+                - generic [ref=e503]: "14"
+                - generic [ref=e504]: "15"
+                - generic [ref=e505]: "16"
+                - generic [ref=e506]: "17"
+                - generic [ref=e507]: "18"
+                - generic [ref=e508]: "19"
+                - generic [ref=e509]: "20"
+                - generic [ref=e510]: "21"
+                - generic [ref=e511]: "22"
+                - generic [ref=e512]: "23"
+                - generic [ref=e513]: "24"
+                - generic [ref=e514]: "25"
+                - generic [ref=e515]: "26"
+                - generic [ref=e516]: "27"
+                - generic [ref=e517]: "28"
+                - generic [ref=e518]: "29"
+                - generic [ref=e519]: "30"
+                - generic [ref=e520]: "31"
+        - generic [ref=e523]:
+          - generic [ref=e524]:
+            - generic [ref=e525]:
+              - generic [ref=e526]:
+                - button "移除小组件" [ref=e527] [cursor=pointer]
+                - button "切换尺寸" [ref=e531] [cursor=pointer]
+              - generic [ref=e538]: 快捷导航
+            - generic [ref=e539]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e540]
+              - button "切换大小" [ref=e548]
+              - button "关闭" [ref=e554]
+          - generic [ref=e559]:
+            - generic [ref=e560]:
+              - generic [ref=e561]: 快捷导航 (Launchpad)
+              - button "添加网址" [ref=e566]
+            - generic [ref=e568]:
+              - link "Apple 官网" [ref=e569] [cursor=pointer]:
+                - /url: https://www.apple.com.cn
+                - button [ref=e575]
+              - link "GitHub" [ref=e579] [cursor=pointer]:
+                - /url: https://github.com
+                - button [ref=e585]
+              - link "Figma" [ref=e589] [cursor=pointer]:
+                - /url: https://www.figma.com
+                - button [ref=e598]
+              - link "ChatGPT" [ref=e602] [cursor=pointer]:
+                - /url: https://chatgpt.com
+                - button [ref=e608]
+              - link "Google AI Studio" [ref=e612] [cursor=pointer]:
+                - /url: https://ai.google.dev
+                - button [ref=e618]
+              - link "Notion 笔记" [ref=e622] [cursor=pointer]:
+                - /url: https://notion.so
+                - button [ref=e628]
+            - generic [ref=e632]:
+              - generic [ref=e633]: 已关联 6 个书签
+              - generic [ref=e634]: 新标签页打开
+        - generic [ref=e642]:
+          - generic [ref=e643]:
+            - generic [ref=e644]:
+              - generic [ref=e645]:
+                - button "移除小组件" [ref=e646] [cursor=pointer]
+                - button "切换尺寸" [ref=e650] [cursor=pointer]
+              - generic [ref=e657]: 控制中心
+            - generic [ref=e658]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e659]
+              - button "切换大小" [ref=e667]
+              - button "关闭" [ref=e673]
+          - generic [ref=e678]:
+            - generic [ref=e679]:
+              - generic [ref=e680]: 控制中心 (Control Center)
+              - generic [ref=e683]: macOS Sonoma
+            - generic [ref=e684]:
+              - generic [ref=e685]:
+                - button "Wi-Fi 5G_Apple_Studio" [ref=e686]:
+                  - generic [ref=e692]:
+                    - generic [ref=e693]: Wi-Fi
+                    - generic [ref=e694]: 5G_Apple_Studio
+                - button "蓝牙 AirPods Pro" [ref=e695]:
+                  - generic [ref=e699]:
+                    - generic [ref=e700]: 蓝牙
+                    - generic [ref=e701]: AirPods Pro
+              - generic [ref=e702]:
+                - button "外观外观 浅色模式" [ref=e703]:
+                  - generic [ref=e707]:
+                    - generic [ref=e708]: 外观外观
+                    - generic [ref=e709]: 浅色模式
+                - button "专注模式 标准接收" [ref=e710]:
+                  - generic [ref=e714]:
+                    - generic [ref=e715]: 专注模式
+                    - generic [ref=e716]: 标准接收
+            - generic [ref=e717]:
+              - generic [ref=e718]:
+                - generic [ref=e719]:
+                  - generic [ref=e720]: 屏幕亮度
+                  - generic [ref=e728]: 85%
+                - slider [ref=e729] [cursor=pointer]: "85"
+              - generic [ref=e730]:
+                - generic [ref=e731]:
+                  - generic [ref=e732]: 声音音量
+                  - generic [ref=e738]: 70%
+                - slider [ref=e739] [cursor=pointer]: "70"
+        - generic [ref=e742]:
+          - generic [ref=e743]:
+            - generic [ref=e744]:
+              - generic [ref=e745]:
+                - button "移除小组件" [ref=e746] [cursor=pointer]
+                - button "切换尺寸" [ref=e750] [cursor=pointer]
+              - generic [ref=e757]: 苹果 UI 表单规范展示
+            - generic [ref=e758]:
+              - generic "按住拖拽排列位置 (Muuri Grid)" [ref=e759]
+              - button "切换大小" [ref=e767]
+              - button "关闭" [ref=e773]
+          - generic [ref=e778]:
+            - generic [ref=e779]:
+              - generic [ref=e780]:
+                - heading "Apple UI 交互表单规范 showcase" [level=2] [ref=e783]
+                - paragraph [ref=e784]: 符合 Apple HIG (macOS Sonoma / iOS) 规范，磨砂哑光底色、无生硬黑框、12px 标准圆角
+              - generic [ref=e785]:
+                - generic [ref=e786]: "状态模拟:"
+                - button "默认" [ref=e787]
+                - button "Hover" [ref=e788]
+                - button "Focus" [ref=e789]
+                - button "禁用" [ref=e790]
+                - button "错误" [ref=e791]
+            - generic [ref=e792]:
+              - generic [ref=e793]:
+                - generic [ref=e794]:
+                  - generic [ref=e795]: 分段控制器 (Segmented Control)
+                  - generic [ref=e796]:
+                    - button "概览视图" [ref=e797]
+                    - button "设计规范" [ref=e798]
+                    - button "组件参数" [ref=e799]
+                  - paragraph [ref=e800]: 苹果经典滑动 Pill 分隔效果
+                - generic [ref=e801]:
+                  - generic [ref=e802]: 单行输入框 (12px 圆角 + 哑光底色)
+                  - textbox "请输入用户名..." [ref=e808]: 库克 (Tim Cook)
+                  - paragraph [ref=e809]:
+                    - generic [ref=e812]: 前置图标、无描边框、focus 淡蓝柔光
+                - generic [ref=e813]:
+                  - generic [ref=e814]: 下拉选择器 (磨砂悬浮弹窗)
+                  - button "macOS Sonoma 桌面系统" [ref=e815]
+                - generic [ref=e819]:
+                  - generic [ref=e820]: 多行文本域 (macOS 纤细滚动条)
+                  - textbox "请输入详细描述..." [ref=e821]: 这是 Apple HIG macOS Sonoma & iOS 规范表单组件。无粗边框、无强烈对比度，采用 12px 哑光圆角与柔和蓝光。
+              - generic [ref=e822]:
+                - generic [ref=e823]:
+                  - generic [ref=e824]:
+                    - generic [ref=e825]:
+                      - generic [ref=e826]: 开关 Toggle
+                      - generic [ref=e827]: 标准 Apple 蓝色
+                    - button [ref=e828]
+                  - generic [ref=e830]:
+                    - generic [ref=e831]:
+                      - generic [ref=e832]: 复选框 Checkbox
+                      - generic [ref=e833]: 圆角蓝底白勾
+                    - button [ref=e834]
+                - generic [ref=e837]:
+                  - generic [ref=e838]: 单选组 (Radio Group)
+                  - generic [ref=e839]:
+                    - button "标准模式" [ref=e840] [cursor=pointer]
+                    - button "专业级" [ref=e844] [cursor=pointer]
+                    - button "Ultra 极限" [ref=e847] [cursor=pointer]
+                - generic [ref=e850]:
+                  - generic [ref=e851]: 数字输入框 (Stepper)
+                  - generic [ref=e852]:
+                    - generic [ref=e853]:
+                      - button [ref=e854]
+                      - spinbutton [ref=e856]: "42"
+                      - button [ref=e857]
+                    - generic [ref=e859]: 微小增量控制 (+1 / -1)
+                - generic [ref=e860]:
+                  - generic [ref=e861]:
+                    - generic [ref=e862]: 滑块 Slider
+                    - generic [ref=e863]: 75%
+                  - slider [ref=e864] [cursor=pointer]: "75"
+                - generic [ref=e865]:
+                  - generic [ref=e866]: 按钮规范 (严格 2:1 水平/垂直比例)
+                  - generic [ref=e867]:
+                    - button "主提交按钮" [ref=e868]
+                    - button "次要取消按钮" [ref=e873]
