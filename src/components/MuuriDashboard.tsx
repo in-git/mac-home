@@ -61,6 +61,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const cleanupRef = useRef<(() => void) | null>(null);
   const skipLayoutRef = useRef(false);
   const isEditModeRef = useRef(isEditMode);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   // Helper to render widget content
   const renderWidgetContent = (type: WidgetType) => {
@@ -104,8 +105,10 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return 'w-full sm:w-1/2 lg:w-1/3';
       case 'large':
         return 'w-full lg:w-1/2';
-      case 'icon':
-        return 'w-1/4 sm:w-1/6 md:w-1/8';
+      case 'icon-1-8':
+        return 'w-1/4 sm:w-1/6 md:w-1/8 aspect-square';
+      case 'icon-1-6':
+        return 'w-1/4 sm:w-1/6 lg:w-1/6 aspect-square';
       default:
         return 'w-full lg:w-1/2 ';
     }
@@ -161,6 +164,28 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
       muuriInstanceRef.current = grid;
       grid.refreshItems().layout();
+
+      // Observe every item's own size and re-layout Muuri whenever it changes.
+      // This keeps the grid from overlapping neighbouring cards when a widget's
+      // height changes for any reason (resizing, aspect-square recompute, image
+      // or font load). Muuri positions items with transforms, so a layout pass
+      // never mutates an item's own box — therefore this observer cannot loop.
+      const observeItems = () => {
+        if (!resizeObserverRef.current || !containerRef.current) return;
+        resizeObserverRef.current.disconnect();
+        containerRef.current
+          .querySelectorAll('.muuri-item')
+          .forEach((el) => resizeObserverRef.current!.observe(el));
+      };
+
+      let resizeRaf = 0;
+      resizeObserverRef.current = new ResizeObserver(() => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(() => {
+          muuriInstanceRef.current?.refreshItems().layout();
+        });
+      });
+      observeItems();
 
       // While dragging, strip the expensive backdrop-blur from every card so
       // the browser doesn't recompute the blur filter on every animation frame
@@ -289,6 +314,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       >
         {widgets.map((widget) => {
           const sizeClasses = getItemSizeClasses(widget.size);
+          const showHeader = widget.showHeader !== false;
 
           return (
             <div
@@ -299,8 +325,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             >
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
-                <div className="h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between hover:shadow-2xl transition-shadow duration-200 group">
+                <div className="h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group">
                   {/* Widget Card Title & Control Bar */}
+                  {showHeader && (
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       {/* Drag Handle or Window Dots */}
@@ -338,13 +365,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
                     {/* Drag Grip Handle & Size Controls */}
                     <div className="flex items-center space-x-1.5">
-                      {/* Drag Handle */}
+                      {/* Drag Handle (only shown while editing) */}
+                      {isEditMode && (
                       <div
                         className="drag-handle p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
                         title="按住拖拽排列位置 (Muuri Grid)"
                       >
                         <GripHorizontal size={14} />
                       </div>
+                      )}
 
                       <button
                         onClick={(e) => {
@@ -372,6 +401,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       </button>
                     </div>
                   </div>
+                  )}
 
                   {/* Inner Widget Component Content */}
                   <div className="flex-1 overflow-hidden pt-1">

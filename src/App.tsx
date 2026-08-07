@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { TopBar } from './components/TopBar';
 import { MuuriDashboard } from './components/MuuriDashboard';
@@ -144,25 +143,6 @@ export default function App() {
         tasks={tasks}
         onAddWidget={addWidget}
       />
-
-      {/* Form Showcase Standalone Modal */}
-      <AnimatePresence>
-        {isFormShowcaseModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-md">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-4xl glass-panel rounded-2xl shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden"
-            >
-              <AppleFormShowcase
-                isModalMode
-                onCloseModal={() => setIsFormShowcaseModalOpen(false)}
-              />
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

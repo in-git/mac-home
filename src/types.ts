@@ -7,7 +7,7 @@ export type WidgetType =
   | 'control-center'
   | 'icon-grid';
 
-export type WidgetSize = 'sm' | 'md' | 'lg' | 'wide' | 'tall' | 'large' | 'icon';
+export type WidgetSize = 'sm' | 'md' | 'lg' | 'wide' | 'tall' | 'large' | 'icon-1-8' | 'icon-1-6';
 
 // Mapping between the internal size tokens and the human-readable fractions
 // shown in the UI (e.g. "1/2", "1:1"). Used for the size picker labels.
@@ -18,7 +18,8 @@ export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
   wide: '1/2',
   tall: '1/3',
   large: '1:1',
-  icon: '1/8',
+  'icon-1-8': '1/8',
+  'icon-1-6': '1/6',
 };
 
 // Each widget type exposes its own set of allowed sizes. This drives both the
@@ -27,7 +28,7 @@ export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
 export const WIDGET_SIZE_OPTIONS: Record<WidgetType, WidgetSize[]> = {
   weather: ['wide', 'large'], // 1/2, 1:1
   shortcuts: ['wide', 'md', 'large'], // 1/2, 1/3, 1:1
-  'icon-grid': ['icon'], // 1/8 (fixed)
+  'icon-grid': ['icon-1-8', 'icon-1-6'], // 1/8, 1/6 (square 1:1)
   'sticky-notes': ['sm', 'md', 'wide', 'large'],
   tasks: ['sm', 'md', 'wide', 'large'],
   clock: ['sm', 'md', 'wide', 'large'],
@@ -47,6 +48,9 @@ export interface WidgetItem {
   size: WidgetSize;
   pinned?: boolean;
   position?: { x: number; y: number };
+  // Whether to render the widget card header (title bar + window dots/controls).
+  // Defaults to true; false for widgets like the single icon block.
+  showHeader?: boolean;
 }
 
 export type WallpaperType = 'dynamic' | 'static';

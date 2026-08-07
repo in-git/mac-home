@@ -7,7 +7,7 @@ export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-clock', type: 'clock', title: '时间 & 日历', size: 'md' },
   { id: 'widget-shortcuts', type: 'shortcuts', title: '快捷导航', size: 'md' },
   { id: 'widget-control', type: 'control-center', title: '控制中心', size: 'sm' },
-  { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon' },
+  { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon-1-8', showHeader: false },
 ];
 
 export const DEFAULT_WALLPAPER: WallpaperConfig = {

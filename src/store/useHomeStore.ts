@@ -82,6 +82,7 @@ export const useHomeStore = create<HomeState>()(
           type,
           title: WIDGET_TITLE_MAP[type],
           size: WIDGET_SIZE_OPTIONS[type][0],
+          showHeader: type !== 'icon-grid',
         };
         set({ widgets: [newWidget, ...widgets] });
       },
