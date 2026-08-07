@@ -7,6 +7,7 @@ import { WallpaperModal } from './components/WallpaperModal';
 import { SpotlightModal } from './components/SpotlightModal';
 import { AddWidgetModal } from './components/AddWidgetModal';
 import { useHomeStore } from './store/useHomeStore';
+import { registerWidgetAction } from './data/presetData';
 
 export default function App() {
   // Persisted data + actions are handled by the zustand store.
@@ -45,6 +46,12 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  // Register the "添加组件" action by widget id so IconWidget can resolve it at
+  // click time via getWidgetAction('widget-add'), independent of localStorage.
+  useEffect(() => {
+    registerWidgetAction('widget-add', () => setIsAddWidgetModalOpen(true));
+  }, []);
 
   // Main Right Click Handler
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -99,7 +106,6 @@ export default function App() {
         onResetLayout={resetLayout}
         isFocusMode={isFocusMode}
         onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
-        onAddWidgetModalOpen={() => setIsAddWidgetModalOpen(true)}
       />
 
       {/* Main Desktop Dashboard Container */}

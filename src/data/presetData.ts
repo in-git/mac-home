@@ -1,12 +1,21 @@
-import { WidgetItem, StickyNote, ReminderTask, WeatherCondition, QuickShortcut, WallpaperConfig, IconConfig } from '../types';
+import { WidgetItem, StickyNote, ReminderTask, WeatherCondition, QuickShortcut, WallpaperConfig } from '../types';
 
-// Special "add widget" entry rendered as an icon-grid tile. Clicking it opens
-// the add-component picker (handled in MuuriDashboard via onAddWidget).
-const ADD_WIDGET_ICON: IconConfig = {
-  glyph: '➕',
-  label: '添加',
-  kind: 'action',
-};
+// Action callbacks are functions and therefore not serializable to localStorage.
+// Instead of storing them on the widget object, we register them here keyed by
+// the widget `id`. At click time IconWidget looks the handler up via
+// getWidgetAction(id), so behaviour is always restored from code rather than
+// from persisted (function-less) data.
+const WIDGET_ACTION_REGISTRY: Record<string, () => void> = {};
+
+/** Register the action callback for a widget id (called once at app startup). */
+export function registerWidgetAction(id: string, fn: () => void): void {
+  WIDGET_ACTION_REGISTRY[id] = fn;
+}
+
+/** Resolve the action callback for a widget id, if any. */
+export function getWidgetAction(id: string): (() => void) | undefined {
+  return WIDGET_ACTION_REGISTRY[id];
+}
 
 export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-weather', type: 'weather', title: '天气预报', size: 'wide' },
@@ -15,8 +24,13 @@ export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-clock', type: 'clock', title: '时间 & 日历', size: 'md' },
   { id: 'widget-shortcuts', type: 'shortcuts', title: '快捷导航', size: 'md' },
   { id: 'widget-control', type: 'control-center', title: '控制中心', size: 'sm' },
-  { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon-1-8', showHeader: false },
-  { id: 'widget-add', type: 'icon-grid', title: '添加组件', size: 'icon-1-8', showHeader: false, icon: ADD_WIDGET_ICON },
+  // `icon-grid` widget — `iconType` decides behaviour:
+  //  link   → open iconHref in a new tab
+  //  action → trigger the onAction() callback resolved by id (see getWidgetAction)
+  { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon-1-8', showHeader: false,
+    iconType: 'link', iconGlyph: 'Globe', iconLabel: '官网', iconHref: 'https://www.apple.com' },
+  { id: 'widget-add', type: 'icon-grid', title: '添加组件', size: 'icon-1-8', showHeader: false,
+    iconType: 'action', iconGlyph: 'Plus', iconLabel: '添加' },
 ];
 
 export const DEFAULT_WALLPAPER: WallpaperConfig = {

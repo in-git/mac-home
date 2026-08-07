@@ -1,9 +1,20 @@
-import { WidgetSize, IconConfig } from '../types';
+import { Globe, Plus, Link2, Rocket, type LucideIcon } from 'lucide-react';
+import { WidgetSize, IconBehavior } from '../types';
+import { getWidgetAction } from '../data/presetData';
 
-const DEFAULT_ICON: IconConfig = {
-  glyph: '🚀',
+// Maps the `iconGlyph` string (a lucide icon name) to its component. Unknown
+// names fall back to the default icon so the tile never renders empty.
+const ICON_REGISTRY: Record<string, LucideIcon> = {
+  Globe,
+  Plus,
+  Link2,
+};
+
+// Fallback used only when an icon-grid widget provides no icon fields.
+const DEFAULT_ICON = {
+  glyph: 'Rocket',
   label: 'App',
-  kind: 'link',
+  type: 'link' as IconBehavior,
   href: 'https://www.apple.com',
 };
 
@@ -28,45 +39,63 @@ const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
 interface IconWidgetProps {
   editing?: boolean;
   size?: WidgetSize;
-  /** Explicit icon config. Falls back to a demo link icon when omitted. */
-  icon?: IconConfig;
-  /** Fallback callback used when kind === 'action' and no inline action is set. */
-  onAction?: () => void;
+  // `type` decides behaviour: `link` opens href, `action` triggers the handler
+  // resolved by `id` via getWidgetAction (see presetData).
+  iconType?: IconBehavior;
+  iconGlyph?: string;
+  iconLabel?: string;
+  // Widget id used to look up its action callback at click time.
+  id?: string;
+  iconHref?: string;
 }
 
-export function IconWidget({ editing, size = 'icon-1-8', icon, onAction }: IconWidgetProps) {
-  const cfg = icon ?? DEFAULT_ICON;
+export function IconWidget({
+  editing,
+  size = 'icon-1-8',
+  iconType,
+  iconGlyph,
+  iconLabel,
+  id,
+  iconHref,
+}: IconWidgetProps) {
+  const kind = iconType ?? DEFAULT_ICON.type;
+  const glyphName = iconGlyph ?? DEFAULT_ICON.glyph;
+  const label = iconLabel ?? DEFAULT_ICON.label;
+  const href = iconHref ?? DEFAULT_ICON.href;
   const typo = ICON_TYPOGRAPHY[size] ?? ICON_TYPOGRAPHY['icon-1-8'];
+  const GlyphIcon = ICON_REGISTRY[glyphName] ?? Rocket;
 
   const handleClick = () => {
-    if (editing) return;
-    if (cfg.kind === 'action') {
-      (cfg.action ?? onAction)?.();
-    } else if (cfg.href) {
-      window.open(cfg.href, '_blank', 'noopener,noreferrer');
+    // Action tiles (e.g. the "添加组件" entry) stay interactive even in edit
+    // mode so they can open their modal; plain link icons are inert while editing.
+    if (editing && kind !== 'action') return;
+    if (kind === 'action') {
+      // Resolve the handler by widget id so it survives a localStorage reload
+      // (functions are never serialized — only the id persists).
+      const action = id ? getWidgetAction(id) : undefined;
+      console.log('[IconWidget] action clicked', { id, label, glyphName, action });
+      action?.();
+    } else if (href) {
+      window.open(href, '_blank', 'noopener,noreferrer');
     }
   };
 
   const title =
-    cfg.kind === 'action'
-      ? `${cfg.label}（功能）`
-      : cfg.href
-        ? `${cfg.label}（打开链接）`
-        : cfg.label;
+    kind === 'action' ? `${label}（功能）` : `${label}（打开链接）`;
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      disabled={editing}
+      disabled={editing && kind !== 'action'}
       title={title}
-      className="glass-icon group flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 px-1 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
+      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 px-1 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
     >
-      <span className={`${typo.glyph} leading-none`}>{cfg.glyph}</span>
+      <GlyphIcon className={`${typo.glyph} leading-none`} strokeWidth={1.75} />
       <span
         className={`max-w-full truncate font-medium text-slate-700 dark:text-slate-200 ${typo.label}`}
       >
-        {cfg.label}
+        {label}
       </span>
     </button>
   );

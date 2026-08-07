@@ -4,7 +4,6 @@ import {
   WidgetItem,
   WidgetSize,
   WIDGET_SIZE_OPTIONS,
-  WIDGET_SIZE_LABEL,
   StickyNote as StickyNoteType,
   ReminderTask
 } from '../types';
@@ -15,9 +14,7 @@ import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { IconWidget } from '../widgets/IconWidget';
-import { Dropdown } from './Dropdown';
 import {
-  Trash2,
   GripHorizontal,
   X,
 } from 'lucide-react';
@@ -37,7 +34,6 @@ interface MuuriDashboardProps {
   onToggleDarkMode: () => void;
   isFocusMode: boolean;
   onToggleFocusMode: () => void;
-  onAddWidgetModalOpen: () => void;
 }
 
 export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
@@ -55,11 +51,20 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   onToggleDarkMode,
   isFocusMode,
   onToggleFocusMode,
-  onAddWidgetModalOpen
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+
+  // Cycle a widget through its available sizes on each click of the green dot.
+  const cycleWidgetSize = (widget: WidgetItem) => {
+    const sizes = WIDGET_SIZE_OPTIONS[widget.type];
+    const currentIndex = sizes.indexOf(widget.size);
+    const nextSize = sizes[(currentIndex + 1) % sizes.length];
+    if (nextSize && nextSize !== widget.size) {
+      onResizeWidget(widget.id, nextSize);
+    }
+  };
   const skipLayoutRef = useRef(false);
   const isEditModeRef = useRef(isEditMode);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
@@ -87,13 +92,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       case 'shortcuts':
         return <ShortcutsWidget />;
       case 'icon-grid': {
-        const isAddTile = widget.id === 'widget-add';
         return (
           <IconWidget
             editing={isEditMode}
             size={widget.size}
-            icon={widget.icon}
-            onAction={isAddTile ? onAddWidgetModalOpen : undefined}
+            iconType={widget.iconType}
+            iconGlyph={widget.iconGlyph}
+            iconLabel={widget.iconLabel}
+            id={widget.id}
+            iconHref={widget.iconHref}
           />
         );
       }
@@ -362,9 +369,30 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                   {/* Widget Card Title & Control Bar */}
                   {showHeader && (
                   <div className="flex items-center justify-between mb-2">
+                    {/* Title (left) */}
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
+                      {widget.title}
+                    </span>
+
+                    {/* Controls (right): window dots + drag handle */}
                     <div className="flex items-center space-x-2">
-                      {/* Drag Handle or Window Dots */}
                       <div className="flex space-x-1.5 items-center">
+                             {/* Green dot → left click cycles size, right click deletes */}
+                        <div
+                          data-no-drag
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cycleWidgetSize(widget);
+                          }}
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onDeleteWidget(widget.id);
+                          }}
+                          className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-all cursor-pointer"
+                          title="左键切换比例，右键移除小组件"
+                        />
+                        {/* Red dot → delete */}
                         <button
                           data-no-drag
                           onClick={(e) => {
@@ -376,16 +404,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         >
                           <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
                         </button>
-                        <div className="w-3 h-3 rounded-full bg-[#28C840]" />
+                   
                       </div>
 
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
-                        {widget.title}
-                      </span>
-                    </div>
-
-                    {/* Drag Grip Handle & Size Controls */}
-                    <div className="flex items-center space-x-1.5">
                       {/* Drag Handle (only shown while editing) */}
                       {isEditMode && (
                       <div
@@ -395,28 +416,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         <GripHorizontal size={14} />
                       </div>
                       )}
-
-                      <Dropdown
-                        value={widget.size}
-                        options={WIDGET_SIZE_OPTIONS[widget.type].map((s) => ({
-                          value: s,
-                          label: WIDGET_SIZE_LABEL[s],
-                        }))}
-                        onChange={(v) => onResizeWidget(widget.id, v as WidgetSize)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      />
-
-                      <button
-                        data-no-drag
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteWidget(widget.id);
-                        }}
-                        className="p-1 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="关闭"
-                      >
-                        <Trash2 size={12} />
-                      </button>
                     </div>
                   </div>
                   )}
