@@ -1,4 +1,12 @@
-import { WidgetItem, StickyNote, ReminderTask, WeatherCondition, QuickShortcut, WallpaperConfig } from '../types';
+import { WidgetItem, StickyNote, ReminderTask, WeatherCondition, QuickShortcut, WallpaperConfig, IconConfig } from '../types';
+
+// Special "add widget" entry rendered as an icon-grid tile. Clicking it opens
+// the add-component picker (handled in MuuriDashboard via onAddWidget).
+const ADD_WIDGET_ICON: IconConfig = {
+  glyph: '➕',
+  label: '添加',
+  kind: 'action',
+};
 
 export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-weather', type: 'weather', title: '天气预报', size: 'wide' },
@@ -8,6 +16,7 @@ export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-shortcuts', type: 'shortcuts', title: '快捷导航', size: 'md' },
   { id: 'widget-control', type: 'control-center', title: '控制中心', size: 'sm' },
   { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon-1-8', showHeader: false },
+  { id: 'widget-add', type: 'icon-grid', title: '添加组件', size: 'icon-1-8', showHeader: false, icon: ADD_WIDGET_ICON },
 ];
 
 export const DEFAULT_WALLPAPER: WallpaperConfig = {

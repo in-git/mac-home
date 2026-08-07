@@ -296,7 +296,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             ) : (
               <Lock size={14} className="text-slate-400" />
             )}
-            <span>{isEditMode ? '锁定自由布局' : '自定义/排序布局'}</span>
+            <span>{isEditMode ? '锁定自由布局' : '调整布局'}</span>
           </div>
           <span className="text-[10px] text-slate-400">{isEditMode ? '解锁中' : '已锁定'}</span>
         </button>

@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import Muuri from 'muuri';
 import {
   WidgetItem,
-  WidgetType,
   WidgetSize,
   WIDGET_SIZE_OPTIONS,
+  WIDGET_SIZE_LABEL,
   StickyNote as StickyNoteType,
   ReminderTask
 } from '../types';
@@ -15,9 +15,8 @@ import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { IconWidget } from '../widgets/IconWidget';
+import { Dropdown } from './Dropdown';
 import {
-  Maximize2,
-  Minimize2,
   Trash2,
   GripHorizontal,
   X,
@@ -38,6 +37,7 @@ interface MuuriDashboardProps {
   onToggleDarkMode: () => void;
   isFocusMode: boolean;
   onToggleFocusMode: () => void;
+  onAddWidgetModalOpen: () => void;
 }
 
 export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
@@ -54,7 +54,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   isDarkMode,
   onToggleDarkMode,
   isFocusMode,
-  onToggleFocusMode
+  onToggleFocusMode,
+  onAddWidgetModalOpen
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
@@ -64,8 +65,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   // Helper to render widget content
-  const renderWidgetContent = (type: WidgetType) => {
-    switch (type) {
+  const renderWidgetContent = (widget: WidgetItem) => {
+    switch (widget.type) {
       case 'sticky-notes':
         return <StickyNotesWidget notes={notes} onUpdateNotes={onUpdateNotes} />;
       case 'weather':
@@ -85,8 +86,17 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         );
       case 'shortcuts':
         return <ShortcutsWidget />;
-      case 'icon-grid':
-        return <IconWidget editing={isEditMode} />;
+      case 'icon-grid': {
+        const isAddTile = widget.id === 'widget-add';
+        return (
+          <IconWidget
+            editing={isEditMode}
+            size={widget.size}
+            icon={widget.icon}
+            onAction={isAddTile ? onAddWidgetModalOpen : undefined}
+          />
+        );
+      }
       default:
         return null;
     }
@@ -105,10 +115,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return 'w-full sm:w-1/2 lg:w-1/3';
       case 'large':
         return 'w-full';
-      case 'icon-1-8':
-        return 'w-1/4 sm:w-1/6 md:w-1/8 aspect-[1/1]';
       case 'icon-1-6':
-        return 'w-1/4 sm:w-1/6 lg:w-1/6 aspect-[1/1]';
+        return 'w-1/3 sm:w-1/4 md:w-1/6 aspect-[1/1]';
+      case 'icon-1-8':
+        return 'w-1/4 sm:w-1/6 md:w-[12.5%] aspect-[1/1]';
+      case 'icon-1-12':
+        return 'w-1/4 sm:w-1/6 md:w-[12.5%] lg:w-[8.333%] aspect-[1/1]';
+      case 'icon-1-16':
+        return 'w-1/4 sm:w-1/6 md:w-[12.5%] lg:w-[8.333%] xl:w-[6.25%] aspect-[1/1]';
       default:
         return 'w-full lg:w-1/2 ';
     }
@@ -362,20 +376,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         >
                           <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
                         </button>
-                        <button
-                          data-no-drag
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const sizeCycle = WIDGET_SIZE_OPTIONS[widget.type];
-                            const nextSize =
-                              sizeCycle[(sizeCycle.indexOf(widget.size) + 1) % sizeCycle.length];
-                            onResizeWidget(widget.id, nextSize);
-                          }}
-                          className="w-3 h-3 rounded-full bg-[#FFBD2E] hover:bg-[#FFBD2E]/80 flex items-center justify-center group/dot transition-all cursor-pointer"
-                          title="切换尺寸"
-                        >
-                          <Minimize2 size={7} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
-                        </button>
                         <div className="w-3 h-3 rounded-full bg-[#28C840]" />
                       </div>
 
@@ -396,20 +396,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       </div>
                       )}
 
-                      <button
-                        data-no-drag
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const opts = WIDGET_SIZE_OPTIONS[widget.type];
-                          const idx = opts.indexOf(widget.size);
-                          const newSize = opts[(idx + 1) % opts.length];
-                          onResizeWidget(widget.id, newSize);
-                        }}
-                        className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="切换大小"
-                      >
-                        <Maximize2 size={12} />
-                      </button>
+                      <Dropdown
+                        value={widget.size}
+                        options={WIDGET_SIZE_OPTIONS[widget.type].map((s) => ({
+                          value: s,
+                          label: WIDGET_SIZE_LABEL[s],
+                        }))}
+                        onChange={(v) => onResizeWidget(widget.id, v as WidgetSize)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
 
                       <button
                         data-no-drag
@@ -431,7 +426,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       disabled) but the card is still draggable from this area
                       because the event passes through to the .widget-card handle. */}
                   <div className={`flex-1 overflow-hidden pt-1${isEditMode ? ' pointer-events-none' : ''}`}>
-                    {renderWidgetContent(widget.type)}
+                    {renderWidgetContent(widget)}
                   </div>
                 </div>
               </div>

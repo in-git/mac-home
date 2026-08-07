@@ -5,6 +5,7 @@ import { MuuriDashboard } from './components/MuuriDashboard';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { WallpaperModal } from './components/WallpaperModal';
 import { SpotlightModal } from './components/SpotlightModal';
+import { AddWidgetModal } from './components/AddWidgetModal';
 import { useHomeStore } from './store/useHomeStore';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
+  const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = useState<boolean>(false);
 
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] = useState<ContextMenuPosition | null>(null);
@@ -65,9 +67,14 @@ export default function App() {
     });
   };
 
-  // Clicking outside the <main> area exits edit mode.
+  // Clicking empty space (anything that isn't a widget card) exits edit mode.
+  // Cards are wrapped in `.muuri-item` (with data-widget-id); clicks on them or
+  // their inner controls must NOT close edit mode.
   const handleRootClick = (e: React.MouseEvent) => {
-    if (isEditMode && mainRef.current && !mainRef.current.contains(e.target as Node)) {
+    if (!isEditMode) return;
+    const target = e.target as HTMLElement;
+    const onCard = target.closest('.muuri-item');
+    if (!onCard) {
       setIsEditMode(false);
     }
   };
@@ -92,11 +99,14 @@ export default function App() {
         onResetLayout={resetLayout}
         isFocusMode={isFocusMode}
         onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
-        onAddWidget={addWidget}
+        onAddWidgetModalOpen={() => setIsAddWidgetModalOpen(true)}
       />
 
       {/* Main Desktop Dashboard Container */}
-      <main ref={mainRef} className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12 overflow-y-auto">
+      <main
+        ref={mainRef}
+        className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
         {/* Muuri Grid Layout Engine */}
         <MuuriDashboard
           widgets={widgets}
@@ -150,6 +160,13 @@ export default function App() {
         onClose={() => setIsSpotlightOpen(false)}
         notes={notes}
         tasks={tasks}
+        onAddWidget={addWidget}
+      />
+
+      {/* Add Widget Modal */}
+      <AddWidgetModal
+        isOpen={isAddWidgetModalOpen}
+        onClose={() => setIsAddWidgetModalOpen(false)}
         onAddWidget={addWidget}
       />
     </div>

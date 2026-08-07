@@ -5,23 +5,16 @@ import {
   Sun,
   Moon,
   Image as ImageIcon,
-  Sliders,
   LayoutGrid,
   Check,
   RotateCcw,
+  CloudSun,
   Volume2,
   Wifi,
   Battery,
-  ShieldAlert,
-  CloudSun,
-  Plus,
-  StickyNote,
-  CheckSquare,
-  Clock,
-  Compass
+  ShieldAlert
 } from 'lucide-react';
 import { playSound } from '../utils/sound';
-import { WidgetType } from '../types';
 
 interface Props {
   isDarkMode: boolean;
@@ -33,7 +26,6 @@ interface Props {
   onResetLayout: () => void;
   isFocusMode: boolean;
   onToggleFocusMode: () => void;
-  onAddWidget: (type: WidgetType) => void;
   weatherTemp?: string;
 }
 
@@ -47,13 +39,11 @@ export const TopBar: React.FC<Props> = ({
   onResetLayout,
   isFocusMode,
   onToggleFocusMode,
-  onAddWidget,
   weatherTemp = '26°C',
 }) => {
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
   const [isAppleMenuOpen, setIsAppleMenuOpen] = useState(false);
-  const [isAddWidgetOpen, setIsAddWidgetOpen] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -118,7 +108,7 @@ export const TopBar: React.FC<Props> = ({
                 }}
                 className="w-full text-left px-3 py-1.5 hover:bg-[#007AFF] hover:text-white flex items-center justify-between rounded-lg mx-0.5 transition-colors"
               >
-                <span>{isEditMode ? '锁定布局' : '自定义布局与大小'}</span>
+                <span>{isEditMode ? '锁定布局' : '调整布局'}</span>
                 {isEditMode ? <Check size={12} /> : <LayoutGrid size={12} />}
               </button>
               <button
@@ -172,51 +162,6 @@ export const TopBar: React.FC<Props> = ({
 
       {/* Right Controls */}
       <div className="flex items-center space-x-2 sm:space-x-3 text-slate-700 dark:text-slate-200">
-        {/* Add Widget Dropdown Button */}
-        <div className="relative">
-          <button
-            onClick={() => {
-              playSound.playClick();
-              setIsAddWidgetOpen(!isAddWidgetOpen);
-            }}
-            className="px-2.5 py-0.5 rounded-lg bg-[#007AFF] text-white hover:bg-blue-600 transition-all flex items-center space-x-1 text-[11px] font-semibold shadow-xs"
-            title="添加小组件"
-          >
-            <Plus size={12} />
-            <span>添加组件</span>
-          </button>
-
-          {isAddWidgetOpen && (
-            <div
-              className="absolute right-0 top-full mt-1 w-48 glass-panel rounded-xl shadow-2xl border border-white/30 dark:border-white/10 py-1.5 z-50 text-slate-800 dark:text-slate-100 backdrop-blur-3xl animate-in fade-in duration-150 space-y-0.5"
-              onClick={() => setIsAddWidgetOpen(false)}
-            >
-              <div className="px-3 py-1 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                选择添加组件
-              </div>
-              {[
-                { type: 'weather', name: '天气预报', icon: CloudSun, color: 'text-sky-500' },
-                { type: 'tasks', name: '实时提醒', icon: CheckSquare, color: 'text-amber-500' },
-                { type: 'sticky-notes', name: '便签笔记', icon: StickyNote, color: 'text-yellow-500' },
-                { type: 'clock', name: '时钟日历', icon: Clock, color: 'text-purple-500' },
-                { type: 'shortcuts', name: '快捷导航', icon: Compass, color: 'text-emerald-500' },
-                { type: 'control-center', name: '控制中心', icon: Sliders, color: 'text-blue-500' },
-              ].map((item) => {
-                const IconComponent = item.icon;
-                return (
-                  <button
-                    key={item.type}
-                    onClick={() => onAddWidget(item.type as WidgetType)}
-                    className="w-full text-left px-3 py-1.5 hover:bg-black/5 dark:hover:bg-white/10 flex items-center space-x-2 rounded-lg mx-0.5 transition-colors text-xs font-medium"
-                  >
-                    <IconComponent size={14} className={item.color} />
-                    <span>{item.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
         {/* Weather Quick Stat */}
         <div className="hidden md:flex items-center space-x-1 text-[11px] font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
           <CloudSun size={13} className="text-amber-500" />
