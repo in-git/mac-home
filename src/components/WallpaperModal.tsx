@@ -135,6 +135,13 @@ const ThemeCarouselPicker: React.FC<{
   const active = THEME_OPTIONS[activeIndex];
   const isApplied = isThemeSelected(active, wallpaper);
 
+  // 滑动/选中过程中 onActiveChange 会跨过多个卡片中心、连续触发，
+  // 若每次都更新全局壁纸会导致背景反复重绘而“闪一下”。
+  // 因此 UI 文字即时更新，而背景应用延迟到选择稳定后（防抖）再执行。
+  const onUpdateRef = useRef(onUpdateWallpaper);
+  onUpdateRef.current = onUpdateWallpaper;
+  const applyTimer = useRef<number | undefined>(undefined);
+
   return (
     <div>
       <div className="relative h-[340px]">
@@ -161,7 +168,10 @@ const ThemeCarouselPicker: React.FC<{
           showIndicators
           onChange={(index) => {
             setActiveIndex(index);
-            onUpdateWallpaper(themeOptionToPatch(THEME_OPTIONS[index]));
+            window.clearTimeout(applyTimer.current);
+            applyTimer.current = window.setTimeout(() => {
+              onUpdateRef.current(themeOptionToPatch(THEME_OPTIONS[index]));
+            }, 250);
           }}
         />
       </div>
@@ -298,7 +308,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
         </nav>
 
         {/* 右侧内容面板 */}
-        <div className="min-w-0 flex-1 overflow-y-auto p-5 ">
+        <div className="min-w-0 flex-1 overflow-y-auto p-5">
           {activeTab === 'dynamic' ? (
             <section>
               <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
@@ -323,12 +333,11 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                           onToggleDarkMode();
                         }
                       }}
-                      className={`group relative aspect-[4/3] overflow-hidden rounded-xl border text-left transition-colors ${
+                      className={`group relative aspect-[4/3] overflow-hidden rounded-xl border bg-black text-left transition-colors ${
                         isSelected
                           ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
                           : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
                       }`}
-                      style={isDarkMode ? { backgroundColor: '#000000' } : undefined}
                     >
                       <PresetLivePreview
                         presetId={preset.id}

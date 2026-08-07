@@ -7,11 +7,13 @@ import {
   RotateCcw,
   Settings as SettingsIcon,
   Sun,
+  Upload,
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
+import { StickyNote as StickyNoteType, WidgetItem } from '../types';
 import { playSound } from '../utils/sound';
 
 // Curated accent colors exposed in the settings panel. Each entry is a CSS
@@ -27,6 +29,48 @@ const ACCENT_COLORS: { name: string; value: string }[] = [
   { name: '黄', value: '#FFCC00' },
 ];
 
+// 解析导入的配置文件（与“导出布局”格式对应：{ app, version, exportedAt, widgets, notes }）。
+// 对 widgets / notes 做宽松校验并过滤出有效项，结构不合法时抛错提示用户。
+function parseImport(text: string): {
+  widgets: WidgetItem[];
+  notes: StickyNoteType[];
+} {
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error('无法解析 JSON，请确认是导出的配置文件');
+  }
+  if (!data || typeof data !== 'object') {
+    throw new Error('配置文件格式不正确');
+  }
+  const { widgets, notes } = data as {
+    widgets?: unknown;
+    notes?: unknown;
+  };
+  if (!Array.isArray(widgets) || !Array.isArray(notes)) {
+    throw new Error('配置缺少 widgets / notes 数据');
+  }
+  const validWidgets = widgets.filter(
+    (w): w is WidgetItem =>
+      !!w &&
+      typeof w === 'object' &&
+      typeof (w as WidgetItem).id === 'string' &&
+      typeof (w as WidgetItem).type === 'string' &&
+      typeof (w as WidgetItem).size === 'string',
+  );
+  const validNotes = notes.filter(
+    (n): n is StickyNoteType =>
+      !!n &&
+      typeof n === 'object' &&
+      typeof (n as StickyNoteType).id === 'string',
+  );
+  if (widgets.length > 0 && validWidgets.length === 0) {
+    throw new Error('未找到有效的小组件数据');
+  }
+  return { widgets: validWidgets, notes: validNotes };
+}
+
 export const SettingsWidget: React.FC = () => {
   const isDarkMode = useHomeStore((s) => s.isDarkMode);
   const setDarkMode = useHomeStore((s) => s.setDarkMode);
@@ -40,18 +84,61 @@ export const SettingsWidget: React.FC = () => {
   const resetLayout = useHomeStore((s) => s.resetLayout);
   const widgets = useHomeStore((s) => s.widgets);
   const notes = useHomeStore((s) => s.notes);
+  const setWidgets = useHomeStore((s) => s.setWidgets);
+  const updateNotes = useHomeStore((s) => s.updateNotes);
 
   const [justReset, setJustReset] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [importMsg, setImportMsg] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 导入成功/失败提示在数秒后自动消失。
+  useEffect(() => {
+    if (!importMsg) return;
+    const t = setTimeout(() => setImportMsg(null), 3000);
+    return () => clearTimeout(t);
+  }, [importMsg]);
+
+  // 读取文件并写入 store（widgets + notes）。
+  const handleImportFile = (file: File) => {
+    if (!file) return;
+    if (
+      file.type &&
+      !file.type.includes('json') &&
+      !file.name.toLowerCase().endsWith('.json')
+    ) {
+      setImportMsg({ type: 'error', text: '仅支持 .json 配置文件' });
+      return;
+    }
+    file
+      .text()
+      .then((text) => {
+        try {
+          const { widgets: w, notes: n } = parseImport(text);
+          setWidgets(w);
+          updateNotes(n);
+          playSound.playClick();
+          setImportMsg({
+            type: 'success',
+            text: `已导入 ${w.length} 个组件、${n.length} 条便签`,
+          });
+        } catch (err) {
+          setImportMsg({
+            type: 'error',
+            text: err instanceof Error ? err.message : '导入失败',
+          });
+        }
+      })
+      .catch(() => setImportMsg({ type: 'error', text: '读取文件失败' }));
+  };
 
   // Keep the sound engine's master switch in sync with persisted state.
   useEffect(() => {
     playSound.setEnabled(soundEnabled);
   }, [soundEnabled]);
-
-  const handleToggleDark = () => {
-    playSound.playClick();
-    setDarkMode(!isDarkMode);
-  };
 
   const handleToggleSound = () => {
     // Play the confirmation click before muting so the user gets feedback.
@@ -88,175 +175,242 @@ export const SettingsWidget: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between text-xs p-1 text-slate-800 dark:text-slate-100">
+    <div className="h-full flex flex-col text-xs text-slate-800 dark:text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-2">
           <SettingsIcon size={16} className="text-[#007AFF]" />
-          <span className="font-bold text-sm tracking-tight">
-            系统设置 (Settings)
-          </span>
+          <span className="font-bold text-sm tracking-tight">系统设置</span>
         </div>
-        <span className="text-font-sm text-slate-400 font-mono">macOS</span>
+        <span className="text-[11px] text-slate-400 font-mono">macOS</span>
       </div>
 
-      {/* Toggle rows */}
-      <div className="flex flex-col space-y-2 my-2">
-        {/* Dark mode */}
-        <button
-          onClick={handleToggleDark}
-          className="w-full flex items-center justify-between p-2.5 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-left"
-        >
-          <span className="flex items-center space-x-2">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                isDarkMode
-                  ? 'bg-amber-400/20 text-amber-300'
-                  : 'bg-slate-200 text-slate-700'
-              }`}
-            >
-              {isDarkMode ? <Moon size={14} /> : <Sun size={14} />}
+      {/* 两栏设置区：左列通用（分组表格），右列个性化 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 my-3 flex-1">
+        {/* 左列：通用设置 */}
+        <div className="rounded-[12px] overflow-hidden bg-black/5 dark:bg-white/10">
+          {/* 外观 — 分段控制器 */}
+          <div className="px-3 py-2.5">
+            <div className="flex items-center space-x-1.5 text-[11px] font-medium text-slate-500 mb-2">
+              <Sun size={12} />
+              <span>外观</span>
             </div>
-            <div>
-              <div className="font-semibold text-font-sm">外观</div>
-              <div className="text-font-sm text-slate-400">
-                {isDarkMode ? '深色模式' : '浅色模式'}
-              </div>
+            <div className="grid grid-cols-2 p-1 rounded-[12px] bg-white/60 dark:bg-white/5">
+              {[
+                { dark: false, label: '浅色', icon: <Sun size={12} /> },
+                { dark: true, label: '深色', icon: <Moon size={12} /> },
+              ].map((opt) => (
+                <button
+                  key={String(opt.dark)}
+                  onClick={() => {
+                    playSound.playClick();
+                    setDarkMode(opt.dark);
+                  }}
+                  className={`flex items-center justify-center space-x-1 py-1.5 rounded-[10px] transition-colors active:scale-95 ${
+                    isDarkMode === opt.dark
+                      ? 'bg-white dark:bg-slate-800 text-[#007AFF] shadow-xs font-medium'
+                      : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                >
+                  {opt.icon}
+                  <span>{opt.label}</span>
+                </button>
+              ))}
             </div>
-          </span>
-          <ToggleDot active={isDarkMode} />
-        </button>
+          </div>
 
-        {/* Sound */}
-        <button
-          onClick={handleToggleSound}
-          className="w-full flex items-center justify-between p-2.5 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-left"
-        >
-          <span className="flex items-center space-x-2">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                soundEnabled
-                  ? 'bg-[#007AFF] text-white'
-                  : 'bg-black/10 dark:bg-white/10 text-slate-400'
-              }`}
-            >
-              {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            </div>
-            <div>
-              <div className="font-semibold text-font-sm">点击音效</div>
-              <div className="text-font-sm text-slate-400">
-                {soundEnabled ? '已开启' : '已静音'}
-              </div>
-            </div>
-          </span>
-          <ToggleDot active={soundEnabled} />
-        </button>
+          <div className="border-t border-black/5 dark:border-white/10" />
 
-        {/* Wallpaper */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            openWallpaper();
-          }}
-          className="w-full flex items-center justify-between p-2.5 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-left"
-        >
-          <span className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center bg-black/10 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-              <ImageIcon size={14} />
-            </div>
-            <div>
-              <div className="font-semibold text-font-sm">壁纸</div>
-              <div className="text-font-sm text-slate-400">动态 / 静态</div>
-            </div>
-          </span>
-          <span className="text-font-sm text-slate-400">更改 ›</span>
-        </button>
-      </div>
-
-      {/* Accent color picker */}
-      <div className="glass-panel p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 mb-1.5 font-medium">
-          <Palette size={12} />
-          <span>主题色</span>
-        </div>
-        <div className="grid grid-cols-8 gap-1.5">
-          {ACCENT_COLORS.map((c) => (
-            <button
-              key={c.value}
-              onClick={() => {
-                playSound.playClick();
-                setThemeColor(c.value);
-              }}
-              title={c.name}
-              className={`w-full aspect-square rounded-full transition-transform hover:scale-110 ${
-                themeColor.toLowerCase() === c.value.toLowerCase()
-                  ? 'ring-2 ring-offset-1 ring-slate-400 dark:ring-white/70'
-                  : ''
-              }`}
-              style={{ backgroundColor: c.value }}
-            >
-              {themeColor.toLowerCase() === c.value.toLowerCase() && (
-                <Check size={12} className="mx-auto text-white drop-shadow" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Font scheme: two options (A: 12/14/16, B: 13/15/17) */}
-      <div className="glass-panel p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 mb-1.5 font-medium">
-          <span className="text-font-sm leading-none">A</span>
-          <span>字体方案</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-1.5">
-          {(['A', 'B'] as const).map((v) => {
-            const active = fontVariant === v;
-            const sample = v === 'A' ? '12 / 14 / 16' : '13 / 15 / 17';
-            return (
-              <button
-                key={v}
-                onClick={() => {
-                  playSound.playClick();
-                  setFontVariant(v);
-                }}
-                className={`flex flex-col items-center justify-center py-1.5 rounded-xl border transition-colors ${
-                  active
-                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
-                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
+          {/* 点击音效 — Toggle 行 */}
+          <button
+            onClick={handleToggleSound}
+            className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-left"
+          >
+            <span className="flex items-center space-x-2">
+              <div
+                className={`w-7 h-7 rounded-[10px] flex items-center justify-center ${
+                  soundEnabled
+                    ? 'bg-[#007AFF] text-white'
+                    : 'bg-white/60 dark:bg-white/10 text-slate-400'
                 }`}
               >
-                <span className="text-font-sm font-bold">{v}</span>
-                <span className="text-font-sm font-mono opacity-80">{sample}</span>
-              </button>
-            );
-          })}
+                {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+              </div>
+              <span>
+                <span className="block font-medium">点击音效</span>
+                <span className="block text-[11px] text-slate-400">
+                  {soundEnabled ? '已开启' : '已静音'}
+                </span>
+              </span>
+            </span>
+            <ToggleDot active={soundEnabled} />
+          </button>
+
+          <div className="border-t border-black/5 dark:border-white/10" />
+
+          {/* 壁纸 — 导航行 */}
+          <button
+            onClick={() => {
+              playSound.playClick();
+              openWallpaper();
+            }}
+            className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-left"
+          >
+            <span className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-[10px] flex items-center justify-center bg-white/60 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                <ImageIcon size={14} />
+              </div>
+              <span>
+                <span className="block font-medium">壁纸</span>
+                <span className="block text-[11px] text-slate-400">
+                  动态 / 静态
+                </span>
+              </span>
+            </span>
+            <span className="text-[11px] text-slate-400">更改 ›</span>
+          </button>
+        </div>
+
+        {/* 右列：个性化 */}
+        <div className="space-y-3">
+          {/* 主题色 */}
+          <div className="rounded-[12px] p-3 bg-black/5 dark:bg-white/10">
+            <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium mb-2">
+              <Palette size={12} />
+              <span>主题色</span>
+            </div>
+            <div className="grid grid-cols-8 gap-2">
+              {ACCENT_COLORS.map((c) => (
+                <button
+                  key={c.value}
+                  onClick={() => {
+                    playSound.playClick();
+                    setThemeColor(c.value);
+                  }}
+                  title={c.name}
+                  className={`aspect-square rounded-full transition-transform hover:scale-110 active:scale-95 ${
+                    themeColor.toLowerCase() === c.value.toLowerCase()
+                      ? 'ring-2 ring-offset-2 ring-slate-400 dark:ring-white/70'
+                      : ''
+                  }`}
+                  style={{ backgroundColor: c.value }}
+                >
+                  {themeColor.toLowerCase() === c.value.toLowerCase() && (
+                    <Check
+                      size={12}
+                      className="mx-auto text-white drop-shadow"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 字体方案 — 分段控制器 */}
+          <div className="rounded-[12px] p-3 bg-black/5 dark:bg-white/10">
+            <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium mb-2">
+              <span className="font-bold leading-none">A</span>
+              <span>字体方案</span>
+            </div>
+            <div className="grid grid-cols-2 p-1 rounded-[12px] bg-white/60 dark:bg-white/5">
+              {(['A', 'B'] as const).map((v) => {
+                const active = fontVariant === v;
+                const sample = v === 'A' ? '12 / 14 / 16' : '13 / 15 / 17';
+                return (
+                  <button
+                    key={v}
+                    onClick={() => {
+                      playSound.playClick();
+                      setFontVariant(v);
+                    }}
+                    className={`flex flex-col items-center justify-center py-1.5 rounded-[10px] transition-colors active:scale-95 ${
+                      active
+                        ? 'bg-white dark:bg-slate-800 text-[#007AFF] shadow-xs font-medium'
+                        : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    <span className="font-bold">{v}</span>
+                    <span className="font-mono opacity-80">{sample}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Export layout */}
-      <button
-        onClick={handleExport}
-        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-sm font-medium"
-      >
-        <Download size={12} className="text-slate-500" />
-        <span className="text-slate-500">导出布局</span>
-      </button>
+      {/* 底部操作区：导出 / 恢复 / 导入 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3 border-t border-black/5 dark:border-white/10">
+        <button
+          onClick={handleExport}
+          className="flex items-center justify-center space-x-1.5 p-2 rounded-[12px] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors active:scale-95 text-[11px] font-medium text-slate-500"
+        >
+          <Download size={12} />
+          <span>导出布局</span>
+        </button>
 
-      {/* Reset */}
-      <button
-        onClick={handleReset}
-        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-sm font-medium"
-      >
-        <RotateCcw
-          size={12}
-          className={justReset ? 'text-[#28C840]' : 'text-slate-500'}
-        />
-        <span className={justReset ? 'text-[#28C840]' : 'text-slate-500'}>
-          {justReset ? '已恢复默认布局' : '恢复默认布局'}
-        </span>
-      </button>
+        <button
+          onClick={handleReset}
+          className={`flex items-center justify-center space-x-1.5 p-2 rounded-[12px] transition-colors active:scale-95 text-[11px] font-medium ${
+            justReset
+              ? 'bg-[#28C840]/10 text-[#28C840]'
+              : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-slate-500'
+          }`}
+        >
+          <RotateCcw size={12} />
+          <span>{justReset ? '已恢复默认布局' : '恢复默认布局'}</span>
+        </button>
+
+        {/* 导入配置 — 拖拽 / 点击 */}
+        <div
+          role="button"
+          tabIndex={0}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragging(false);
+            const file = e.dataTransfer.files?.[0];
+            if (file) handleImportFile(file);
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          className={`sm:col-span-2 flex items-center justify-center space-x-2 p-2.5 rounded-[12px] border-2 border-dashed cursor-pointer transition-colors ${
+            isDragging
+              ? 'border-[#007AFF] bg-[#007AFF]/10'
+              : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/5'
+          }`}
+        >
+          <Upload size={12} className="text-slate-500" />
+          <span
+            className={`text-[11px] font-medium ${
+              importMsg?.type === 'error'
+                ? 'text-red-500'
+                : importMsg?.type === 'success'
+                  ? 'text-[#28C840]'
+                  : 'text-slate-500'
+            }`}
+          >
+            {importMsg
+              ? importMsg.text
+              : '拖拽配置文件到此处，或点击选择 JSON 文件'}
+          </span>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleImportFile(file);
+              e.target.value = '';
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

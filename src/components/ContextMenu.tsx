@@ -4,6 +4,7 @@ import {
   Lock,
   Plus,
   Search,
+  Settings as SettingsIcon,
   Trash2,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -31,6 +32,7 @@ interface ContextMenuProps {
   onOpenWallpaper: () => void;
   onOpenSpotlight: () => void;
   onOpenAddWidget: () => void;
+  onOpenSettings: () => void;
 }
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -46,6 +48,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onOpenWallpaper,
   onOpenSpotlight,
   onOpenAddWidget,
+  onOpenSettings,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -204,6 +207,22 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         >
           <Search size={14} className="text-blue-500" />
           <span>聚焦搜索 (Spotlight)</span>
+        </button>
+
+        {/* Settings */}
+        <button
+          onClick={() => {
+            playSound.playClick();
+            onOpenSettings();
+            onClose();
+          }}
+          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
+        >
+          <div className="flex items-center space-x-2">
+            <SettingsIcon size={14} className="text-[#007AFF]" />
+            <span>设置</span>
+          </div>
+          <span className="text-font-sm text-slate-400">›</span>
         </button>
 
         {/* Toggle Edit Mode: 仅在已锁定（非编辑模式）时显示，文本为一把锁 */}

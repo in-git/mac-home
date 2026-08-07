@@ -1,12 +1,8 @@
 import {
-  Apple,
   Battery,
-  Check,
   CloudSun,
   Image as ImageIcon,
-  LayoutGrid,
   Moon,
-  RotateCcw,
   Search,
   Sun,
   Volume2,
@@ -22,7 +18,6 @@ interface Props {
   onToggleEditMode: () => void;
   onOpenWallpaperModal: () => void;
   onOpenSpotlight: () => void;
-  onResetLayout: () => void;
   weatherTemp?: string;
 }
 
@@ -33,12 +28,10 @@ export const TopBar: React.FC<Props> = ({
   onToggleEditMode,
   onOpenWallpaperModal,
   onOpenSpotlight,
-  onResetLayout,
   weatherTemp = '26°C',
 }) => {
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
-  const [isAppleMenuOpen, setIsAppleMenuOpen] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -68,58 +61,6 @@ export const TopBar: React.FC<Props> = ({
     <header className="sticky top-0 z-40 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs font-medium border-b border-white/20 dark:border-white/10 select-none shadow-xs">
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
-        {/* Apple Logo Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => {
-              playSound.playClick();
-              setIsAppleMenuOpen(!isAppleMenuOpen);
-            }}
-            className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center text-slate-800 dark:text-slate-200"
-            title="Apple 菜单"
-          >
-            <Apple size={15} className="fill-current" />
-          </button>
-
-          {isAppleMenuOpen && (
-            <div
-              className="absolute left-0 top-full mt-1 w-52 glass-panel rounded-xl shadow-2xl border border-white/30 dark:border-white/10 py-1.5 z-50 text-slate-800 dark:text-slate-100 backdrop-blur-3xl animate-in fade-in slide-in-from-top-1 duration-150"
-              onClick={() => setIsAppleMenuOpen(false)}
-            >
-              <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                macOS Sonoma 桌面
-              </div>
-              <div className="my-1 border-t border-slate-200/50 dark:border-slate-700/50" />
-              <button
-                onClick={onOpenWallpaperModal}
-                className="w-full text-left px-3 py-1.5 hover:bg-[#007AFF] hover:text-white flex items-center rounded-lg mx-0.5 transition-colors"
-              >
-                设置壁纸 (动态/静态)
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleEditMode();
-                }}
-                className="w-full text-left px-3 py-1.5 hover:bg-[#007AFF] hover:text-white flex items-center justify-between rounded-lg mx-0.5 transition-colors"
-              >
-                <span>{isEditMode ? '锁定布局' : '调整布局'}</span>
-                {isEditMode ? <Check size={12} /> : <LayoutGrid size={12} />}
-              </button>
-              <button
-                onClick={() => {
-                  playSound.playClick();
-                  onResetLayout();
-                }}
-                className="w-full text-left px-3 py-1.5 hover:bg-[#007AFF] hover:text-white flex items-center justify-between rounded-lg mx-0.5 transition-colors text-amber-600 dark:text-amber-400 hover:text-white"
-              >
-                <span>重置默认布局</span>
-                <RotateCcw size={12} />
-              </button>
-            </div>
-          )}
-        </div>
-
         <span className="font-semibold text-slate-800 dark:text-slate-100 hidden sm:inline">
           macOS 主页
         </span>

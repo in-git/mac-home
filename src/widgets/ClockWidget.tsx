@@ -35,17 +35,16 @@ export const ClockWidget: React.FC = () => {
     <div className="h-full flex flex-col items-center justify-center text-slate-800 dark:text-slate-100 p-1 select-none">
       {/* Analog dial */}
       <div className="relative w-20 h-20 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-black/30 flex items-center justify-center shadow-inner">
-        {[12, 3, 6, 9].map((n) => (
+        {[
+          { n: 12, style: { top: 4, left: '50%', transform: 'translateX(-50%)' } },
+          { n: 3, style: { right: 4, top: '50%', transform: 'translateY(-50%)' } },
+          { n: 6, style: { bottom: 4, left: '50%', transform: 'translateX(-50%)' } },
+          { n: 9, style: { left: 4, top: '50%', transform: 'translateY(-50%)' } },
+        ].map(({ n, style }) => (
           <span
             key={n}
             className="absolute text-font-sm font-bold text-slate-500 dark:text-slate-400"
-            style={{
-              top: n === 12 ? '2px' : n === 6 ? 'auto' : '50%',
-              bottom: n === 6 ? '2px' : 'auto',
-              left: n === 9 ? '3px' : n === 3 ? 'auto' : '50%',
-              right: n === 3 ? '3px' : 'auto',
-              transform: 'translate(-50%, -50%)',
-            }}
+            style={style}
           >
             {n}
           </span>

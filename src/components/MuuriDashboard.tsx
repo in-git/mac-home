@@ -503,17 +503,17 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                           {enableHeadlessModal &&
                             (widget.type === 'sticky-notes' ||
                               widget.type === 'shortcuts') && (
-                            <Tooltip content="无头模态放大" placement="top">
-                              <div
-                                data-no-drag
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedWidgetId(widget.id);
-                                }}
-                                className="w-3 h-3 rounded-full bg-[#FFCC00] hover:bg-[#FFCC00]/80 transition-colors cursor-pointer"
-                              />
-                            </Tooltip>
-                          )}
+                              <Tooltip content="无头模态放大" placement="top">
+                                <div
+                                  data-no-drag
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setExpandedWidgetId(widget.id);
+                                  }}
+                                  className="w-3 h-3 rounded-full bg-[#FFCC00] hover:bg-[#FFCC00]/80 transition-colors cursor-pointer"
+                                />
+                              </Tooltip>
+                            )}
                           {/* Red dot → delete */}
                           <Tooltip content="移除小组件" placement="top">
                             <button
@@ -599,7 +599,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               onClick={() => setSettingsModalOpen(false)}
             >
               <div
-                className="glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-full max-w-sm max-h-[90vh] flex flex-col overflow-hidden"
+                className="glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex-1 min-h-0 overflow-y-auto">

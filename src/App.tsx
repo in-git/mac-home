@@ -4,6 +4,7 @@ import { AddWidgetModal } from './components/AddWidgetModal';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { MuuriDashboard } from './components/MuuriDashboard';
+import { SettingsModal } from './components/SettingsModal';
 import { SpotlightModal } from './components/SpotlightModal';
 import { TopBar } from './components/TopBar';
 import { WallpaperModal } from './components/WallpaperModal';
@@ -21,7 +22,6 @@ export default function App() {
   const deleteWidget = useHomeStore((s) => s.deleteWidget);
   const resizeWidget = useHomeStore((s) => s.resizeWidget);
   const moveToTopWidget = useHomeStore((s) => s.moveToTopWidget);
-  const resetLayout = useHomeStore((s) => s.resetLayout);
   const updateNotes = useHomeStore((s) => s.updateNotes);
   const updateWallpaper = useHomeStore((s) => s.updateWallpaper);
   const isDarkMode = useHomeStore((s) => s.isDarkMode);
@@ -37,6 +37,8 @@ export default function App() {
     useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
   const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] =
+    useState<boolean>(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] =
     useState<boolean>(false);
 
   // Right Click Context Menu State
@@ -126,7 +128,6 @@ export default function App() {
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaperModal={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
-        onResetLayout={resetLayout}
       />
 
       {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
@@ -178,6 +179,7 @@ export default function App() {
         onOpenWallpaper={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
+        onOpenSettings={() => setIsSettingsModalOpen(true)}
       />
 
       {/* Wallpaper Setting Modal */}
@@ -206,6 +208,12 @@ export default function App() {
         onClose={() => setIsAddWidgetModalOpen(false)}
         onAddWidget={addWidget}
         widgets={widgets}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
       />
     </div>
   );
