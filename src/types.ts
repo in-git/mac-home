@@ -2,6 +2,7 @@ export type WidgetType =
   | 'sticky-notes'
   | 'weather'
   | 'search'
+  | 'ai-chat'
   | 'tasks'
   | 'clock'
   | 'shortcuts'

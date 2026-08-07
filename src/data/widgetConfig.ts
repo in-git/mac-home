@@ -37,6 +37,15 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     glyph: '🔍',
     label: '网络搜索',
   },
+  'ai-chat': {
+    title: 'AI 大模型助手',
+    maxInstances: Infinity,
+    defaultSize: 'large',
+    sizeOptions: ['large', 'wide'],
+    isAddable: true,
+    glyph: '🤖',
+    label: 'AI 聊天',
+  },
   weather: {
     title: '天气预报',
     maxInstances: 1,

@@ -29,6 +29,8 @@ import {
 } from '../utils/weatherApi';
 
 const STORAGE_KEY = 'weather-cities';
+/** 当前选中城市的 id（持久化，保证下次进入恢复上一次的查看/定位城市） */
+const SELECTED_KEY = 'weather-selected-id';
 /** 首次加载自动定位标记（只自动尝试一次，避免每次刷新都弹授权） */
 const LOCATION_TRIED_KEY = 'weather-location-tried';
 
@@ -91,6 +93,24 @@ function saveCities(cities: WeatherCity[]) {
   }
 }
 
+function loadSelectedId(cities: WeatherCity[]): string {
+  try {
+    const raw = localStorage.getItem(SELECTED_KEY);
+    if (raw && cities.some((c) => c.id === raw)) return raw;
+  } catch {
+    // 忽略损坏的本地数据
+  }
+  return cities[0]?.id ?? '';
+}
+
+function saveSelectedId(id: string) {
+  try {
+    localStorage.setItem(SELECTED_KEY, id);
+  } catch {
+    // 忽略存储失败
+  }
+}
+
 const CONDITION_TEXT: Record<string, string> = {
   sunny: '晴朗',
   cloudy: '多云',
@@ -108,9 +128,7 @@ const AQI_LABEL_CN: Record<string, string> = {
 
 export const WeatherWidget: React.FC = () => {
   const [cities, setCities] = useState<WeatherCity[]>(loadCities);
-  const [selectedId, setSelectedId] = useState<string>(
-    () => loadCities()[0]?.id ?? '',
-  );
+  const [selectedId, setSelectedId] = useState<string>(() => loadSelectedId(loadCities()));
   const [weather, setWeather] = useState<WeatherCondition | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -124,6 +142,12 @@ export const WeatherWidget: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCity = cities.find((c) => c.id === selectedId) ?? cities[0];
+
+  /** 切换选中城市并持久化，保证下次进入恢复 */
+  const selectCity = (id: string) => {
+    setSelectedId(id);
+    saveSelectedId(id);
+  };
 
   // 加载选中城市的实时天气
   useEffect(() => {
@@ -183,6 +207,7 @@ export const WeatherWidget: React.FC = () => {
       saveCities(next);
     }
     setSelectedId(id);
+    saveSelectedId(id);
     setSearchQuery('');
     setSearchResults([]);
     setSearchOpen(false);
@@ -194,7 +219,7 @@ export const WeatherWidget: React.FC = () => {
     if (next.length === 0) return; // 至少保留一个城市
     saveCities(next);
     setCities(next);
-    if (id === selectedId) setSelectedId(next[0].id);
+    if (id === selectedId) selectCity(next[0].id);
   };
 
   /** 自动定位：Geolocation 获取坐标 → 反向解析城市 → 切换到该城市 */
@@ -332,7 +357,7 @@ export const WeatherWidget: React.FC = () => {
               <button
                 onClick={() => {
                   playSound.playClick();
-                  setSelectedId(c.id);
+                  selectCity(c.id);
                 }}
                 className={`px-2 py-0.5 rounded-md text-[11px] font-medium transition-colors whitespace-nowrap ${
                   c.id === selectedId

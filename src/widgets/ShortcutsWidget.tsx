@@ -1,29 +1,39 @@
-import React, { useState } from 'react';
 import {
-  Compass,
-  Plus,
-  ExternalLink,
-  Trash2,
   Apple,
+  Compass,
+  ExternalLink,
   Github,
   Palette,
+  Plus,
   Sparkles,
-  StickyNote
+  StickyNote,
+  Trash2,
 } from 'lucide-react';
-import { QuickShortcut } from '../types';
-import { INITIAL_SHORTCUTS } from '../data/presetData';
-import { playSound } from '../utils/sound';
+import React, { useState } from 'react';
 import { Modal } from '../components/Modal';
+import { INITIAL_SHORTCUTS } from '../data/presetData';
+import { QuickShortcut } from '../types';
+import { playSound } from '../utils/sound';
 
 export const ShortcutsWidget: React.FC = () => {
-  const [shortcuts, setShortcuts] = useState<QuickShortcut[]>(INITIAL_SHORTCUTS);
+  const [shortcuts, setShortcuts] =
+    useState<QuickShortcut[]>(INITIAL_SHORTCUTS);
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newIcon, setNewIcon] = useState('Compass');
-  const [newColor, setNewColor] = useState('bg-gradient-to-tr from-blue-600 to-indigo-600 text-white');
+  const [newColor, setNewColor] = useState(
+    'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white',
+  );
 
-  const ICON_OPTIONS = ['Compass', 'Apple', 'Github', 'Palette', 'Sparkles', 'StickyNote'] as const;
+  const ICON_OPTIONS = [
+    'Compass',
+    'Apple',
+    'Github',
+    'Palette',
+    'Sparkles',
+    'StickyNote',
+  ] as const;
   const COLOR_OPTIONS = [
     'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white',
     'bg-gradient-to-tr from-pink-500 to-rose-500 text-white',
@@ -64,7 +74,9 @@ export const ShortcutsWidget: React.FC = () => {
     const item: QuickShortcut = {
       id: `sc-${Date.now()}`,
       title: newTitle.trim(),
-      url: newUrl.startsWith('http') ? newUrl.trim() : `https://${newUrl.trim()}`,
+      url: newUrl.startsWith('http')
+        ? newUrl.trim()
+        : `https://${newUrl.trim()}`,
       iconName: newIcon,
       category: '自定义',
       bgColor: newColor,
@@ -87,7 +99,9 @@ export const ShortcutsWidget: React.FC = () => {
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-2">
           <Compass size={16} className="text-[#007AFF]" />
-          <span className="font-bold text-sm tracking-tight">快捷导航 (Launchpad)</span>
+          <span className="font-bold text-sm tracking-tight">
+            快捷导航 (Launchpad)
+          </span>
         </div>
 
         <button
@@ -115,7 +129,9 @@ export const ShortcutsWidget: React.FC = () => {
       >
         <div className="p-6 space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-500">网站名称</label>
+            <label className="text-xs font-medium text-slate-500">
+              网站名称
+            </label>
             <input
               type="text"
               value={newTitle}
@@ -126,7 +142,9 @@ export const ShortcutsWidget: React.FC = () => {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-500">网址 URL</label>
+            <label className="text-xs font-medium text-slate-500">
+              网址 URL
+            </label>
             <input
               type="text"
               value={newUrl}
@@ -164,7 +182,9 @@ export const ShortcutsWidget: React.FC = () => {
                   key={c}
                   onClick={() => setNewColor(c)}
                   className={`h-8 rounded-lg ${c} border-2 transition-transform ${
-                    newColor === c ? 'border-[color:var(--accent)] scale-105' : 'border-transparent'
+                    newColor === c
+                      ? 'border-[color:var(--accent)] scale-105'
+                      : 'border-transparent'
                   }`}
                 />
               ))}
@@ -204,7 +224,7 @@ export const ShortcutsWidget: React.FC = () => {
             target="_blank"
             rel="noreferrer"
             onClick={() => playSound.playClick()}
-            className="group relative flex flex-col p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10 aspect-square"
+            className="group relative flex flex-col p-2  rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10 aspect-square"
           >
             <div
               className={`group/icon relative w-full flex-1 aspect-square rounded-xl flex items-center justify-center shadow-sm ${

@@ -12,6 +12,7 @@ import {
   WidgetItem,
   WidgetSize,
 } from '../types';
+import { AiChatWidget } from '../widgets/AiChatWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { IconWidget } from '../widgets/IconWidget';
@@ -75,14 +76,16 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   // Helper to render widget content
   const renderWidgetContent = (widget: WidgetItem) => {
     switch (widget.type) {
+      case 'search':
+        return <SearchWidget />;
       case 'sticky-notes':
         return (
           <StickyNotesWidget notes={notes} onUpdateNotes={onUpdateNotes} />
         );
       case 'weather':
         return <WeatherWidget />;
-      case 'search':
-        return <SearchWidget />;
+      case 'ai-chat':
+        return <AiChatWidget />;
       case 'tasks':
         return <TasksWidget tasks={tasks} onUpdateTasks={onUpdateTasks} />;
       case 'clock':
@@ -411,7 +414,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
                 <div
-                  className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 overflow-auto shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
+                  className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
                   onClick={(e) => {
                     // Custom onAction event: owned by the widget-card container, not
                     // the inner icon button. When an icon-grid tile is clicked we
