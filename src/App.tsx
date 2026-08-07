@@ -24,10 +24,10 @@ export default function App() {
   const updateNotes = useHomeStore((s) => s.updateNotes);
   const updateTasks = useHomeStore((s) => s.updateTasks);
   const updateWallpaper = useHomeStore((s) => s.updateWallpaper);
-
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+  const isDarkMode = useHomeStore((s) => s.isDarkMode);
+  const setDarkMode = useHomeStore((s) => s.setDarkMode);
+  const themeColor = useHomeStore((s) => s.themeColor);
+  const setThemeColor = useHomeStore((s) => s.setThemeColor);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -39,13 +39,16 @@ export default function App() {
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] = useState<ContextMenuPosition | null>(null);
 
+  // Apply persisted dark mode + theme color to the document root.
   useEffect(() => {
+    const root = document.documentElement;
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
     }
-  }, [isDarkMode]);
+    root.style.setProperty('--accent', themeColor);
+  }, [isDarkMode, themeColor]);
 
   // Register the "添加组件" action by widget id so IconWidget can resolve it at
   // click time via getWidgetAction('widget-add'), independent of localStorage.
@@ -98,7 +101,7 @@ export default function App() {
       {/* Top macOS Navigation Bar */}
       <TopBar
         isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        onToggleDarkMode={() => setDarkMode(!isDarkMode)}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaperModal={() => setIsWallpaperModalOpen(true)}
@@ -128,7 +131,7 @@ export default function App() {
             tasks={tasks}
             onUpdateTasks={updateTasks}
             isDarkMode={isDarkMode}
-            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+            onToggleDarkMode={() => setDarkMode(!isDarkMode)}
             isFocusMode={isFocusMode}
             onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
           />
@@ -144,7 +147,7 @@ export default function App() {
         onResizeWidget={resizeWidget}
         onMoveToTopWidget={moveToTopWidget}
         isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        onToggleDarkMode={() => setDarkMode(!isDarkMode)}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         isFocusMode={isFocusMode}
@@ -160,6 +163,7 @@ export default function App() {
         isOpen={isWallpaperModalOpen}
         onClose={() => setIsWallpaperModalOpen(false)}
         wallpaper={wallpaper}
+        isDarkMode={isDarkMode}
         onUpdateWallpaper={updateWallpaper}
       />
 

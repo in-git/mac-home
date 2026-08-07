@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { WallpaperConfig } from '../types';
 import { getWallpaperEffect, createParticles, dynamicPresets } from '../data/wallpaperEffects';
 import MoltenMetalWallpaper from '../effects/MoltenMetal';
-import ThreadsWallpaper from '../effects/Threads';
-import PlasmaWaveWallpaper from '../effects/PlasmaWave';
+import { ThreadsWallpaper } from '../effects/Threads';
+import { PlasmaWaveWallpaper } from '../effects/PlasmaWave';
 
 interface Props {
   wallpaper: WallpaperConfig;

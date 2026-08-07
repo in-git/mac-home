@@ -34,6 +34,8 @@ interface HomeState {
   wallpaper: WallpaperConfig;
   notes: StickyNoteType[];
   tasks: ReminderTask[];
+  isDarkMode: boolean;
+  themeColor: string;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -43,10 +45,12 @@ interface HomeState {
   moveToTopWidget: (id: string) => void;
   resetLayout: () => void;
 
-  // Notes / Tasks / Wallpaper
+  // Notes / Tasks / Wallpaper / Appearance
   updateNotes: (notes: StickyNoteType[]) => void;
   updateTasks: (tasks: ReminderTask[]) => void;
   updateWallpaper: (cfg: Partial<WallpaperConfig>) => void;
+  setDarkMode: (value: boolean) => void;
+  setThemeColor: (color: string) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -56,6 +60,9 @@ export const useHomeStore = create<HomeState>()(
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_WALLPAPER),
       notes: readLegacy('apple_homepage_notes', INITIAL_NOTES),
       tasks: readLegacy('apple_homepage_tasks', INITIAL_TASKS),
+      isDarkMode:
+        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+      themeColor: '#007AFF',
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -114,6 +121,8 @@ export const useHomeStore = create<HomeState>()(
       updateNotes: (notes) => set({ notes }),
       updateTasks: (tasks) => set({ tasks }),
       updateWallpaper: (cfg) => set({ wallpaper: { ...get().wallpaper, ...cfg } }),
+      setDarkMode: (value) => set({ isDarkMode: value }),
+      setThemeColor: (color) => set({ themeColor: color }),
     }),
     {
       name: 'apple-homepage-store',
@@ -123,6 +132,8 @@ export const useHomeStore = create<HomeState>()(
         wallpaper: state.wallpaper,
         notes: state.notes,
         tasks: state.tasks,
+        isDarkMode: state.isDarkMode,
+        themeColor: state.themeColor,
       }),
     }
   )

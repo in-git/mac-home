@@ -102,7 +102,7 @@ void main() {
 }
 `;
 
-interface PlasmaWaveProps {
+export interface PlasmaWaveProps {
   xOffset?: number;
   yOffset?: number;
   rotationDeg?: number;

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle, Color } from 'ogl';
 
-interface ThreadsProps {
+export interface ThreadsProps {
   color?: [number, number, number];
   amplitude?: number;
   distance?: number;

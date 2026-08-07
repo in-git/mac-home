@@ -6,8 +6,15 @@ import type { PlasmaWaveProps } from './PlasmaWave';
  * Full-screen wrapper for the PlasmaWave WebGL background effect.
  * Used as a dynamic wallpaper preset (`plasma-wave`) in DynamicWallpaperCanvas.
  */
-const PlasmaWaveWallpaper: React.FC<Partial<PlasmaWaveProps>> = (props) => (
-  <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none">
+const PlasmaWaveWallpaper: React.FC<
+  Partial<PlasmaWaveProps> & { className?: string; style?: React.CSSProperties }
+> = ({ className, style, ...rest }) => (
+  <div
+    className={`fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none ${
+      className ?? ''
+    }`}
+    style={style}
+  >
     <PlasmaWave
       colors={['#A855F7', '#06B6D4']}
       speed1={0.05}
@@ -17,7 +24,7 @@ const PlasmaWaveWallpaper: React.FC<Partial<PlasmaWaveProps>> = (props) => (
       bend2={0.5}
       dir2={1}
       rotationDeg={0}
-      {...props}
+      {...rest}
     />
   </div>
 );

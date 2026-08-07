@@ -6,8 +6,15 @@ import type { MoltenMetalProps } from './MoltenMetal';
  * Full-screen wrapper for the MoltenMetal WebGL background effect.
  * Used as a dynamic wallpaper preset (`molten-metal`) in DynamicWallpaperCanvas.
  */
-const MoltenMetalWallpaper: React.FC<Partial<MoltenMetalProps>> = (props) => (
-  <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none">
+const MoltenMetalWallpaper: React.FC<
+  Partial<MoltenMetalProps> & { className?: string; style?: React.CSSProperties }
+> = ({ className, style, ...rest }) => (
+  <div
+    className={`fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none ${
+      className ?? ''
+    }`}
+    style={style}
+  >
     <MoltenMetal
       color1="#5227FF"
       color2="#FF9FFC"
@@ -27,7 +34,7 @@ const MoltenMetalWallpaper: React.FC<Partial<MoltenMetalProps>> = (props) => (
       mouseInteraction
       mouseStrength={0.3}
       opacity={1}
-      {...props}
+      {...rest}
     />
   </div>
 );
