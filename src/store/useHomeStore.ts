@@ -37,6 +37,8 @@ interface HomeState {
   soundEnabled: boolean;
   // 字体方案：A(12/14/16) 或 B(13/15/17)
   fontVariant: FontVariant;
+  // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
+  screenBrightness: number;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -53,6 +55,7 @@ interface HomeState {
   setThemeColor: (color: string) => void;
   setSoundEnabled: (value: boolean) => void;
   setFontVariant: (variant: FontVariant) => void;
+  setScreenBrightness: (value: number) => void;
   openWallpaper: () => void;
 }
 
@@ -68,6 +71,7 @@ export const useHomeStore = create<HomeState>()(
       themeColor: '#007AFF',
       soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
       fontVariant: 'A',
+      screenBrightness: 100,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -135,6 +139,8 @@ export const useHomeStore = create<HomeState>()(
       setThemeColor: (color) => set({ themeColor: color }),
       setSoundEnabled: (value) => set({ soundEnabled: value }),
       setFontVariant: (variant) => set({ fontVariant: variant }),
+      setScreenBrightness: (value) =>
+        set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
       // Registered by App on mount so the store can open the wallpaper modal
       // without threading the setter through the whole component tree.
       openWallpaper: () => {},
@@ -150,6 +156,7 @@ export const useHomeStore = create<HomeState>()(
         themeColor: state.themeColor,
         soundEnabled: state.soundEnabled,
         fontVariant: state.fontVariant,
+        screenBrightness: state.screenBrightness,
       }),
     },
   ),

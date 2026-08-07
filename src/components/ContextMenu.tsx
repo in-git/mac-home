@@ -2,13 +2,9 @@ import {
   ArrowUp,
   Image as ImageIcon,
   Lock,
-  Moon,
   Plus,
-  RotateCcw,
   Search,
-  Sun,
   Trash2,
-  Unlock,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef } from 'react';
@@ -30,12 +26,10 @@ interface ContextMenuProps {
   onResizeWidget: (id: string, newSize: WidgetSize) => void;
   onMoveToTopWidget: (id: string) => void;
   isDarkMode: boolean;
-  onToggleDarkMode: () => void;
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onOpenWallpaper: () => void;
   onOpenSpotlight: () => void;
-  onResetLayout: () => void;
   onOpenAddWidget: () => void;
 }
 
@@ -47,12 +41,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onResizeWidget,
   onMoveToTopWidget,
   isDarkMode,
-  onToggleDarkMode,
   isEditMode,
   onToggleEditMode,
   onOpenWallpaper,
   onOpenSpotlight,
-  onResetLayout,
   onOpenAddWidget,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -214,67 +206,24 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           <span>聚焦搜索 (Spotlight)</span>
         </button>
 
-        <div className="my-1 border-t border-black/5 dark:border-white/10" />
-
-        {/* Toggle Dark Mode */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onToggleDarkMode();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
-        >
-          <div className="flex items-center space-x-2">
-            {isDarkMode ? (
-              <Sun size={14} className="text-amber-400" />
-            ) : (
-              <Moon size={14} className="text-indigo-500" />
-            )}
-            <span>外观：{isDarkMode ? '深色模式' : '浅色模式'}</span>
-          </div>
-          <span className="text-font-sm text-slate-400">
-            {isDarkMode ? 'Dark' : 'Light'}
-          </span>
-        </button>
-
-        {/* Toggle Edit Mode */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            playSound.playClick();
-            onToggleEditMode();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
-        >
-          <div className="flex items-center space-x-2">
-            {isEditMode ? (
-              <Unlock size={14} className="text-emerald-500" />
-            ) : (
+        {/* Toggle Edit Mode: 仅在已锁定（非编辑模式）时显示，文本为一把锁 */}
+        {!isEditMode && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              playSound.playClick();
+              onToggleEditMode();
+              onClose();
+            }}
+            className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
+          >
+            <div className="flex items-center space-x-2">
               <Lock size={14} className="text-slate-400" />
-            )}
-            <span>{isEditMode ? '锁定自由布局' : '调整布局'}</span>
-          </div>
-          <span className="text-font-sm text-slate-400">
-            {isEditMode ? '解锁中' : '已锁定'}
-          </span>
-        </button>
-
-        <div className="my-1 border-t border-black/5 dark:border-white/10" />
-
-        {/* Reset Layout */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onResetLayout();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center space-x-2 text-left transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-        >
-          <RotateCcw size={14} />
-          <span>恢复默认排版</span>
-        </button>
+              <span>调整布局已锁定</span>
+            </div>
+            <Lock size={14} className="text-slate-400" />
+          </button>
+        )}
       </motion.div>
     </AnimatePresence>
   );

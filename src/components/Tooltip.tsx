@@ -1,4 +1,9 @@
-import { Tooltip as HeroTooltip } from '@heroui/react';
+import {
+  Tooltip as RadixTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { type ReactNode } from 'react';
 
 interface TooltipProps {
@@ -9,10 +14,9 @@ interface TooltipProps {
   className?: string;
 }
 
-// Lightweight wrapper around HeroUI's Tooltip (React Aria Components based).
-// Keeps the previous `content` / `placement` prop shape so call sites stay
-// unchanged, while delegating positioning, portals, delays and focus/keyboard
-// handling to HeroUI.
+// 基于 shadcn/ui（Radix UI）的 Tooltip 封装。
+// 保持原有的 `content` / `placement` 属性形状，调用方无需改动，
+// 定位、Portal、延迟与键盘/焦点处理由 Radix 负责。
 export function Tooltip({
   content,
   children,
@@ -20,11 +24,15 @@ export function Tooltip({
   className = '',
 }: TooltipProps) {
   return (
-    <HeroTooltip>
-      <span className="inline-flex">{children}</span>
-      <HeroTooltip.Content placement={placement} className={className}>
-        {content}
-      </HeroTooltip.Content>
-    </HeroTooltip>
+    <TooltipProvider delayDuration={150}>
+      <RadixTooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex">{children}</span>
+        </TooltipTrigger>
+        <TooltipContent side={placement} className={className}>
+          {content}
+        </TooltipContent>
+      </RadixTooltip>
+    </TooltipProvider>
   );
 }

@@ -29,6 +29,7 @@ export default function App() {
   const themeColor = useHomeStore((s) => s.themeColor);
   const setThemeColor = useHomeStore((s) => s.setThemeColor);
   const fontVariant = useHomeStore((s) => s.fontVariant);
+  const screenBrightness = useHomeStore((s) => s.screenBrightness);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -111,6 +112,7 @@ export default function App() {
     <div
       onClick={handleRootClick}
       onContextMenu={handleContextMenu}
+      style={{ filter: `brightness(${screenBrightness / 100})` }}
       className="relative h-screen w-full flex flex-col overflow-y-hidden font-sans overflow-x-hidden selection:bg-[#007AFF] selection:text-white"
     >
       {/* Dynamic Canvas Background */}
@@ -171,12 +173,10 @@ export default function App() {
         onResizeWidget={resizeWidget}
         onMoveToTopWidget={moveToTopWidget}
         isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setDarkMode(!isDarkMode)}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaper={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
-        onResetLayout={resetLayout}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
       />
 
