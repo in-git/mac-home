@@ -142,7 +142,7 @@ export const SearchWidget: React.FC = () => {
       </form>
 
       {/* 底部常用热搜/快速提示脚部 */}
-      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-xs text-slate-500 dark:text-slate-400">
         <span>
           当前引擎:{' '}
           <strong className="text-slate-700 dark:text-slate-200">

@@ -2,11 +2,12 @@
 export type FontVariant = 'A' | 'B';
 export type FontScale = 'sm' | 'base' | 'lg';
 
-// 每套方案的三档字号（px）：[小, 中, 大] 对应 sm/base/lg。
-//   A → 12 / 14 / 16，B → 13 / 15 / 17
-export const FONT_SCALE_PX: Record<FontVariant, Record<FontScale, { sm: number; base: number; lg: number }>> = {
-  A: { sm: { sm: 12, base: 14, lg: 16 }, base: { sm: 12, base: 14, lg: 16 }, lg: { sm: 12, base: 14, lg: 16 } },
-  B: { sm: { sm: 13, base: 15, lg: 17 }, base: { sm: 13, base: 15, lg: 17 }, lg: { sm: 13, base: 15, lg: 17 } },
+// 基准字号（px）：选小/中/大档位时，方案 A 取 12/14/16，方案 B 取 13/15/17。
+// 该值被写入 CSS 变量 --font-base，全站所有字号都以它为基准用 calc() 派生，
+// 因此设置只改这一个变量即可整体缩放。
+export const FONT_BASE_PX: Record<FontVariant, Record<FontScale, number>> = {
+  A: { sm: 12, base: 14, lg: 16 },
+  B: { sm: 13, base: 15, lg: 17 },
 };
 
 export type WidgetType =

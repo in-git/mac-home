@@ -26,7 +26,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             控制中心 (Control Center)
           </span>
         </div>
-        <span className="text-[10px] text-slate-400 font-mono">
+        <span className="text-font-sm text-slate-400 font-mono">
           macOS Sonoma
         </span>
       </div>
@@ -53,8 +53,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
               <Wifi size={14} />
             </div>
             <div>
-              <div className="font-semibold text-[11px]">Wi-Fi</div>
-              <div className="text-[9px] text-slate-400">
+              <div className="font-semibold text-font-sm">Wi-Fi</div>
+              <div className="text-font-sm text-slate-400">
                 {wifiEnabled ? '5G_Apple_Studio' : '已关闭'}
               </div>
             </div>
@@ -78,8 +78,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
               <Bluetooth size={14} />
             </div>
             <div>
-              <div className="font-semibold text-[11px]">蓝牙</div>
-              <div className="text-[9px] text-slate-400">
+              <div className="font-semibold text-font-sm">蓝牙</div>
+              <div className="text-font-sm text-slate-400">
                 {btEnabled ? 'AirPods Pro' : '已断开'}
               </div>
             </div>
@@ -110,8 +110,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
               <Moon size={14} />
             </div>
             <div>
-              <div className="font-semibold text-[11px]">浅色深色</div>
-              <div className="text-[9px] opacity-70">
+              <div className="font-semibold text-font-sm">浅色深色</div>
+              <div className="text-font-sm opacity-70">
                 {isDarkMode ? '深色模式' : '浅色模式'}
               </div>
             </div>
@@ -122,7 +122,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       {/* Sliders: Brightness & Volume */}
       <div className="glass-panel p-3 rounded-2xl space-y-2.5">
         <div>
-          <div className="flex justify-between items-center text-[10px] text-slate-500 mb-1">
+          <div className="flex justify-between items-center text-font-sm text-slate-500 mb-1">
             <span className="flex items-center space-x-1 font-medium">
               <Sun size={12} />
               <span>屏幕亮度</span>
@@ -140,7 +140,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
         </div>
 
         <div>
-          <div className="flex justify-between items-center text-[10px] text-slate-500 mb-1">
+          <div className="flex justify-between items-center text-font-sm text-slate-500 mb-1">
             <span className="flex items-center space-x-1 font-medium">
               <Volume2 size={12} />
               <span>声音音量</span>

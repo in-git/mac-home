@@ -68,36 +68,7 @@ export const STATIC_WALLPAPERS = [
 ];
 
 export const INITIAL_NOTES: StickyNote[] = [
-  {
-    id: 'note-1',
-    title: '💡 设计理念 (Design Notes)',
-    content: '遵循 Apple macOS Sonoma & iOS 人机交互规范。保持无边界毛玻璃、低饱和中性色与极其通透的 12px/18px 统一圆角。',
-    color: 'yellow',
-    updatedAt: '10:30 AM',
-    pinned: true,
-  },
-  {
-    id: 'note-2',
-    title: '📝 待办事项',
-    content: '',
-    color: 'mint',
-    updatedAt: '11:15 AM',
-    pinned: false,
-    isChecklist: true,
-    checklistItems: [
-      { id: 'c1', text: '检查 Apple 开关与下拉框动画', completed: true },
-      { id: 'c2', text: '测试实时任务到期声音提醒', completed: false },
-      { id: 'c3', text: '体验动态极光壁纸与黑夜模式', completed: false },
-    ],
-  },
-  {
-    id: 'note-3',
-    title: '🎨 苹果UI规范要点',
-    content: '1. 单行输入框 12px 圆角 + 磨砂底色\n2. 按钮 padding 严格 2:1\n3. 无生硬黑色描边，只有柔和弥散软阴影\n4. 标准 Apple 蓝色 #007AFF',
-    color: 'glass',
-    updatedAt: '02:00 PM',
-    pinned: false,
-  },
+
 ];
 
 export const PRESET_WEATHER: Record<string, WeatherCondition> = {

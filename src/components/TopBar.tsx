@@ -86,7 +86,7 @@ export const TopBar: React.FC<Props> = ({
               className="absolute left-0 top-full mt-1 w-52 glass-panel rounded-xl shadow-2xl border border-white/30 dark:border-white/10 py-1.5 z-50 text-slate-800 dark:text-slate-100 backdrop-blur-3xl animate-in fade-in slide-in-from-top-1 duration-150"
               onClick={() => setIsAppleMenuOpen(false)}
             >
-              <div className="px-3 py-1 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                 macOS Sonoma 桌面
               </div>
               <div className="my-1 border-t border-slate-200/50 dark:border-slate-700/50" />
@@ -134,8 +134,8 @@ export const TopBar: React.FC<Props> = ({
         className="px-3 py-0.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 flex items-center space-x-2 transition-colors cursor-pointer border border-black/5 dark:border-white/5"
       >
         <Search size={12} className="text-slate-400" />
-        <span className="text-[11px]">聚焦搜索...</span>
-        <span className="text-[10px] opacity-50 px-1 py-0.2 rounded bg-black/10 dark:bg-white/10">
+        <span className="text-font-sm">聚焦搜索...</span>
+        <span className="text-font-sm opacity-50 px-1 py-0.2 rounded bg-black/10 dark:bg-white/10">
           ⌘K
         </span>
       </button>
@@ -143,7 +143,7 @@ export const TopBar: React.FC<Props> = ({
       {/* Right Controls */}
       <div className="flex items-center space-x-2 sm:space-x-3 text-slate-700 dark:text-slate-200">
         {/* Weather Quick Stat */}
-        <div className="hidden md:flex items-center space-x-1 text-[11px] font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
+        <div className="hidden md:flex items-center space-x-1 text-font-sm font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
           <CloudSun size={13} className="text-amber-500" />
           <span>上海 {weatherTemp}</span>
         </div>
@@ -184,7 +184,7 @@ export const TopBar: React.FC<Props> = ({
         </div>
 
         {/* Time and Date */}
-        <div className="flex items-center space-x-1 font-semibold text-[11px] pl-1">
+        <div className="flex items-center space-x-1 font-semibold text-font-sm pl-1">
           <span className="hidden sm:inline opacity-70">{dateStr}</span>
           <span>{timeStr}</span>
         </div>

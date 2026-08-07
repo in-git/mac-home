@@ -474,7 +474,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                   {showHeader && (
                     <div className="flex items-center justify-between mb-2">
                       {/* Title (left) */}
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
+                      <span className="text-font-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
                         {widget.title}
                       </span>
 

@@ -99,7 +99,7 @@ export const SettingsWidget: React.FC = () => {
             系统设置 (Settings)
           </span>
         </div>
-        <span className="text-[10px] text-slate-400 font-mono">macOS</span>
+        <span className="text-font-xs text-slate-400 font-mono">macOS</span>
       </div>
 
       {/* Toggle rows */}
@@ -120,8 +120,8 @@ export const SettingsWidget: React.FC = () => {
               {isDarkMode ? <Moon size={14} /> : <Sun size={14} />}
             </div>
             <div>
-              <div className="font-semibold text-[11px]">外观</div>
-              <div className="text-[9px] text-slate-400">
+              <div className="font-semibold text-font-xs">外观</div>
+              <div className="text-font-xs text-slate-400">
                 {isDarkMode ? '深色模式' : '浅色模式'}
               </div>
             </div>
@@ -145,8 +145,8 @@ export const SettingsWidget: React.FC = () => {
               {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
             </div>
             <div>
-              <div className="font-semibold text-[11px]">点击音效</div>
-              <div className="text-[9px] text-slate-400">
+              <div className="font-semibold text-font-xs">点击音效</div>
+              <div className="text-font-xs text-slate-400">
                 {soundEnabled ? '已开启' : '已静音'}
               </div>
             </div>
@@ -167,17 +167,17 @@ export const SettingsWidget: React.FC = () => {
               <ImageIcon size={14} />
             </div>
             <div>
-              <div className="font-semibold text-[11px]">壁纸</div>
-              <div className="text-[9px] text-slate-400">动态 / 静态</div>
+              <div className="font-semibold text-font-xs">壁纸</div>
+              <div className="text-font-xs text-slate-400">动态 / 静态</div>
             </div>
           </span>
-          <span className="text-[10px] text-slate-400">更改 ›</span>
+          <span className="text-font-xs text-slate-400">更改 ›</span>
         </button>
       </div>
 
       {/* Accent color picker */}
       <div className="glass-panel p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1.5 text-[10px] text-slate-500 mb-1.5 font-medium">
+        <div className="flex items-center space-x-1.5 text-font-xs text-slate-500 mb-1.5 font-medium">
           <Palette size={12} />
           <span>主题色</span>
         </div>
@@ -207,8 +207,8 @@ export const SettingsWidget: React.FC = () => {
 
       {/* Font size: two variants (A: 12/14/16, B: 13/15/17) × three tiers */}
       <div className="glass-panel p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1.5 text-[10px] text-slate-500 mb-1.5 font-medium">
-          <span className="text-[12px] leading-none">A</span>
+        <div className="flex items-center space-x-1.5 text-font-xs text-slate-500 mb-1.5 font-medium">
+          <span className="text-font-sm leading-none">A</span>
           <span>字体大小</span>
         </div>
 
@@ -230,8 +230,8 @@ export const SettingsWidget: React.FC = () => {
                     : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
                 }`}
               >
-                <span className="text-[13px] font-bold">{v}</span>
-                <span className="text-[9px] font-mono opacity-80">{sample}</span>
+                <span className="text-font-sm font-bold">{v}</span>
+                <span className="text-font-xs font-mono opacity-80">{sample}</span>
               </button>
             );
           })}
@@ -254,7 +254,7 @@ export const SettingsWidget: React.FC = () => {
                   playSound.playClick();
                   setFontScale(t.key);
                 }}
-                className={`py-1.5 rounded-xl border text-[11px] font-medium transition-colors ${
+                className={`py-1.5 rounded-xl border text-font-xs font-medium transition-colors ${
                   active
                     ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
                     : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
@@ -270,7 +270,7 @@ export const SettingsWidget: React.FC = () => {
       {/* Export layout */}
       <button
         onClick={handleExport}
-        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-[11px] font-medium"
+        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-xs font-medium"
       >
         <Download size={12} className="text-slate-500" />
         <span className="text-slate-500">导出布局</span>
@@ -279,7 +279,7 @@ export const SettingsWidget: React.FC = () => {
       {/* Reset */}
       <button
         onClick={handleReset}
-        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-[11px] font-medium"
+        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-xs font-medium"
       >
         <RotateCcw
           size={12}

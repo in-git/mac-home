@@ -54,14 +54,11 @@ export default function App() {
     root.style.setProperty('--accent', themeColor);
   }, [isDarkMode, themeColor]);
 
-  // Drive the three font-size CSS variables from the chosen font variant + scale.
-  // variant A → 12/14/16, variant B → 13/15/17; scale picks the active tier.
+  // Drive the single font-size CSS variable from the chosen font variant + scale.
+  // --font-base is the only source of truth; every other size is derived via calc().
   useEffect(() => {
     const root = document.documentElement;
-    const tiers = FONT_SCALE_PX[fontVariant];
-    root.style.setProperty('--font-sm', `${tiers.sm}px`);
-    root.style.setProperty('--font-base', `${tiers.base}px`);
-    root.style.setProperty('--font-lg', `${tiers.lg}px`);
+    root.style.setProperty('--font-base', `${FONT_BASE_PX[fontVariant][fontScale]}px`);
   }, [fontVariant, fontScale]);
 
   // Register the "添加组件" action by widget id so IconWidget can resolve it at
