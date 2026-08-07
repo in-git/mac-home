@@ -1,20 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
-  WidgetItem,
-  WidgetType,
-  WidgetSize,
-  WallpaperConfig,
-  StickyNote as StickyNoteType,
-  ReminderTask,
-} from '../types';
-import {
-  INITIAL_WIDGETS,
   DEFAULT_WALLPAPER,
   INITIAL_NOTES,
-  INITIAL_TASKS,
+  INITIAL_WIDGETS,
 } from '../data/presetData';
-import { getWidgetConfig, canAddWidget } from '../data/widgetConfig';
+import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
+import {
+  StickyNote as StickyNoteType,
+  WallpaperConfig,
+  WidgetItem,
+  WidgetSize,
+  WidgetType,
+} from '../types';
 import { playSound } from '../utils/sound';
 
 // One-time migration from the previous per-key localStorage layout so existing
@@ -33,9 +31,9 @@ interface HomeState {
   widgets: WidgetItem[];
   wallpaper: WallpaperConfig;
   notes: StickyNoteType[];
-  tasks: ReminderTask[];
   isDarkMode: boolean;
   themeColor: string;
+  soundEnabled: boolean;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -45,12 +43,13 @@ interface HomeState {
   moveToTopWidget: (id: string) => void;
   resetLayout: () => void;
 
-  // Notes / Tasks / Wallpaper / Appearance
+  // Notes / Wallpaper / Appearance
   updateNotes: (notes: StickyNoteType[]) => void;
-  updateTasks: (tasks: ReminderTask[]) => void;
   updateWallpaper: (cfg: Partial<WallpaperConfig>) => void;
   setDarkMode: (value: boolean) => void;
   setThemeColor: (color: string) => void;
+  setSoundEnabled: (value: boolean) => void;
+  openWallpaper: () => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -59,10 +58,11 @@ export const useHomeStore = create<HomeState>()(
       widgets: readLegacy('apple_homepage_widgets', INITIAL_WIDGETS),
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_WALLPAPER),
       notes: readLegacy('apple_homepage_notes', INITIAL_NOTES),
-      tasks: readLegacy('apple_homepage_tasks', INITIAL_TASKS),
       isDarkMode:
-        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches,
       themeColor: '#007AFF',
+      soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -99,7 +99,7 @@ export const useHomeStore = create<HomeState>()(
         playSound.playClick();
         set({
           widgets: get().widgets.map((w) =>
-            w.id === id ? { ...w, size: newSize } : w
+            w.id === id ? { ...w, size: newSize } : w,
           ),
         });
       },
@@ -119,10 +119,14 @@ export const useHomeStore = create<HomeState>()(
       },
 
       updateNotes: (notes) => set({ notes }),
-      updateTasks: (tasks) => set({ tasks }),
-      updateWallpaper: (cfg) => set({ wallpaper: { ...get().wallpaper, ...cfg } }),
+      updateWallpaper: (cfg) =>
+        set({ wallpaper: { ...get().wallpaper, ...cfg } }),
       setDarkMode: (value) => set({ isDarkMode: value }),
       setThemeColor: (color) => set({ themeColor: color }),
+      setSoundEnabled: (value) => set({ soundEnabled: value }),
+      // Registered by App on mount so the store can open the wallpaper modal
+      // without threading the setter through the whole component tree.
+      openWallpaper: () => {},
     }),
     {
       name: 'apple-homepage-store',
@@ -131,10 +135,10 @@ export const useHomeStore = create<HomeState>()(
         widgets: state.widgets,
         wallpaper: state.wallpaper,
         notes: state.notes,
-        tasks: state.tasks,
         isDarkMode: state.isDarkMode,
         themeColor: state.themeColor,
+        soundEnabled: state.soundEnabled,
       }),
-    }
-  )
+    },
+  ),
 );

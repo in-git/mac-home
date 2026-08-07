@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
-import { TopBar } from './components/TopBar';
-import { MuuriDashboard } from './components/MuuriDashboard';
-import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
-import { WallpaperModal } from './components/WallpaperModal';
-import { SpotlightModal } from './components/SpotlightModal';
+import React, { useEffect, useRef, useState } from 'react';
 import { AddWidgetModal } from './components/AddWidgetModal';
-import { useHomeStore } from './store/useHomeStore';
+import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
+import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
+import { MuuriDashboard } from './components/MuuriDashboard';
+import { SpotlightModal } from './components/SpotlightModal';
+import { TopBar } from './components/TopBar';
+import { WallpaperModal } from './components/WallpaperModal';
 import { registerWidgetAction } from './data/widgetConfig';
+import { useHomeStore } from './store/useHomeStore';
 
 export default function App() {
   // Persisted data + actions are handled by the zustand store.
   const widgets = useHomeStore((s) => s.widgets);
   const wallpaper = useHomeStore((s) => s.wallpaper);
   const notes = useHomeStore((s) => s.notes);
-  const tasks = useHomeStore((s) => s.tasks);
   const setWidgets = useHomeStore((s) => s.setWidgets);
   const addWidget = useHomeStore((s) => s.addWidget);
   const deleteWidget = useHomeStore((s) => s.deleteWidget);
@@ -22,7 +21,6 @@ export default function App() {
   const moveToTopWidget = useHomeStore((s) => s.moveToTopWidget);
   const resetLayout = useHomeStore((s) => s.resetLayout);
   const updateNotes = useHomeStore((s) => s.updateNotes);
-  const updateTasks = useHomeStore((s) => s.updateTasks);
   const updateWallpaper = useHomeStore((s) => s.updateWallpaper);
   const isDarkMode = useHomeStore((s) => s.isDarkMode);
   const setDarkMode = useHomeStore((s) => s.setDarkMode);
@@ -31,13 +29,15 @@ export default function App() {
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
-  const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
-  const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState<boolean>(false);
+  const [isWallpaperModalOpen, setIsWallpaperModalOpen] =
+    useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
-  const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = useState<boolean>(false);
+  const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] =
+    useState<boolean>(false);
 
   // Right Click Context Menu State
-  const [contextMenuPos, setContextMenuPos] = useState<ContextMenuPosition | null>(null);
+  const [contextMenuPos, setContextMenuPos] =
+    useState<ContextMenuPosition | null>(null);
 
   // Apply persisted dark mode + theme color to the document root.
   useEffect(() => {
@@ -54,6 +54,14 @@ export default function App() {
   // click time via getWidgetAction('widget-add'), independent of localStorage.
   useEffect(() => {
     registerWidgetAction('widget-add', () => setIsAddWidgetModalOpen(true));
+  }, []);
+
+  // Wire the store's openWallpaper() to the local wallpaper modal so the
+  // Settings widget can open it without prop-drilling through MuuriDashboard.
+  useEffect(() => {
+    useHomeStore.setState({
+      openWallpaper: () => setIsWallpaperModalOpen(true),
+    });
   }, []);
 
   // Main Right Click Handler
@@ -107,8 +115,6 @@ export default function App() {
         onOpenWallpaperModal={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
         onResetLayout={resetLayout}
-        isFocusMode={isFocusMode}
-        onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
       />
 
       {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
@@ -128,12 +134,8 @@ export default function App() {
             isEditMode={isEditMode}
             notes={notes}
             onUpdateNotes={updateNotes}
-            tasks={tasks}
-            onUpdateTasks={updateTasks}
             isDarkMode={isDarkMode}
             onToggleDarkMode={() => setDarkMode(!isDarkMode)}
-            isFocusMode={isFocusMode}
-            onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
           />
         </main>
       </div>
@@ -150,8 +152,6 @@ export default function App() {
         onToggleDarkMode={() => setDarkMode(!isDarkMode)}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
-        isFocusMode={isFocusMode}
-        onToggleFocusMode={() => setIsFocusMode(!isFocusMode)}
         onOpenWallpaper={() => setIsWallpaperModalOpen(true)}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
         onResetLayout={resetLayout}
@@ -175,7 +175,6 @@ export default function App() {
         isOpen={isSpotlightOpen}
         onClose={() => setIsSpotlightOpen(false)}
         notes={notes}
-        tasks={tasks}
         onAddWidget={addWidget}
       />
 

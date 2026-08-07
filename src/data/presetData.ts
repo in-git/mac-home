@@ -1,14 +1,14 @@
-import { WidgetItem, StickyNote, ReminderTask, WeatherCondition, QuickShortcut, WallpaperConfig } from '../types';
+import { WidgetItem, StickyNote, WeatherCondition, QuickShortcut, WallpaperConfig } from '../types';
 
 export const INITIAL_WIDGETS: WidgetItem[] = [
   { id: 'widget-search', type: 'search', title: '网络搜索', size: 'wide' },
   { id: 'widget-ai-chat', type: 'ai-chat', title: 'AI 大模型助手', size: 'large' },
   { id: 'widget-weather', type: 'weather', title: '天气预报', size: 'wide' },
-  { id: 'widget-tasks', type: 'tasks', title: '实时提醒', size: 'large' },
   { id: 'widget-sticky', type: 'sticky-notes', title: '便签', size: 'wide' },
   { id: 'widget-clock', type: 'clock', title: '时间 & 日历', size: 'sm' },
   { id: 'widget-shortcuts', type: 'shortcuts', title: '快捷导航', size: 'sm' },
   { id: 'widget-control', type: 'control-center', title: '控制中心', size: 'sm' },
+  { id: 'widget-settings', type: 'settings', title: '设置', size: 'wide' },
   { id: 'widget-icon', type: 'icon-grid', title: '图标', size: 'icon-1-8', showHeader: false,
     iconType: 'link', iconGlyph: 'Globe', iconLabel: '官网', iconHref: 'https://www.apple.com' },
   { id: 'widget-add', type: 'icon-grid', title: '添加组件', size: 'icon-1-8', showHeader: false,
@@ -95,54 +95,6 @@ export const INITIAL_NOTES: StickyNote[] = [
     color: 'glass',
     updatedAt: '02:00 PM',
     pinned: false,
-  },
-];
-
-export const INITIAL_TASKS: ReminderTask[] = [
-  {
-    id: 'task-1',
-    title: '提交 UX 交互评估报告',
-    notes: '包含 Apple HIG 规范对比与控件表单细节测试',
-    dueDate: new Date().toISOString().split('T')[0],
-    dueTime: '18:00',
-    completed: false,
-    priority: 'high',
-    category: 'today',
-    hasAlarm: true,
-    alarmSound: true,
-  },
-  {
-    id: 'task-2',
-    title: '团队每周产品对齐例会',
-    notes: '线上会议 Link: https://meet.google.com/xyz',
-    dueDate: new Date().toISOString().split('T')[0],
-    dueTime: '15:30',
-    completed: false,
-    priority: 'medium',
-    category: 'today',
-    hasAlarm: true,
-    alarmSound: true,
-  },
-  {
-    id: 'task-3',
-    title: '重构 Apple 表单数字输入框与分段选择器',
-    notes: '优化 hover 与 error 状态的小字红字提示',
-    dueDate: '2026-08-08',
-    dueTime: '10:00',
-    completed: true,
-    priority: 'low',
-    category: 'work',
-    hasAlarm: false,
-  },
-  {
-    id: 'task-4',
-    title: '定制 Sonoma 动态极光壁纸粒子',
-    notes: '增加 canvas 60fps 平滑渲染',
-    dueDate: '2026-08-09',
-    dueTime: '14:00',
-    completed: false,
-    priority: 'medium',
-    category: 'personal',
   },
 ];
 

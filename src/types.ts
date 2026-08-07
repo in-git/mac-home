@@ -3,10 +3,10 @@ export type WidgetType =
   | 'weather'
   | 'search'
   | 'ai-chat'
-  | 'tasks'
   | 'clock'
   | 'shortcuts'
   | 'control-center'
+  | 'settings'
   | 'icon-grid';
 
 export type WidgetSize =
@@ -116,21 +116,6 @@ export interface StickyNote {
   checklistItems?: { id: string; text: string; completed: boolean }[];
 }
 
-export type TaskPriority = 'low' | 'medium' | 'high';
-
-export interface ReminderTask {
-  id: string;
-  title: string;
-  notes?: string;
-  dueDate?: string; // YYYY-MM-DD
-  dueTime?: string; // HH:MM
-  completed: boolean;
-  priority: TaskPriority;
-  category: 'today' | 'scheduled' | 'work' | 'personal';
-  hasAlarm?: boolean;
-  alarmSound?: boolean;
-}
-
 export interface WeatherCondition {
   city: string;
   country: string;
@@ -158,7 +143,6 @@ export interface QuickShortcut {
 
 export interface SystemStatus {
   isDarkMode: boolean;
-  isFocusMode: boolean;
   volume: number;
   brightness: number;
   cpuUsage: number;

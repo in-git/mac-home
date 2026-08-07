@@ -1,22 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import {
-  Plus,
-  Image as ImageIcon,
-  Search,
-  Moon,
-  Sun,
-  Lock,
-  Unlock,
-  RotateCcw,
-  Trash2,
-  AppWindow,
   ArrowUp,
-  Eye,
-  EyeOff
+  Image as ImageIcon,
+  Lock,
+  Moon,
+  Plus,
+  RotateCcw,
+  Search,
+  Sun,
+  Trash2,
+  Unlock,
 } from 'lucide-react';
-import { WidgetType, WidgetSize, WidgetItem, WIDGET_SIZE_LABEL } from '../types';
+import { AnimatePresence, motion } from 'motion/react';
+import React, { useEffect, useRef } from 'react';
 import { getWidgetConfig } from '../data/widgetConfig';
+import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
 import { playSound } from '../utils/sound';
 
 export interface ContextMenuPosition {
@@ -36,8 +33,6 @@ interface ContextMenuProps {
   onToggleDarkMode: () => void;
   isEditMode: boolean;
   onToggleEditMode: () => void;
-  isFocusMode: boolean;
-  onToggleFocusMode: () => void;
   onOpenWallpaper: () => void;
   onOpenSpotlight: () => void;
   onResetLayout: () => void;
@@ -55,12 +50,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onToggleDarkMode,
   isEditMode,
   onToggleEditMode,
-  isFocusMode,
-  onToggleFocusMode,
   onOpenWallpaper,
   onOpenSpotlight,
   onResetLayout,
-  onOpenAddWidget
+  onOpenAddWidget,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -127,7 +120,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             </div>
 
             {/* Widget Size Switching */}
-            <div className="px-2 py-1 text-[11px] text-slate-400 font-medium">调整尺寸</div>
+            <div className="px-2 py-1 text-[11px] text-slate-400 font-medium">
+              调整尺寸
+            </div>
             <div className="grid grid-cols-4 gap-1 px-1.5 mb-1.5">
               {getWidgetConfig(targetWidget.type).sizeOptions.map((sz) => (
                 <button
@@ -238,7 +233,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             )}
             <span>外观：{isDarkMode ? '深色模式' : '浅色模式'}</span>
           </div>
-          <span className="text-[10px] text-slate-400">{isDarkMode ? 'Dark' : 'Light'}</span>
+          <span className="text-[10px] text-slate-400">
+            {isDarkMode ? 'Dark' : 'Light'}
+          </span>
         </button>
 
         {/* Toggle Edit Mode */}
@@ -259,26 +256,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             )}
             <span>{isEditMode ? '锁定自由布局' : '调整布局'}</span>
           </div>
-          <span className="text-[10px] text-slate-400">{isEditMode ? '解锁中' : '已锁定'}</span>
-        </button>
-
-        {/* Focus Mode */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onToggleFocusMode();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
-        >
-          <div className="flex items-center space-x-2">
-            {isFocusMode ? (
-              <EyeOff size={14} className="text-rose-500" />
-            ) : (
-              <Eye size={14} className="text-sky-500" />
-            )}
-            <span>{isFocusMode ? '退出专注模式' : '进入专注模式'}</span>
-          </div>
+          <span className="text-[10px] text-slate-400">
+            {isEditMode ? '解锁中' : '已锁定'}
+          </span>
         </button>
 
         <div className="my-1 border-t border-black/5 dark:border-white/10" />

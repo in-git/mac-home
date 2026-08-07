@@ -1,25 +1,20 @@
 import { GripHorizontal, X } from 'lucide-react';
 import Muuri from 'muuri';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   executeWidgetAction,
   getWidgetAction,
   getWidgetConfig,
 } from '../data/widgetConfig';
-import {
-  ReminderTask,
-  StickyNote as StickyNoteType,
-  WidgetItem,
-  WidgetSize,
-} from '../types';
+import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { AiChatWidget } from '../widgets/AiChatWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { IconWidget } from '../widgets/IconWidget';
 import { SearchWidget } from '../widgets/SearchWidget';
+import { SettingsWidget } from '../widgets/SettingsWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
-import { TasksWidget } from '../widgets/TasksWidget';
 import { WeatherWidget } from '../widgets/WeatherWidget';
 import { Tooltip } from './Tooltip';
 
@@ -32,12 +27,10 @@ interface MuuriDashboardProps {
   isEditMode: boolean;
   notes: StickyNoteType[];
   onUpdateNotes: (notes: StickyNoteType[]) => void;
-  tasks: ReminderTask[];
-  onUpdateTasks: (tasks: ReminderTask[]) => void;
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
-  isFocusMode: boolean;
-  onToggleFocusMode: () => void;
+  /** 是否在 widget 控制栏显示黄色按钮（点击后该 widget 以无头模态框居中显示） */
+  enableHeadlessModal?: boolean;
 }
 
 export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
@@ -49,12 +42,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   isEditMode,
   notes,
   onUpdateNotes,
-  tasks,
-  onUpdateTasks,
   isDarkMode,
   onToggleDarkMode,
-  isFocusMode,
-  onToggleFocusMode,
+  enableHeadlessModal = true,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
@@ -73,6 +63,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const isEditModeRef = useRef(isEditMode);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
+  // 无头模态：当前以 fixed 居中放大的 widget id（null 表示普通网格状态）
+  const [expandedWidgetId, setExpandedWidgetId] = useState<string | null>(null);
+
   // Helper to render widget content
   const renderWidgetContent = (widget: WidgetItem) => {
     switch (widget.type) {
@@ -86,8 +79,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return <WeatherWidget />;
       case 'ai-chat':
         return <AiChatWidget isDarkMode={isDarkMode} />;
-      case 'tasks':
-        return <TasksWidget tasks={tasks} onUpdateTasks={onUpdateTasks} />;
       case 'clock':
         return <ClockCalendarWidget />;
       case 'control-center':
@@ -95,12 +86,12 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           <ControlCenterWidget
             isDarkMode={isDarkMode}
             onToggleDarkMode={onToggleDarkMode}
-            isFocusMode={isFocusMode}
-            onToggleFocusMode={onToggleFocusMode}
           />
         );
       case 'shortcuts':
         return <ShortcutsWidget />;
+      case 'settings':
+        return <SettingsWidget />;
       case 'icon-grid': {
         return (
           <div data-icon-grid className="h-full w-full">
@@ -410,7 +401,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             <div
               key={widget.id}
               data-widget-id={widget.id}
-              className={`muuri-item p-2.5 sm:p-3 absolute z-10 ${sizeClasses}`}
+              className={`muuri-item p-2.5 sm:p-3 absolute z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
               onContextMenu={(e) => onContextMenuWidget(e, widget.id)}
             >
               {/* Muuri Required Item Content Wrapper */}
@@ -479,6 +470,19 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                               className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
                             />
                           </Tooltip>
+                          {/* Yellow dot → toggle headless modal (fixed centered) */}
+                          {enableHeadlessModal && (
+                            <Tooltip content="无头模态放大" placement="top">
+                              <div
+                                data-no-drag
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedWidgetId(widget.id);
+                                }}
+                                className="w-3 h-3 rounded-full bg-[#FFCC00] hover:bg-[#FFCC00]/80 transition-colors cursor-pointer"
+                              />
+                            </Tooltip>
+                          )}
                           {/* Red dot → delete */}
                           <Tooltip content="移除小组件" placement="top">
                             <button
@@ -518,7 +522,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                   <div
                     className={`flex-1${widget.size === 'icon-1-16' ? '' : ' pt-1'}${isEditMode ? ' pointer-events-none' : ''}`}
                   >
-                    {renderWidgetContent(widget)}
+                    {widget.id === expandedWidgetId
+                      ? null
+                      : renderWidgetContent(widget)}
                   </div>
                 </div>
               </div>
@@ -526,6 +532,30 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           );
         })}
       </div>
+
+      {/* 无头模态层：点击黄色按钮后，对应 widget 以 fixed 居中、无头、放大的模态框显示；
+          点击外部遮罩则还原为普通网格 widget（position 由 fixed 改回网格流） */}
+      {expandedWidgetId &&
+        (() => {
+          const expandedWidget = widgets.find((w) => w.id === expandedWidgetId);
+          if (!expandedWidget) return null;
+          return (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+              onClick={() => setExpandedWidgetId(null)}
+            >
+              <div
+                className="glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-[80vw] h-[80vh] flex flex-col overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* 无头：不渲染标题栏与控制栏 */}
+                <div className="flex-1 min-h-0">
+                  {renderWidgetContent(expandedWidget)}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
     </div>
   );
 };

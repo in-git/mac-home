@@ -2,6 +2,18 @@
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
+  /** Master switch controlled from the Settings widget. Defaults to on. */
+  private enabled = true;
+
+  /** Toggle all UI feedback sounds on/off. */
+  setEnabled(value: boolean) {
+    this.enabled = value;
+  }
+
+  /** Current master switch state. */
+  isEnabled() {
+    return this.enabled;
+  }
 
   private initCtx() {
     if (!this.ctx && typeof window !== 'undefined') {
@@ -17,6 +29,7 @@ class SoundEngine {
 
   // Soft Apple click sound
   playClick() {
+    if (!this.enabled) return;
     try {
       this.initCtx();
       if (!this.ctx) return;
@@ -43,6 +56,7 @@ class SoundEngine {
 
   // Apple Task Done / Success Chime
   playChime() {
+    if (!this.enabled) return;
     try {
       this.initCtx();
       if (!this.ctx) return;
@@ -78,6 +92,7 @@ class SoundEngine {
 
   // Reminder Alarm Alert Chime
   playAlert() {
+    if (!this.enabled) return;
     try {
       this.initCtx();
       if (!this.ctx) return;

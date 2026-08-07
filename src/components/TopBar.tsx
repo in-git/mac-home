@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react';
 import {
   Apple,
-  Search,
-  Sun,
-  Moon,
+  Battery,
+  Check,
+  CloudSun,
   Image as ImageIcon,
   LayoutGrid,
-  Check,
+  Moon,
   RotateCcw,
-  CloudSun,
+  Search,
+  Sun,
   Volume2,
   Wifi,
-  Battery,
-  ShieldAlert
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { playSound } from '../utils/sound';
 
 interface Props {
@@ -24,8 +23,6 @@ interface Props {
   onOpenWallpaperModal: () => void;
   onOpenSpotlight: () => void;
   onResetLayout: () => void;
-  isFocusMode: boolean;
-  onToggleFocusMode: () => void;
   weatherTemp?: string;
 }
 
@@ -37,8 +34,6 @@ export const TopBar: React.FC<Props> = ({
   onOpenWallpaperModal,
   onOpenSpotlight,
   onResetLayout,
-  isFocusMode,
-  onToggleFocusMode,
   weatherTemp = '26°C',
 }) => {
   const [timeStr, setTimeStr] = useState('');
@@ -53,14 +48,14 @@ export const TopBar: React.FC<Props> = ({
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
-        })
+        }),
       );
       setDateStr(
         now.toLocaleDateString('zh-CN', {
           month: 'short',
           day: 'numeric',
           weekday: 'short',
-        })
+        }),
       );
     };
 
@@ -128,23 +123,6 @@ export const TopBar: React.FC<Props> = ({
         <span className="font-semibold text-slate-800 dark:text-slate-100 hidden sm:inline">
           macOS 主页
         </span>
-
-        {/* Focus Mode Badge */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onToggleFocusMode();
-          }}
-          className={`px-2 py-0.5 rounded-full text-[11px] font-medium flex items-center space-x-1 transition-colors ${
-            isFocusMode
-              ? 'bg-[#007AFF] text-white shadow-xs'
-              : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
-          }`}
-          title="专注模式 (勿扰)"
-        >
-          <ShieldAlert size={11} />
-          <span>{isFocusMode ? '专注中' : '标准'}</span>
-        </button>
       </div>
 
       {/* Center Spotlight Search Trigger */}
@@ -157,7 +135,9 @@ export const TopBar: React.FC<Props> = ({
       >
         <Search size={12} className="text-slate-400" />
         <span className="text-[11px]">聚焦搜索...</span>
-        <span className="text-[10px] opacity-50 px-1 py-0.2 rounded bg-black/10 dark:bg-white/10">⌘K</span>
+        <span className="text-[10px] opacity-50 px-1 py-0.2 rounded bg-black/10 dark:bg-white/10">
+          ⌘K
+        </span>
       </button>
 
       {/* Right Controls */}
@@ -189,7 +169,11 @@ export const TopBar: React.FC<Props> = ({
           className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           title={isDarkMode ? '切换浅色模式' : '切换深色模式'}
         >
-          {isDarkMode ? <Sun size={14} className="text-amber-400" /> : <Moon size={14} className="text-slate-700" />}
+          {isDarkMode ? (
+            <Sun size={14} className="text-amber-400" />
+          ) : (
+            <Moon size={14} className="text-slate-700" />
+          )}
         </button>
 
         {/* Status System Icons */}

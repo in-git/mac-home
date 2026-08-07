@@ -1,29 +1,15 @@
+import { Bluetooth, Moon, Sliders, Sun, Volume2, Wifi } from 'lucide-react';
 import React, { useState } from 'react';
-import {
-  Sliders,
-  Sun,
-  Volume2,
-  Wifi,
-  Bluetooth,
-  Shield,
-  Moon,
-  Airplay,
-  HardDrive
-} from 'lucide-react';
 import { playSound } from '../utils/sound';
 
 interface Props {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
-  isFocusMode: boolean;
-  onToggleFocusMode: () => void;
 }
 
 export const ControlCenterWidget: React.FC<Props> = ({
   isDarkMode,
   onToggleDarkMode,
-  isFocusMode,
-  onToggleFocusMode,
 }) => {
   const [wifiEnabled, setWifiEnabled] = useState(true);
   const [btEnabled, setBtEnabled] = useState(true);
@@ -37,9 +23,13 @@ export const ControlCenterWidget: React.FC<Props> = ({
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-2">
           <Sliders size={16} className="text-[#007AFF]" />
-          <span className="font-bold text-sm tracking-tight">控制中心 (Control Center)</span>
+          <span className="font-bold text-sm tracking-tight">
+            控制中心 (Control Center)
+          </span>
         </div>
-        <span className="text-[10px] text-slate-400 font-mono">macOS Sonoma</span>
+        <span className="text-[10px] text-slate-400 font-mono">
+          macOS Sonoma
+        </span>
       </div>
 
       {/* Grid Controls */}
@@ -56,14 +46,18 @@ export const ControlCenterWidget: React.FC<Props> = ({
           >
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                wifiEnabled ? 'bg-[#007AFF] text-white shadow-xs' : 'bg-black/10 dark:bg-white/10 text-slate-400'
+                wifiEnabled
+                  ? 'bg-[#007AFF] text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-white/10 text-slate-400'
               }`}
             >
               <Wifi size={14} />
             </div>
             <div>
               <div className="font-semibold text-[11px]">Wi-Fi</div>
-              <div className="text-[9px] text-slate-400">{wifiEnabled ? '5G_Apple_Studio' : '已关闭'}</div>
+              <div className="text-[9px] text-slate-400">
+                {wifiEnabled ? '5G_Apple_Studio' : '已关闭'}
+              </div>
             </div>
           </button>
 
@@ -77,14 +71,18 @@ export const ControlCenterWidget: React.FC<Props> = ({
           >
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                btEnabled ? 'bg-[#007AFF] text-white shadow-xs' : 'bg-black/10 dark:bg-white/10 text-slate-400'
+                btEnabled
+                  ? 'bg-[#007AFF] text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-white/10 text-slate-400'
               }`}
             >
               <Bluetooth size={14} />
             </div>
             <div>
               <div className="font-semibold text-[11px]">蓝牙</div>
-              <div className="text-[9px] text-slate-400">{btEnabled ? 'AirPods Pro' : '已断开'}</div>
+              <div className="text-[9px] text-slate-400">
+                {btEnabled ? 'AirPods Pro' : '已断开'}
+              </div>
             </div>
           </button>
         </div>
@@ -105,39 +103,18 @@ export const ControlCenterWidget: React.FC<Props> = ({
           >
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                isDarkMode ? 'bg-amber-400/20 text-amber-300' : 'bg-slate-200 text-slate-700'
+                isDarkMode
+                  ? 'bg-amber-400/20 text-amber-300'
+                  : 'bg-slate-200 text-slate-700'
               }`}
             >
               <Moon size={14} />
             </div>
             <div>
               <div className="font-semibold text-[11px]">浅色深色</div>
-              <div className="text-[9px] opacity-70">{isDarkMode ? '深色模式' : '浅色模式'}</div>
-            </div>
-          </button>
-
-          {/* Focus Mode Tile */}
-          <button
-            onClick={() => {
-              playSound.playClick();
-              onToggleFocusMode();
-            }}
-            className={`flex-1 p-2.5 rounded-2xl flex items-center space-x-2 text-left transition-colors ${
-              isFocusMode
-                ? 'bg-[#007AFF] text-white shadow-md'
-                : 'glass-panel hover:bg-white/80'
-            }`}
-          >
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center ${
-                isFocusMode ? 'bg-white/20 text-white' : 'bg-black/10 dark:bg-white/10 text-slate-700'
-              }`}
-            >
-              <Shield size={14} />
-            </div>
-            <div>
-              <div className="font-semibold text-[11px]">专注模式</div>
-              <div className="text-[9px] opacity-75">{isFocusMode ? '勿扰已开启' : '标准接收'}</div>
+              <div className="text-[9px] opacity-70">
+                {isDarkMode ? '深色模式' : '浅色模式'}
+              </div>
             </div>
           </button>
         </div>

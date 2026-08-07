@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, StickyNote, CheckSquare, CloudSun, Clock, Compass, Sliders, ExternalLink } from 'lucide-react';
-import { StickyNote as StickyNoteType, ReminderTask, WidgetType } from '../types';
+import { Search, StickyNote, CloudSun, Clock, Compass, Sliders, ExternalLink } from 'lucide-react';
+import { StickyNote as StickyNoteType, WidgetType } from '../types';
 import { playSound } from '../utils/sound';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   notes: StickyNoteType[];
-  tasks: ReminderTask[];
   onAddWidget: (type: WidgetType) => void;
 }
 
@@ -16,7 +15,6 @@ export const SpotlightModal: React.FC<Props> = ({
   isOpen,
   onClose,
   notes,
-  tasks,
   onAddWidget,
 }) => {
   const [query, setQuery] = useState('');
@@ -48,15 +46,8 @@ export const SpotlightModal: React.FC<Props> = ({
       n.content.toLowerCase().includes(query.toLowerCase())
   );
 
-  const filteredTasks = tasks.filter(
-    (t) =>
-      t.title.toLowerCase().includes(query.toLowerCase()) ||
-      (t.notes && t.notes.toLowerCase().includes(query.toLowerCase()))
-  );
-
   const widgetCommands = [
     { name: '打开/添加 天气预报小组件', type: 'weather' as WidgetType, icon: CloudSun },
-    { name: '打开/添加 实时任务提醒', type: 'tasks' as WidgetType, icon: CheckSquare },
     { name: '打开/添加 便签小组件', type: 'sticky-notes' as WidgetType, icon: StickyNote },
     { name: '打开/添加 时钟与日历', type: 'clock' as WidgetType, icon: Clock },
     { name: '打开/添加 控制中心', type: 'control-center' as WidgetType, icon: Sliders },
@@ -144,42 +135,6 @@ export const SpotlightModal: React.FC<Props> = ({
                         <div className="text-slate-500 dark:text-slate-400 line-clamp-1">{n.content}</div>
                       )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Tasks Results */}
-            {filteredTasks.length > 0 && (
-              <div>
-                <div className="px-3 py-1 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                  提醒事项 ({filteredTasks.length})
-                </div>
-                {filteredTasks.map((t) => (
-                  <div
-                    key={t.id}
-                    className="px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between transition-colors cursor-pointer"
-                    onClick={() => {
-                      playSound.playClick();
-                      onAddWidget('tasks');
-                      onClose();
-                    }}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <CheckSquare size={15} className="text-[#007AFF] shrink-0" />
-                      <span
-                        className={`font-medium ${
-                          t.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-100'
-                        }`}
-                      >
-                        {t.title}
-                      </span>
-                    </div>
-                    {t.dueTime && (
-                      <span className="text-[10px] text-slate-400 bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded">
-                        {t.dueTime}
-                      </span>
-                    )}
                   </div>
                 ))}
               </div>

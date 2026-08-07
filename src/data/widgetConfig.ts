@@ -1,4 +1,4 @@
-import { WidgetType, WidgetSize } from '../types';
+import { WidgetSize, WidgetType } from '../types';
 
 /**
  * Type-level configuration registry for every widget type. This consolidates
@@ -55,15 +55,6 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     glyph: '⛅',
     label: '天气预报',
   },
-  tasks: {
-    title: '实时提醒',
-    maxInstances: 1,
-    defaultSize: 'large',
-    sizeOptions: ['sm', 'third', 'wide', 'large'],
-    isAddable: true,
-    glyph: '📋',
-    label: '实时提醒',
-  },
   'sticky-notes': {
     title: '便签笔记',
     maxInstances: 1,
@@ -99,6 +90,15 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     isAddable: true,
     glyph: '🎛️',
     label: '控制中心',
+  },
+  settings: {
+    title: '设置',
+    maxInstances: 1,
+    defaultSize: 'wide',
+    sizeOptions: ['wide', 'large'],
+    isAddable: true,
+    glyph: '⚙️',
+    label: '系统设置',
   },
   'icon-grid': {
     title: '图标',
