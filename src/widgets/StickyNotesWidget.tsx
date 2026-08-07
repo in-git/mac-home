@@ -107,7 +107,7 @@ export const StickyNotesWidget: React.FC<Props> = ({ notes, onUpdateNotes }) => 
                 playSound.playClick();
                 setActiveNoteId(n.id);
               }}
-              className={`px-2.5 py-1 rounded-lg font-medium truncate max-w-[100px] transition-all flex items-center space-x-1 ${
+              className={`px-2.5 py-1 rounded-lg font-medium truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
                 activeNoteId === n.id
                   ? 'bg-[#007AFF] text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
@@ -131,7 +131,7 @@ export const StickyNotesWidget: React.FC<Props> = ({ notes, onUpdateNotes }) => 
       {/* Active Note Content Area */}
       {activeNote ? (
         <div
-          className={`flex-1 rounded-2xl p-3.5 border transition-all flex flex-col justify-between shadow-xs ${
+          className={`flex-1 rounded-2xl p-3.5 border transition-colors flex flex-col justify-between shadow-xs ${
             colorStyles[activeNote.color].bg
           } ${colorStyles[activeNote.color].text}`}
         >

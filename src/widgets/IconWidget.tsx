@@ -83,7 +83,7 @@ export function IconWidget({
       disabled={editing && kind !== 'action'}
       title={title}
       style={bgStyle}
-      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 px-1 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
+      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
     >
       <GlyphIcon
         className={`${typo.glyph} leading-none`}

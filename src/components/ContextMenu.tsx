@@ -137,7 +137,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     onResizeWidget(targetWidget.id, sz);
                     onClose();
                   }}
-                  className={`py-1 rounded-lg text-[10px] font-semibold transition-all ${
+                  className={`py-1 rounded-lg text-[10px] font-semibold transition-colors ${
                     targetWidget.size === sz
                       ? 'bg-[#007AFF] text-white shadow-xs'
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'

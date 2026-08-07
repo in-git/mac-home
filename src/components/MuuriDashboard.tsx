@@ -115,20 +115,27 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   };
 
   // Size helper for responsive width classes on Muuri item containers
+  // IMPORTANT: widths MUST be fixed percentages (no Tailwind responsive
+  // breakpoints). Muuri measures each item's real pixel width via
+  // getBoundingClientRect() to compute layout & free space. Responsive
+  // classes (sm:/lg:/md:) change the width with the viewport, so below
+  // 1024px a `sm` item was actually full-width and Muuri saw NO 1/4 gap ->
+  // a ≤1/4 component could never be dragged up into the "remaining" space.
+  // Fixed % keeps Muuri's measured width viewport-independent and correct.
   const getItemSizeClasses = (size: WidgetSize) => {
     switch (size) {
       case 'sm':
-        return 'w-full sm:w-1/2 lg:w-1/4'; // 1/4
+        return 'w-[25%]'; // 1/4
       case 'wide':
-        return 'w-full lg:w-1/2'; // 1/2
+        return 'w-[50%]'; // 1/2
       case 'large':
         return 'w-full'; // 1:1 占满整行
       case 'icon-1-8':
-        return 'w-1/4 sm:w-1/6 md:w-[12.5%] aspect-[1/1]'; // 1:8
+        return 'w-[12.5%] aspect-[1/1]'; // 1:8
       case 'icon-1-16':
-        return 'w-1/6 sm:w-1/12 md:w-[6.25%] aspect-[1/1]'; // 1:16
+        return 'w-[6.25%] aspect-[1/1]'; // 1:16
       default:
-        return 'w-full lg:w-1/2 ';
+        return 'w-[50%]';
     }
   };
 
@@ -419,7 +426,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                                 e.stopPropagation();
                                 onDeleteWidget(widget.id);
                               }}
-                              className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-all cursor-pointer"
+                              className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
                             />
                           </Tooltip>
                           {/* Red dot → delete */}
@@ -430,7 +437,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                                 e.stopPropagation();
                                 onDeleteWidget(widget.id);
                               }}
-                              className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-all cursor-pointer"
+                              className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-colors cursor-pointer"
                               title="移除小组件"
                             >
                               <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />

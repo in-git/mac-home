@@ -13,7 +13,7 @@
 | 主色 | Apple 蓝 `#007AFF`，hover 加深 `bg-blue-600` |
 | 文字 | `text-slate-800 dark:text-slate-100`，辅助说明 `text-slate-400/500` |
 | 字号 | 正文 `text-xs`（12px），说明 `text-[11px]`，标签 `font-medium` |
-| 动效 | `transition-all`，按钮 `active:scale-95`，弹窗 `animate-in fade-in slide-in-from-top-1` |
+| 动效 | 禁用`transition-all`，按钮 `active:scale-95`，弹窗 `animate-in fade-in slide-in-from-top-1` |
 
 ## 状态模拟（simulatedState）
 

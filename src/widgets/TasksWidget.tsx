@@ -122,7 +122,7 @@ export const TasksWidget: React.FC<Props> = ({ tasks, onUpdateTasks }) => {
             <span>完成度 {progressPct}%</span>
             <div className="w-12 h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#007AFF] transition-all duration-500 rounded-full"
+                className="h-full bg-[#007AFF] transition-[width] duration-500 rounded-full"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -158,7 +158,7 @@ export const TasksWidget: React.FC<Props> = ({ tasks, onUpdateTasks }) => {
               playSound.playClick();
               setActiveTab(tab.id as typeof activeTab);
             }}
-            className={`px-2.5 py-1 rounded-lg font-medium transition-all text-[11px] shrink-0 ${
+            className={`px-2.5 py-1 rounded-lg font-medium transition-colors text-[11px] shrink-0 ${
               activeTab === tab.id
                 ? 'bg-[#007AFF] text-white shadow-xs font-semibold'
                 : 'bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10'
@@ -207,7 +207,7 @@ export const TasksWidget: React.FC<Props> = ({ tasks, onUpdateTasks }) => {
           filteredTasks.map((task) => (
             <div
               key={task.id}
-              className={`p-2.5 rounded-xl transition-all flex items-center justify-between group border border-transparent ${
+              className={`p-2.5 rounded-xl transition-[colors,opacity] flex items-center justify-between group border border-transparent ${
                 task.completed
                   ? 'bg-black/3 dark:bg-white/3 opacity-60'
                   : 'bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 shadow-xs'

@@ -128,7 +128,7 @@ export const ShortcutsWidget: React.FC = () => {
             target="_blank"
             rel="noreferrer"
             onClick={() => playSound.playClick()}
-            className="group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all shadow-xs text-center border border-white/40 dark:border-white/10"
+            className="group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10"
           >
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center mb-1.5 shadow-sm ${

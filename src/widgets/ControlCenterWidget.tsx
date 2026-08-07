@@ -97,7 +97,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
               playSound.playClick();
               onToggleDarkMode();
             }}
-            className={`flex-1 p-2.5 rounded-2xl flex items-center space-x-2 text-left transition-all ${
+            className={`flex-1 p-2.5 rounded-2xl flex items-center space-x-2 text-left transition-colors ${
               isDarkMode
                 ? 'bg-slate-800 text-amber-300 shadow-md border border-slate-700'
                 : 'glass-panel hover:bg-white/80'
@@ -122,7 +122,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
               playSound.playClick();
               onToggleFocusMode();
             }}
-            className={`flex-1 p-2.5 rounded-2xl flex items-center space-x-2 text-left transition-all ${
+            className={`flex-1 p-2.5 rounded-2xl flex items-center space-x-2 text-left transition-colors ${
               isFocusMode
                 ? 'bg-[#007AFF] text-white shadow-md'
                 : 'glass-panel hover:bg-white/80'

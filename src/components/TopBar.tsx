@@ -135,7 +135,7 @@ export const TopBar: React.FC<Props> = ({
             playSound.playClick();
             onToggleFocusMode();
           }}
-          className={`px-2 py-0.5 rounded-full text-[11px] font-medium flex items-center space-x-1 transition-all ${
+          className={`px-2 py-0.5 rounded-full text-[11px] font-medium flex items-center space-x-1 transition-colors ${
             isFocusMode
               ? 'bg-[#007AFF] text-white shadow-xs'
               : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
@@ -153,7 +153,7 @@ export const TopBar: React.FC<Props> = ({
           playSound.playClick();
           onOpenSpotlight();
         }}
-        className="px-3 py-0.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 flex items-center space-x-2 transition-all cursor-pointer border border-black/5 dark:border-white/5"
+        className="px-3 py-0.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 flex items-center space-x-2 transition-colors cursor-pointer border border-black/5 dark:border-white/5"
       >
         <Search size={12} className="text-slate-400" />
         <span className="text-[11px]">聚焦搜索...</span>

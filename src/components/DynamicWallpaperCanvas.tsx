@@ -71,11 +71,11 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode 
 
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none">
-      {wallpaper.dynamicPreset === 'molten-metal' ? (
+      {wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === 'molten-metal' ? (
         <MoltenMetalWallpaper className="absolute inset-0" />
-      ) : wallpaper.dynamicPreset === 'threads' ? (
+      ) : wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === 'threads' ? (
         <ThreadsWallpaper className="absolute inset-0" color={effectiveDarkMode ? [0.6, 0.6, 0.7] : [1, 1, 1]} />
-      ) : wallpaper.dynamicPreset === 'plasma-wave' ? (
+      ) : wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === 'plasma-wave' ? (
         <PlasmaWaveWallpaper
           className="absolute inset-0"
           colors={effectiveDarkMode ? ['#A855F7', '#22D3EE'] : ['#C084FC', '#67E8F9']}
@@ -90,13 +90,13 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({ wallpaper, isDarkMode 
         />
       ) : (
         <div
-          className="absolute inset-0 w-full h-full transition-all duration-700"
+          className="absolute inset-0 w-full h-full transition-opacity duration-700"
           style={{ background: wallpaper.gradient || 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)' }}
         />
       )}
 
       {/* Overlay Filters */}
-      <div className="absolute inset-0 w-full h-full transition-all duration-300" style={filterStyle} />
+      <div className="absolute inset-0 w-full h-full transition-[opacity,filter] duration-300" style={filterStyle} />
       
       {/* Soft Noise Grain Overlay for Apple Matte Finish */}
       <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />

@@ -123,8 +123,8 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
   const [activeTab, setActiveTab] = useState<TabId>('dynamic');
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="桌面与屏幕保护" maxWidth="max-w-6xl">
-      <div className="flex min-h-0 flex-1">
+    <Modal isOpen={isOpen} onClose={onClose} title="桌面与屏幕保护" maxWidth="max-w-6xl" >
+      <div className="flex min-h-0 flex-1   min-h-[80vh] md:min-h-[60vh]">
         {/* 竖向 Tab 导航 */}
         <nav className="flex w-44 shrink-0 flex-col gap-1 border-r border-black/5 p-3 dark:border-white/10">
           {TABS.map((tab) => (
@@ -144,7 +144,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
         </nav>
 
         {/* 右侧内容面板 */}
-        <div className="min-w-0 flex-1 overflow-y-auto p-5">
+        <div className="min-w-0 flex-1 overflow-y-auto p-5 ">
           {activeTab === 'dynamic' ? (
             <section>
               <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
@@ -160,13 +160,16 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                         onUpdateWallpaper({
                           type: 'dynamic',
                           dynamicPreset: preset.id,
+                          // 清除静态字段，避免残留污染渲染分支。
+                          imageUrl: undefined,
                         });
-                        // 预设配置了 isDarkMode 时，必须切换暗色模式。
-                        if (preset.isDarkMode) {
+                        // 预设配置了 isDarkMode 时，强制切换到暗色模式；
+                        // 否则跟随全局模式，避免从强制深色预设切走后卡在暗色。
+                        if (preset.isDarkMode && !isDarkMode) {
                           onToggleDarkMode();
                         }
                       }}
-                      className={`group relative aspect-[4/3] overflow-hidden rounded-xl border text-left transition-all ${
+                      className={`group relative aspect-[4/3] overflow-hidden rounded-xl border text-left transition-colors ${
                         isSelected
                           ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
                           : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
@@ -211,11 +214,11 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                         onClick={() =>
                           onUpdateWallpaper(
                             w.url
-                              ? { type: 'static', gradient: w.gradient, imageUrl: w.url }
-                              : { type: 'static', gradient: w.gradient }
+                              ? { type: 'static', gradient: w.gradient, imageUrl: w.url, dynamicPreset: undefined }
+                              : { type: 'static', gradient: w.gradient, imageUrl: undefined, dynamicPreset: undefined }
                           )
                         }
-                        className={`relative aspect-[4/3] overflow-hidden rounded-lg border transition-all ${
+                        className={`relative aspect-[4/3] overflow-hidden rounded-lg border transition-[transform,colors] ${
                           isSelected
                             ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
                             : 'border-black/10 hover:scale-105 dark:border-white/10'
