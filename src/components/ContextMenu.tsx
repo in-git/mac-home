@@ -111,16 +111,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {targetWidget ? (
           <>
             <div className="px-2.5 py-1.5 mb-1 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
-              <span className="font-bold text-font-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
+              <span className="font-bold text-font-sm uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
                 {targetWidget.title}
               </span>
-              <span className="text-font-xs px-1.5 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
+              <span className="text-font-sm px-1.5 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
                 {targetWidget.size}
               </span>
             </div>
 
             {/* Widget Size Switching */}
-            <div className="px-2 py-1 text-font-xs text-slate-400 font-medium">
+            <div className="px-2 py-1 text-font-sm text-slate-400 font-medium">
               调整尺寸
             </div>
             <div className="grid grid-cols-4 gap-1 px-1.5 mb-1.5">
@@ -132,7 +132,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     onResizeWidget(targetWidget.id, sz);
                     onClose();
                   }}
-                  className={`py-1 rounded-lg text-font-xs font-semibold transition-colors ${
+                  className={`py-1 rounded-lg text-font-sm font-semibold transition-colors ${
                     targetWidget.size === sz
                       ? 'bg-[#007AFF] text-white shadow-xs'
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
@@ -185,7 +185,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             <Plus size={14} className="text-[#007AFF]" />
             <span>添加小组件...</span>
           </div>
-          <span className="text-font-xs text-slate-400">›</span>
+          <span className="text-font-sm text-slate-400">›</span>
         </button>
 
         {/* Change Wallpaper */}
@@ -233,7 +233,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             )}
             <span>外观：{isDarkMode ? '深色模式' : '浅色模式'}</span>
           </div>
-          <span className="text-font-xs text-slate-400">
+          <span className="text-font-sm text-slate-400">
             {isDarkMode ? 'Dark' : 'Light'}
           </span>
         </button>
@@ -256,7 +256,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             )}
             <span>{isEditMode ? '锁定自由布局' : '调整布局'}</span>
           </div>
-          <span className="text-font-xs text-slate-400">
+          <span className="text-font-sm text-slate-400">
             {isEditMode ? '解锁中' : '已锁定'}
           </span>
         </button>

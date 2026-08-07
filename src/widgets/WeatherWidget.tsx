@@ -472,7 +472,7 @@ export const WeatherWidget: React.FC = () => {
                 {getWeatherIcon(weather.condition, 24)}
               </div>
               <div className="my-1">
-                <div className="text-3xl font-extrabold tracking-tight">
+                <div className="text-lg font-extrabold tracking-tight">
                   {weather.temp}°
                 </div>
                 <div className="text-xs font-medium text-slate-600 dark:text-slate-300 capitalize">

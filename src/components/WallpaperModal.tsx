@@ -167,11 +167,11 @@ const ThemeCarouselPicker: React.FC<{
       </div>
       <div className="mt-2.5 flex min-h-[18px] items-center gap-2 px-1">
         {isApplied ? (
-          <span className="shrink-0 rounded-full bg-[color:var(--accent)] px-2 py-0.5 text-font-xs font-semibold text-white">
+          <span className="shrink-0 rounded-full bg-[color:var(--accent)] px-2 py-0.5 text-font-sm font-semibold text-white">
             当前
           </span>
         ) : (
-          <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-font-xs font-medium text-slate-500 dark:bg-white/10 dark:text-slate-300">
+          <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-font-sm font-medium text-slate-500 dark:bg-white/10 dark:text-slate-300">
             预览
           </span>
         )}
@@ -337,12 +337,12 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                         <div className="truncate text-xs font-medium text-white">
                           {preset.name}
                         </div>
-                        <div className="truncate text-font-xs text-white/70">
+                        <div className="truncate text-font-sm text-white/70">
                           {preset.desc}
                         </div>
                       </div>
                       {isSelected && (
-                        <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-xs font-semibold text-white">
+                        <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">
                           当前
                         </div>
                       )}
@@ -400,7 +400,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                       )}
                       {isSelected && (
                         <span className="absolute inset-0 inline-flex items-center justify-center bg-black/30">
-                          <span className="rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-xs font-semibold text-white">
+                          <span className="rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">
                             当前
                           </span>
                         </span>

@@ -20,17 +20,11 @@
     --apple-radius: 18px;
     --apple-input-bg: rgba(0, 0, 0, 0.04);
 
-    /* 字号：--font-base 是唯一由设置面板写入的变量（px）。
-       其余档位全部以它为基准用 calc() 派生，因此改一处即全站缩放。 */
-    --font-base: 14px;
-    --font-xs: calc(var(--font-base) * 0.75);   /* ~10.5 / 11.25 */
-    --font-sm: calc(var(--font-base) * 0.857);  /* ~12 / 12.9 */
-    --font-md: calc(var(--font-base) * 1);       /* 14 / 15 */
-    --font-lg: calc(var(--font-base) * 1.143);   /* ~16 / 17.1 */
-    --font-xl: calc(var(--font-base) * 1.43);    /* ~20 / 21.4 */
-    --font-2xl: calc(var(--font-base) * 1.71);   /* ~24 / 25.7 */
-    --font-3xl: calc(var(--font-base) * 2.29);   /* ~32 / 34.3 */
-    --font-4xl: calc(var(--font-base) * 3.43);   /* ~48 / 51.4 */
+    /* 三档字号，由设置面板直接写入（方案 A: 12/14/16, 方案 B: 13/15/17）。
+       全站所有字号只引用这三个变量，不做任何派生。 */
+    --font-sm: 12px;
+    --font-md: 14px;
+    --font-lg: 16px;
   }
 
   .dark {
@@ -175,28 +169,19 @@
 }
 
 /* ===== 字号档位工具类 =====
-   映射到 CSS 变量 --font-sm / --font-base / --font-lg，由设置面板动态改写变量值，
-   从而实现全站统一缩放在两套方案（A: 12/14/16, B: 13/15/17）× 三档之间切换。 */
+   只引用三个 CSS 变量 --font-sm / --font-md / --font-lg，由设置面板直接改写。 */
 @layer utilities {
-  .text-font-xs { font-size: var(--font-xs); line-height: 1.3; }
   .text-font-sm { font-size: var(--font-sm); line-height: 1.35; }
-  .text-font-base { font-size: var(--font-md); line-height: 1.4; }
+  .text-font-md { font-size: var(--font-md); line-height: 1.4; }
   .text-font-lg { font-size: var(--font-lg); line-height: 1.45; }
-  .text-font-xl { font-size: var(--font-xl); line-height: 1.5; }
-  .text-font-2xl { font-size: var(--font-2xl); line-height: 1.5; }
-  .text-font-3xl { font-size: var(--font-3xl); line-height: 1.5; }
-  .text-font-4xl { font-size: var(--font-4xl); line-height: 1.5; }
 }
 
-/* Redirect Tailwind's default text-size utilities to the font-scale variables so
-   all `text-xs/sm/base/lg/xl` usages respond to the font settings. */
+/* Redirect Tailwind's default text-size utilities to the three font variables so
+   all `text-xs/sm/base/lg` usages respond to the font settings. */
 @layer base {
-  .text-xs { font-size: var(--font-xs) !important; line-height: 1.3; }
+  .text-xs { font-size: var(--font-sm) !important; line-height: 1.35; }
   .text-sm { font-size: var(--font-sm) !important; line-height: 1.35; }
   .text-base { font-size: var(--font-md) !important; line-height: 1.4; }
   .text-lg { font-size: var(--font-lg) !important; line-height: 1.45; }
-  .text-xl { font-size: var(--font-xl) !important; line-height: 1.5; }
-  .text-2xl { font-size: var(--font-2xl) !important; line-height: 1.5; }
-  .text-3xl { font-size: var(--font-3xl) !important; line-height: 1.5; }
-  .text-4xl { font-size: var(--font-4xl) !important; line-height: 1.5; }
+  .text-xl { font-size: var(--font-lg) !important; line-height: 1.45; }
 }

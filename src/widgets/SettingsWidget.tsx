@@ -36,8 +36,6 @@ export const SettingsWidget: React.FC = () => {
   const setSoundEnabled = useHomeStore((s) => s.setSoundEnabled);
   const fontVariant = useHomeStore((s) => s.fontVariant);
   const setFontVariant = useHomeStore((s) => s.setFontVariant);
-  const fontScale = useHomeStore((s) => s.fontScale);
-  const setFontScale = useHomeStore((s) => s.setFontScale);
   const openWallpaper = useHomeStore((s) => s.openWallpaper);
   const resetLayout = useHomeStore((s) => s.resetLayout);
   const widgets = useHomeStore((s) => s.widgets);
@@ -99,7 +97,7 @@ export const SettingsWidget: React.FC = () => {
             系统设置 (Settings)
           </span>
         </div>
-        <span className="text-font-xs text-slate-400 font-mono">macOS</span>
+        <span className="text-font-sm text-slate-400 font-mono">macOS</span>
       </div>
 
       {/* Toggle rows */}
@@ -120,8 +118,8 @@ export const SettingsWidget: React.FC = () => {
               {isDarkMode ? <Moon size={14} /> : <Sun size={14} />}
             </div>
             <div>
-              <div className="font-semibold text-font-xs">外观</div>
-              <div className="text-font-xs text-slate-400">
+              <div className="font-semibold text-font-sm">外观</div>
+              <div className="text-font-sm text-slate-400">
                 {isDarkMode ? '深色模式' : '浅色模式'}
               </div>
             </div>
@@ -145,8 +143,8 @@ export const SettingsWidget: React.FC = () => {
               {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
             </div>
             <div>
-              <div className="font-semibold text-font-xs">点击音效</div>
-              <div className="text-font-xs text-slate-400">
+              <div className="font-semibold text-font-sm">点击音效</div>
+              <div className="text-font-sm text-slate-400">
                 {soundEnabled ? '已开启' : '已静音'}
               </div>
             </div>
@@ -167,17 +165,17 @@ export const SettingsWidget: React.FC = () => {
               <ImageIcon size={14} />
             </div>
             <div>
-              <div className="font-semibold text-font-xs">壁纸</div>
-              <div className="text-font-xs text-slate-400">动态 / 静态</div>
+              <div className="font-semibold text-font-sm">壁纸</div>
+              <div className="text-font-sm text-slate-400">动态 / 静态</div>
             </div>
           </span>
-          <span className="text-font-xs text-slate-400">更改 ›</span>
+          <span className="text-font-sm text-slate-400">更改 ›</span>
         </button>
       </div>
 
       {/* Accent color picker */}
       <div className="glass-panel p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1.5 text-font-xs text-slate-500 mb-1.5 font-medium">
+        <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 mb-1.5 font-medium">
           <Palette size={12} />
           <span>主题色</span>
         </div>
@@ -205,15 +203,14 @@ export const SettingsWidget: React.FC = () => {
         </div>
       </div>
 
-      {/* Font size: two variants (A: 12/14/16, B: 13/15/17) × three tiers */}
+      {/* Font scheme: two options (A: 12/14/16, B: 13/15/17) */}
       <div className="glass-panel p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1.5 text-font-xs text-slate-500 mb-1.5 font-medium">
+        <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 mb-1.5 font-medium">
           <span className="text-font-sm leading-none">A</span>
-          <span>字体大小</span>
+          <span>字体方案</span>
         </div>
 
-        {/* Variant switch (A / B) */}
-        <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+        <div className="grid grid-cols-2 gap-1.5">
           {(['A', 'B'] as const).map((v) => {
             const active = fontVariant === v;
             const sample = v === 'A' ? '12 / 14 / 16' : '13 / 15 / 17';
@@ -231,36 +228,7 @@ export const SettingsWidget: React.FC = () => {
                 }`}
               >
                 <span className="text-font-sm font-bold">{v}</span>
-                <span className="text-font-xs font-mono opacity-80">{sample}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tier switch (小 / 中 / 大) */}
-        <div className="grid grid-cols-3 gap-1.5">
-          {(
-            [
-              { key: 'sm', label: '小' },
-              { key: 'base', label: '中' },
-              { key: 'lg', label: '大' },
-            ] as const
-          ).map((t) => {
-            const active = fontScale === t.key;
-            return (
-              <button
-                key={t.key}
-                onClick={() => {
-                  playSound.playClick();
-                  setFontScale(t.key);
-                }}
-                className={`py-1.5 rounded-xl border text-font-xs font-medium transition-colors ${
-                  active
-                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
-                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
-                }`}
-              >
-                {t.label}
+                <span className="text-font-sm font-mono opacity-80">{sample}</span>
               </button>
             );
           })}
@@ -270,7 +238,7 @@ export const SettingsWidget: React.FC = () => {
       {/* Export layout */}
       <button
         onClick={handleExport}
-        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-xs font-medium"
+        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-sm font-medium"
       >
         <Download size={12} className="text-slate-500" />
         <span className="text-slate-500">导出布局</span>
@@ -279,7 +247,7 @@ export const SettingsWidget: React.FC = () => {
       {/* Reset */}
       <button
         onClick={handleReset}
-        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-xs font-medium"
+        className="mt-2 w-full flex items-center justify-center space-x-1.5 p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors text-font-sm font-medium"
       >
         <RotateCcw
           size={12}

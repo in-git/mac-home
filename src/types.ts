@@ -1,13 +1,11 @@
-// 字号方案：两套基准（A: 12/14/16, B: 13/15/17），三档缩放（sm/base/lg）。
+// 字体方案（两种），每方案给出三档字号（直接写入 CSS 变量，不做派生）：
+//   A → --font-sm 12 / --font-md 14 / --font-lg 16
+//   B → --font-sm 13 / --font-md 15 / --font-lg 17
 export type FontVariant = 'A' | 'B';
-export type FontScale = 'sm' | 'base' | 'lg';
 
-// 基准字号（px）：选小/中/大档位时，方案 A 取 12/14/16，方案 B 取 13/15/17。
-// 该值被写入 CSS 变量 --font-base，全站所有字号都以它为基准用 calc() 派生，
-// 因此设置只改这一个变量即可整体缩放。
-export const FONT_BASE_PX: Record<FontVariant, Record<FontScale, number>> = {
-  A: { sm: 12, base: 14, lg: 16 },
-  B: { sm: 13, base: 15, lg: 17 },
+export const FONT_TIER_PX: Record<FontVariant, { sm: number; md: number; lg: number }> = {
+  A: { sm: 12, md: 14, lg: 16 },
+  B: { sm: 13, md: 15, lg: 17 },
 };
 
 export type WidgetType =

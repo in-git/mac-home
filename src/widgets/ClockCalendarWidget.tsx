@@ -58,7 +58,7 @@ export const ClockCalendarWidget: React.FC = () => {
             playSound.playClick();
             setIsDigitalMode(!isDigitalMode);
           }}
-          className="flex items-center space-x-1 text-font-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+          className="flex items-center space-x-1 text-font-sm text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
         >
           <span>{isDigitalMode ? '数字时钟' : '模拟表盘'}</span>
         </button>
@@ -68,7 +68,7 @@ export const ClockCalendarWidget: React.FC = () => {
       <div className="my-2 flex items-center justify-center">
         {isDigitalMode ? (
           <div className="text-center">
-            <div className="text-3xl font-extrabold tracking-tight font-mono text-[#007AFF] drop-shadow-xs">
+            <div className="text-lg font-extrabold tracking-tight font-mono text-[#007AFF] drop-shadow-xs">
               {formattedTime}
             </div>
             <div className="text-xs font-medium text-slate-500 mt-1">{formattedDate}</div>
@@ -99,7 +99,7 @@ export const ClockCalendarWidget: React.FC = () => {
 
       {/* Mini Calendar Grid */}
       <div className="pt-2 border-t border-black/5 dark:border-white/10 text-xs">
-        <div className="grid grid-cols-7 gap-1 text-center font-medium text-slate-400 text-font-xs mb-1">
+        <div className="grid grid-cols-7 gap-1 text-center font-medium text-slate-400 text-font-sm mb-1">
           <span>日</span>
           <span>一</span>
           <span>二</span>
@@ -108,7 +108,7 @@ export const ClockCalendarWidget: React.FC = () => {
           <span>五</span>
           <span>六</span>
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-font-xs">
+        <div className="grid grid-cols-7 gap-1 text-center text-font-sm">
           {paddingDays.map((_, i) => (
             <div key={`pad-${i}`} className="p-1" />
           ))}

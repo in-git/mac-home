@@ -100,7 +100,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                 {t.label}
               </span>
               {disabled && (
-                <span className="text-font-xs text-slate-400">已添加</span>
+                <span className="text-font-sm text-slate-400">已添加</span>
               )}
             </button>
           );

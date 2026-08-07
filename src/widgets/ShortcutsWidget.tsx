@@ -244,7 +244,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               >
                 {getIcon(item.iconName, 'w-[30%] h-[30%]')}
               </div>
-              <span className="font-semibold text-font-xs truncate w-full mt-1 text-slate-800 dark:text-slate-100">
+              <span className="font-semibold text-font-sm truncate w-full mt-1 text-slate-800 dark:text-slate-100">
                 {item.title}
               </span>
 
@@ -260,7 +260,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         </div>
       </div>
 
-      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex justify-between items-center text-font-xs text-slate-400">
+      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex justify-between items-center text-font-sm text-slate-400">
         <span>已关联 {shortcuts.length} 个书签</span>
         <span className="flex items-center space-x-1">
           <ExternalLink size={10} />

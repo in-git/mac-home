@@ -9,7 +9,7 @@ import { TopBar } from './components/TopBar';
 import { WallpaperModal } from './components/WallpaperModal';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
-import { FONT_SCALE_PX } from './types';
+import { FONT_TIER_PX } from './types';
 
 export default function App() {
   // Persisted data + actions are handled by the zustand store.
@@ -29,7 +29,6 @@ export default function App() {
   const themeColor = useHomeStore((s) => s.themeColor);
   const setThemeColor = useHomeStore((s) => s.setThemeColor);
   const fontVariant = useHomeStore((s) => s.fontVariant);
-  const fontScale = useHomeStore((s) => s.fontScale);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -54,12 +53,14 @@ export default function App() {
     root.style.setProperty('--accent', themeColor);
   }, [isDarkMode, themeColor]);
 
-  // Drive the single font-size CSS variable from the chosen font variant + scale.
-  // --font-base is the only source of truth; every other size is derived via calc().
+  // Write the three font-size CSS variables directly from the chosen font variant.
   useEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty('--font-base', `${FONT_BASE_PX[fontVariant][fontScale]}px`);
-  }, [fontVariant, fontScale]);
+    const t = FONT_TIER_PX[fontVariant];
+    root.style.setProperty('--font-sm', `${t.sm}px`);
+    root.style.setProperty('--font-md', `${t.md}px`);
+    root.style.setProperty('--font-lg', `${t.lg}px`);
+  }, [fontVariant]);
 
   // Register the "添加组件" action by widget id so IconWidget can resolve it at
   // click time via getWidgetAction('widget-add'), independent of localStorage.

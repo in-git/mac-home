@@ -180,7 +180,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
 
         <div className="flex items-center space-x-2">
           {/* 模型名切换或指示 */}
-          <span className="text-font-xs px-2 py-0.5 rounded-[8px] bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono">
+          <span className="text-font-sm px-2 py-0.5 rounded-[8px] bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono">
             {model}
           </span>
           <button
@@ -234,7 +234,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
                 >
                   {msg.content}
                 </div>
-                <span className="text-font-xs text-slate-400 mt-1 px-0.5">
+                <span className="text-font-sm text-slate-400 mt-1 px-0.5">
                   {msg.timestamp}
                 </span>
               </div>

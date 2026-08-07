@@ -223,7 +223,7 @@ export const StickyNotesWidget: React.FC<Props> = ({ notes, onUpdateNotes }) => 
           </div>
 
           {/* Footer timestamp */}
-          <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-xs opacity-60">
+          <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-sm opacity-60">
             <span className="flex items-center space-x-1">
               <Calendar size={10} />
               <span>更新时间: {activeNote.updatedAt}</span>

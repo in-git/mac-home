@@ -22,14 +22,14 @@ const DEFAULT_ICON = {
 // caption stay proportional — large 1/6 tile reads big, tiny 1/16 tile shrinks
 // both the icon and its text together. The 1:16 tile is icon-only (no label).
 const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
-  'icon-1-8': { glyph: 'text-4xl', label: 'text-font-sm' },
-  'icon-1-16': { glyph: 'text-2xl', label: 'text-font-sm' },
+  'icon-1-8': { glyph: 'text-lg', label: 'text-font-sm' },
+  'icon-1-16': { glyph: 'text-lg', label: 'text-font-sm' },
   // Fallback sizes (non-icon tiles) — kept for type completeness; the icon-grid
   // widget only ever receives icon-* sizes.
-  sm: { glyph: 'text-3xl', label: 'text-font-sm' },
-  third: { glyph: 'text-3xl', label: 'text-font-sm' },
-  wide: { glyph: 'text-3xl', label: 'text-font-sm' },
-  large: { glyph: 'text-3xl', label: 'text-font-sm' },
+  sm: { glyph: 'text-lg', label: 'text-font-sm' },
+  third: { glyph: 'text-lg', label: 'text-font-sm' },
+  wide: { glyph: 'text-lg', label: 'text-font-sm' },
+  large: { glyph: 'text-lg', label: 'text-font-sm' },
 };
 
 // When true the tile renders only the glyph (no text label). Used for the

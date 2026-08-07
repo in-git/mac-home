@@ -89,7 +89,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Widget Commands */}
             {widgetCommands.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   功能 & 小组件
                 </div>
                 {widgetCommands.map((w, i) => {
@@ -115,7 +115,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Notes Results */}
             {filteredNotes.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   便签卡片 ({filteredNotes.length})
                 </div>
                 {filteredNotes.map((n) => (
@@ -152,7 +152,7 @@ export const SpotlightModal: React.FC<Props> = ({
                   <ExternalLink size={14} />
                   <span>在网页中搜索 "{query}"</span>
                 </div>
-                <span className="text-font-xs opacity-70">Enter ⏎</span>
+                <span className="text-font-sm opacity-70">Enter ⏎</span>
               </a>
             )}
           </div>

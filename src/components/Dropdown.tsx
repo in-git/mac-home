@@ -50,7 +50,7 @@ export function Dropdown({ value, options, onChange, className = '' }: DropdownP
       onClick={handleClick}
       onMouseDown={(e) => e.stopPropagation()}
       title={options.length > 1 ? `当前占比 ${current.label} · 点击切换` : `占比 ${current.label}`}
-      className={`flex items-center gap-1 rounded-[10px] px-1.5 py-1 text-font-xs font-medium text-slate-700 transition-colors hover:bg-black/5 dark:text-slate-200 dark:hover:bg-white/10 ${className}`}
+      className={`flex items-center gap-1 rounded-[10px] px-1.5 py-1 text-font-sm font-medium text-slate-700 transition-colors hover:bg-black/5 dark:text-slate-200 dark:hover:bg-white/10 ${className}`}
     >
       <Maximize2 size={12} className="shrink-0 text-slate-400 dark:text-slate-500" />
       <span className="select-none">{current.label}</span>

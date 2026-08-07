@@ -1,6 +1,7 @@
-import { Bluetooth, Moon, Sliders, Sun, Volume2, Wifi } from 'lucide-react';
+import { Bluetooth, Moon, Sliders, Sun, Volume2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { playSound } from '../utils/sound';
+import { useHomeStore } from '../store/useHomeStore';
 
 interface Props {
   isDarkMode: boolean;
@@ -11,8 +12,9 @@ export const ControlCenterWidget: React.FC<Props> = ({
   isDarkMode,
   onToggleDarkMode,
 }) => {
-  const [wifiEnabled, setWifiEnabled] = useState(true);
   const [btEnabled, setBtEnabled] = useState(true);
+  const fontVariant = useHomeStore((s) => s.fontVariant);
+  const setFontVariant = useHomeStore((s) => s.setFontVariant);
   const [brightness, setBrightness] = useState(85);
   const [volume, setVolume] = useState(70);
 
@@ -23,7 +25,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
         <div className="flex items-center space-x-2">
           <Sliders size={16} className="text-[#007AFF]" />
           <span className="font-bold text-sm tracking-tight">
-            控制中心 (Control Center)
+            控制中心 
           </span>
         </div>
         <span className="text-font-sm text-slate-400 font-mono">
@@ -33,33 +35,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
 
       {/* Grid Controls */}
       <div className="grid grid-cols-2 gap-2 my-2">
-        {/* Connectivity 2x2 Box */}
+        {/* Connectivity Box */}
         <div className="glass-panel p-2.5 rounded-2xl space-y-2">
-          {/* Wifi */}
-          <button
-            onClick={() => {
-              playSound.playClick();
-              setWifiEnabled(!wifiEnabled);
-            }}
-            className="w-full flex items-center space-x-2 text-left"
-          >
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                wifiEnabled
-                  ? 'bg-[#007AFF] text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-white/10 text-slate-400'
-              }`}
-            >
-              <Wifi size={14} />
-            </div>
-            <div>
-              <div className="font-semibold text-font-sm">Wi-Fi</div>
-              <div className="text-font-sm text-slate-400">
-                {wifiEnabled ? '5G_Apple_Studio' : '已关闭'}
-              </div>
-            </div>
-          </button>
-
           {/* Bluetooth */}
           <button
             onClick={() => {
