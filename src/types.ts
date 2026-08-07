@@ -80,7 +80,8 @@ export type DynamicPreset =
   | 'floating-geometry'
   | 'tessellation'
   | 'molten-metal'
-  | 'threads';
+  | 'threads'
+  | 'plasma-wave';
 
 export interface WallpaperConfig {
   type: WallpaperType;

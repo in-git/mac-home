@@ -187,7 +187,14 @@ export function getWallpaperEffect(id: string): WallpaperEffect {
     return WALLPAPER_EFFECTS[id] ?? DEFAULT_EFFECT;
 }
 
-export const dynamicPresets: { id: DynamicPreset; name: string; desc: string; previewColor: string }[] = [
+export const dynamicPresets: {
+    id: DynamicPreset;
+    name: string;
+    desc: string;
+    previewColor: string;
+    /** 若该预设固定使用深色渲染，则设为 true，覆盖全局浅/深色模式。 */
+    isDarkMode?: boolean;
+}[] = [
     {
         id: 'aurora',
         name: 'Sonoma 极光流彩 (Aurora)',
@@ -223,12 +230,21 @@ export const dynamicPresets: { id: DynamicPreset; name: string; desc: string; pr
         name: '熔金流体 (Molten Metal)',
         desc: 'WebGL 熔融金属流光与鼠标交互',
         previewColor: 'from-indigo-500 via-fuchsia-400 to-white',
+        isDarkMode: true,
     },
     {
         id: 'threads',
         name: '丝线流光 (Threads)',
         desc: 'WebGL 流体丝线与鼠标交互',
         previewColor: 'from-slate-200 via-slate-400 to-slate-600',
+        isDarkMode: true,
+    },
+    {
+        id: 'plasma-wave',
+        name: '等离子波形 (Plasma Wave)',
+        desc: 'WebGL 双色正弦等离子流体律动',
+        previewColor: 'from-purple-500 via-fuchsia-400 to-cyan-400',
+        isDarkMode: true,
     },
 
 ];
@@ -239,8 +255,5 @@ export const dynamicPresets: { id: DynamicPreset; name: string; desc: string; pr
 export const WEBGL_WALLPAPER_EFFECTS: Record<string, boolean> = {
     'molten-metal': true,
     'threads': true,
+    'plasma-wave': true,
 };
-
-export function isWebglWallpaper(id: string): boolean {
-    return !!WEBGL_WALLPAPER_EFFECTS[id];
-}

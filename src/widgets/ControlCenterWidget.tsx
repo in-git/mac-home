@@ -111,7 +111,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
               <Moon size={14} />
             </div>
             <div>
-              <div className="font-semibold text-[11px]">外观外观</div>
+              <div className="font-semibold text-[11px]">浅色深色</div>
               <div className="text-[9px] opacity-70">{isDarkMode ? '深色模式' : '浅色模式'}</div>
             </div>
           </button>
