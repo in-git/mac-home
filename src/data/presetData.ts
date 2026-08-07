@@ -1,6 +1,7 @@
 import { WidgetItem, StickyNote, ReminderTask, WeatherCondition, QuickShortcut, WallpaperConfig } from '../types';
 
 export const INITIAL_WIDGETS: WidgetItem[] = [
+  { id: 'widget-search', type: 'search', title: '网络搜索', size: 'wide' },
   { id: 'widget-weather', type: 'weather', title: '天气预报', size: 'wide' },
   { id: 'widget-tasks', type: 'tasks', title: '实时提醒', size: 'large' },
   { id: 'widget-sticky', type: 'sticky-notes', title: '便签', size: 'wide' },

@@ -13,12 +13,25 @@ import {
 import { QuickShortcut } from '../types';
 import { INITIAL_SHORTCUTS } from '../data/presetData';
 import { playSound } from '../utils/sound';
+import { Modal } from '../components/Modal';
 
 export const ShortcutsWidget: React.FC = () => {
   const [shortcuts, setShortcuts] = useState<QuickShortcut[]>(INITIAL_SHORTCUTS);
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
+  const [newIcon, setNewIcon] = useState('Compass');
+  const [newColor, setNewColor] = useState('bg-gradient-to-tr from-blue-600 to-indigo-600 text-white');
+
+  const ICON_OPTIONS = ['Compass', 'Apple', 'Github', 'Palette', 'Sparkles', 'StickyNote'] as const;
+  const COLOR_OPTIONS = [
+    'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white',
+    'bg-gradient-to-tr from-pink-500 to-rose-500 text-white',
+    'bg-gradient-to-tr from-emerald-500 to-teal-500 text-white',
+    'bg-gradient-to-tr from-amber-500 to-orange-500 text-white',
+    'bg-gradient-to-tr from-violet-500 to-purple-600 text-white',
+    'bg-slate-800 text-white',
+  ];
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -37,8 +50,14 @@ export const ShortcutsWidget: React.FC = () => {
     }
   };
 
-  const handleAddShortcut = (e: React.FormEvent) => {
-    e.preventDefault();
+  const resetAddForm = () => {
+    setNewTitle('');
+    setNewUrl('');
+    setNewIcon('Compass');
+    setNewColor('bg-gradient-to-tr from-blue-600 to-indigo-600 text-white');
+  };
+
+  const handleAddShortcut = () => {
     if (!newTitle.trim() || !newUrl.trim()) return;
 
     playSound.playClick();
@@ -46,14 +65,13 @@ export const ShortcutsWidget: React.FC = () => {
       id: `sc-${Date.now()}`,
       title: newTitle.trim(),
       url: newUrl.startsWith('http') ? newUrl.trim() : `https://${newUrl.trim()}`,
-      iconName: 'Compass',
+      iconName: newIcon,
       category: '自定义',
-      bgColor: 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white',
+      bgColor: newColor,
     };
 
     setShortcuts([...shortcuts, item]);
-    setNewTitle('');
-    setNewUrl('');
+    resetAddForm();
     setShowAdd(false);
   };
 
@@ -75,7 +93,7 @@ export const ShortcutsWidget: React.FC = () => {
         <button
           onClick={() => {
             playSound.playClick();
-            setShowAdd(!showAdd);
+            setShowAdd(true);
           }}
           className="p-1 rounded-lg bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs transition-transform active:scale-95"
           title="添加网址"
@@ -84,43 +102,101 @@ export const ShortcutsWidget: React.FC = () => {
         </button>
       </div>
 
-      {/* Add Shortcut Form */}
-      {showAdd && (
-        <form onSubmit={handleAddShortcut} className="my-2 p-2.5 rounded-xl bg-black/5 dark:bg-white/10 space-y-2">
-          <input
-            type="text"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="网站名称 (如 Google)"
-            className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-800 outline-none text-xs"
-          />
-          <input
-            type="text"
-            value={newUrl}
-            onChange={(e) => setNewUrl(e.target.value)}
-            placeholder="网址 URL (https://...)"
-            className="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-800 outline-none text-xs"
-          />
-          <div className="flex justify-end space-x-2">
+      {/* Add Shortcut Modal */}
+      <Modal
+        isOpen={showAdd}
+        onClose={() => {
+          setShowAdd(false);
+          resetAddForm();
+        }}
+        title="添加快捷网址"
+        icon={<Plus size={16} className="text-[#007AFF]" />}
+        maxWidth="max-w-md"
+      >
+        <div className="p-6 space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-slate-500">网站名称</label>
+            <input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAddShortcut()}
+              placeholder="如 Google"
+              className="w-full px-3 py-2 rounded-lg bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-slate-500">网址 URL</label>
+            <input
+              type="text"
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAddShortcut()}
+              placeholder="https://..."
+              className="w-full px-3 py-2 rounded-lg bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-slate-500">图标</label>
+            <div className="grid grid-cols-6 gap-2">
+              {ICON_OPTIONS.map((name) => (
+                <button
+                  key={name}
+                  onClick={() => setNewIcon(name)}
+                  className={`p-2 rounded-lg flex items-center justify-center border transition-colors ${
+                    newIcon === name
+                      ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
+                      : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  {getIcon(name)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-slate-500">颜色</label>
+            <div className="grid grid-cols-6 gap-2">
+              {COLOR_OPTIONS.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setNewColor(c)}
+                  className={`h-8 rounded-lg ${c} border-2 transition-transform ${
+                    newColor === c ? 'border-[color:var(--accent)] scale-105' : 'border-transparent'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-2 pt-2">
             <button
               type="button"
-              onClick={() => setShowAdd(false)}
-              className="px-2.5 py-1 rounded-lg text-slate-500 hover:bg-black/5"
+              onClick={() => {
+                setShowAdd(false);
+                resetAddForm();
+              }}
+              className="px-3 py-1.5 rounded-lg text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             >
               取消
             </button>
             <button
-              type="submit"
-              className="px-3 py-1 rounded-lg bg-[#007AFF] text-white font-medium"
+              type="button"
+              onClick={handleAddShortcut}
+              className="px-4 py-1.5 rounded-lg bg-[#007AFF] text-white font-medium hover:bg-blue-600 transition-colors"
             >
               确定添加
             </button>
           </div>
-        </form>
-      )}
+        </div>
+      </Modal>
 
       {/* Grid of Shortcuts */}
-      <div className="grid grid-cols-3 gap-3 my-2 overflow-y-auto max-h-52 pr-1">
+      {/* auto-fill grid so the column count adapts to how many items exist;
+          each cell is aspect-square (1:1) so all tiles stay square. */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-3 my-2 overflow-y-auto max-h-52 pr-1">
         {shortcuts.map((item) => (
           <a
             key={item.id}
@@ -128,23 +204,23 @@ export const ShortcutsWidget: React.FC = () => {
             target="_blank"
             rel="noreferrer"
             onClick={() => playSound.playClick()}
-            className="group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10"
+            className="group relative flex flex-col p-2 rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10 aspect-square"
           >
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center mb-1.5 shadow-sm ${
+              className={`group/icon relative w-full flex-1 aspect-square rounded-xl flex items-center justify-center shadow-sm ${
                 item.bgColor || 'bg-slate-800 text-white'
-              } transition-transform group-hover:scale-105`}
+              } transition-transform group-hover/icon:scale-105`}
             >
               {getIcon(item.iconName)}
             </div>
-            <span className="font-semibold text-[11px] truncate w-full text-slate-800 dark:text-slate-100">
+            <span className="font-semibold text-[11px] truncate w-full mt-1 text-slate-800 dark:text-slate-100">
               {item.title}
             </span>
 
-            {/* Hover Delete */}
+            {/* Hover Delete — only when the ICON itself is hovered */}
             <button
               onClick={(e) => handleDelete(item.id, e)}
-              className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
             >
               <Trash2 size={11} />
             </button>

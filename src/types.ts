@@ -1,6 +1,7 @@
 export type WidgetType =
   | 'sticky-notes'
   | 'weather'
+  | 'search'
   | 'tasks'
   | 'clock'
   | 'shortcuts'

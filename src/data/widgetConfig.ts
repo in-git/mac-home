@@ -28,6 +28,15 @@ export interface WidgetTypeConfig {
 }
 
 export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
+  search: {
+    title: '网络搜索',
+    maxInstances: Infinity,
+    defaultSize: 'wide',
+    sizeOptions: ['wide', 'large', 'sm'],
+    isAddable: true,
+    glyph: '🔍',
+    label: '网络搜索',
+  },
   weather: {
     title: '天气预报',
     maxInstances: 1,

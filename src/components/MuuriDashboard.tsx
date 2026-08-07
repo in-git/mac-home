@@ -1,25 +1,26 @@
-import React, { useEffect, useRef } from 'react';
+import { GripHorizontal, X } from 'lucide-react';
 import Muuri from 'muuri';
+import React, { useEffect, useRef } from 'react';
 import {
+  executeWidgetAction,
+  getWidgetAction,
+  getWidgetConfig,
+} from '../data/widgetConfig';
+import {
+  ReminderTask,
+  StickyNote as StickyNoteType,
   WidgetItem,
   WidgetSize,
-  StickyNote as StickyNoteType,
-  ReminderTask
 } from '../types';
-import { getWidgetConfig, executeWidgetAction } from '../data/widgetConfig';
-import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
-import { WeatherWidget } from '../widgets/WeatherWidget';
-import { TasksWidget } from '../widgets/TasksWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
-import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { IconWidget } from '../widgets/IconWidget';
+import { SearchWidget } from '../widgets/SearchWidget';
+import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
+import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
+import { TasksWidget } from '../widgets/TasksWidget';
+import { WeatherWidget } from '../widgets/WeatherWidget';
 import { Tooltip } from './Tooltip';
-import { getWidgetAction } from '../data/widgetConfig';
-import {
-  GripHorizontal,
-  X,
-} from 'lucide-react';
 
 interface MuuriDashboardProps {
   widgets: WidgetItem[];
@@ -75,9 +76,13 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const renderWidgetContent = (widget: WidgetItem) => {
     switch (widget.type) {
       case 'sticky-notes':
-        return <StickyNotesWidget notes={notes} onUpdateNotes={onUpdateNotes} />;
+        return (
+          <StickyNotesWidget notes={notes} onUpdateNotes={onUpdateNotes} />
+        );
       case 'weather':
         return <WeatherWidget />;
+      case 'search':
+        return <SearchWidget />;
       case 'tasks':
         return <TasksWidget tasks={tasks} onUpdateTasks={onUpdateTasks} />;
       case 'clock':
@@ -173,7 +178,36 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         layoutDuration: 180,
         layoutEasing: 'cubic-bezier(0.2, 1, 0.2, 1)',
         dragSortHeuristics: {
-          sortInterval: 50
+          sortInterval: 50,
+        },
+        // Custom sort predicate.
+        // Muuri's default predicate only reorders when the dragged element
+        // OVERLAPS another item by >= 50%. So when you drag C below B into an
+        // empty gap (C barely overlaps B), the score < threshold -> null -> C
+        // snaps back. That's exactly the "can't drop C under B" bug.
+        // We instead compute the target index from the pointer's vertical
+        // position relative to every item's center, so dropping into an empty
+        // gap below B correctly inserts C right after B.
+        dragSortPredicate: (item: any, e: any) => {
+          const grid = muuriInstanceRef.current;
+          if (!grid) return null;
+          const all = grid.getItems() as any[];
+          const px = e.clientX;
+          const py = e.clientY;
+          // Walk items in current layout order; find the first item whose
+          // center is below/right of the pointer -> insert before it.
+          for (let i = 0; i < all.length; i++) {
+            const t = all[i];
+            if (t === item || !t._isActive) continue;
+            const r = t.getElement().getBoundingClientRect();
+            const cy = r.top + r.height / 2;
+            const cx = r.left + r.width / 2;
+            if (py < cy || (Math.abs(py - cy) < r.height / 2 && px < cx)) {
+              return { index: i, action: 'move' };
+            }
+          }
+          // Pointer is below every item -> append at the end.
+          return { index: all.length - 1, action: 'move' };
         },
         dragPlaceholder: {
           enabled: true,
@@ -190,8 +224,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             inner.appendChild(panel);
             el.appendChild(inner);
             return el;
-          }
-        }
+          },
+        },
       });
 
       muuriInstanceRef.current = grid;
@@ -242,7 +276,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         // Only persist when the order actually changed, otherwise a needless
         // setWidgets -> full re-render of the dashboard happens on every click.
         const orderChanged = newOrderedIds.some(
-          (id, i) => widgets[i] && widgets[i].id !== id
+          (id, i) => widgets[i] && widgets[i].id !== id,
         );
         if (!orderChanged) return;
 
@@ -317,18 +351,28 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     // Remove items that no longer exist in widgets.
     const toRemove = grid
       .getItems()
-      .filter((item) => !desiredIds.has(item.getElement().getAttribute('data-widget-id') || ''));
+      .filter(
+        (item) =>
+          !desiredIds.has(
+            item.getElement().getAttribute('data-widget-id') || '',
+          ),
+      );
     if (toRemove.length) {
       grid.remove(toRemove, { layout: false });
     }
 
     // Add newly-added widget items (React already rendered their DOM nodes).
     const existingIds = new Set(
-      grid.getItems().map((item) => item.getElement().getAttribute('data-widget-id'))
+      grid
+        .getItems()
+        .map((item) => item.getElement().getAttribute('data-widget-id')),
     );
     const addedEls = Array.from(
-      containerRef.current?.querySelectorAll('.muuri-item') || []
-    ).filter((el: Element) => !existingIds.has(el.getAttribute('data-widget-id') || ''));
+      containerRef.current?.querySelectorAll('.muuri-item') || [],
+    ).filter(
+      (el: Element) =>
+        !existingIds.has(el.getAttribute('data-widget-id') || ''),
+    );
     if (addedEls.length) {
       grid.add(addedEls as HTMLElement[], { layout: false });
     }
@@ -352,10 +396,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   return (
     <div className="w-full relative h-full">
       {/* Muuri Container */}
-      <div
-        ref={containerRef}
-        className="muuri-grid relative w-full h-full "
-      >
+      <div ref={containerRef} className="muuri-grid relative w-full h-full ">
         {widgets.map((widget) => {
           const sizeClasses = getItemSizeClasses(widget.size);
           const showHeader = widget.showHeader !== false;
@@ -370,37 +411,41 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
                 <div
-                className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
-                onClick={(e) => {
-                  // Custom onAction event: owned by the widget-card container, not
-                  // the inner icon button. When an icon-grid tile is clicked we
-                  // resolve its behaviour by id (action handler from presetData,
-                  // or a link to open). Clicks on header controls are marked
-                  // data-no-drag but still bubble here — we ignore those so the
-                  // green/red dot handlers remain authoritative.
-                  if (isEditMode) return;
-                  const target = e.target as HTMLElement;
-                  if (target.closest('[data-no-drag]')) return;
-                  // Type-level default action (optional). Resolved & executed
-                  // centrally via WIDGET_CONFIG so the trigger lives in one place.
-                  if (executeWidgetAction(widget.type)) return;
-                  const iconGrid = target.closest('[data-icon-grid]');
-                  if (!iconGrid) return;
-                  const kind = widget.iconType;
-                  if (kind === 'action') {
-                    const action = getWidgetAction(widget.id);
-                    console.log('[widget-card] action clicked', {
-                      id: widget.id,
-                      label: widget.iconLabel,
-                      glyphName: widget.iconGlyph,
-                      action,
-                    });
-                    action?.();
-                  } else if (widget.iconHref) {
-                    window.open(widget.iconHref, '_blank', 'noopener,noreferrer');
-                  }
-                }}
-              >
+                  className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 overflow-auto shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
+                  onClick={(e) => {
+                    // Custom onAction event: owned by the widget-card container, not
+                    // the inner icon button. When an icon-grid tile is clicked we
+                    // resolve its behaviour by id (action handler from presetData,
+                    // or a link to open). Clicks on header controls are marked
+                    // data-no-drag but still bubble here — we ignore those so the
+                    // green/red dot handlers remain authoritative.
+                    if (isEditMode) return;
+                    const target = e.target as HTMLElement;
+                    if (target.closest('[data-no-drag]')) return;
+                    // Type-level default action (optional). Resolved & executed
+                    // centrally via WIDGET_CONFIG so the trigger lives in one place.
+                    if (executeWidgetAction(widget.type)) return;
+                    const iconGrid = target.closest('[data-icon-grid]');
+                    if (!iconGrid) return;
+                    const kind = widget.iconType;
+                    if (kind === 'action') {
+                      const action = getWidgetAction(widget.id);
+                      console.log('[widget-card] action clicked', {
+                        id: widget.id,
+                        label: widget.iconLabel,
+                        glyphName: widget.iconGlyph,
+                        action,
+                      });
+                      action?.();
+                    } else if (widget.iconHref) {
+                      window.open(
+                        widget.iconHref,
+                        '_blank',
+                        'noopener,noreferrer',
+                      );
+                    }
+                  }}
+                >
                   {/* Widget Card Title & Control Bar */}
                   {showHeader && (
                     <div className="flex items-center justify-between mb-2">
@@ -440,12 +485,12 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                               className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-colors cursor-pointer"
                               title="移除小组件"
                             >
-                              <X size={8} className="text-black/60 opacity-0 group-hover/dot:opacity-100" />
+                              <X
+                                size={8}
+                                className="text-black/60 opacity-0 group-hover/dot:opacity-100"
+                              />
                             </button>
-
-
                           </Tooltip>
-
                         </div>
 
                         {/* Drag Handle (only shown while editing) */}
@@ -465,7 +510,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       In edit mode the content is non-interactive (clicks are
                       disabled) but the card is still draggable from this area
                       because the event passes through to the .widget-card handle. */}
-                  <div className={`flex-1 overflow-hidden pt-1${isEditMode ? ' pointer-events-none' : ''}`}>
+                  <div
+                    className={`flex-1${widget.size === 'icon-1-16' ? '' : ' pt-1'}${isEditMode ? ' pointer-events-none' : ''}`}
+                  >
                     {renderWidgetContent(widget)}
                   </div>
                 </div>
