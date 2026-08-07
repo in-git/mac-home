@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Bot, Send, Trash2, User, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
+import { Bot, RefreshCw, Send, Sparkles, Trash2, User } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { API_ENDPOINTS } from '../utils/request';
 import { playSound } from '../utils/sound';
-import { request, API_ENDPOINTS } from '../utils/request';
 
 export interface ChatMessage {
   id: string;
@@ -11,29 +11,34 @@ export interface ChatMessage {
   error?: boolean;
 }
 
-
 // 后端地址由 src/utils/request.ts 统一拼接（baseURL + API_ENDPOINTS.aiChat）
 
 interface AiChatWidgetProps {
   isDarkMode?: boolean;
 }
 
-export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }) => {
+export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
+  isDarkMode = false,
+}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
       role: 'assistant',
       content: '你好！我是 AI 大模型助手，有什么我可以帮你的吗？',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [model, setModel] = useState('qwen2.5:3b');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [model] = useState('qwen2.5:3b');
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   };
 
   useEffect(() => {
@@ -47,7 +52,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
         id: 'welcome-' + Date.now(),
         role: 'assistant',
         content: '对话记录已清空。随时向我提问吧！',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
       },
     ]);
   };
@@ -63,7 +71,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
       id: 'msg-' + Date.now(),
       role: 'user',
       content: trimmed,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     };
 
     const newHistory = [...messages, userMsg];
@@ -81,13 +92,36 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
       }));
 
     try {
-      // 使用统一封装的 request（遵循后端响应规范：自动解包 data、状态码处理、未授权跳登录）
-      const raw = await request.post<string>(API_ENDPOINTS.aiChat, {
-        model: model.trim() || undefined,
-        messages: apiMessages,
+      // 使用 fetch 请求（遵循后端响应规范：统一解包 data、非 200 抛错、401 跳转登录）
+      const baseURL = import.meta.env.VITE_API_BASE_URL ?? '';
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${baseURL}${API_ENDPOINTS.aiChat}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          model: model.trim() || undefined,
+          messages: apiMessages,
+        }),
       });
 
-      // 根据文档：raw 即 CommonResult<String> 的 data 字段（ollama 响应的 JSON 字符串）
+      const body = await res.json();
+      // 非标准结构（直接返回数据）原样透传
+      if (body == null || typeof body.code !== 'number') {
+        throw new Error('AI 服务响应格式异常');
+      }
+      // 未授权 → 跳转登录
+      if ([401, 1011007, 1011008].includes(body.code)) {
+        window.location.href = '/login';
+      }
+      if (body.code !== 200) {
+        throw new Error(body.msg || 'AI 服务请求失败');
+      }
+
+      // 根据文档：data 即 CommonResult<String> 的 data 字段（ollama 响应的 JSON 字符串）
+      const raw = body.data as string;
       let replyContent = '';
       if (typeof raw === 'string') {
         try {
@@ -106,7 +140,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
         id: 'msg-' + (Date.now() + 1),
         role: 'assistant',
         content: replyContent,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -116,7 +153,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
         id: 'err-' + Date.now(),
         role: 'assistant',
         content: `调用失败: ${err.message || '无法连接到 AI 服务'}`,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
         error: true,
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -155,7 +195,10 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
       </div>
 
       {/* 消息列表区域（按 Apple HIG 通透模糊设计） */}
-      <div className="flex-1 overflow-y-auto my-2 pr-1 space-y-3 min-h-0 text-xs select-text scrollbar-thin">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto my-2 pr-1 space-y-3 min-h-0 max-h-[400px] text-xs select-text scrollbar-thin"
+      >
         {messages.map((msg) => {
           const isUser = msg.role === 'user';
           return (
@@ -169,22 +212,24 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
                   isUser
                     ? 'bg-[#007AFF] text-white'
                     : msg.error
-                    ? 'bg-red-500 text-white'
-                    : 'bg-emerald-500 text-white'
+                      ? 'bg-red-500 text-white'
+                      : 'bg-emerald-500 text-white'
                 }`}
               >
                 {isUser ? <User size={13} /> : <Bot size={13} />}
               </div>
 
               {/* 气泡 */}
-              <div className={`max-w-[80%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+              <div
+                className={`max-w-[80%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
+              >
                 <div
                   className={`p-2.5 rounded-[14px] leading-relaxed break-words whitespace-pre-wrap ${
                     isUser
                       ? 'bg-[#007AFF] text-white rounded-tr-xs shadow-xs'
                       : msg.error
-                      ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-tl-xs border border-red-200 dark:border-red-800/40'
-                      : 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-100 rounded-tl-xs'
+                        ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-tl-xs border border-red-200 dark:border-red-800/40'
+                        : 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-100 rounded-tl-xs'
                   }`}
                 >
                   {msg.content}
@@ -205,11 +250,12 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ isDarkMode = false }
             </div>
             <div className="px-3 py-2 bg-black/5 dark:bg-white/10 rounded-[14px] rounded-tl-xs flex items-center space-x-1.5">
               <RefreshCw size={12} className="animate-spin text-[#007AFF]" />
-              <span className="text-slate-500 dark:text-slate-400">正在思考回复中...</span>
+              <span className="text-slate-500 dark:text-slate-400">
+                正在思考回复中...
+              </span>
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* 底部发送表单（遵循 12px 圆角 + 哑光底色 + Focus 蓝光圈） */}

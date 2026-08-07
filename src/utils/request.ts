@@ -78,13 +78,14 @@ function createRequest(options: RequestConfig = {}) {
   const {
     // baseURL 仅含后端根地址（不含 /api 前缀），接口 path 由 API_ENDPOINTS 提供；
     // 未配置环境变量时回退空串，即走同源相对路径。
-    baseURL = import.meta.env?.VITE_API_BASE_URL ?? '',
+    baseURL = import.meta.env.VITE_API_BASE_URL ?? '',
     getToken = () => localStorage.getItem(TOKEN_KEY),
     onUnauthorized = (code) => {
       console.warn(`[request] 未授权 (${code})，跳转登录页`);
       window.location.href = '/login';
     },
-    onError = (error) => console.error(`[request] ${error.code}: ${error.message}`, error.traceId),
+    onError = (error) =>
+      console.error(`[request] ${error.code}: ${error.message}`, error.traceId),
   } = options;
 
   const instance: AxiosInstance = axios.create({
@@ -146,17 +147,24 @@ function createRequest(options: RequestConfig = {}) {
 
   /** 通用请求方法，返回 data */
   function request<T = unknown>(config: AxiosRequestConfig): Promise<T> {
-    return instance.request<unknown, T>(config);
+    // 响应拦截器已将 body.data 解包，此处断言为 T
+    return instance.request<unknown, T>(config) as Promise<T>;
   }
 
   return {
     instance,
     get: <T = unknown>(url: string, config?: AxiosRequestConfig) =>
       request<T>({ ...config, url, method: 'GET' }),
-    post: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-      request<T>({ ...config, url, method: 'POST', data }),
-    put: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-      request<T>({ ...config, url, method: 'PUT', data }),
+    post: <T = unknown>(
+      url: string,
+      data?: unknown,
+      config?: AxiosRequestConfig,
+    ) => request<T>({ ...config, url, method: 'POST', data }),
+    put: <T = unknown>(
+      url: string,
+      data?: unknown,
+      config?: AxiosRequestConfig,
+    ) => request<T>({ ...config, url, method: 'PUT', data }),
     delete: <T = unknown>(url: string, config?: AxiosRequestConfig) =>
       request<T>({ ...config, url, method: 'DELETE' }),
     /** 分页请求：自动合并分页参数，返回完整分页结构 */
