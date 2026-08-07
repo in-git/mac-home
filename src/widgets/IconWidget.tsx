@@ -19,15 +19,20 @@ const DEFAULT_ICON = {
 
 // Glyph + label font sizes scale with the icon tile size so the emoji and
 // caption stay proportional — large 1/6 tile reads big, tiny 1/16 tile shrinks
-// both the icon and its text together.
+// both the icon and its text together. The 1:16 tile is icon-only (no label).
 const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
   'icon-1-8': { glyph: 'text-4xl', label: 'text-[11px]' },
+  'icon-1-16': { glyph: 'text-2xl', label: 'text-[9px]' },
   // Fallback sizes (non-icon tiles) — kept for type completeness; the icon-grid
   // widget only ever receives icon-* sizes.
   sm: { glyph: 'text-3xl', label: 'text-[10px]' },
   wide: { glyph: 'text-3xl', label: 'text-[10px]' },
   large: { glyph: 'text-3xl', label: 'text-[10px]' },
 };
+
+// When true the tile renders only the glyph (no text label). Used for the
+// smallest 1:16 size where the label would overflow the tiny tile.
+const ICON_ONLY_SIZES: ReadonlySet<WidgetSize> = new Set<WidgetSize>(['icon-1-16']);
 
 interface IconWidgetProps {
   editing?: boolean;
@@ -40,6 +45,10 @@ interface IconWidgetProps {
   iconGlyph?: string;
   iconLabel?: string;
   iconHref?: string;
+  // Custom tile colors. `iconTextColor` tints the glyph + label; `iconBgColor`
+  // overrides the default translucent background. Any valid CSS color accepted.
+  iconTextColor?: string;
+  iconBgColor?: string;
 }
 
 export function IconWidget({
@@ -49,15 +58,22 @@ export function IconWidget({
   iconGlyph,
   iconLabel,
   iconHref,
+  iconTextColor,
+  iconBgColor,
 }: IconWidgetProps) {
   const kind = iconType ?? DEFAULT_ICON.type;
   const glyphName = iconGlyph ?? DEFAULT_ICON.glyph;
   const label = iconLabel ?? DEFAULT_ICON.label;
   const typo = ICON_TYPOGRAPHY[size] ?? ICON_TYPOGRAPHY['icon-1-8'];
   const GlyphIcon = ICON_REGISTRY[glyphName] ?? Rocket;
+  const iconOnly = ICON_ONLY_SIZES.has(size);
 
   const title =
     kind === 'action' ? `${label}（功能）` : `${label}（打开链接）`;
+
+  // Inline style overrides for custom colors (only applied when provided).
+  const bgStyle = iconBgColor ? { backgroundColor: iconBgColor } : undefined;
+  const textStyle = iconTextColor ? { color: iconTextColor } : undefined;
 
   return (
     <button
@@ -66,14 +82,22 @@ export function IconWidget({
       // owns the custom onAction event (resolved by id via getWidgetAction).
       disabled={editing && kind !== 'action'}
       title={title}
+      style={bgStyle}
       className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 px-1 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
     >
-      <GlyphIcon className={`${typo.glyph} leading-none`} strokeWidth={1.75} />
-      <span
-        className={`max-w-full truncate font-medium text-slate-700 dark:text-slate-200 ${typo.label}`}
-      >
-        {label}
-      </span>
+      <GlyphIcon
+        className={`${typo.glyph} leading-none`}
+        strokeWidth={1.75}
+        style={textStyle}
+      />
+      {!iconOnly && (
+        <span
+          className={`max-w-full truncate font-medium text-slate-700 dark:text-slate-200 ${typo.label}`}
+          style={textStyle}
+        >
+          {label}
+        </span>
+      )}
     </button>
   );
 }

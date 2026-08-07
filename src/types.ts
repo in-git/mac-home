@@ -11,7 +11,8 @@ export type WidgetSize =
   | 'sm'      // 1/4
   | 'wide'    // 1/2
   | 'large'   // 1:1
-  | 'icon-1-8'; // 1:8
+  | 'icon-1-8'  // 1:8
+  | 'icon-1-16'; // 1:16 (纯图标, 不显示文本)
 
 // Behaviour of an `icon-grid` widget. `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.
@@ -24,6 +25,7 @@ export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
   wide: '1/2',
   large: '1:1',
   'icon-1-8': '1:8',
+  'icon-1-16': '1:16',
 };
 
 // Props shared by every widget component. `editing` reflects whether the
@@ -48,6 +50,10 @@ export interface WidgetItem {
   // Name of a lucide-react icon (e.g. 'Globe', 'Plus') rendered by IconWidget.
   iconGlyph?: string;
   iconLabel?: string;
+  // Custom colors for `icon-grid` tiles. `iconTextColor` tints the glyph + label,
+  // `iconBgColor` overrides the tile background. Both are any valid CSS color.
+  iconTextColor?: string;
+  iconBgColor?: string;
   // Action callback resolved at runtime by id (see getWidgetAction in
   // widgetConfig). Functions are not serialized to localStorage, so this field is
   // only meaningful for widgets sourced from code (INITIAL_WIDGETS).

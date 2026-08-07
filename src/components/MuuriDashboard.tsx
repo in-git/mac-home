@@ -6,7 +6,7 @@ import {
   StickyNote as StickyNoteType,
   ReminderTask
 } from '../types';
-import { getWidgetConfig } from '../data/widgetConfig';
+import { getWidgetConfig, executeWidgetAction } from '../data/widgetConfig';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget } from '../widgets/WeatherWidget';
 import { TasksWidget } from '../widgets/TasksWidget';
@@ -103,6 +103,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               iconGlyph={widget.iconGlyph}
               iconLabel={widget.iconLabel}
               iconHref={widget.iconHref}
+              iconTextColor={widget.iconTextColor}
+              iconBgColor={widget.iconBgColor}
             />
           </div>
         );
@@ -120,9 +122,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       case 'wide':
         return 'w-full lg:w-1/2'; // 1/2
       case 'large':
-        return 'w-full lg:w-1/2'; // 1:1
+        return 'w-full'; // 1:1 占满整行
       case 'icon-1-8':
         return 'w-1/4 sm:w-1/6 md:w-[12.5%] aspect-[1/1]'; // 1:8
+      case 'icon-1-16':
+        return 'w-1/6 sm:w-1/12 md:w-[6.25%] aspect-[1/1]'; // 1:16
       default:
         return 'w-full lg:w-1/2 ';
     }

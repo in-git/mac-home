@@ -86,13 +86,10 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     title: '图标',
     maxInstances: Infinity,
     defaultSize: 'icon-1-8',
-    sizeOptions: ['icon-1-8'],
+    sizeOptions: ['icon-1-8', 'icon-1-16'],
     isAddable: false,
     glyph: '🧩',
     label: '图标',
-    onAction: () => {
-      console.log('icon-grid onAction');
-    },
   },
 };
 
@@ -104,11 +101,15 @@ export function getWidgetConfig(type: WidgetType): WidgetTypeConfig {
 /**
  * Find a widget type's optional `onAction` by type and execute it if present.
  * Centralizes the type-level click trigger so callers don't reach into the
- * config object directly.
+ * config object directly. Returns `true` when an action was executed.
  */
-export function executeWidgetAction(type: WidgetType): void {
+export function executeWidgetAction(type: WidgetType): boolean {
   const entry = Object.entries(WIDGET_CONFIG).find(([t]) => t === type);
-  entry?.[1].onAction?.();
+  if (entry?.[1].onAction) {
+    entry[1].onAction();
+    return true;
+  }
+  return false;
 }
 
 /** Whether another instance of `type` may be added given the current count. */
