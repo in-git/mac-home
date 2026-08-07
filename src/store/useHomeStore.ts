@@ -4,6 +4,7 @@ import {
   WidgetItem,
   WidgetType,
   WidgetSize,
+  WIDGET_SIZE_OPTIONS,
   WallpaperConfig,
   StickyNote as StickyNoteType,
   ReminderTask,
@@ -55,17 +56,8 @@ const WIDGET_TITLE_MAP: Record<WidgetType, string> = {
   clock: '时钟日历',
   shortcuts: '快捷导航',
   'control-center': '控制中心',
+  'icon-grid': '图标导航',
   'form-showcase': 'Apple UI 表单',
-};
-
-const WIDGET_SIZE_MAP: Record<WidgetType, WidgetSize> = {
-  'sticky-notes': 'wide',
-  weather: 'wide',
-  tasks: 'large',
-  clock: 'md',
-  shortcuts: 'md',
-  'control-center': 'sm',
-  'form-showcase': 'wide',
 };
 
 export const useHomeStore = create<HomeState>()(
@@ -90,7 +82,7 @@ export const useHomeStore = create<HomeState>()(
           id: `widget-${Date.now()}`,
           type,
           title: WIDGET_TITLE_MAP[type],
-          size: WIDGET_SIZE_MAP[type],
+          size: WIDGET_SIZE_OPTIONS[type][0],
         };
         set({ widgets: [newWidget, ...widgets] });
       },

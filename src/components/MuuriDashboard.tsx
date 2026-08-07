@@ -4,6 +4,7 @@ import {
   WidgetItem,
   WidgetType,
   WidgetSize,
+  WIDGET_SIZE_OPTIONS,
   StickyNote as StickyNoteType,
   ReminderTask
 } from '../types';
@@ -13,6 +14,7 @@ import { TasksWidget } from '../widgets/TasksWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
+import { IconWidget } from '../widgets/IconWidget';
 import { AppleFormShowcase } from './AppleFormShowcase';
 import {
   Maximize2,
@@ -83,6 +85,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         );
       case 'shortcuts':
         return <ShortcutsWidget />;
+      case 'icon-grid':
+        return <IconWidget editing={isEditMode} />;
       case 'form-showcase':
         return <AppleFormShowcase />;
       default:
@@ -94,15 +98,17 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const getItemSizeClasses = (size: WidgetSize) => {
     switch (size) {
       case 'sm':
-        return 'w-full sm:w-1/2 lg:w-1/4 h-[240px]';
+        return 'w-full sm:w-1/2 lg:w-1/4';
       case 'md':
-        return 'w-full sm:w-1/2 lg:w-1/3 h-[270px]';
+        return 'w-full sm:w-1/2 lg:w-1/3';
       case 'wide':
         return 'w-full lg:w-1/2';
       case 'tall':
-        return 'w-full sm:w-1/2 lg:w-1/3 h-[420px]';
+        return 'w-full sm:w-1/2 lg:w-1/3';
       case 'large':
         return 'w-full lg:w-1/2';
+      case 'icon':
+        return 'w-1/4 sm:w-1/6 md:w-1/8';
       default:
         return 'w-full lg:w-1/2 ';
     }
@@ -315,7 +321,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            const sizeCycle: WidgetSize[] = ['sm', 'md', 'wide', 'large'];
+                            const sizeCycle = WIDGET_SIZE_OPTIONS[widget.type];
                             const nextSize =
                               sizeCycle[(sizeCycle.indexOf(widget.size) + 1) % sizeCycle.length];
                             onResizeWidget(widget.id, nextSize);
@@ -346,7 +352,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          const newSize = widget.size === 'wide' ? 'md' : 'wide';
+                          const opts = WIDGET_SIZE_OPTIONS[widget.type];
+                          const idx = opts.indexOf(widget.size);
+                          const newSize = opts[(idx + 1) % opts.length];
                           onResizeWidget(widget.id, newSize);
                         }}
                         className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity"

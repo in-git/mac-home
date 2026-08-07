@@ -11,7 +11,7 @@ import {
   RotateCcw,
   Trash2,
   Maximize2,
-  LayoutGrid,
+  AppWindow,
   Sparkles,
   Sliders,
   CloudSun,
@@ -23,7 +23,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
-import { WidgetType, WidgetSize, WidgetItem } from '../types';
+import { WidgetType, WidgetSize, WidgetItem, WIDGET_SIZE_OPTIONS, WIDGET_SIZE_LABEL } from '../types';
 import { playSound } from '../utils/sound';
 
 export interface ContextMenuPosition {
@@ -118,6 +118,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     { type: 'sticky-notes', name: '便签笔记', icon: <StickyNote size={14} className="text-yellow-500" /> },
     { type: 'clock', name: '时钟日历', icon: <Clock size={14} className="text-purple-500" /> },
     { type: 'shortcuts', name: '快捷导航', icon: <Compass size={14} className="text-emerald-500" /> },
+    { type: 'icon-grid', name: '图标', icon: <AppWindow size={14} className="text-pink-500" /> },
     { type: 'control-center', name: '控制中心', icon: <Sliders size={14} className="text-blue-500" /> },
     { type: 'form-showcase', name: 'Apple UI 表单', icon: <Sparkles size={14} className="text-indigo-500" /> },
   ];
@@ -148,7 +149,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             {/* Widget Size Switching */}
             <div className="px-2 py-1 text-[11px] text-slate-400 font-medium">调整尺寸</div>
             <div className="grid grid-cols-4 gap-1 px-1.5 mb-1.5">
-              {(['sm', 'md', 'wide', 'large'] as WidgetSize[]).map((sz) => (
+              {WIDGET_SIZE_OPTIONS[targetWidget.type].map((sz) => (
                 <button
                   key={sz}
                   onClick={() => {
@@ -162,7 +163,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  {sz.toUpperCase()}
+                  {WIDGET_SIZE_LABEL[sz]}
                 </button>
               ))}
             </div>

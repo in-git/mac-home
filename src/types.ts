@@ -5,9 +5,42 @@ export type WidgetType =
   | 'clock'
   | 'shortcuts'
   | 'control-center'
+  | 'icon-grid'
   | 'form-showcase';
 
-export type WidgetSize = 'sm' | 'md' | 'lg' | 'wide' | 'tall' | 'large';
+export type WidgetSize = 'sm' | 'md' | 'lg' | 'wide' | 'tall' | 'large' | 'icon';
+
+// Mapping between the internal size tokens and the human-readable fractions
+// shown in the UI (e.g. "1/2", "1:1"). Used for the size picker labels.
+export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
+  sm: '1/4',
+  md: '1/3',
+  lg: '1/4',
+  wide: '1/2',
+  tall: '1/3',
+  large: '1:1',
+  icon: '1/8',
+};
+
+// Each widget type exposes its own set of allowed sizes. This drives both the
+// right-click size picker and the yellow drag-handle size cycle button so that
+// every component only offers the sizes that make sense for it.
+export const WIDGET_SIZE_OPTIONS: Record<WidgetType, WidgetSize[]> = {
+  weather: ['wide', 'large'], // 1/2, 1:1
+  shortcuts: ['wide', 'md', 'large'], // 1/2, 1/3, 1:1
+  'icon-grid': ['icon'], // 1/8 (fixed)
+  'sticky-notes': ['sm', 'md', 'wide', 'large'],
+  tasks: ['sm', 'md', 'wide', 'large'],
+  clock: ['sm', 'md', 'wide', 'large'],
+  'control-center': ['sm', 'md'],
+  'form-showcase': ['sm', 'md', 'wide', 'large'],
+};
+
+// Props shared by every widget component. `editing` reflects whether the
+// dashboard is in free-layout (unlocked) mode.
+export interface WidgetProps {
+  editing?: boolean;
+}
 
 export interface WidgetItem {
   id: string;

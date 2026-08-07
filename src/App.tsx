@@ -7,7 +7,6 @@ import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { WallpaperModal } from './components/WallpaperModal';
 import { SpotlightModal } from './components/SpotlightModal';
 import { AppleFormShowcase } from './components/AppleFormShowcase';
-import { Unlock } from 'lucide-react';
 import { useHomeStore } from './store/useHomeStore';
 
 export default function App() {
@@ -93,28 +92,6 @@ export default function App() {
 
       {/* Main Desktop Dashboard Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-12 overflow-y-auto">
-        {/* Layout Mode Notification Banner */}
-        {isEditMode && (
-          <motion.div
-            initial={{ y: -10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="mb-4 p-3 rounded-2xl glass-panel bg-blue-500/10 border border-[#007AFF]/30 flex items-center justify-between text-xs text-slate-800 dark:text-slate-100"
-          >
-            <div className="flex items-center space-x-2">
-              <Unlock size={16} className="text-[#007AFF]" />
-              <span className="font-semibold">
-                已启用 Muuri 自由网格拖拽：直接按住小组件右上角图标或卡片拖动，右键可弹出菜单操作！
-              </span>
-            </div>
-            <button
-              onClick={() => setIsEditMode(false)}
-              className="px-3 py-1 rounded-xl bg-[#007AFF] text-white font-medium hover:bg-blue-600 cursor-pointer"
-            >
-              完成锁定
-            </button>
-          </motion.div>
-        )}
-
         {/* Muuri Grid Layout Engine */}
         <MuuriDashboard
           widgets={widgets}

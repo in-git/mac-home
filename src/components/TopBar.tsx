@@ -13,8 +13,6 @@ import {
   Wifi,
   Battery,
   ShieldAlert,
-  Lock,
-  Unlock,
   CloudSun,
   Plus,
   StickyNote,
@@ -232,23 +230,6 @@ export const TopBar: React.FC<Props> = ({
           <CloudSun size={13} className="text-amber-500" />
           <span>上海 {weatherTemp}</span>
         </div>
-
-        {/* Edit Mode Toggle Button */}
-        <button
-          onClick={() => {
-            playSound.playClick();
-            onToggleEditMode();
-          }}
-          className={`px-2 py-0.5 rounded-md flex items-center space-x-1 text-[11px] font-medium transition-all ${
-            isEditMode
-              ? 'bg-[#007AFF] text-white shadow-xs'
-              : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20'
-          }`}
-          title="拖拽与布局调整"
-        >
-          {isEditMode ? <Unlock size={12} /> : <Lock size={12} />}
-          <span className="hidden sm:inline">{isEditMode ? '布局中' : '锁定'}</span>
-        </button>
 
         {/* Wallpaper Picker Toggle */}
         <button
