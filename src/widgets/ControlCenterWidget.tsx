@@ -159,7 +159,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             max="100"
             value={brightness}
             onChange={(e) => setBrightness(Number(e.target.value))}
-            className="w-full accent-[#007AFF] cursor-pointer"
+            className="w-full accent-[var(--accent)] cursor-pointer"
           />
         </div>
 
@@ -177,7 +177,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             max="100"
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
-            className="w-full accent-[#007AFF] cursor-pointer"
+            className="w-full accent-[var(--accent)] cursor-pointer"
           />
         </div>
       </div>

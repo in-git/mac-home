@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Palette, Image as ImageIcon, SunMedium } from 'lucide-react';
 import { Modal } from './Modal';
-import { DynamicWallpaperCanvas } from './DynamicWallpaperCanvas';
 import MoltenMetalWallpaper from '../effects/MoltenMetal';
 import { ThreadsWallpaper } from '../effects/Threads';
 import { PlasmaWaveWallpaper } from '../effects/PlasmaWave';
@@ -18,7 +17,10 @@ interface WallpaperModalProps {
   onClose: () => void;
   wallpaper: WallpaperConfig;
   isDarkMode: boolean;
+  themeColor: string;
   onUpdateWallpaper: (patch: Partial<WallpaperConfig>) => void;
+  onUpdateThemeColor: (color: string) => void;
+  onToggleDarkMode: () => void;
 }
 
 type TabId = 'dynamic' | 'static' | 'adjust';
@@ -27,6 +29,17 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'dynamic', label: '动态效果', icon: <Palette size={16} /> },
   { id: 'static', label: '静态壁纸', icon: <ImageIcon size={16} /> },
   { id: 'adjust', label: '桌面模糊与亮度', icon: <SunMedium size={16} /> },
+];
+
+const THEME_COLORS = [
+  '#007AFF',
+  '#FF3B30',
+  '#FF9500',
+  '#FFCC00',
+  '#34C759',
+  '#AF52DE',
+  '#FF2D55',
+  '#5AC8FA',
 ];
 
 /** Live miniature of a dynamic preset — renders the REAL effect, scaled to fit. */
@@ -102,7 +115,10 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
   onClose,
   wallpaper,
   isDarkMode,
+  themeColor,
   onUpdateWallpaper,
+  onUpdateThemeColor,
+  onToggleDarkMode,
 }) => {
   const [activeTab, setActiveTab] = useState<TabId>('dynamic');
 
@@ -117,7 +133,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center space-x-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-blue-500/15 font-medium text-blue-600 dark:text-blue-300'
+                  ? 'bg-[color:var(--accent)]/15 font-medium text-[color:var(--accent)] dark:text-[color:var(--accent)]'
                   : 'text-slate-600 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10'
               }`}
             >
@@ -140,16 +156,20 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                   return (
                     <button
                       key={preset.id}
-                      onClick={() =>
+                      onClick={() => {
                         onUpdateWallpaper({
                           type: 'dynamic',
                           dynamicPreset: preset.id,
-                        })
-                      }
+                        });
+                        // 预设配置了 isDarkMode 时，必须切换暗色模式。
+                        if (preset.isDarkMode) {
+                          onToggleDarkMode();
+                        }
+                      }}
                       className={`group relative aspect-[4/3] overflow-hidden rounded-xl border text-left transition-all ${
                         isSelected
-                          ? 'border-blue-500 ring-2 ring-blue-500/40'
-                          : 'border-black/10 hover:border-blue-400/60 dark:border-white/10'
+                          ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+                          : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
                       }`}
                     >
                       <PresetLivePreview
@@ -165,7 +185,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                         </div>
                       </div>
                       {isSelected && (
-                        <div className="absolute right-2 top-2 rounded-full bg-blue-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                        <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-[10px] font-semibold text-white">
                           当前
                         </div>
                       )}
@@ -182,40 +202,49 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                   {STATIC_WALLPAPERS.map((w) => {
                     const isSelected =
-                      wallpaper.type === 'static' && wallpaper.gradient === w.gradient;
+                      wallpaper.type === 'static' &&
+                      wallpaper.gradient === w.gradient &&
+                      (wallpaper.imageUrl ?? '') === (w.url ?? '');
                     return (
                       <button
                         key={w.id}
                         onClick={() =>
-                          onUpdateWallpaper({ type: 'static', gradient: w.gradient })
+                          onUpdateWallpaper(
+                            w.url
+                              ? { type: 'static', gradient: w.gradient, imageUrl: w.url }
+                              : { type: 'static', gradient: w.gradient }
+                          )
                         }
-                      className={`aspect-[4/3] overflow-hidden rounded-lg border transition-all ${
-                        isSelected
-                          ? 'border-blue-500 ring-2 ring-blue-500/40'
-                          : 'border-black/10 hover:scale-105 dark:border-white/10'
-                      }`}
-                      style={{ background: w.gradient }}
-                      title={w.name}
-                    >
-                      {isSelected && (
-                        <span className="inline-flex h-full w-full items-center justify-center">
-                          <span className="rounded-full bg-blue-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                            当前
+                        className={`relative aspect-[4/3] overflow-hidden rounded-lg border transition-all ${
+                          isSelected
+                            ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+                            : 'border-black/10 hover:scale-105 dark:border-white/10'
+                        }`}
+                        style={{ background: w.gradient }}
+                        title={w.name}
+                      >
+                        {w.url && (
+                          <img
+                            src={w.url}
+                            alt={w.name}
+                            loading="lazy"
+                            className="absolute inset-0 h-full w-full object-cover"
+                          />
+                        )}
+                        {isSelected && (
+                          <span className="absolute inset-0 inline-flex items-center justify-center bg-black/30">
+                            <span className="rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                              当前
+                            </span>
                           </span>
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
             </section>
           ) : (
             <div className="space-y-5">
-              {/* 实时预览 */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
-                <DynamicWallpaperCanvas wallpaper={wallpaper} isDarkMode={isDarkMode} />
-              </div>
-
               {/* 模糊调节 */}
               <div>
                 <div className="mb-1.5 flex items-center justify-between text-sm">
@@ -232,7 +261,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                   max={40}
                   value={wallpaper.blur}
                   onChange={(e) => onUpdateWallpaper({ blur: Number(e.target.value) })}
-                  className="w-full accent-blue-500"
+                  className="w-full accent-[var(--accent)]"
                 />
               </div>
 
@@ -252,8 +281,48 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                   max={100}
                   value={wallpaper.brightness}
                   onChange={(e) => onUpdateWallpaper({ brightness: Number(e.target.value) })}
-                  className="w-full accent-blue-500"
+                  className="w-full accent-[var(--accent)]"
                 />
+              </div>
+
+              {/* 主题色 */}
+              <div>
+                <div className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+                  主题色
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {THEME_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => onUpdateThemeColor(c)}
+                      className={`h-7 w-7 rounded-full border transition-transform ${
+                        themeColor.toLowerCase() === c.toLowerCase()
+                          ? 'scale-110 border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+                          : 'border-black/10 hover:scale-110 dark:border-white/20'
+                      }`}
+                      style={{ background: c }}
+                      title={c}
+                    />
+                  ))}
+                  <label
+                    className="relative h-7 w-7 cursor-pointer overflow-hidden rounded-full border border-black/10 dark:border-white/20"
+                    title="自定义主题色"
+                  >
+                    <span
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
+                      }}
+                    />
+                    <input
+                      type="color"
+                      value={themeColor}
+                      onChange={(e) => onUpdateThemeColor(e.target.value)}
+                      className="absolute inset-0 cursor-pointer opacity-0"
+                    />
+                  </label>
+                </div>
               </div>
 
               <p className="text-xs text-slate-400 dark:text-slate-500">

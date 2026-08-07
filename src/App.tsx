@@ -164,7 +164,10 @@ export default function App() {
         onClose={() => setIsWallpaperModalOpen(false)}
         wallpaper={wallpaper}
         isDarkMode={isDarkMode}
+        themeColor={themeColor}
         onUpdateWallpaper={updateWallpaper}
+        onUpdateThemeColor={setThemeColor}
+        onToggleDarkMode={() => setDarkMode(!isDarkMode)}
       />
 
       {/* Spotlight Search Modal */}

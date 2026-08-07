@@ -10,7 +10,7 @@ const PlasmaWaveWallpaper: React.FC<
   Partial<PlasmaWaveProps> & { className?: string; style?: React.CSSProperties }
 > = ({ className, style, ...rest }) => (
   <div
-    className={`fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none ${
+    className={`absolute inset-0 overflow-hidden pointer-events-none select-none ${
       className ?? ''
     }`}
     style={style}
