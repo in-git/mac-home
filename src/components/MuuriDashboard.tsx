@@ -8,6 +8,7 @@ import {
 } from '../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { AiChatWidget } from '../widgets/AiChatWidget';
+import { AgentTestWidget } from '../widgets/AgentTestWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
@@ -84,6 +85,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return <WeatherWidget />;
       case 'ai-chat':
         return <AiChatWidget isDarkMode={isDarkMode} />;
+      case 'agent-test':
+        return <AgentTestWidget isDarkMode={isDarkMode} />;
       case 'clock':
         return <ClockCalendarWidget />;
       case 'clock-mini':

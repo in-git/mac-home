@@ -59,7 +59,12 @@ const setDarkModeTool: AgentTool = {
     },
   },
   run: (args) => {
-    const enabled = args.enabled;
+    let enabled = args.enabled;
+    // 模型常漏传 enabled（如返回 {"tool":"set_dark_mode","args":{}}），
+    // 缺省按「开启」处理，避免硬性报错。
+    if (enabled === undefined && Object.keys(args).length === 0) {
+      enabled = true;
+    }
     if (typeof enabled !== 'boolean') {
       return err('set_dark_mode', '参数 enabled 必须是布尔值。');
     }

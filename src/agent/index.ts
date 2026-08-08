@@ -25,12 +25,13 @@ export function listAgentTools(): AgentTool[] {
 export async function executeAgentTool(
   invocation: AgentToolInvocation,
 ): Promise<AgentToolCallResult> {
-  const tool = TOOL_MAP[invocation.name];
+  const toolName = invocation?.name;
+  const tool = toolName ? TOOL_MAP[toolName] : undefined;
   if (!tool) {
     return {
       ok: false,
-      tool: invocation.name,
-      message: `未知功能：「${invocation.name}」。可用功能：${AGENT_TOOLS.map(
+      tool: toolName ?? '',
+      message: `未知功能：「${toolName ?? 'undefined'}」。可用功能：${AGENT_TOOLS.map(
         (t) => t.name,
       ).join(', ')}`,
     };

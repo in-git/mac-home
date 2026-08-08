@@ -35,6 +35,7 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   'control-center': SlidersHorizontal,
   settings: Settings,
   'icon-grid': Plus,
+  'agent-test': Bot,
 };
 
 /** 图标气泡哑光底色（主色以 Apple 蓝 #007AFF 点缀） */
@@ -49,6 +50,7 @@ const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
   'control-center': 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
   settings: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   'icon-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+  'agent-test': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
 };
 
 /**
