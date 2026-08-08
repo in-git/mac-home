@@ -86,7 +86,10 @@ const setThemeColorTool: AgentTool = {
   run: (args) => {
     const color = args.color;
     if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
-      return err('set_theme_color', '参数 color 必须是 6 位十六进制色值，如 #007AFF。');
+      return err(
+        'set_theme_color',
+        '参数 color 必须是 6 位十六进制色值，如 #007AFF。',
+      );
     }
     applyThemeColor(color);
     return ok('set_theme_color', `已将主题色设为 ${color}。`);
@@ -150,7 +153,10 @@ const setScreenBrightnessTool: AgentTool = {
       return err('set_screen_brightness', '参数 value 必须是数字。');
     }
     applyScreenBrightness(value);
-    return ok('set_screen_brightness', `已将屏幕亮度设为 ${Math.min(100, Math.max(10, Math.round(value)))}%。`);
+    return ok(
+      'set_screen_brightness',
+      `已将屏幕亮度设为 ${Math.min(100, Math.max(10, Math.round(value)))}%。`,
+    );
   },
 };
 
@@ -161,7 +167,8 @@ const setWallpaperTool: AgentTool = {
   parameters: {
     gradient: {
       type: 'string',
-      description: 'CSS 渐变字符串，例如 linear-gradient(135deg,#0ea5e9,#6366f1)。',
+      description:
+        'CSS 渐变字符串，例如 linear-gradient(135deg,#0ea5e9,#6366f1)。',
       required: false,
     },
     imageUrl: {
@@ -195,7 +202,10 @@ const setWallpaperTool: AgentTool = {
     if (typeof args.blur === 'number') patch.blur = args.blur;
     if (typeof args.brightness === 'number') patch.brightness = args.brightness;
     if (Object.keys(patch).length === 0) {
-      return err('set_wallpaper', '至少需要提供一个壁纸参数（gradient/imageUrl/preset/blur/brightness）。');
+      return err(
+        'set_wallpaper',
+        '至少需要提供一个壁纸参数（gradient/imageUrl/preset/blur/brightness）。',
+      );
     }
     applyWallpaper(patch);
     return ok('set_wallpaper', '已更新桌面壁纸。');

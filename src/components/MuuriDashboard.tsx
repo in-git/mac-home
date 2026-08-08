@@ -7,8 +7,8 @@ import {
   getWidgetConfig,
 } from '../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
-import { AiChatWidget } from '../widgets/AiChatWidget';
 import { AgentTestWidget } from '../widgets/AgentTestWidget';
+import { AiChatWidget } from '../widgets/AiChatWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
@@ -515,7 +515,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                             (widget.type === 'sticky-notes' ||
                               widget.type === 'shortcuts' ||
                               widget.type === 'agent-test') && (
-                              <Tooltip content="无头模态放大" placement="top">
+                              <Tooltip content="最大化" placement="top">
                                 <div
                                   data-no-drag
                                   onClick={(e) => {

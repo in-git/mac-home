@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { initScheduler } from './agent/scheduler';
+import { initGlobalSound } from './utils/sound';
 import { AddWidgetModal } from './components/AddWidgetModal';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -75,6 +76,12 @@ export default function App() {
   // Restore any scheduled agent tasks that were pending before a page reload.
   useEffect(() => {
     initScheduler();
+  }, []);
+
+  // 全局点击音效：事件委托，自动命中任意 <button> 或带 data-sound 的元素。
+  useEffect(() => {
+    const dispose = initGlobalSound();
+    return dispose;
   }, []);
 
   // Wire the store's openWallpaper() to the local wallpaper modal so the

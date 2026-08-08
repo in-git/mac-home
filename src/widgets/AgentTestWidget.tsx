@@ -17,7 +17,7 @@ const TOOLS = listAgentTools();
 
 interface AgentTestWidgetProps {
   isDarkMode?: boolean;
-  /** 是否处于全屏（无头模态放大）状态，用于铺满布局 */
+  /** 是否处于全屏（最大化）状态，用于铺满布局 */
   expanded?: boolean;
 }
 

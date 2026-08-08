@@ -151,3 +151,28 @@ class SoundEngine {
 }
 
 export const playSound = new SoundEngine();
+
+/**
+ * 全局点击音效（事件委托）。
+ *
+ * 在 document 上挂一个 click 监听，自动命中「任意 <button>」或带
+ * `data-sound` 属性的非按钮元素，无需在每个组件里手动调 playClick()。
+ * 由于使用事件委托，React 后续动态挂载的元素也能自动生效。
+ *
+ * 说明：过渡期内部分组件仍保留了显式 playSound.playClick() 调用，
+ * 与新机制会「双响」；统一清理后可移除那些旧调用。
+ */
+export function initGlobalSound(): () => void {
+  const handler = (e: MouseEvent) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    // 命中 button 或显式标记 data-sound 的元素（含其任意子元素内点击）
+    const hit = target.closest('button, [data-sound]');
+    if (hit) {
+      playSound.playClick();
+    }
+  };
+  document.addEventListener('click', handler, true);
+  // 返回卸载函数，便于在 React 严格模式下避免重复绑定
+  return () => document.removeEventListener('click', handler, true);
+}
