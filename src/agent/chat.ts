@@ -1,12 +1,10 @@
 import { API_ENDPOINTS, request } from '../utils/request';
-import { listAgentTools, executeAgentTool } from './index';
+import { executeAgentTool, listAgentTools } from './index';
 import type {
-  AgentToolInvocation,
   AgentChatMessage,
-  ToolTask,
-  ModelTask,
-  ParsedModel,
   AgentChatOptions,
+  AgentToolInvocation,
+  ToolTask,
 } from './types';
 
 function now(): string {
@@ -44,114 +42,6 @@ function normalizeReply(raw: unknown): string {
   return '';
 }
 
-/** 清洗后的单条任务：tool 已解析为结构化 name/args，text 保留纯文本 */
-type CleanedTask =
-  | { type: 'tool'; name: string; args: Record<string, unknown> }
-  | { type: 'text'; content: string };
-
-/** 清洗后的模型响应 */
-interface CleanedModel {
-  tasks: CleanedTask[];
-  continue: boolean;
-}
-
-/**
- * 处理前清洗模型返回：
- * - type==='tool'：把 content（可能是 JSON 字符串 / 对象 / 带引号的字符串）
- *   统一解析为 { name, args }，并确保 args 也是 JSON 对象（若模型把 args
- *   写成了 JSON 字符串，则再解析一层）。
- * - type==='text'：原样保留。
- */
-function cleanModelResponse(parsed: ParsedModel): CleanedModel {
-  const tasks: CleanedTask[] = [];
-
-  for (const t of parsed.tasks) {
-    if (t.type === 'tool') {
-      // 1) content 可能是 JSON 字符串、对象或纯工具名，统一解析
-      let name = '';
-      let args: Record<string, unknown> = {};
-
-      const raw = t.content.trim();
-      try {
-        const obj = JSON.parse(raw);
-        if (obj && typeof obj === 'object') {
-          const o = obj as Record<string, unknown>;
-          name = typeof o.name === 'string' ? o.name : '';
-          let a = o.args;
-          // 2) args 若为 JSON 字符串，再解析一层
-          if (typeof a === 'string') {
-            try {
-              a = JSON.parse(a);
-            } catch {
-              /* 保持原字符串 */
-            }
-          }
-          args =
-            a && typeof a === 'object' ? (a as Record<string, unknown>) : {};
-        } else if (typeof obj === 'string') {
-          name = obj;
-        }
-      } catch {
-        // 不是合法 JSON → 当作纯工具名
-        name = raw;
-      }
-
-      if (name) {
-        tasks.push({ type: 'tool', name, args });
-      }
-    } else {
-      tasks.push({ type: 'text', content: t.content });
-    }
-  }
-
-  return { tasks, continue: parsed.continue };
-}
-
-/**
- * 解析模型输出，统一为 ParsedModel：
- * { task: [{ type: 'text'|'tool', content: string }, ...], continue: boolean }
- *
- * - task 中 type==='tool' 的项表示让前端执行工具（content 为工具名）
- * - task 中 type==='text' 的项表示输出到输入框给用户看的回复
- * - continue 表示是否继续下一轮对话（模型不传时按 true 处理）
- * 若解析失败或无有效任务，则整体作为一条 text 任务兜底。
- */
-function extractModelResponse(content: string): ParsedModel {
-  const text = content.trim();
-  try {
-    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-    const jsonText = fence ? fence[1].trim() : text;
-    const parsed = JSON.parse(jsonText);
-
-    if (parsed && typeof parsed === 'object') {
-      const obj = parsed as Record<string, unknown>;
-      const tasks: ModelTask[] = [];
-
-      if (Array.isArray(obj.task)) {
-        for (const t of obj.task) {
-          if (t && typeof t.type === 'string' && typeof t.content === 'string') {
-            tasks.push({
-              type: t.type === 'tool' ? 'tool' : 'text',
-              content:JSON.parse( t.content),
-            });
-          }
-        }
-      }
-
-      const cont =
-        typeof obj.continue === 'boolean' ? obj.continue : true;
-
-      if (tasks.length > 0) {
-        return { tasks, continue: cont };
-      }
-    }
-  } catch {
-    /* 非 JSON，按纯文本兜底 */
-  }
-  // 解析失败或无任务：整体作为一条 text 回复
-  return { tasks: [{ type: 'text', content: text }], continue: false };
-}
-
 /** 构造系统提示：声明可用工具 + ReAct 行为约定 */
 function makeSystemPrompt(): string {
   const toolList = listAgentTools()
@@ -168,7 +58,7 @@ ${toolList}
 你需要处理用户提出的问题，通过调用前端的工具，或者回答文本
 ## 工作规则
 你在每一轮必须按以下三种情况之一处理用户请求，并据此决定返回内容：
-返回值约束,JSON键值，绝对不能为中文，完全按照下面格式去做
+
 
 **严格约束（务必遵守，否则工具无法执行）：**
 1. 返回内容必须是合法的 JSON，且只能包含上面定义的 \`task\` 和 \`continue\` 两个顶层字段。禁止输出 编造的字段或其他任何非 JSON 格式。
@@ -176,24 +66,27 @@ ${toolList}
 3. 其中 \`name\` **只能取「可用工具」列表中真实存在的工具名**，禁止自行编造、拼接或猜测不存在的工具名（例如不要凭空创造 \`set_font_variant\` 之类的工具）。
 4. \`args\` 的**键名必须与上面对应工具的「参数」定义完全一致**，只能传该工具声明过的参数，禁止自创新的键值对，参数值须符合其类型（例如枚举值只能取规定范围内的值，不要编造如 \`"C"\` 这样未声明的值）。
 5. 若用户请求所需的工具或参数不在「可用工具」列表中，不要硬造工具，改用 \`type: 'text'\` 如实告诉用户该能力暂不支持。
-interface Response {
 
-  task: [
-    /* type: 'text',表示输出到输入框，用于回答用户问题，给用户看的 */
-    /* type: 'tool',表示让前端执行工具，不在前端展示 */
+参数解释
+ type: "text"表示输出到输入框，用于回答用户问题，给用户看的 
+  type: "tool"表示让前端执行工具，不在前端展示 
+  "continue": boolean,是否继续下一轮对话，前端会根据这个值来判断是否继续请求模型 
+绝对不能为中文，按照下面格式返回标准JSON格式，确保能解析
+
+{
+  "tasks": [
     {
-      type: 'text',
-      content: string,
-    }, {
-      type: 'tool',
-      // content 为 JSON 字符串，格式：{"name": 工具名, "args": 参数对象}
-      content: string,//前端要求返回的参数
+      "type": "tool",
+      "content": {
+        "name": "set_dark_mode",
+        "args": {
+          "enabled": true
+        }
+      }
     }
   ],
-  /* 是否继续下一轮对话，前端会根据这个值来判断是否继续请求模型 */
-  continue: boolean
+  "continue": false
 }
-
 
 ### 情况一：命令可直接执行
 如果用户的请求不需要任何外部数据、仅凭现有能力即可完成（例如「打开深色模式」「切换主题色」这类直接操作），直接调用对应工具，**无需再问模型**。返回该工具任务并把 "continue" 设为 **false**：
@@ -267,7 +160,10 @@ export async function sendAgentChat(
 
     let raw: unknown;
     try {
-      raw = await request.post<string>(API_ENDPOINTS.aiChat, { model, messages });
+      raw = await request.post<string>(API_ENDPOINTS.aiChat, {
+        model,
+        messages,
+      });
     } catch (e) {
       const errMsg: AgentChatMessage = {
         id: 'err-' + Date.now(),
@@ -281,17 +177,17 @@ export async function sendAgentChat(
     }
 
     const replyContent = normalizeReply(raw);
-    const parsed = extractModelResponse(replyContent);
-    // 处理前先清洗模型返回：tool 任务的 content 转 JSON，args 也确保为 JSON 对象
-    const cleaned = cleanModelResponse(parsed);
-console.log(cleaned);
+    // 解析 + 清洗模型返回（递归摊平嵌套 JSON），直接得到可执行结构
+    const cleaned = JSON.parse(replyContent);
 
     // 将清洗后的 task 列表拆为「工具任务」与「文本回复」
     const toolTasks: ToolTask[] = [];
     const textTasks: string[] = [];
+    console.log(cleaned);
+
     for (const t of cleaned.tasks) {
       if (t.type === 'tool') {
-        toolTasks.push({ name: t.name, args: t.args });
+        toolTasks.push({ name: t.content.name, args: t.content.args });
       } else {
         textTasks.push(t.content);
       }
@@ -317,7 +213,7 @@ console.log(cleaned);
       history.push(textMsg);
       produced.push(textMsg);
     }
-console.log(filteredToolTasks);
+    console.log(filteredToolTasks);
 
     // 执行所有工具任务，并把执行结果回填到历史
     for (const task of filteredToolTasks) {
@@ -361,10 +257,10 @@ console.log(filteredToolTasks);
 }
 
 export type {
-  AgentRole,
   AgentChatMessage,
-  ToolTask,
+  AgentChatOptions,
+  AgentRole,
   ModelTask,
   ParsedModel,
-  AgentChatOptions,
+  ToolTask,
 } from './types';

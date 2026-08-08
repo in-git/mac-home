@@ -182,3 +182,7 @@ export interface SystemStatus {
   soundEnabled: boolean;
   isLayoutLocked: boolean;
 }
+
+export interface ToolTask{
+   name: string, args:any
+}

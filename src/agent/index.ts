@@ -17,6 +17,8 @@ export type {
   ParsedModel,
   AgentChatOptions,
 } from './types';
+export type { CleanedModel, CleanedTask } from '../lib/modelResponse';
+export { parseModelResponse, toToolTasks, toTextTasks } from '../lib/modelResponse';
 export { AGENT_TOOLS } from './tools';
 
 /** 供 AI 获取当前可用的功能清单（function-calling 用） */
