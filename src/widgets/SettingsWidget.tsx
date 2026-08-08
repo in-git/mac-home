@@ -1,9 +1,11 @@
+import { AlertDialog, Button } from '@heroui/react';
 import {
   Check,
   Download,
   Image as ImageIcon,
   Moon,
   Palette,
+  RefreshCw,
   RotateCcw,
   Settings as SettingsIcon,
   Sun,
@@ -82,6 +84,7 @@ export const SettingsWidget: React.FC = () => {
   const setFontVariant = useHomeStore((s) => s.setFontVariant);
   const openWallpaper = useHomeStore((s) => s.openWallpaper);
   const resetLayout = useHomeStore((s) => s.resetLayout);
+  const resetAll = useHomeStore((s) => s.resetAll);
   const widgets = useHomeStore((s) => s.widgets);
   const notes = useHomeStore((s) => s.notes);
   const setWidgets = useHomeStore((s) => s.setWidgets);
@@ -153,6 +156,15 @@ export const SettingsWidget: React.FC = () => {
     setTimeout(() => setJustReset(false), 1500);
   };
 
+  // 重置系统：恢复全部持久化配置（由确认弹窗触发）
+  const [justResetSystem, setJustResetSystem] = useState(false);
+  const handleResetSystem = () => {
+    playSound.playClick();
+    resetAll();
+    setJustResetSystem(true);
+    setTimeout(() => setJustResetSystem(false), 1500);
+  };
+
   // 导出布局：将当前组件顺序、尺寸与便签序列化为 JSON 下载
   const handleExport = () => {
     playSound.playClick();
@@ -182,7 +194,7 @@ export const SettingsWidget: React.FC = () => {
           <SettingsIcon size={16} className="text-[#007AFF]" />
           <span className="font-bold text-sm tracking-tight">系统设置</span>
         </div>
-        <span className="text-[11px] text-slate-400 font-mono">macOS</span>
+        <span className="text-font-sm text-slate-400 font-mono">macOS</span>
       </div>
 
       {/* 两栏设置区：左列通用（分组表格），右列个性化 */}
@@ -191,7 +203,7 @@ export const SettingsWidget: React.FC = () => {
         <div className="rounded-[12px] overflow-hidden bg-black/5 dark:bg-white/10">
           {/* 外观 — 分段控制器 */}
           <div className="px-3 py-2.5">
-            <div className="flex items-center space-x-1.5 text-[11px] font-medium text-slate-500 mb-2">
+            <div className="flex items-center space-x-1.5 text-font-sm font-medium text-slate-500 mb-2">
               <Sun size={12} />
               <span>外观</span>
             </div>
@@ -238,7 +250,7 @@ export const SettingsWidget: React.FC = () => {
               </div>
               <span>
                 <span className="block font-medium">点击音效</span>
-                <span className="block text-[11px] text-slate-400">
+                <span className="block text-font-sm text-slate-400">
                   {soundEnabled ? '已开启' : '已静音'}
                 </span>
               </span>
@@ -262,12 +274,12 @@ export const SettingsWidget: React.FC = () => {
               </div>
               <span>
                 <span className="block font-medium">壁纸</span>
-                <span className="block text-[11px] text-slate-400">
+                <span className="block text-font-sm text-slate-400">
                   动态 / 静态
                 </span>
               </span>
             </span>
-            <span className="text-[11px] text-slate-400">更改 ›</span>
+            <span className="text-font-sm text-slate-400">更改 ›</span>
           </button>
         </div>
 
@@ -275,7 +287,7 @@ export const SettingsWidget: React.FC = () => {
         <div className="space-y-3">
           {/* 主题色 */}
           <div className="rounded-[12px] p-3 bg-black/5 dark:bg-white/10">
-            <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium mb-2">
+            <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium mb-2">
               <Palette size={12} />
               <span>主题色</span>
             </div>
@@ -308,14 +320,19 @@ export const SettingsWidget: React.FC = () => {
 
           {/* 字体方案 — 分段控制器 */}
           <div className="rounded-[12px] p-3 bg-black/5 dark:bg-white/10">
-            <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium mb-2">
+            <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium mb-2">
               <span className="font-bold leading-none">A</span>
               <span>字体方案</span>
             </div>
-            <div className="grid grid-cols-2 p-1 rounded-[12px] bg-white/60 dark:bg-white/5">
-              {(['A', 'B'] as const).map((v) => {
+            <div className="grid grid-cols-3 p-1 rounded-[12px] bg-white/60 dark:bg-white/5">
+              {(['A', 'B', 'C'] as const).map((v) => {
                 const active = fontVariant === v;
-                const sample = v === 'A' ? '12 / 14 / 16' : '13 / 15 / 17';
+                const sample =
+                  v === 'A'
+                    ? '12 / 14 / 16'
+                    : v === 'B'
+                      ? '13 / 15 / 17'
+                      : '14 / 16 / 18';
                 return (
                   <button
                     key={v}
@@ -343,7 +360,7 @@ export const SettingsWidget: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3 border-t border-black/5 dark:border-white/10">
         <button
           onClick={handleExport}
-          className="flex items-center justify-center space-x-1.5 p-2 rounded-[12px] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors active:scale-95 text-[11px] font-medium text-slate-500"
+          className="flex items-center justify-center space-x-1.5 p-2 rounded-[12px] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors active:scale-95 text-font-sm font-medium text-slate-500"
         >
           <Download size={12} />
           <span>导出布局</span>
@@ -351,7 +368,7 @@ export const SettingsWidget: React.FC = () => {
 
         <button
           onClick={handleReset}
-          className={`flex items-center justify-center space-x-1.5 p-2 rounded-[12px] transition-colors active:scale-95 text-[11px] font-medium ${
+          className={`flex items-center justify-center space-x-1.5 p-2 rounded-[12px] transition-colors active:scale-95 text-font-sm font-medium ${
             justReset
               ? 'bg-[#28C840]/10 text-[#28C840]'
               : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-slate-500'
@@ -386,7 +403,7 @@ export const SettingsWidget: React.FC = () => {
         >
           <Upload size={12} className="text-slate-500" />
           <span
-            className={`text-[11px] font-medium ${
+            className={`text-font-sm font-medium ${
               importMsg?.type === 'error'
                 ? 'text-red-500'
                 : importMsg?.type === 'success'
@@ -410,6 +427,48 @@ export const SettingsWidget: React.FC = () => {
             }}
           />
         </div>
+
+        {/* 重置系统 — 需弹窗确认 */}
+        <AlertDialog>
+          <AlertDialog.Trigger
+            className={`sm:col-span-2 flex items-center justify-center space-x-1.5 p-2 rounded-[12px] text-font-sm font-medium transition-colors active:scale-95 ${
+              justResetSystem
+                ? 'bg-[#28C840]/10 text-[#28C840]'
+                : 'bg-[#FF3B30]/10 text-[#FF3B30] hover:bg-[#FF3B30]/15'
+            }`}
+          >
+            <RefreshCw size={12} />
+            <span>{justResetSystem ? '已重置系统' : '重置系统'}</span>
+          </AlertDialog.Trigger>
+          <AlertDialog.Backdrop variant="blur">
+            <AlertDialog.Container>
+              <AlertDialog.Dialog>
+                <AlertDialog.Header>
+                  <AlertDialog.Heading>重置系统？</AlertDialog.Heading>
+                </AlertDialog.Header>
+                <AlertDialog.Body>
+                  将恢复默认布局、壁纸、便签、外观、主题色、点击音效、字号与屏幕亮度等所有设置，此操作不可撤销。
+                </AlertDialog.Body>
+                <AlertDialog.Footer>
+                  <Button
+                    slot="close"
+                    variant="tertiary"
+                    onPress={() => playSound.playClick()}
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    slot="close"
+                    variant="danger"
+                    onPress={handleResetSystem}
+                  >
+                    确定重置
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Dialog>
+            </AlertDialog.Container>
+          </AlertDialog.Backdrop>
+        </AlertDialog>
       </div>
     </div>
   );

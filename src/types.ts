@@ -1,11 +1,16 @@
-// 字体方案（两种），每方案给出三档字号（直接写入 CSS 变量，不做派生）：
+// 字体方案（三种），每方案给出三档字号（直接写入 CSS 变量，不做派生）：
 //   A → --font-sm 12 / --font-md 14 / --font-lg 16
 //   B → --font-sm 13 / --font-md 15 / --font-lg 17
-export type FontVariant = 'A' | 'B';
+//   C → --font-sm 14 / --font-md 16 / --font-lg 18
+export type FontVariant = 'A' | 'B' | 'C';
 
-export const FONT_TIER_PX: Record<FontVariant, { sm: number; md: number; lg: number }> = {
+export const FONT_TIER_PX: Record<
+  FontVariant,
+  { sm: number; md: number; lg: number }
+> = {
   A: { sm: 12, md: 14, lg: 16 },
   B: { sm: 13, md: 15, lg: 17 },
+  C: { sm: 14, md: 16, lg: 18 },
 };
 
 export type WidgetType =
@@ -21,11 +26,11 @@ export type WidgetType =
   | 'icon-grid';
 
 export type WidgetSize =
-  | 'sm'      // 1/4
-  | 'third'   // 1/3
-  | 'wide'    // 1/2
-  | 'large'   // 1:1
-  | 'icon-1-8'  // 1:8
+  | 'sm' // 1/4
+  | 'third' // 1/3
+  | 'wide' // 1/2
+  | 'large' // 1:1
+  | 'icon-1-8' // 1:8
   | 'icon-1-16'; // 1:16 (纯图标, 不显示文本)
 
 // Behaviour of an `icon-grid` widget. `link` → open iconHref in a new tab;
@@ -114,7 +119,13 @@ export interface WallpaperConfig {
   invert?: number; // 0 - 1
 }
 
-export type NoteColor = 'yellow' | 'mint' | 'pink' | 'lavender' | 'blue' | 'glass';
+export type NoteColor =
+  | 'yellow'
+  | 'mint'
+  | 'pink'
+  | 'lavender'
+  | 'blue'
+  | 'glass';
 
 export interface StickyNote {
   id: string;
@@ -139,8 +150,17 @@ export interface WeatherCondition {
   uvIndex: number;
   aqi: number; // Air Quality Index
   aqiLabel: 'Excellent' | 'Good' | 'Moderate' | 'Unhealthy';
-  hourlyForecast: { time: string; temp: number; condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder' }[];
-  dailyForecast: { day: string; high: number; low: number; condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder' }[];
+  hourlyForecast: {
+    time: string;
+    temp: number;
+    condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder';
+  }[];
+  dailyForecast: {
+    day: string;
+    high: number;
+    low: number;
+    condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder';
+  }[];
 }
 
 export interface QuickShortcut {

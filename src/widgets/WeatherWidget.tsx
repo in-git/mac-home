@@ -16,7 +16,7 @@ import {
   Zap,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { PRESET_WEATHER } from '../data/presetData';
+import { PRESET_DATA } from '../data/presetData';
 import { WeatherCondition } from '../types';
 import { playSound } from '../utils/sound';
 import {
@@ -162,7 +162,7 @@ export const WeatherWidget: React.FC = () => {
       .catch(() => {
         if (cancelled) return;
         setError('实时天气获取失败，显示离线数据');
-        setWeather(PRESET_WEATHER[selectedCity.name] ?? null);
+        setWeather(PRESET_DATA.PRESET_WEATHER[selectedCity.name] ?? null);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

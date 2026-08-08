@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { Modal } from '../components/Modal';
-import { INITIAL_SHORTCUTS } from '../data/presetData';
+import { PRESET_DATA } from '../data/presetData';
 import { QuickShortcut } from '../types';
 import { playSound } from '../utils/sound';
 
@@ -24,7 +24,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
 }) => {
   const [shortcuts, setShortcuts] =
-    useState<QuickShortcut[]>(INITIAL_SHORTCUTS);
+    useState<QuickShortcut[]>(PRESET_DATA.INITIAL_SHORTCUTS);
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');

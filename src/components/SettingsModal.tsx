@@ -34,7 +34,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
           exit={{ y: -20, opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.15 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-5xl glass-panel rounded-2xl shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100"
+          className="w-full max-w-5xl rounded-2xl shadow-2xl border border-black/5 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100 bg-white dark:bg-[#1C1C1E]"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-black/5 dark:border-white/10">

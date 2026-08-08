@@ -599,7 +599,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               onClick={() => setSettingsModalOpen(false)}
             >
               <div
-                className="glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden"
+                className="rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/15 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden bg-white dark:bg-[#1C1C1E]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex-1 min-h-0 overflow-y-auto">

@@ -1,7 +1,7 @@
-import { MapPin, Moon, Sliders, Sun, Volume2 } from 'lucide-react';
+import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
-import { playSound } from '../utils/sound';
 import { useHomeStore } from '../store/useHomeStore';
+import { playSound } from '../utils/sound';
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
 interface Props {
@@ -17,12 +17,14 @@ export const ControlCenterWidget: React.FC<Props> = ({
   const setFontVariant = useHomeStore((s) => s.setFontVariant);
   const screenBrightness = useHomeStore((s) => s.screenBrightness);
   const setScreenBrightness = useHomeStore((s) => s.setScreenBrightness);
-  const [volume, setVolume] = useState(70);
 
   // 定位状态：idle 未定位 / locating 请求中 / done 成功 / error 失败
   const [locating, setLocating] = useState(false);
   const [locCity, setLocCity] = useState<string | null>(null);
-  const [locCoords, setLocCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [locCoords, setLocCoords] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
 
   /** 点击位置模块：调用 Geolocation API 获取坐标，并反向解析城市名 */
   const locate = () => {
@@ -122,8 +124,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
         </button>
       </div>
 
-      {/* Sliders: Brightness & Volume */}
-      <div className="glass-panel p-3.5 rounded-2xl space-y-3">
+      {/* Brightness slider */}
+      <div className="glass-panel p-3.5 rounded-2xl">
         <div>
           <div className="flex justify-between items-center text-font-sm text-slate-500 mb-1.5">
             <span className="flex items-center space-x-1.5 font-medium">
@@ -141,27 +143,9 @@ export const ControlCenterWidget: React.FC<Props> = ({
             className="w-full accent-[var(--accent)] cursor-pointer"
           />
         </div>
-
-        <div className="pt-0.5">
-          <div className="flex justify-between items-center text-font-sm text-slate-500 mb-1.5">
-            <span className="flex items-center space-x-1.5 font-medium">
-              <Volume2 size={13} />
-              <span>声音音量</span>
-            </span>
-            <span className="font-mono">{volume}%</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
-            className="w-full accent-[var(--accent)] cursor-pointer"
-          />
-        </div>
       </div>
 
-      {/* Font size: A (12/14/16) or B (13/15/17) */}
+      {/* Font size: A (12/14/16) / B (13/15/17) / C (14/16/18) */}
       <div className="glass-panel p-3.5 rounded-2xl">
         <div className="flex items-center justify-between mb-2.5">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
@@ -171,11 +155,15 @@ export const ControlCenterWidget: React.FC<Props> = ({
             <span>字体大小</span>
           </span>
           <span className="text-font-sm text-slate-400 font-mono">
-            {fontVariant === 'A' ? '12 / 14 / 16' : '13 / 15 / 17'}
+            {fontVariant === 'A'
+              ? '12 / 14 / 16'
+              : fontVariant === 'B'
+                ? '13 / 15 / 17'
+                : '14 / 16 / 18'}
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          {(['A', 'B'] as const).map((v) => {
+        <div className="grid grid-cols-3 gap-2">
+          {(['A', 'B', 'C'] as const).map((v) => {
             const active = fontVariant === v;
             return (
               <button

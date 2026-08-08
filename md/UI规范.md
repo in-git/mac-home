@@ -5,14 +5,14 @@
 
 ## 设计总览（Design Tokens）
 
-| 维度 | 规范 |
-| --- | --- |
-| 圆角 | 统一 `12px`（分段控制器、输入框、选择器、按钮），Pill 容器内部 `10px` |
-| 底色 | 哑光磨砂：`bg-black/5 dark:bg-white/10`，hover `bg-black/10 dark:bg-white/15` |
-| 边框 | 无生硬黑框；focus 用 `ring-2 ring-[#007AFF]/50` 柔光，禁用生硬描边 |
-| 主色 | Apple 蓝 `#007AFF`，hover 加深 `bg-blue-600` |
-| 文字 | `text-slate-800 dark:text-slate-100`，辅助说明 `text-slate-400/500` |
-| 字号 | 正文 `text-xs`（12px），说明 `text-[11px]`，标签 `font-medium` |
+| 维度 | 规范                                                                                        |
+| ---- | ------------------------------------------------------------------------------------------- |
+| 圆角 | 统一 `12px`（分段控制器、输入框、选择器、按钮），Pill 容器内部 `10px`                       |
+| 底色 | 哑光磨砂：`bg-black/5 dark:bg-white/10`，hover `bg-black/10 dark:bg-white/15`               |
+| 边框 | 无生硬黑框；focus 用 `ring-2 ring-[#007AFF]/50` 柔光，禁用生硬描边                          |
+| 主色 | Apple 蓝 `#007AFF`，hover 加深 `bg-blue-600`                                                |
+| 文字 | `text-slate-800 dark:text-slate-100`，辅助说明 `text-slate-400/500`                         |
+| 字号 | 正文 `text-xs`（12px），说明 `text-[12px]`，标签 `font-medium`                              |
 | 动效 | 禁用`transition-all`，按钮 `active:scale-95`，弹窗 `animate-in fade-in slide-in-from-top-1` |
 
 ## 状态模拟（simulatedState）
@@ -45,17 +45,20 @@ const defaultFormState = {
 ## 组件清单与默认参数
 
 ### 1. 分段控制器 Segmented Control
+
 - 选项：`overview`(概览视图) / `design`(设计规范) / `settings`(组件参数)
 - 默认选中：`overview`
 - 样式：外层 `bg-black/5 dark:bg-white/10 p-1 rounded-[12px]`；选中项 `bg-white dark:bg-slate-800 text-[#007AFF] shadow-xs rounded-[10px]`
 
 ### 2. 单行输入框 Single-line Input
+
 - 默认值：`库克 (Tim Cook)`
 - 占位符：`请输入用户名...`
 - 前置图标：`User`，左内边距 `pl-9`
 - focus：`ring-2 ring-[#007AFF]/50`
 
 ### 3. 下拉选择器 Dropdown Select
+
 - 选项：
   - `macos-sonoma` → macOS Sonoma 桌面系统（默认）
   - `ios-18` → iOS 18 苹果人机工程规范
@@ -64,36 +67,44 @@ const defaultFormState = {
 - 弹窗：`glass-panel rounded-xl shadow-2xl`，选中项右侧显示蓝色 `Check`
 
 ### 4. 多行文本域 Textarea
+
 - 默认：`这是 Apple HIG macOS Sonoma & iOS 规范表单组件...`
 - 行高 `rows={3}`，`resize-y`，focus 柔光
 
 ### 5. 开关 Toggle
+
 - 默认：`true`（开启，蓝色 `bg-[#007AFF]`，关闭 `bg-slate-300 dark:bg-slate-600`）
 - 轨道 `w-11 h-6 rounded-full`，滑块 `w-5 h-5 rounded-full translate-x-5`
 
 ### 6. 复选框 Checkbox
+
 - 默认：`true`
 - 选中：`bg-[#007AFF] text-white rounded-md` + 白色对勾 `Check`（`stroke-[3]`）
 - 未选：`border-2 border-slate-300 dark:border-slate-600`
 
 ### 7. 单选组 Radio Group
+
 - 选项：`standard`(标准模式) / `pro`(专业级) / `ultra`(Ultra 极限)
 - 默认：`standard`
 - 外环 `w-4 h-4 rounded-full border`，选中内点 `w-2 h-2 rounded-full bg-[#007AFF]`
 
 ### 8. 数字输入框 Stepper
+
 - 默认：`42`（步进 +1 / -1）
 - 两侧圆角按钮 `w-7 h-7 rounded-lg`，中间 `w-14` 居中数字输入
 
 ### 9. 滑块 Slider
+
 - 默认：`75`（`min=0 max=100`），右侧显示 `{val}%` 蓝色
 - `accent-[#007AFF]`
 
 ### 10. 按钮规范
+
 - 主按钮：`px-6 py-3 rounded-[12px] bg-[#007AFF] text-white`，含 `Sparkles` 图标，文字「主提交按钮」，比例严格 2:1
 - 次要按钮：`glass-pill`，文字「次要取消按钮」
 
 ## 复刻提示
+
 - 先铺「状态模拟」切换器（default/hover/focus/disabled/error），用 `simulatedState` 驱动全局样式分支。
 - 左列放 Segmented / Input / Select / Textarea；右列放 Toggle+Checkbox / Radio / Stepper / Slider / Buttons。
 - 所有控件统一通过 `updateState(key, val)` 更新并触发点击音效。

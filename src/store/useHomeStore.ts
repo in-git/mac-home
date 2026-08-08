@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {
-  DEFAULT_WALLPAPER,
-  INITIAL_NOTES,
-  INITIAL_WIDGETS,
-} from '../data/presetData';
+import { PRESET_DATA } from '../data/presetData';
 import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
 import {
   FontVariant,
@@ -35,7 +31,7 @@ interface HomeState {
   isDarkMode: boolean;
   themeColor: string;
   soundEnabled: boolean;
-  // 字体方案：A(12/14/16) 或 B(13/15/17)
+  // 字体方案：A(12/14/16) / B(13/15/17) / C(14/16/18)
   fontVariant: FontVariant;
   // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
   screenBrightness: number;
@@ -47,6 +43,8 @@ interface HomeState {
   resizeWidget: (id: string, newSize: WidgetSize) => void;
   moveToTopWidget: (id: string) => void;
   resetLayout: () => void;
+  // 重置系统：恢复所有持久化配置（布局、壁纸、便签、外观、主题色、音效、字号、亮度）
+  resetAll: () => void;
 
   // Notes / Wallpaper / Appearance
   updateNotes: (notes: StickyNoteType[]) => void;
@@ -62,9 +60,9 @@ interface HomeState {
 export const useHomeStore = create<HomeState>()(
   persist(
     (set, get) => ({
-      widgets: readLegacy('apple_homepage_widgets', INITIAL_WIDGETS),
-      wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_WALLPAPER),
-      notes: readLegacy('apple_homepage_notes', INITIAL_NOTES),
+      widgets: readLegacy('apple_homepage_widgets', PRESET_DATA.INITIAL_WIDGETS),
+      wallpaper: readLegacy('apple_homepage_wallpaper', PRESET_DATA.DEFAULT_WALLPAPER),
+      notes: readLegacy('apple_homepage_notes', PRESET_DATA.INITIAL_NOTES),
       isDarkMode:
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches,
@@ -129,7 +127,23 @@ export const useHomeStore = create<HomeState>()(
 
       resetLayout: () => {
         playSound.playClick();
-        set({ widgets: INITIAL_WIDGETS, wallpaper: DEFAULT_WALLPAPER });
+        set({ widgets: PRESET_DATA.INITIAL_WIDGETS, wallpaper: PRESET_DATA.DEFAULT_WALLPAPER });
+      },
+
+      resetAll: () => {
+        playSound.playClick();
+        set({
+          widgets: PRESET_DATA.INITIAL_WIDGETS,
+          wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
+          notes: PRESET_DATA.INITIAL_NOTES,
+          isDarkMode:
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches,
+          themeColor: '#007AFF',
+          soundEnabled: true,
+          fontVariant: 'A',
+          screenBrightness: 100,
+        });
       },
 
       updateNotes: (notes) => set({ notes }),

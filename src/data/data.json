@@ -1,0 +1,81 @@
+{
+  "app": "macOS 主页",
+  "version": 1,
+  "exportedAt": "2026-08-07T16:32:19.706Z",
+  "widgets": [
+    {
+      "id": "widget-search",
+      "type": "search",
+      "title": "网络搜索",
+      "size": "wide"
+    },
+    {
+      "id": "widget-weather",
+      "type": "weather",
+      "title": "天气预报",
+      "size": "wide"
+    },
+    {
+      "id": "widget-sticky",
+      "type": "sticky-notes",
+      "title": "便签",
+      "size": "wide"
+    },
+    {
+      "id": "widget-clock",
+      "type": "clock",
+      "title": "时间 & 日历",
+      "size": "sm"
+    },
+    {
+      "id": "widget-clock-mini",
+      "type": "clock-mini",
+      "title": "时钟",
+      "size": "sm"
+    },
+    {
+      "id": "widget-shortcuts",
+      "type": "shortcuts",
+      "title": "快捷导航",
+      "size": "sm"
+    },
+    {
+      "id": "widget-control",
+      "type": "control-center",
+      "title": "控制中心",
+      "size": "sm"
+    },
+    {
+      "id": "widget-settings",
+      "type": "settings",
+      "title": "设置",
+      "size": "icon-1-8",
+      "showHeader": false,
+      "iconType": "action",
+      "iconGlyph": "Settings",
+      "iconLabel": "设置"
+    },
+    {
+      "id": "widget-icon",
+      "type": "icon-grid",
+      "title": "图标",
+      "size": "icon-1-8",
+      "showHeader": false,
+      "iconType": "link",
+      "iconGlyph": "Globe",
+      "iconLabel": "官网",
+      "iconHref": "https://www.apple.com"
+    },
+    {
+      "id": "widget-add",
+      "type": "icon-grid",
+      "title": "添加组件",
+      "size": "icon-1-8",
+      "showHeader": false,
+      "iconType": "action",
+      "iconGlyph": "Plus",
+      "iconLabel": "添加"
+    }
+  ],
+  "notes": []
+}

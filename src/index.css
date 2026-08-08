@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
+@import '@heroui/styles';
 @import '@fontsource-variable/geist';
 
 /* Tailwind v4 defaults `dark:` to a media-query strategy (prefers-color-scheme).

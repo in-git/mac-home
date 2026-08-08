@@ -1,6 +1,6 @@
 import { Image as ImageIcon, Palette, SunMedium } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { STATIC_WALLPAPERS } from '../data/presetData';
+import { PRESET_DATA } from '../data/presetData';
 import THEME_OPTIONS from '../data/theme.options';
 import {
   createParticles,
@@ -367,7 +367,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                 静态壁纸
               </h3>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                {STATIC_WALLPAPERS.map((w) => {
+                {PRESET_DATA.STATIC_WALLPAPERS.map((w) => {
                   const isSelected =
                     wallpaper.type === 'static' &&
                     wallpaper.gradient === w.gradient &&
