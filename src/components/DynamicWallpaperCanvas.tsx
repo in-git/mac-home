@@ -13,11 +13,14 @@ import { buildWallpaperFilter } from '../utils/wallpaperFilter';
 interface Props {
   wallpaper: WallpaperConfig;
   isDarkMode: boolean;
+  /** 屏幕亮度（10-100，100 为原始），与壁纸亮度叠加作用于背景层 */
+  screenBrightness?: number;
 }
 
 export const DynamicWallpaperCanvas: React.FC<Props> = ({
   wallpaper,
   isDarkMode,
+  screenBrightness = 100,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -81,10 +84,14 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
     };
   }, [wallpaper, effectiveDarkMode]);
 
+  // 屏幕亮度与壁纸亮度叠加：两者均为百分比，乘积 / 100 得综合亮度。
+  // 作用于整个壁纸层，动态画布、静态图片与渐变背景表现完全一致。
+  const effectiveBrightness = (wallpaper.brightness * screenBrightness) / 100;
+
   const filterStyle = {
     backdropFilter: buildWallpaperFilter({
       blur: wallpaper.blur,
-      brightness: wallpaper.brightness,
+      brightness: effectiveBrightness,
       contrast: wallpaper.contrast ?? 1,
       saturation: wallpaper.saturation ?? 1,
       hue: wallpaper.hue ?? 0,
@@ -94,7 +101,7 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
     }),
     WebkitBackdropFilter: buildWallpaperFilter({
       blur: wallpaper.blur,
-      brightness: wallpaper.brightness,
+      brightness: effectiveBrightness,
       contrast: wallpaper.contrast ?? 1,
       saturation: wallpaper.saturation ?? 1,
       hue: wallpaper.hue ?? 0,

@@ -16,7 +16,6 @@ import { PRESET_DATA } from '../data/presetData';
 import { QuickShortcut } from '../types';
 import { playSound } from '../utils/sound';
 
-
 interface ShortcutsWidgetProps {
   /** 是否处于无头模态（放大）状态：网格区域填满模态高度，图标从左上开始流式排列 */
   expanded?: boolean;
@@ -47,7 +46,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       icon: <Plus size={13} />,
       className: 'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
       onClick: () => {
-        
         setShowAdd(true);
       },
     },
@@ -140,7 +138,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const handleAddShortcut = () => {
     if (!newTitle.trim() || !newUrl.trim()) return;
 
-    
     const item: QuickShortcut = {
       id: `sc-${Date.now()}`,
       title: newTitle.trim(),
@@ -159,7 +156,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     setShortcuts(shortcuts.filter((s) => s.id !== id));
   };
 
@@ -305,11 +302,11 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
 
       {/* Grid of Shortcuts */}
       {/* 容器查询实现响应式列数：一排最多 12 个，随容器宽度依次减少
-          （2 → 3 → 4 → 6 → 8 → 10 → 12），普通卡片窄、放大模态宽，自动适配。 */}
+          （3 → 4 → 6 → 8 → 10 → 12），普通卡片窄、放大模态宽，自动适配。 */}
       <div
         className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
       >
-        <div className="grid grid-cols-2 @xs:grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
+        <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
           {shortcuts.map((item) => (
             <a
               key={item.id}

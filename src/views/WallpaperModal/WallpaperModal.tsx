@@ -6,7 +6,7 @@ import {
 import { useState } from 'react';
 import type { WallpaperConfig } from '../../types';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
-import { Modal } from '../components/Modal';
+import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from './StaticWallpaperSection';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
 

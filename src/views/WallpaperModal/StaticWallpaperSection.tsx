@@ -108,7 +108,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
       {/* 在线壁纸列表 */}
       <div>
         <h4 className="mb-2 text-xs font-semibold uppercase text-slate-400">
-          壁纸库（接口免登录）
+          壁纸库
         </h4>
         {loading && items.length === 0 ? (
           <div className="flex h-32 items-center justify-center text-slate-400">
@@ -128,10 +128,10 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
                   <button
                     key={item.id}
                     onClick={() => handleSelectWallpaper(item)}
-                    className={`group relative aspect-[4/3] overflow-hidden rounded-lg border bg-black/5 transition-transform dark:bg-white/5 ${
+                    className={`group relative  min-h-[162px] overflow-hidden rounded-lg border bg-black/5 transition-transform dark:bg-white/5 ${
                       isSelected
                         ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
-                        : 'border-black/10 hover:scale-105 dark:border-white/10'
+                        : 'border-black/10 dark:border-white/10 overflow-hidden'
                     }`}
                     title={item.title}
                   >
@@ -140,7 +140,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
                         src={imgSrc}
                         alt={item.title}
                         loading="lazy"
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover hover:scale-105 transition-transform"
                       />
                     )}
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">

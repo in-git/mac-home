@@ -1,7 +1,6 @@
 import { ArrowRight, ExternalLink, Globe, Search } from 'lucide-react';
 import React, { useState } from 'react';
 
-
 export type SearchEngineId = 'google' | 'bing' | 'baidu';
 
 export interface SearchEngine {
@@ -60,7 +59,6 @@ export const SearchWidget: React.FC = () => {
     SEARCH_ENGINES.find((e) => e.id === engineId) ?? SEARCH_ENGINES[0];
 
   const handleSelectEngine = (id: SearchEngineId) => {
-    
     setEngineId(id);
     try {
       localStorage.setItem(STORAGE_KEY, id);
@@ -74,7 +72,6 @@ export const SearchWidget: React.FC = () => {
     const trimmed = query.trim();
     if (!trimmed) return;
 
-    
     const targetUrl = currentEngine.url.replace(
       '%s',
       encodeURIComponent(trimmed),
@@ -88,7 +85,7 @@ export const SearchWidget: React.FC = () => {
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
           <Globe size={13} className="text-[#007AFF]" />
-          <span>聚合搜索</span>
+          <span>搜索</span>
         </div>
 
         {/* 12px 哑光容器 + 10px Pill 选中项 */}

@@ -1,19 +1,19 @@
 import { Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { initScheduler } from './agent/scheduler';
-import { initGlobalSound } from './utils/sound';
-import { AddWidgetModal } from './components/AddWidgetModal';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { MuuriDashboard } from './components/MuuriDashboard';
-import { SettingsModal } from './components/SettingsModal';
-import { SpotlightModal } from './components/SpotlightModal';
 import { TopBar } from './components/TopBar';
-import { WallpaperModal } from './components/WallpaperModal';
 import { registerWidgetAction } from './data/widgetConfig';
-import { useShallow } from 'zustand/react/shallow';
 import { useHomeStore } from './store/useHomeStore';
 import { FONT_TIER_PX } from './types';
+import { initGlobalSound } from './utils/sound';
+import { AddWidgetModal } from './views/AddWidgetModal';
+import { SettingsModal } from './views/SettingsModal';
+import { SpotlightModal } from './views/SpotlightModal';
+import { WallpaperModal } from './views/WallpaperModal';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -143,11 +143,14 @@ export default function App() {
     <div
       onClick={handleRootClick}
       onContextMenu={handleContextMenu}
-      style={{ filter: `brightness(${screenBrightness / 100})` }}
       className="relative h-screen w-full flex flex-col overflow-y-hidden font-sans overflow-x-hidden selection:bg-[#007AFF] selection:text-white"
     >
       {/* Dynamic Canvas Background */}
-      <DynamicWallpaperCanvas wallpaper={wallpaper} isDarkMode={isDarkMode} />
+      <DynamicWallpaperCanvas
+        wallpaper={wallpaper}
+        isDarkMode={isDarkMode}
+        screenBrightness={screenBrightness}
+      />
 
       {/* Top macOS Navigation Bar */}
       <TopBar
