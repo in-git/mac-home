@@ -303,12 +303,10 @@ export const StickyNotesWidget: React.FC<Props> = ({
                 {copied ? (
                   <>
                     <Check size={10} />
-                    <span>已复制</span>
                   </>
                 ) : (
                   <>
                     <Copy size={10} />
-                    <span>复制</span>
                   </>
                 )}
               </button>

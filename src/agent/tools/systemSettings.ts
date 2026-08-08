@@ -1,6 +1,7 @@
 import { useHomeStore } from '../../store/useHomeStore';
 import type { FontVariant, WallpaperConfig } from '../../types';
 import type { AgentTool } from '../types';
+import { ok, err } from '../result';
 
 /**
  * 系统设置（System Settings）——全局唯一的设置操作入口。
@@ -229,14 +230,6 @@ const resetSettingsTool: AgentTool = {
     return ok('reset_settings', '已将所有设置重置为默认值。');
   },
 };
-
-// 工具结果辅助
-function ok(tool: string, message: string) {
-  return { ok: true, tool, message };
-}
-function err(tool: string, message: string) {
-  return { ok: false, tool, message };
-}
 
 /** 本模块导出的所有系统设置 AI 工具 */
 export const systemSettingsTools: AgentTool[] = [
