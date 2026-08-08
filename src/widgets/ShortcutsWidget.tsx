@@ -227,7 +227,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       <div
         className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
       >
-        <div className="grid grid-cols-2 @xs:grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-8 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
+        <div className="grid grid-cols-2 @xs:grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
           {shortcuts.map((item) => (
             <a
               key={item.id}

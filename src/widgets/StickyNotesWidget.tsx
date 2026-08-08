@@ -99,7 +99,7 @@ export const StickyNotesWidget: React.FC<Props> = ({ notes, onUpdateNotes }) => 
     <div className="h-full flex flex-col justify-between text-xs p-1">
       {/* Top Header & Note Switcher Tabs */}
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-black/5 dark:border-white/10">
-        <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar max-w-[80%] pr-2">
+        <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pr-2">
           {notes.map((n) => (
             <button
               key={n.id}

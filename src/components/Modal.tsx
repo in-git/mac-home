@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { playSound } from '../utils/sound';
@@ -46,25 +47,25 @@ export const Modal: React.FC<ModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-md"
-          onMouseDown={(e) => {
-            if (closeOnBackdrop && e.target === e.currentTarget) {
-              playSound.playClick();
-              onClose();
-            }
-          }}
-        >
-          <motion.div
-            initial={{ scale: 0.92, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.92, opacity: 0 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`w-full ${maxWidth} glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col`}
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/30 backdrop-blur-md"
+            onMouseDown={(e) => {
+              if (closeOnBackdrop && e.target === e.currentTarget) {
+                playSound.playClick();
+                onClose();
+              }
+            }}
           >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              className={`w-full ${maxWidth} glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col`}
+            >
             {title && (
               <div className="px-6 py-4 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -88,6 +89,7 @@ export const Modal: React.FC<ModalProps> = ({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
