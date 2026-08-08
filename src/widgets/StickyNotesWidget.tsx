@@ -131,10 +131,22 @@ export const StickyNotesWidget: React.FC<Props> = ({ notes, onUpdateNotes }) => 
       {/* Active Note Content Area */}
       {activeNote ? (
         <div
-          className={`flex-1 rounded-2xl p-3.5 border transition-colors flex flex-col justify-between shadow-xs ${
+          className={`group relative flex-1 rounded-2xl p-3.5 border transition-colors flex flex-col justify-between shadow-xs ${
             colorStyles[activeNote.color].bg
           } ${colorStyles[activeNote.color].text}`}
         >
+          {/* 右上角悬浮删除按钮：仅 hover 时显示 */}
+          <button
+            onClick={() => {
+              playSound.playClick();
+              handleDeleteNote(activeNote.id);
+            }}
+            className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 hover:bg-red-500 transition-all"
+            title="删除便签"
+          >
+            <Trash2 size={13} />
+          </button>
+
           {/* Note Title & Action Bar */}
           <div className="flex items-center justify-between mb-2">
             <input

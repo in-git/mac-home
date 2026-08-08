@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { initScheduler } from './agent/scheduler';
 import { AddWidgetModal } from './components/AddWidgetModal';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -69,6 +70,11 @@ export default function App() {
   // click time via getWidgetAction('widget-add'), independent of localStorage.
   useEffect(() => {
     registerWidgetAction('widget-add', () => setIsAddWidgetModalOpen(true));
+  }, []);
+
+  // Restore any scheduled agent tasks that were pending before a page reload.
+  useEffect(() => {
+    initScheduler();
   }, []);
 
   // Wire the store's openWallpaper() to the local wallpaper modal so the

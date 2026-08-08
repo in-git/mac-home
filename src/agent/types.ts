@@ -5,7 +5,7 @@
  */
 
 export interface AgentToolParam {
-  type: 'string' | 'number' | 'boolean';
+  type: 'string' | 'number' | 'boolean' | 'object';
   description: string;
   enum?: string[];
   required?: boolean;

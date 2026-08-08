@@ -86,7 +86,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       case 'ai-chat':
         return <AiChatWidget isDarkMode={isDarkMode} />;
       case 'agent-test':
-        return <AgentTestWidget isDarkMode={isDarkMode} />;
+        return <AgentTestWidget isDarkMode={isDarkMode} expanded={inModal} />;
       case 'clock':
         return <ClockCalendarWidget />;
       case 'clock-mini':
@@ -513,7 +513,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                               放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
                           {enableHeadlessModal &&
                             (widget.type === 'sticky-notes' ||
-                              widget.type === 'shortcuts') && (
+                              widget.type === 'shortcuts' ||
+                              widget.type === 'agent-test') && (
                               <Tooltip content="无头模态放大" placement="top">
                                 <div
                                   data-no-drag

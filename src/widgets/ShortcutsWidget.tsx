@@ -3,16 +3,14 @@ import {
   Compass,
   ExternalLink,
   Github,
-  Maximize2,
   MoreHorizontal,
   Palette,
   Plus,
-  RotateCcw,
   Sparkles,
   StickyNote,
   Trash2,
 } from 'lucide-react';
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Modal } from '../components/Modal';
 import { PRESET_DATA } from '../data/presetData';
 import { QuickShortcut } from '../types';
@@ -29,8 +27,9 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
   onExpand,
 }) => {
-  const [shortcuts, setShortcuts] =
-    useState<QuickShortcut[]>(PRESET_DATA.INITIAL_SHORTCUTS);
+  const [shortcuts, setShortcuts] = useState<QuickShortcut[]>(
+    PRESET_DATA.INITIAL_SHORTCUTS,
+  );
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
@@ -39,66 +38,19 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white',
   );
 
-  // ---- Header 操作按钮 + 溢出测量 ----
-  // 操作按钮（按优先级从左到右）。expanded（全屏）模式下空间充足，直接展示全部；
-  // grid 模式下空间有限，放不下的会被收进「更多」。
-  const actions = expanded
-    ? [
-        {
-          key: 'add',
-          label: '添加网址',
-          icon: <Plus size={13} />,
-          className:
-            'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
-          onClick: () => {
-            playSound.playClick();
-            setShowAdd(true);
-          },
-        },
-        {
-          key: 'reset',
-          label: '重置为预设',
-          icon: <RotateCcw size={13} />,
-          className:
-            'text-slate-500 hover:bg-black/5 dark:hover:bg-white/10',
-          onClick: () => {
-            playSound.playClick();
-            setShortcuts(PRESET_DATA.INITIAL_SHORTCUTS);
-          },
-        },
-      ]
-    : [
-        {
-          key: 'add',
-          label: '添加网址',
-          icon: <Plus size={13} />,
-          className:
-            'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
-          onClick: () => {
-            playSound.playClick();
-            setShowAdd(true);
-          },
-        },
-        {
-          key: 'expand',
-          label: '全屏',
-          icon: <Maximize2 size={13} />,
-          className:
-            'text-slate-500 hover:bg-black/5 dark:hover:bg-white/10',
-          onClick: () => onExpand?.(),
-        },
-        {
-          key: 'reset',
-          label: '重置为预设',
-          icon: <RotateCcw size={13} />,
-          className:
-            'text-slate-500 hover:bg-black/5 dark:hover:bg-white/10',
-          onClick: () => {
-            playSound.playClick();
-            setShortcuts(PRESET_DATA.INITIAL_SHORTCUTS);
-          },
-        },
-      ];
+  // ---- Header 操作按钮 ----
+  const actions = [
+    {
+      key: 'add',
+      label: '添加网址',
+      icon: <Plus size={13} />,
+      className: 'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
+      onClick: () => {
+        playSound.playClick();
+        setShowAdd(true);
+      },
+    },
+  ];
 
   const headerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -219,9 +171,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       >
         <div className="flex items-center space-x-2">
           <Compass size={16} className="text-[#007AFF]" />
-          <span className="font-bold text-sm tracking-tight">
-            快捷导航 (Launchpad)
-          </span>
+          <span className="font-bold text-sm tracking-tight">快捷导航</span>
         </div>
 
         <div ref={containerRef} className="flex items-center gap-2">

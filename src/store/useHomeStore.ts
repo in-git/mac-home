@@ -60,8 +60,14 @@ interface HomeState {
 export const useHomeStore = create<HomeState>()(
   persist(
     (set, get) => ({
-      widgets: readLegacy('apple_homepage_widgets', PRESET_DATA.INITIAL_WIDGETS),
-      wallpaper: readLegacy('apple_homepage_wallpaper', PRESET_DATA.DEFAULT_WALLPAPER),
+      widgets: readLegacy(
+        'apple_homepage_widgets',
+        PRESET_DATA.INITIAL_WIDGETS,
+      ),
+      wallpaper: readLegacy(
+        'apple_homepage_wallpaper',
+        PRESET_DATA.DEFAULT_WALLPAPER,
+      ),
       notes: readLegacy('apple_homepage_notes', PRESET_DATA.INITIAL_NOTES),
       isDarkMode:
         window.matchMedia &&
@@ -99,7 +105,7 @@ export const useHomeStore = create<HomeState>()(
             ? { iconType: 'action', iconGlyph: 'Settings', iconLabel: '设置' }
             : {}),
         };
-        set({ widgets: [newWidget, ...widgets] });
+        set({ widgets: [...widgets, newWidget] });
       },
 
       deleteWidget: (id) => {
@@ -127,7 +133,10 @@ export const useHomeStore = create<HomeState>()(
 
       resetLayout: () => {
         playSound.playClick();
-        set({ widgets: PRESET_DATA.INITIAL_WIDGETS, wallpaper: PRESET_DATA.DEFAULT_WALLPAPER });
+        set({
+          widgets: PRESET_DATA.INITIAL_WIDGETS,
+          wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
+        });
       },
 
       resetAll: () => {

@@ -1,3 +1,4 @@
+import { AgentChatMessage, sendAgentChat } from '@/agent/chat';
 import {
   Bot,
   RefreshCw,
@@ -8,75 +9,23 @@ import {
   Wrench,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { request, API_ENDPOINTS } from '../utils/request';
+import { listAgentTools } from '../agent';
 import { playSound } from '../utils/sound';
-import { executeAgentTool, listAgentTools, AGENT_TOOLS } from '../agent';
-
-export interface AgentTestMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system' | 'tool';
-  content: string;
-  timestamp: string;
-  error?: boolean;
-  // tool 消息专用
-  toolName?: string;
-  toolArgs?: string;
-  toolOk?: boolean;
-}
 
 // 把 agent 工具清单格式化为大模型可理解的「可调用函数」描述
 const TOOLS = listAgentTools();
-const SYSTEM_PROMPT = `你是运行在本系统里的 AI 助手，可以通过调用工具来操作系统设置。
-可用工具：
-${TOOLS.map(
-  (t) =>
-    `- ${t.name}：${t.description}\n  参数：${JSON.stringify(t.parameters)}`,
-).join('\n')}
-
-规则：
-1. 当用户意图明确匹配某个工具时，请只回复一个 JSON 对象（不要任何多余文字、不要 markdown 代码块包裹）：
-{"tool":"<工具名>","args":{<参数>}}
-2. 参数必须严格符合上述工具的参数定义与类型；需要布尔值的参数（如 enabled）必须显式给出 true/false。
-3. 若用户意图不匹配任何工具，请用自然语言正常回答。`;
-
-/**
- * 从大模型回复中提取 JSON 形式的工具调用。
- * 兼容：纯 JSON、被 \`\`\`json 代码块包裹、以及夹带在正文中的 JSON。
- */
-function extractToolCall(
-  content: string,
-): { tool: string; args: Record<string, unknown> } | null {
-  let text = content.trim();
-  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) text = fence[1].trim();
-  // 非贪婪匹配首个完整 JSON 对象（兼容模型在 JSON 前后夹带文字）
-  const brace = text.match(/\{[\s\S]*?\}/);
-  if (brace) text = brace[0];
-  try {
-    const obj = JSON.parse(text);
-    if (!obj) return null;
-    // 兼容 tool / name 两种字段命名
-    const tool = obj.tool ?? obj.name;
-    if (typeof tool !== 'string' || tool.length === 0) return null;
-    const args =
-      obj.args && typeof obj.args === 'object'
-        ? (obj.args as Record<string, unknown>)
-        : {};
-    return { tool, args };
-  } catch {
-    /* 非 JSON，视为普通对话 */
-  }
-  return null;
-}
 
 interface AgentTestWidgetProps {
   isDarkMode?: boolean;
+  /** 是否处于全屏（无头模态放大）状态，用于铺满布局 */
+  expanded?: boolean;
 }
 
 export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
   isDarkMode = false,
+  expanded = false,
 }) => {
-  const [messages, setMessages] = useState<AgentTestMessage[]>([
+  const [messages, setMessages] = useState<AgentChatMessage[]>([
     {
       id: 'welcome',
       role: 'assistant',
@@ -122,7 +71,7 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
     if (!trimmed || loading) return;
     playSound.playClick();
 
-    const userMsg: AgentTestMessage = {
+    const userMsg: AgentChatMessage = {
       id: 'msg-' + Date.now(),
       role: 'user',
       content: trimmed,
@@ -136,116 +85,13 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
     setInput('');
     setLoading(true);
 
-    // 组装发给大模型的消息：系统提示 + 历史（过滤开场/错误，排除 system 占位）
-    const apiMessages = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...newHistory
-        .filter((m) => !m.error && m.role !== 'system')
-        .map((m) => ({ role: m.role, content: m.content })),
-      { role: 'user', content: trimmed },
-    ];
-
     try {
-      const raw = await request.post<string>(API_ENDPOINTS.aiChat, {
-        model: model.trim() || undefined,
-        messages: apiMessages,
+      const replyMsgs = await sendAgentChat({
+        history: newHistory,
+        userInput: trimmed,
+        model,
       });
-
-      // 后端 data 可能是 ollama 响应的 JSON 字符串，也可能是已解析的对象。
-      let replyContent = '';
-      const normalizeReply = (value: unknown): string => {
-        if (typeof value === 'string') {
-          // 可能是 ollama JSON 字符串，也可能是直接的内容文本
-          try {
-            const parsed = JSON.parse(value);
-            if (parsed && typeof parsed === 'object') {
-              const obj = parsed as Record<string, unknown>;
-              // ollama 风格：{ message: { content } }
-              if (obj.message && typeof obj.message === 'object') {
-                const content = (obj.message as Record<string, unknown>).content;
-                if (typeof content === 'string') return content;
-              }
-              // 直接就是工具 JSON（如 {"tool":...}），原样返回以便下一步解析
-              return value;
-            }
-          } catch {
-            return value;
-          }
-          return value;
-        }
-        if (value && typeof value === 'object') {
-          const obj = value as Record<string, unknown>;
-          if (obj.message && typeof obj.message === 'object') {
-            const content = (obj.message as Record<string, unknown>).content;
-            if (typeof content === 'string') return content;
-          }
-          // 对象本身已是工具调用（如 {"tool":...}）
-          try {
-            return JSON.stringify(value);
-          } catch {
-            return '';
-          }
-        }
-        return '';
-      };
-      replyContent = normalizeReply(raw);
-
-      const call = extractToolCall(replyContent);
-      // 兼容工具名前后多余空白 / 大小写差异
-      const matchedTool = call
-        ? AGENT_TOOLS.find(
-            (t) =>
-              t.name === call.tool ||
-              t.name.trim().toLowerCase() === call.tool.trim().toLowerCase(),
-          )
-        : undefined;
-
-      if (call && matchedTool) {
-        // 命中 agent 工具 → 执行并回显
-        const result = await executeAgentTool({ name: matchedTool.name, args: call.args });
-        const toolMsg: AgentTestMessage = {
-          id: 'tool-' + Date.now(),
-          role: 'tool',
-          content: result.message,
-          toolName: call.tool,
-          toolArgs: JSON.stringify(call.args),
-          toolOk: result.ok,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        };
-        setMessages((prev) => [...prev, toolMsg]);
-      } else {
-        const fallbackContent =
-          call && !matchedTool
-            ? `模型返回了工具调用，但未匹配到已注册功能：tool="${call.tool}"。已注册：${AGENT_TOOLS.map(
-                (t) => t.name,
-              ).join(', ')}`
-            : replyContent || '未获取到回复内容';
-        const assistantMsg: AgentTestMessage = {
-          id: 'msg-' + (Date.now() + 1),
-          role: 'assistant',
-          content: fallbackContent,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
-      }
-    } catch (err: any) {
-      const errorMsg: AgentTestMessage = {
-        id: 'err-' + Date.now(),
-        role: 'assistant',
-        content: `调用失败: ${err?.message || '无法连接到 AI 服务'}`,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        error: true,
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => [...prev, ...replyMsgs]);
     } finally {
       setLoading(false);
     }
@@ -285,7 +131,9 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
       {/* 消息列表 */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto my-2 pr-1 space-y-3 min-h-0 max-h-[400px] text-xs select-text scrollbar-thin"
+        className={`flex-1 overflow-y-auto my-2 pr-1 space-y-3 min-h-0 text-xs select-text scrollbar-thin ${
+          expanded ? '' : 'max-h-[400px]'
+        }`}
       >
         {messages.map((msg) => {
           if (msg.role === 'tool') {
