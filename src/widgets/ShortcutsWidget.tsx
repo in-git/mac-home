@@ -314,26 +314,28 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               target="_blank"
               rel="noreferrer"
               onClick={() => playSound.playClick()}
-              className="group relative flex flex-col p-2  rounded-2xl glass-panel hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors shadow-xs text-center border border-white/40 dark:border-white/10 aspect-square"
+              className="group relative flex flex-col rounded-2xl transition-colors shadow-xs text-center aspect-square"
             >
-              <div
-                className={`group/icon relative w-full flex-1 aspect-square rounded-xl flex items-center justify-center shadow-sm ${
-                  item.bgColor || 'bg-slate-800 text-white'
-                } transition-transform group-hover/icon:scale-105`}
-              >
-                {getIcon(item.iconName, 'w-[30%] h-[30%]')}
+              <div className="relative group/icon w-full flex-1">
+                <div
+                  className={`relative w-full aspect-square rounded-xl flex items-center justify-center shadow-sm ${
+                    item.bgColor || 'bg-slate-800 text-white'
+                  } transition-transform group-hover/icon:scale-105`}
+                >
+                  {getIcon(item.iconName, 'w-[30%] h-[30%]')}
+                </div>
+
+                {/* Hover Delete — only when the ICON itself is hovered */}
+                <button
+                  onClick={(e) => handleDelete(item.id, e)}
+                  className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
+                >
+                  <Trash2 size={11} />
+                </button>
               </div>
               <span className="font-semibold text-font-sm truncate w-full mt-1 text-slate-800 dark:text-slate-100">
                 {item.title}
               </span>
-
-              {/* Hover Delete — only when the ICON itself is hovered */}
-              <button
-                onClick={(e) => handleDelete(item.id, e)}
-                className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
-              >
-                <Trash2 size={11} />
-              </button>
             </a>
           ))}
         </div>

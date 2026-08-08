@@ -233,7 +233,7 @@ export async function sendAgentChat(
     // 依据 continue 决定走向：
     // continue===false → 执行完即结束本轮，不再请求模型；
     // continue===true（默认）→ 把工具结果回填，自动进入下一轮对话。
-    if (cleaned.continue === false) {
+    if (!cleaned.continue) {
       // 若本轮没有任何 text 回复，用最后一个工具结果兜底作为结束消息
       if (textTasks.length === 0 && filteredToolTasks.length > 0) {
         const lastTool = [...history].reverse().find((m) => m.role === 'tool');

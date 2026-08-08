@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { GlassTabs } from '../../components/GlassTabs';
 import {
   createParticles,
   dynamicPresets,
@@ -89,64 +90,83 @@ const MiniCanvas2D: React.FC<{ presetId: string; isDark: boolean }> = ({
   );
 };
 
-/** 动态效果面板组件：渲染所有动态预设的实时预览，点击后应用到桌面 */
-export const DynamicWallpaperSection: React.FC<DynamicWallpaperSectionProps> = ({
-  wallpaper,
-  isDarkMode,
-  onUpdateWallpaper,
-  onToggleDarkMode,
-}) => {
+/** 动态效果面板组件：以「亮色 / 深色」Tab 区分预设，点击后应用到桌面 */
+export const DynamicWallpaperSection: React.FC<
+  DynamicWallpaperSectionProps
+> = ({ wallpaper, isDarkMode, onUpdateWallpaper, onToggleDarkMode }) => {
+  // 固定深色的预设（WebGL 类）归入「深色」，其余跟随全局模式归入「亮色」
+  const lightPresets = dynamicPresets.filter((p) => !p.isDarkMode);
+  const darkPresets = dynamicPresets.filter((p) => p.isDarkMode);
+  const [toneTab, setToneTab] = useState<'light' | 'dark'>('light');
+
+  const renderPreset = (preset: (typeof dynamicPresets)[number]) => {
+    const isSelected = wallpaper.dynamicPreset === preset.id;
+    return (
+      <button
+        key={preset.id}
+        onClick={() => {
+          onUpdateWallpaper({
+            type: 'dynamic',
+            dynamicPreset: preset.id,
+            // 清除静态字段，避免残留污染渲染分支。
+            imageUrl: undefined,
+          });
+          // 预设配置了 isDarkMode 时，强制切换到暗色模式；
+          // 否则跟随全局模式，避免从强制深色预设切走后卡在暗色。
+          if (preset.isDarkMode && !isDarkMode) {
+            onToggleDarkMode();
+          }
+        }}
+        className={`group relative aspect-[4/3] overflow-hidden rounded-xl border bg-black text-left transition-colors ${
+          isSelected
+            ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+            : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
+        }`}
+      >
+        <PresetLivePreview
+          presetId={preset.id}
+          isDark={preset.isDarkMode ?? isDarkMode}
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2.5 py-2">
+          <div className="truncate text-xs font-medium text-white">
+            {preset.name}
+          </div>
+          <div className="truncate text-font-sm text-white/70">
+            {preset.desc}
+          </div>
+        </div>
+        {isSelected && (
+          <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">
+            当前
+          </div>
+        )}
+      </button>
+    );
+  };
+
   return (
     <section>
       <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
         动态效果
       </h3>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {dynamicPresets.map((preset) => {
-          const isSelected = wallpaper.dynamicPreset === preset.id;
-          return (
-            <button
-              key={preset.id}
-              onClick={() => {
-                onUpdateWallpaper({
-                  type: 'dynamic',
-                  dynamicPreset: preset.id,
-                  // 清除静态字段，避免残留污染渲染分支。
-                  imageUrl: undefined,
-                });
-                // 预设配置了 isDarkMode 时，强制切换到暗色模式；
-                // 否则跟随全局模式，避免从强制深色预设切走后卡在暗色。
-                if (preset.isDarkMode && !isDarkMode) {
-                  onToggleDarkMode();
-                }
-              }}
-              className={`group relative aspect-[4/3] overflow-hidden rounded-xl border bg-black text-left transition-colors ${
-                isSelected
-                  ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
-                  : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
-              }`}
-            >
-              <PresetLivePreview
-                presetId={preset.id}
-                isDark={preset.isDarkMode ?? isDarkMode}
-              />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2.5 py-2">
-                <div className="truncate text-xs font-medium text-white">
-                  {preset.name}
-                </div>
-                <div className="truncate text-font-sm text-white/70">
-                  {preset.desc}
-                </div>
-              </div>
-              {isSelected && (
-                <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">
-                  当前
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      <GlassTabs
+        items={[
+          { id: 'light', label: '亮色' },
+          { id: 'dark', label: '深色' },
+        ]}
+        activeKey={toneTab}
+        onChange={(key) => setToneTab(key as 'light' | 'dark')}
+      />
+      {toneTab === 'light' && (
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {lightPresets.map(renderPreset)}
+        </div>
+      )}
+      {toneTab === 'dark' && (
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {darkPresets.map(renderPreset)}
+        </div>
+      )}
     </section>
   );
 };

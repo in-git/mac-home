@@ -12,7 +12,6 @@ import React, { useEffect, useRef } from 'react';
 import { getWidgetConfig } from '../data/widgetConfig';
 import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
 
-
 export interface ContextMenuPosition {
   x: number;
   y: number;
@@ -123,7 +122,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 <button
                   key={sz}
                   onClick={() => {
-                    
                     onResizeWidget(targetWidget.id, sz);
                     onClose();
                   }}
@@ -140,7 +138,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
             <button
               onClick={() => {
-                
                 onMoveToTopWidget(targetWidget.id);
                 onClose();
               }}
@@ -152,7 +149,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
             <button
               onClick={() => {
-                
                 onDeleteWidget(targetWidget.id);
                 onClose();
               }}
@@ -170,7 +166,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Add Widget — opens the Add Widget modal directly */}
         <button
           onClick={() => {
-            
             onOpenAddWidget();
             onClose();
           }}
@@ -186,7 +181,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Change Wallpaper */}
         <button
           onClick={() => {
-            
             onOpenWallpaper();
             onClose();
           }}
@@ -199,7 +193,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Spotlight Search */}
         <button
           onClick={() => {
-            
             onOpenSpotlight();
             onClose();
           }}
@@ -212,7 +205,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Settings */}
         <button
           onClick={() => {
-            
             onOpenSettings();
             onClose();
           }}
@@ -230,7 +222,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              
+
               onToggleEditMode();
               onClose();
             }}
@@ -238,7 +230,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           >
             <div className="flex items-center space-x-2">
               <Lock size={14} className="text-slate-400" />
-              <span>调整布局已锁定</span>
+              <span>布局</span>
             </div>
             <Lock size={14} className="text-slate-400" />
           </button>

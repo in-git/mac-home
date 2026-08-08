@@ -11,7 +11,6 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { listAgentTools } from '../agent';
 
-
 // 把 agent 工具清单格式化为大模型可理解的「可调用函数」描述
 const TOOLS = listAgentTools();
 
@@ -37,7 +36,7 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
       }),
     },
   ]);
-  const [input, setInput] = useState('开启黑暗模式');
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [model] = useState('qwen2.5:3b');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -51,7 +50,6 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
   }, [messages, loading]);
 
   const handleClear = () => {
-    
     setMessages([
       {
         id: 'welcome-' + Date.now(),
@@ -69,7 +67,6 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
     if (e) e.preventDefault();
     const trimmed = input.trim();
     if (!trimmed || loading) return;
-    
 
     const userMsg: AgentChatMessage = {
       id: 'msg-' + Date.now(),
