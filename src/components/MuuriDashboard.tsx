@@ -1,3 +1,4 @@
+import { Tooltip } from '@heroui/react';
 import { GripHorizontal, X } from 'lucide-react';
 import Muuri from 'muuri';
 import React, { useEffect, useRef, useState } from 'react';
@@ -18,7 +19,7 @@ import { SettingsWidget } from '../widgets/SettingsWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget } from '../widgets/WeatherWidget';
-import { Tooltip } from './Tooltip';
+import { LoadingOverlay } from './LoadingOverlay';
 
 interface MuuriDashboardProps {
   widgets: WidgetItem[];
@@ -51,6 +52,10 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const loadingTimerRef = useRef<number | null>(null);
+
+  // 首次进入：Muuri 初始化/布局完成前显示磨砂 loading 遮罩（绝对定位盖在 grid 上层）
+  const [isLoading, setIsLoading] = useState(true);
 
   // Cycle a widget through its available sizes on each click of the green dot.
   const cycleWidgetSize = (widget: WidgetItem) => {
@@ -190,6 +195,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       // Instantiate Muuri Layout
       const grid = new Muuri(containerRef.current, {
         items: '.muuri-item',
+        // 首次布局延迟到下面显式执行：初始化时 item 仍处于普通文档流
+        //（CSS 兜底），避免未布局前 absolute 卡片叠在 (0,0)。
+        layoutOnInit: false,
         dragEnabled: true,
         // Allow dragging from the whole card (so content can be dragged too),
         // or from the explicit grip handle. Edit-mode gating is done below.
@@ -259,7 +267,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       });
 
       muuriInstanceRef.current = grid;
-      grid.refreshItems().layout();
+
+      // 切换 item 到绝对定位（CSS 依据此 class），并立即（无动画）执行首次
+      // 布局。两步在同一帧内同步完成，用户看不到任何重叠状态。
+      containerRef.current.classList.add('muuri-laid-out');
+      grid.refreshItems().layout(true);
+
+      loadingTimerRef.current = window.setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
 
       // Observe every item's own size and re-layout Muuri whenever it changes.
       // This keeps the grid from overlapping neighbouring cards when a widget's
@@ -337,6 +353,10 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       window.addEventListener('resize', handleResize);
 
       cleanupRef.current = () => {
+        if (loadingTimerRef.current !== null) {
+          clearTimeout(loadingTimerRef.current);
+          loadingTimerRef.current = null;
+        }
         window.removeEventListener('resize', handleResize);
         if (resizeObserverRef.current) {
           resizeObserverRef.current.disconnect();
@@ -356,6 +376,12 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         cleanupRef.current = null;
       }
     };
+  }, []);
+
+  // 兜底：即使 Muuri 初始化异常，loading 遮罩最多显示 1500ms 后也会隐藏。
+  useEffect(() => {
+    const t = window.setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(t);
   }, []);
 
   // Keep the live edit-mode ref in sync so the dragStartPredicate can gate
@@ -435,7 +461,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             <div
               key={widget.id}
               data-widget-id={widget.id}
-              className={`muuri-item p-2.5 sm:p-3 absolute z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
+              className={`muuri-item p-2.5 sm:p-3 z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
               onContextMenu={(e) => onContextMenuWidget(e, widget.id)}
             >
               {/* Muuri Required Item Content Wrapper */}
@@ -494,20 +520,25 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       <div className="flex items-center space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
                         <div className="flex space-x-1.5 items-center">
                           {/* Green dot → left click cycles size, right click deletes */}
-                          <Tooltip content="切换比例" placement="top">
-                            <div
-                              data-no-drag
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                cycleWidgetSize(widget);
-                              }}
-                              onContextMenu={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                onDeleteWidget(widget.id);
-                              }}
-                              className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
-                            />
+                          <Tooltip delay={150}>
+                            <Tooltip.Trigger className="inline-flex">
+                              <div
+                                data-no-drag
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  cycleWidgetSize(widget);
+                                }}
+                                onContextMenu={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  onDeleteWidget(widget.id);
+                                }}
+                                className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
+                              />
+                            </Tooltip.Trigger>
+                            <Tooltip.Content placement="top">
+                              切换比例
+                            </Tooltip.Content>
                           </Tooltip>
                           {/* Yellow dot → toggle headless modal (fixed centered).
                               放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
@@ -515,33 +546,43 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                             (widget.type === 'sticky-notes' ||
                               widget.type === 'shortcuts' ||
                               widget.type === 'agent-test') && (
-                              <Tooltip content="最大化" placement="top">
-                                <div
-                                  data-no-drag
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setExpandedWidgetId(widget.id);
-                                  }}
-                                  className="w-3 h-3 rounded-full bg-[#FFCC00] hover:bg-[#FFCC00]/80 transition-colors cursor-pointer"
-                                />
+                              <Tooltip delay={150}>
+                                <Tooltip.Trigger className="inline-flex">
+                                  <div
+                                    data-no-drag
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setExpandedWidgetId(widget.id);
+                                    }}
+                                    className="w-3 h-3 rounded-full bg-[#FFCC00] hover:bg-[#FFCC00]/80 transition-colors cursor-pointer"
+                                  />
+                                </Tooltip.Trigger>
+                                <Tooltip.Content placement="top">
+                                  最大化
+                                </Tooltip.Content>
                               </Tooltip>
                             )}
                           {/* Red dot → delete */}
-                          <Tooltip content="移除小组件" placement="top">
-                            <button
-                              data-no-drag
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDeleteWidget(widget.id);
-                              }}
-                              className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-colors cursor-pointer"
-                              title="移除小组件"
-                            >
-                              <X
-                                size={8}
-                                className="text-black/60 opacity-0 group-hover/dot:opacity-100"
-                              />
-                            </button>
+                          <Tooltip delay={150}>
+                            <Tooltip.Trigger className="inline-flex">
+                              <button
+                                data-no-drag
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDeleteWidget(widget.id);
+                                }}
+                                className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-colors cursor-pointer"
+                                title="移除小组件"
+                              >
+                                <X
+                                  size={8}
+                                  className="text-black/60 opacity-0 group-hover/dot:opacity-100"
+                                />
+                              </button>
+                            </Tooltip.Trigger>
+                            <Tooltip.Content placement="top">
+                              移除小组件
+                            </Tooltip.Content>
                           </Tooltip>
                         </div>
 
@@ -575,6 +616,10 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           );
         })}
       </div>
+
+      {/* 首次加载全屏遮罩：由独立组件 LoadingOverlay 渲染（fixed 覆盖整个视口）。
+          布局完成（或 1500ms 兜底）后隐藏，避免首帧看到卡片重叠/布局中的状态。 */}
+      <LoadingOverlay visible={isLoading} label="正在加载小组件…" />
 
       {/* 无头模态层：点击黄色按钮后，对应 widget 以 fixed 居中、无头、放大的模态框显示；
           点击外部遮罩则还原为普通网格 widget（position 由 fixed 改回网格流） */}

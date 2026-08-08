@@ -153,6 +153,16 @@
   box-shadow: none;
 }
 
+/* 首次布局前让 item 保持普通文档流（逐行堆叠），避免 Muuri 尚未布局时
+   所有 absolute 卡片一起叠在 (0,0)。布局完成（grid 加 .muuri-laid-out）
+   后再切换到绝对定位，由 Muuri 的 transform 负责摆放。 */
+.muuri-grid .muuri-item {
+  position: absolute;
+}
+.muuri-grid:not(.muuri-laid-out) .muuri-item {
+  position: relative;
+}
+
 /* During an active drag, drop the backdrop-blur on every card. Recomputing
    the blur filter each frame for 7 glass cards is the main source of drag lag.
    Cards fall back to a solid translucent fill so the UI still looks glassy. */

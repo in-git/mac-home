@@ -1,4 +1,5 @@
 import type { AgentTool } from '../types';
+import { agentChatTool } from './agentChat';
 import { generalChatTool } from './generalChat';
 import { pageActionTools } from './pageActions';
 import { scheduledTaskTools } from './scheduledTask';
@@ -15,8 +16,10 @@ export const AGENT_TOOLS: AgentTool[] = [
   ...pageActionTools,
   ...stickyNoteTools,
   generalChatTool,
+  agentChatTool,
 ];
 
+export { agentChatTool } from './agentChat';
 export { generalChatTool } from './generalChat';
 export { pageActionTools } from './pageActions';
 export { scheduledTaskTools } from './scheduledTask';

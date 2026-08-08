@@ -1,340 +1,370 @@
-/**
- * Agent 对话核心逻辑：
- * 组装消息 → 请求大模型（强制 JSON 输出）→ 解析决策 JSON →
- * 命中系统工具则按任务数组逐个执行（每个任务支持延迟），
- * 否则封装 general_chat 并返回普通回复。
- */
 import { API_ENDPOINTS, request } from '../utils/request';
-import { AGENT_TOOLS, executeAgentTool, listAgentTools } from './index';
+import { listAgentTools, executeAgentTool } from './index';
+import type {
+  AgentToolInvocation,
+  AgentChatMessage,
+  ToolTask,
+  ModelTask,
+  ParsedModel,
+  AgentChatOptions,
+} from './types';
 
-/** 对话消息（界面可展示） */
-export interface AgentChatMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system' | 'tool';
-  content: string;
-  timestamp: string;
-  error?: boolean;
-  // tool 消息专用
-  toolName?: string;
-  toolArgs?: string;
-  toolOk?: boolean;
-}
-
-/** 单个待执行任务 */
-export interface AgentTask {
-  tool: string;
-  args?: Record<string, unknown>;
-  /** 延迟执行毫秒数，默认 0 */
-  delay?: number;
-}
-
-/** 大模型结构化输出解析结果 */
-export interface ParsedModelResponse {
-  isSystemAction?: boolean;
-  tool?: string;
-  args?: Record<string, unknown>;
-  reply?: string;
-  /** 任务数组：一次可执行多个功能，每项支持 delay */
-  tasks?: AgentTask[];
-}
-
-// 把 agent 工具清单格式化为大模型可理解的「可调用函数」描述
-const TOOLS = listAgentTools();
-const SYSTEM_PROMPT = `你是运行在本系统里的 AI 助手，负责判断用户意图并输出机器可解析的 JSON。
-
-可用系统功能工具：
-${TOOLS.filter((t) => t.name !== 'general_chat')
-  .map(
-    (t) =>
-      `- ${t.name}：${t.description}\n  参数：${JSON.stringify(t.parameters)}`,
-  )
-  .join('\n')}
-
-输出要求（必须严格遵守，输出必须能被 JSON.parse 直接解析）：
-1. 每次回复只输出一个 JSON 对象，禁止输出任何 JSON 以外的内容（包括自然语言解释、说明、标题）。
-2. 禁止输出 <tool_response> 标签、markdown 代码块、或任何包装文字。
-3. 当用户意图匹配系统功能工具时，输出任务数组：
-   {"isSystemAction": true, "tasks": [{"tool": "<工具名>", "args": {<参数>}, "delay": <毫秒>}]}
-   其中：
-   - args 的字段名与类型必须与上述工具定义完全一致；布尔参数（如 enabled）必须显式给出 true/false。
-   - delay 是延迟执行的毫秒数，用户没提到时间则写 0（立即执行），提到时间（如「5 秒后」「3 分钟后」）则换算成毫秒。
-   - 一次可以包含多个任务（例如「调大字体并开启深色模式」输出两个任务），按顺序逐个执行。
-4. 当用户要求创建定时/延迟任务时，优先使用 create_scheduled_task 工具，输出：
-   {"isSystemAction": true, "tasks": [{"tool": "create_scheduled_task", "args": {"name": "任务名", "tool": "<要执行的目标工具>", "args": {<目标工具参数>}, "delay": <毫秒>}}]}
-5. 当用户意图与系统功能无关时，输出：
-   {"isSystemAction": false, "reply": "<给用户的自然语言回答>"}
-6. 不要输出工具执行结果，也不要重复描述你做了什么，你只需要输出上述决策 JSON。
-
-示例：
-用户说「开启深色模式」→ {"isSystemAction": true, "tasks": [{"tool": "set_dark_mode", "args": {"enabled": true}, "delay": 0}]}
-用户说「把亮度调到 100」→ {"isSystemAction": true, "tasks": [{"tool": "set_screen_brightness", "args": {"value": 100}, "delay": 0}]}
-用户说「调大字体，同时开启深色模式」→ {"isSystemAction": true, "tasks": [{"tool": "set_font_variant", "args": {"variant": "C"}, "delay": 0}, {"tool": "set_dark_mode", "args": {"enabled": true}, "delay": 0}]}
-用户说「5 秒后开启深色模式」→ {"isSystemAction": true, "tasks": [{"tool": "create_scheduled_task", "args": {"name": "5秒后开深色模式", "tool": "set_dark_mode", "args": {"enabled": true}, "delay": 5000}}]}
-用户说「今天天气怎么样」→ {"isSystemAction": false, "reply": "我是本地助手，暂时无法获取实时天气。"}`;
-
-function nowTimestamp(): string {
+function now(): string {
   return new Date().toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   });
 }
 
-const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
-
-/**
- * 从大模型回复中提取 JSON 形式的响应对象。
- * 兼容：纯 JSON、被 ```json 代码块包裹、以及夹带在正文中的 JSON。
- */
-export function extractModelResponse(
-  content: string,
-): ParsedModelResponse | null {
-  let text = content.trim();
-  const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) text = fence[1].trim();
-  const start = text.indexOf('{');
-  if (start === -1) return null;
-  let depth = 0;
-  let inString = false;
-  let escaped = false;
-  let end = -1;
-  for (let i = start; i < text.length; i++) {
-    const ch = text[i];
-    if (inString) {
-      if (escaped) escaped = false;
-      else if (ch === '\\') escaped = true;
-      else if (ch === '"') inString = false;
-      continue;
-    }
-    if (ch === '"') inString = true;
-    else if (ch === '{') depth++;
-    else if (ch === '}') {
-      depth--;
-      if (depth === 0) {
-        end = i;
-        break;
-      }
-    }
-  }
-  if (end === -1) return null;
-  text = text.slice(start, end + 1);
-  try {
-    const obj = JSON.parse(text);
-    if (!obj || typeof obj !== 'object') return null;
-
-    // 任务数组：优先解析 tasks，其次兼容单个 tool/name 的旧格式
-    let tasks: AgentTask[] | undefined;
-    if (Array.isArray(obj.tasks)) {
-      tasks = obj.tasks
-        .filter(
-          (t: unknown) =>
-            !!t &&
-            typeof t === 'object' &&
-            typeof (t as Record<string, unknown>).tool === 'string',
-        )
-        .map((t: unknown) => {
-          const item = t as Record<string, unknown>;
-          const args =
-            item.args && typeof item.args === 'object'
-              ? (item.args as Record<string, unknown>)
-              : {};
-          const delay =
-            typeof item.delay === 'number' && !Number.isNaN(item.delay)
-              ? Math.max(0, Math.round(item.delay))
-              : 0;
-          return { tool: String(item.tool), args, delay };
-        });
-    }
-
-    const tool =
-      typeof (obj.tool ?? obj.name) === 'string'
-        ? String(obj.tool ?? obj.name)
-        : undefined;
-    const args =
-      obj.args && typeof obj.args === 'object'
-        ? (obj.args as Record<string, unknown>)
-        : {};
-    const reply = typeof obj.reply === 'string' ? obj.reply : undefined;
-    const isSystemAction =
-      typeof obj.isSystemAction === 'boolean'
-        ? obj.isSystemAction
-        : Array.isArray(tasks) && tasks.length > 0
-          ? true
-          : typeof tool === 'string' && tool.length > 0;
-
-    const parsed: ParsedModelResponse = {
-      isSystemAction,
-      tool,
-      args,
-      reply,
-      ...(tasks && tasks.length > 0 ? { tasks } : {}),
-    };
-    return parsed;
-  } catch {
-    /* 非 JSON */
-  }
-  return null;
-}
-
-/**
- * 规范化后端返回体，解出模型回复文本。
- * data 可能是 ollama 响应的 JSON 字符串，也可能是已解析的对象。
- */
-function normalizeReply(value: unknown): string {
-  if (typeof value === 'string') {
-    // 可能是 ollama JSON 字符串，也可能是直接的内容文本
+/** 把后端返回的各类形态统一为模型 content 字符串 */
+function normalizeReply(raw: unknown): string {
+  if (typeof raw === 'string') {
     try {
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
         const obj = parsed as Record<string, unknown>;
-        // ollama 风格：{ message: { content } }
         if (obj.message && typeof obj.message === 'object') {
           const content = (obj.message as Record<string, unknown>).content;
           if (typeof content === 'string') return content;
         }
-        // 直接就是决策 JSON（如 {"isSystemAction":...}），原样返回以便下一步解析
-        return value;
+        return raw;
       }
     } catch {
-      return value;
+      return raw;
     }
-    return value;
+    return raw;
   }
-  if (value && typeof value === 'object') {
-    const obj = value as Record<string, unknown>;
+  if (raw && typeof raw === 'object') {
+    const obj = raw as Record<string, unknown>;
     if (obj.message && typeof obj.message === 'object') {
       const content = (obj.message as Record<string, unknown>).content;
       if (typeof content === 'string') return content;
-    }
-    // 对象本身已是决策 JSON
-    try {
-      return JSON.stringify(value);
-    } catch {
-      return '';
     }
   }
   return '';
 }
 
-export interface SendAgentChatParams {
-  /** 当前对话历史（应已包含最新用户消息） */
-  history: AgentChatMessage[];
-  /** 用户本次输入 */
-  userInput: string;
-  /** 模型名，不传走后端默认模型 */
-  model?: string;
+/** 清洗后的单条任务：tool 已解析为结构化 name/args，text 保留纯文本 */
+type CleanedTask =
+  | { type: 'tool'; name: string; args: Record<string, unknown> }
+  | { type: 'text'; content: string };
+
+/** 清洗后的模型响应 */
+interface CleanedModel {
+  tasks: CleanedTask[];
+  continue: boolean;
 }
 
 /**
- * 发送一轮 Agent 对话并处理返回（可返回多条消息）：
- * - 命中系统工具：按任务数组逐个执行（每个任务可带 delay），每条结果一条 tool 消息
- * - 未命中：封装 general_chat 工具，返回一条 assistant 消息（模型回答原文）
- * 任何异常都会转为 error 消息返回，不会向外抛错。
+ * 处理前清洗模型返回：
+ * - type==='tool'：把 content（可能是 JSON 字符串 / 对象 / 带引号的字符串）
+ *   统一解析为 { name, args }，并确保 args 也是 JSON 对象（若模型把 args
+ *   写成了 JSON 字符串，则再解析一层）。
+ * - type==='text'：原样保留。
+ */
+function cleanModelResponse(parsed: ParsedModel): CleanedModel {
+  const tasks: CleanedTask[] = [];
+
+  for (const t of parsed.tasks) {
+    if (t.type === 'tool') {
+      // 1) content 可能是 JSON 字符串、对象或纯工具名，统一解析
+      let name = '';
+      let args: Record<string, unknown> = {};
+
+      const raw = t.content.trim();
+      try {
+        const obj = JSON.parse(raw);
+        if (obj && typeof obj === 'object') {
+          const o = obj as Record<string, unknown>;
+          name = typeof o.name === 'string' ? o.name : '';
+          let a = o.args;
+          // 2) args 若为 JSON 字符串，再解析一层
+          if (typeof a === 'string') {
+            try {
+              a = JSON.parse(a);
+            } catch {
+              /* 保持原字符串 */
+            }
+          }
+          args =
+            a && typeof a === 'object' ? (a as Record<string, unknown>) : {};
+        } else if (typeof obj === 'string') {
+          name = obj;
+        }
+      } catch {
+        // 不是合法 JSON → 当作纯工具名
+        name = raw;
+      }
+
+      if (name) {
+        tasks.push({ type: 'tool', name, args });
+      }
+    } else {
+      tasks.push({ type: 'text', content: t.content });
+    }
+  }
+
+  return { tasks, continue: parsed.continue };
+}
+
+/**
+ * 解析模型输出，统一为 ParsedModel：
+ * { task: [{ type: 'text'|'tool', content: string }, ...], continue: boolean }
+ *
+ * - task 中 type==='tool' 的项表示让前端执行工具（content 为工具名）
+ * - task 中 type==='text' 的项表示输出到输入框给用户看的回复
+ * - continue 表示是否继续下一轮对话（模型不传时按 true 处理）
+ * 若解析失败或无有效任务，则整体作为一条 text 任务兜底。
+ */
+function extractModelResponse(content: string): ParsedModel {
+  const text = content.trim();
+  try {
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const jsonText = fence ? fence[1].trim() : text;
+    const parsed = JSON.parse(jsonText);
+
+    if (parsed && typeof parsed === 'object') {
+      const obj = parsed as Record<string, unknown>;
+      const tasks: ModelTask[] = [];
+
+      if (Array.isArray(obj.task)) {
+        for (const t of obj.task) {
+          if (t && typeof t.type === 'string' && typeof t.content === 'string') {
+            tasks.push({
+              type: t.type === 'tool' ? 'tool' : 'text',
+              content:JSON.parse( t.content),
+            });
+          }
+        }
+      }
+
+      const cont =
+        typeof obj.continue === 'boolean' ? obj.continue : true;
+
+      if (tasks.length > 0) {
+        return { tasks, continue: cont };
+      }
+    }
+  } catch {
+    /* 非 JSON，按纯文本兜底 */
+  }
+  // 解析失败或无任务：整体作为一条 text 回复
+  return { tasks: [{ type: 'text', content: text }], continue: false };
+}
+
+/** 构造系统提示：声明可用工具 + ReAct 行为约定 */
+function makeSystemPrompt(): string {
+  const toolList = listAgentTools()
+    .map(
+      (t) =>
+        `- ${t.name}：${t.description}\n  参数：${JSON.stringify(t.parameters)}`,
+    )
+    .join('\n');
+
+  return `你是这个个性化主页（mac-home）的 AI 助手，可以通过调用工具来读取或修改系统数据。
+
+## 可用工具
+${toolList}
+你需要处理用户提出的问题，通过调用前端的工具，或者回答文本
+## 工作规则
+你在每一轮必须按以下三种情况之一处理用户请求，并据此决定返回内容：
+返回值约束,JSON键值，绝对不能为中文，完全按照下面格式去做
+
+**严格约束（务必遵守，否则工具无法执行）：**
+1. 返回内容必须是合法的 JSON，且只能包含上面定义的 \`task\` 和 \`continue\` 两个顶层字段。禁止输出 编造的字段或其他任何非 JSON 格式。
+2. \`type: 'tool'\` 时，\`content\` 必须是一个 JSON 字符串，格式固定为 \`{"name": 工具名, "args": 参数对象}\`。
+3. 其中 \`name\` **只能取「可用工具」列表中真实存在的工具名**，禁止自行编造、拼接或猜测不存在的工具名（例如不要凭空创造 \`set_font_variant\` 之类的工具）。
+4. \`args\` 的**键名必须与上面对应工具的「参数」定义完全一致**，只能传该工具声明过的参数，禁止自创新的键值对，参数值须符合其类型（例如枚举值只能取规定范围内的值，不要编造如 \`"C"\` 这样未声明的值）。
+5. 若用户请求所需的工具或参数不在「可用工具」列表中，不要硬造工具，改用 \`type: 'text'\` 如实告诉用户该能力暂不支持。
+interface Response {
+
+  task: [
+    /* type: 'text',表示输出到输入框，用于回答用户问题，给用户看的 */
+    /* type: 'tool',表示让前端执行工具，不在前端展示 */
+    {
+      type: 'text',
+      content: string,
+    }, {
+      type: 'tool',
+      // content 为 JSON 字符串，格式：{"name": 工具名, "args": 参数对象}
+      content: string,//前端要求返回的参数
+    }
+  ],
+  /* 是否继续下一轮对话，前端会根据这个值来判断是否继续请求模型 */
+  continue: boolean
+}
+
+
+### 情况一：命令可直接执行
+如果用户的请求不需要任何外部数据、仅凭现有能力即可完成（例如「打开深色模式」「切换主题色」这类直接操作），直接调用对应工具，**无需再问模型**。返回该工具任务并把 "continue" 设为 **false**：
+你需要返回这两个字段，让前端去执行，以达到用户的需求
+
+
+
+`;
+}
+
+/** 执行单个工具任务，并封装为一条 tool 类型的对话消息（回填给模型） */
+async function runTaskAsToolMessage(task: ToolTask): Promise<AgentChatMessage> {
+  const invocation: AgentToolInvocation = {
+    name: task.name,
+    args: task.args ?? {},
+  };
+  const res = await executeAgentTool(invocation);
+  return {
+    id: 'tool-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    role: 'tool',
+    content: res.message,
+    timestamp: now(),
+    toolName: res.tool,
+    toolArgs: JSON.stringify(task.args ?? {}),
+    toolOk: res.ok,
+  };
+}
+
+/**
+ * Agent 对话核心：实现「思考 → 调用工具 → 回填结果 → 再思考」的 ReAct 循环。
+ *
+ * - 模型返回工具调用时，执行工具并把结果作为 tool 消息追加回 history，
+ *   然后继续请求模型，直到模型给出纯文本回答为止。
+ * - 返回值为本轮新增的消息（含中间的 tool 气泡与最终的 assistant 回答），
+ *   UI 直接追加渲染即可。
  */
 export async function sendAgentChat(
-  params: SendAgentChatParams,
+  options: AgentChatOptions,
 ): Promise<AgentChatMessage[]> {
-  const { history, userInput, model } = params;
+  const {
+    userInput,
+    model = 'qwen2.5:3b',
+    maxRounds = 6,
+    disableSelfCall = false,
+  } = options;
 
-  // 组装发给大模型的消息：系统提示 + 历史（过滤错误/开场，排除 system 占位）
-  const apiMessages = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...history
-      .filter((m) => !m.error && m.role !== 'system')
-      .map((m) => ({ role: m.role, content: m.content })),
-    { role: 'user', content: userInput },
-  ];
+  // 维护运行期历史（复制外部传入的，避免污染 UI state）
+  const history: AgentChatMessage[] = [...(options.history ?? [])];
+  if (
+    userInput &&
+    (history.length === 0 ||
+      history[history.length - 1].role !== 'user' ||
+      history[history.length - 1].content !== userInput)
+  ) {
+    history.push({
+      id: 'user-' + Date.now(),
+      role: 'user',
+      content: userInput,
+      timestamp: now(),
+    });
+  }
 
-  try {
-    const raw = await request.post<string>(
-      API_ENDPOINTS.aiChat,
-      {
-        model: model?.trim() || undefined,
-        messages: apiMessages,
-        // 强制 JSON 结构化输出，确保模型只返回可解析的 JSON 对象
-        format: 'json',
-      },
-      // AI 大模型响应慢（后端最长 300s），此请求不设超时
-      { timeout: 0 },
-    );
+  const systemPrompt = makeSystemPrompt();
+  const produced: AgentChatMessage[] = [];
+
+  for (let round = 0; round < maxRounds; round++) {
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...history.map((m) => ({ role: m.role, content: m.content })),
+    ];
+
+    let raw: unknown;
+    try {
+      raw = await request.post<string>(API_ENDPOINTS.aiChat, { model, messages });
+    } catch (e) {
+      const errMsg: AgentChatMessage = {
+        id: 'err-' + Date.now(),
+        role: 'assistant',
+        content: `请求模型失败：${e instanceof Error ? e.message : String(e)}`,
+        timestamp: now(),
+        error: true,
+      };
+      produced.push(errMsg);
+      return produced;
+    }
 
     const replyContent = normalizeReply(raw);
     const parsed = extractModelResponse(replyContent);
-    const isSystem = parsed?.isSystemAction ?? (parsed?.tool ? true : false);
+    // 处理前先清洗模型返回：tool 任务的 content 转 JSON，args 也确保为 JSON 对象
+    const cleaned = cleanModelResponse(parsed);
+console.log(cleaned);
 
-    // 汇总待执行任务：优先 tasks 数组，其次单个 tool
-    const tasks: AgentTask[] = [];
-    if (Array.isArray(parsed?.tasks) && parsed.tasks.length > 0) {
-      tasks.push(...parsed.tasks);
-    } else if (parsed?.tool) {
-      tasks.push({ tool: parsed.tool, args: parsed.args, delay: 0 });
-    }
-
-    if (isSystem && tasks.length > 0) {
-      const results: AgentChatMessage[] = [];
-      for (const task of tasks) {
-        // 延迟执行：按任务自身的 delay 等待（默认 0）
-        if (task.delay && task.delay > 0) {
-          await sleep(task.delay);
-        }
-        const toolName = task.tool;
-        const matchedTool = AGENT_TOOLS.find(
-          (t) =>
-            t.name === toolName ||
-            t.name.trim().toLowerCase() === toolName.trim().toLowerCase(),
-        );
-
-        if (matchedTool) {
-          const result = await executeAgentTool({
-            name: matchedTool.name,
-            args: task.args,
-          });
-          results.push({
-            id: 'tool-' + Date.now() + '-' + results.length,
-            role: 'tool',
-            content: result.message,
-            toolName,
-            toolArgs: JSON.stringify(task.args ?? {}),
-            toolOk: result.ok,
-            timestamp: nowTimestamp(),
-          });
-        } else {
-          results.push({
-            id: 'msg-' + (Date.now() + results.length),
-            role: 'assistant',
-            content: `模型指示执行系统功能，但工具未找到：tool="${toolName}"。可用系统工具：${AGENT_TOOLS.map(
-              (t) => t.name,
-            ).join(', ')}`,
-            timestamp: nowTimestamp(),
-          });
-        }
+    // 将清洗后的 task 列表拆为「工具任务」与「文本回复」
+    const toolTasks: ToolTask[] = [];
+    const textTasks: string[] = [];
+    for (const t of cleaned.tasks) {
+      if (t.type === 'tool') {
+        toolTasks.push({ name: t.name, args: t.args });
+      } else {
+        textTasks.push(t.content);
       }
-      return results;
     }
 
-    // 与系统无关的通用请求：把回复/请求封装成 general_chat 工具在后台处理，界面显示模型回答原文
-    const replyText = parsed?.reply || replyContent || '未获取到回复内容';
-    await executeAgentTool({
-      name: 'general_chat',
-      args: { query: userInput, reply: replyText },
-    });
+    // 过滤自调用（防递归）
+    const filteredToolTasks = disableSelfCall
+      ? toolTasks.filter((t) => t.name !== 'agent_chat')
+      : toolTasks;
 
-    return [
-      {
-        id: 'msg-' + (Date.now() + 1),
+    if (disableSelfCall && filteredToolTasks.length < toolTasks.length) {
+      textTasks.push('（已在自问自答处理中，无法再次自我调用。）');
+    }
+
+    // 先展示本轮的 text 回复（给用户看的）
+    for (const txt of textTasks) {
+      const textMsg: AgentChatMessage = {
+        id: 'txt-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
         role: 'assistant',
-        content: replyText,
-        timestamp: nowTimestamp(),
-      },
-    ];
-  } catch (err: any) {
-    return [
-      {
-        id: 'err-' + Date.now(),
-        role: 'assistant',
-        content: `调用失败: ${err?.message || '无法连接到 AI 服务'}`,
-        timestamp: nowTimestamp(),
-        error: true,
-      },
-    ];
+        content: txt,
+        timestamp: now(),
+      };
+      history.push(textMsg);
+      produced.push(textMsg);
+    }
+console.log(filteredToolTasks);
+
+    // 执行所有工具任务，并把执行结果回填到历史
+    for (const task of filteredToolTasks) {
+      const toolMsg = await runTaskAsToolMessage(task);
+      history.push(toolMsg);
+      produced.push(toolMsg);
+    }
+
+    // 依据 continue 决定走向：
+    // continue===false → 执行完即结束本轮，不再请求模型；
+    // continue===true（默认）→ 把工具结果回填，自动进入下一轮对话。
+    if (cleaned.continue === false) {
+      // 若本轮没有任何 text 回复，用最后一个工具结果兜底作为结束消息
+      if (textTasks.length === 0 && filteredToolTasks.length > 0) {
+        const lastTool = [...history].reverse().find((m) => m.role === 'tool');
+        const endMsg: AgentChatMessage = {
+          id: 'end-' + Date.now(),
+          role: 'assistant',
+          content: lastTool?.content || '（操作已完成，但未返回可读结果。）',
+          timestamp: now(),
+        };
+        history.push(endMsg);
+        produced.push(endMsg);
+      }
+      return produced;
+    }
+
+    // continue===true：工具结果已回填，自动进入下一轮对话
+    continue;
   }
+
+  // 超过最大轮次仍未给出文本回答
+  const timeoutMsg: AgentChatMessage = {
+    id: 'to-' + Date.now(),
+    role: 'assistant',
+    content: '处理步骤过多，已自动停止。请简化你的问题后重试。',
+    timestamp: now(),
+  };
+  produced.push(timeoutMsg);
+  return produced;
 }
+
+export type {
+  AgentRole,
+  AgentChatMessage,
+  ToolTask,
+  ModelTask,
+  ParsedModel,
+  AgentChatOptions,
+} from './types';

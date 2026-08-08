@@ -16,6 +16,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
 import { StickyNote as StickyNoteType, WidgetItem } from '../types';
+import { playSound } from '../utils/sound';
 
 
 // Curated accent colors exposed in the settings panel. Each entry is a CSS

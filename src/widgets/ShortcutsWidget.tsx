@@ -14,6 +14,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Modal } from '../components/Modal';
 import { PRESET_DATA } from '../data/presetData';
 import { QuickShortcut } from '../types';
+import { playSound } from '../utils/sound';
 
 
 interface ShortcutsWidgetProps {

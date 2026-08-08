@@ -10,6 +10,12 @@ export type {
   AgentToolParam,
   AgentToolCallResult,
   AgentToolInvocation,
+  AgentRole,
+  AgentChatMessage,
+  ToolTask,
+  ModelTask,
+  ParsedModel,
+  AgentChatOptions,
 } from './types';
 export { AGENT_TOOLS } from './tools';
 

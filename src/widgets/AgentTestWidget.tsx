@@ -37,7 +37,7 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
       }),
     },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState('开启黑暗模式');
   const [loading, setLoading] = useState(false);
   const [model] = useState('qwen2.5:3b');
   const scrollRef = useRef<HTMLDivElement>(null);

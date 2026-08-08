@@ -1,3 +1,4 @@
+import { Tooltip } from '@heroui/react';
 import {
   Calendar,
   Check,
@@ -9,7 +10,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import React, { useState } from 'react';
-import { Tooltip } from '../components/Tooltip';
 import { NoteColor, StickyNote as StickyNoteType } from '../types';
 
 interface Props {
@@ -63,7 +63,6 @@ export const StickyNotesWidget: React.FC<Props> = ({
   };
 
   const handleAddNote = () => {
-
     const newNote: StickyNoteType = {
       id: `note-${Date.now()}`,
       title: '新便签',
@@ -80,7 +79,6 @@ export const StickyNotesWidget: React.FC<Props> = ({
   };
 
   const handleDeleteNote = (id: string) => {
-
     const updated = notes.filter((n) => n.id !== id);
     onUpdateNotes(updated);
     if (activeNoteId === id && updated.length > 0) {
@@ -106,7 +104,6 @@ export const StickyNotesWidget: React.FC<Props> = ({
   };
 
   const handleToggleChecklistItem = (noteId: string, itemId: string) => {
-
     const note = notes.find((n) => n.id === noteId);
     if (!note || !note.checklistItems) return;
 
@@ -144,7 +141,6 @@ export const StickyNotesWidget: React.FC<Props> = ({
             <button
               key={n.id}
               onClick={() => {
-            
                 setActiveNoteId(n.id);
               }}
               className={`px-2.5 py-1 rounded-lg font-medium truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
@@ -188,7 +184,6 @@ export const StickyNotesWidget: React.FC<Props> = ({
               {/* Pin button */}
               <button
                 onClick={() => {
-              
                   handleUpdateCurrent({ pinned: !activeNote.pinned });
                 }}
                 className={`p-1 rounded-md transition-colors ${
@@ -219,7 +214,6 @@ export const StickyNotesWidget: React.FC<Props> = ({
                   <button
                     key={c}
                     onClick={() => {
-                  
                       handleUpdateCurrent({ color: c });
                     }}
                     className={`w-3.5 h-3.5 rounded-full border border-black/10 transition-transform ${
@@ -291,25 +285,30 @@ export const StickyNotesWidget: React.FC<Props> = ({
               <Calendar size={10} />
               <span>更新时间: {activeNote.updatedAt}</span>
             </span>
-            <Tooltip content={copied ? '已复制' : '一键复制'} placement="top">
-              <button
-                onClick={handleCopyNote}
-                className={`flex items-center space-x-1 transition-colors ${
-                  copied
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : 'hover:opacity-100'
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <Check size={10} />
-                  </>
-                ) : (
-                  <>
-                    <Copy size={10} />
-                  </>
-                )}
-              </button>
+            <Tooltip delay={150}>
+              <Tooltip.Trigger className="inline-flex">
+                <button
+                  onClick={handleCopyNote}
+                  className={`flex items-center space-x-1 transition-colors ${
+                    copied
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'hover:opacity-100'
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <Check size={10} />
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={10} />
+                    </>
+                  )}
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Content placement="top">
+                {copied ? '已复制' : '一键复制'}
+              </Tooltip.Content>
             </Tooltip>
           </div>
         </div>
