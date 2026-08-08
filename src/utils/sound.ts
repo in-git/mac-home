@@ -117,6 +117,37 @@ class SoundEngine {
       // Audio fallback
     }
   }
+
+  // Warning buzz: two short descending beeps (distinct from playAlert's rising chime)
+  playWarning() {
+    if (!this.enabled) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+
+      const now = this.ctx.currentTime;
+      const beeps: { f: number; t: number }[] = [
+        { f: 740, t: 0 },
+        { f: 540, t: 0.18 },
+      ];
+      beeps.forEach(({ f, t }) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(f, now + t);
+        gain.gain.setValueAtTime(0.0001, now + t);
+        gain.gain.exponentialRampToValueAtTime(0.18, now + t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.14);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + t);
+        osc.stop(now + t + 0.15);
+      });
+    } catch {
+      // Audio fallback
+    }
+  }
 }
 
 export const playSound = new SoundEngine();

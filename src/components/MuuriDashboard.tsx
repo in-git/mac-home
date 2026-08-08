@@ -97,7 +97,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         );
       case 'shortcuts':
         // inModal 为 true 时表示处于无头模态（放大）状态，传 expanded 让布局填满模态并从头开始流式排列
-        return <ShortcutsWidget expanded={inModal} />;
+        // grid 模式（非放大）下提供 onExpand，使 header 的「更多」能复用放大模态（全屏）功能
+        return (
+          <ShortcutsWidget
+            expanded={inModal}
+            onExpand={
+              inModal ? undefined : () => setExpandedWidgetId(widget.id)
+            }
+          />
+        );
       case 'settings':
         // 网格中：渲染为图标，点击后打开无头模态显示完整设置面板
         if (inModal) return <SettingsWidget />;

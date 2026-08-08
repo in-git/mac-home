@@ -3,13 +3,16 @@ import {
   Compass,
   ExternalLink,
   Github,
+  Maximize2,
+  MoreHorizontal,
   Palette,
   Plus,
+  RotateCcw,
   Sparkles,
   StickyNote,
   Trash2,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { Modal } from '../components/Modal';
 import { PRESET_DATA } from '../data/presetData';
 import { QuickShortcut } from '../types';
@@ -18,10 +21,13 @@ import { playSound } from '../utils/sound';
 interface ShortcutsWidgetProps {
   /** 是否处于无头模态（放大）状态：网格区域填满模态高度，图标从左上开始流式排列 */
   expanded?: boolean;
+  /** grid 模式下点击 header「更多」时触发的放大（全屏）回调，由仪表盘传入 */
+  onExpand?: () => void;
 }
 
 export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
+  onExpand,
 }) => {
   const [shortcuts, setShortcuts] =
     useState<QuickShortcut[]>(PRESET_DATA.INITIAL_SHORTCUTS);
@@ -32,6 +38,109 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const [newColor, setNewColor] = useState(
     'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white',
   );
+
+  // ---- Header 操作按钮 + 溢出测量 ----
+  // 操作按钮（按优先级从左到右）。expanded（全屏）模式下空间充足，直接展示全部；
+  // grid 模式下空间有限，放不下的会被收进「更多」。
+  const actions = expanded
+    ? [
+        {
+          key: 'add',
+          label: '添加网址',
+          icon: <Plus size={13} />,
+          className:
+            'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
+          onClick: () => {
+            playSound.playClick();
+            setShowAdd(true);
+          },
+        },
+        {
+          key: 'reset',
+          label: '重置为预设',
+          icon: <RotateCcw size={13} />,
+          className:
+            'text-slate-500 hover:bg-black/5 dark:hover:bg-white/10',
+          onClick: () => {
+            playSound.playClick();
+            setShortcuts(PRESET_DATA.INITIAL_SHORTCUTS);
+          },
+        },
+      ]
+    : [
+        {
+          key: 'add',
+          label: '添加网址',
+          icon: <Plus size={13} />,
+          className:
+            'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
+          onClick: () => {
+            playSound.playClick();
+            setShowAdd(true);
+          },
+        },
+        {
+          key: 'expand',
+          label: '全屏',
+          icon: <Maximize2 size={13} />,
+          className:
+            'text-slate-500 hover:bg-black/5 dark:hover:bg-white/10',
+          onClick: () => onExpand?.(),
+        },
+        {
+          key: 'reset',
+          label: '重置为预设',
+          icon: <RotateCcw size={13} />,
+          className:
+            'text-slate-500 hover:bg-black/5 dark:hover:bg-white/10',
+          onClick: () => {
+            playSound.playClick();
+            setShortcuts(PRESET_DATA.INITIAL_SHORTCUTS);
+          },
+        },
+      ];
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const moreRef = useRef<HTMLButtonElement>(null);
+  const [visibleCount, setVisibleCount] = useState(actions.length);
+
+  // JS 动态计算：测量按钮区可用宽度，超出则折叠多余按钮，仅保留「更多」
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const measure = () => {
+      const avail = container.clientWidth;
+      const els = actionsRef.current;
+      // 先临时全部显示以测得真实宽度（隐藏元素 offsetWidth 为 0）
+      els.forEach((el) => {
+        if (el) el.style.display = '';
+      });
+      const widths = els.map((el) => el?.offsetWidth ?? 0);
+      const moreW = moreRef.current?.offsetWidth ?? 36;
+      const gap = 8; // 对应 gap-2
+      const total = widths.reduce((s, w) => s + w + gap, 0) - gap;
+      if (total <= avail) {
+        setVisibleCount(actions.length);
+        return;
+      }
+      let used = 0;
+      let count = 0;
+      for (let i = 0; i < widths.length; i++) {
+        const next = used + widths[i] + gap;
+        // 必须预留「更多」按钮的位置
+        if (next + moreW > avail) break;
+        used = next;
+        count++;
+      }
+      setVisibleCount(Math.max(count, 1)); // 始终保留「添加网址」
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [actions.length, expanded]);
 
   const ICON_OPTIONS = [
     'Compass',
@@ -103,8 +212,11 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
 
   return (
     <div className="h-full flex flex-col text-xs p-1 text-slate-800 dark:text-slate-100">
-      {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
+      {/* Header：右侧操作按钮由 JS 测量溢出，放不下的收进「更多」 */}
+      <div
+        ref={headerRef}
+        className="flex items-center justify-between pb-2 mb-2 border-b border-black/5 dark:border-white/10"
+      >
         <div className="flex items-center space-x-2">
           <Compass size={16} className="text-[#007AFF]" />
           <span className="font-bold text-sm tracking-tight">
@@ -112,16 +224,35 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
           </span>
         </div>
 
-        <button
-          onClick={() => {
-            playSound.playClick();
-            setShowAdd(true);
-          }}
-          className="p-1 rounded-lg bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs transition-transform active:scale-95"
-          title="添加网址"
-        >
-          <Plus size={13} />
-        </button>
+        <div ref={containerRef} className="flex items-center gap-2">
+          {actions.map((a, i) => (
+            <button
+              key={a.key}
+              ref={(el) => {
+                actionsRef.current[i] = el;
+              }}
+              onClick={a.onClick}
+              title={a.label}
+              className={`p-1 rounded-lg transition-transform active:scale-95 ${a.className} ${
+                i >= visibleCount ? 'hidden' : ''
+              }`}
+            >
+              {a.icon}
+            </button>
+          ))}
+          {!expanded && (
+            <button
+              ref={moreRef}
+              onClick={() => onExpand?.()}
+              title="更多"
+              className={`p-1 rounded-lg bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-black/10 dark:hover:bg-white/15 transition-transform active:scale-95 ${
+                visibleCount >= actions.length ? 'hidden' : ''
+              }`}
+            >
+              <MoreHorizontal size={13} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Add Shortcut Modal */}
