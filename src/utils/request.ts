@@ -90,7 +90,7 @@ function createRequest(options: RequestConfig = {}) {
 
   const instance: AxiosInstance = axios.create({
     baseURL,
-    timeout: 15000,
+    timeout: 0,
     headers: { 'Content-Type': 'application/json' },
   });
 
