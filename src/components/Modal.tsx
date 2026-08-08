@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
-import { playSound } from '../utils/sound';
+
 
 interface ModalProps {
   isOpen: boolean;
@@ -39,7 +39,7 @@ export const Modal: React.FC<ModalProps> = ({
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        playSound.playClick();
+        
         onClose();
       }
     };
@@ -54,7 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/30 backdrop-blur-md"
             onMouseDown={(e) => {
               if (closeOnBackdrop && e.target === e.currentTarget) {
-                playSound.playClick();
+                
                 onClose();
               }
             }}
@@ -75,7 +75,7 @@ export const Modal: React.FC<ModalProps> = ({
                 {showCloseButton && (
                   <button
                     onClick={() => {
-                      playSound.playClick();
+                      
                       onClose();
                     }}
                     className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"

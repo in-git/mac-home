@@ -9,7 +9,7 @@ import {
   Wifi,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { playSound } from '../utils/sound';
+
 
 interface Props {
   isDarkMode: boolean;
@@ -69,7 +69,7 @@ export const TopBar: React.FC<Props> = ({
       {/* Center Spotlight Search Trigger */}
       <button
         onClick={() => {
-          playSound.playClick();
+          
           onOpenSpotlight();
         }}
         className="px-3 py-0.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 flex items-center space-x-2 transition-colors cursor-pointer border border-black/5 dark:border-white/5"
@@ -92,7 +92,7 @@ export const TopBar: React.FC<Props> = ({
         {/* Wallpaper Picker Toggle */}
         <button
           onClick={() => {
-            playSound.playClick();
+            
             onOpenWallpaperModal();
           }}
           className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
@@ -104,7 +104,7 @@ export const TopBar: React.FC<Props> = ({
         {/* Dark Mode Toggle */}
         <button
           onClick={() => {
-            playSound.playClick();
+            
             onToggleDarkMode();
           }}
           className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors"

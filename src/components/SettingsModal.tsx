@@ -1,7 +1,7 @@
 import { Settings as SettingsIcon, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect } from 'react';
-import { playSound } from '../utils/sound';
+
 import { SettingsWidget } from '../widgets/SettingsWidget';
 
 interface Props {
@@ -44,7 +44,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </div>
             <button
               onClick={() => {
-                playSound.playClick();
+                
                 onClose();
               }}
               className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors"

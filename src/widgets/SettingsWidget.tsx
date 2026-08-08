@@ -16,7 +16,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
 import { StickyNote as StickyNoteType, WidgetItem } from '../types';
-import { playSound } from '../utils/sound';
+
 
 // Curated accent colors exposed in the settings panel. Each entry is a CSS
 // color used for the `--accent` CSS variable (drives buttons, rings, focus).
@@ -123,7 +123,7 @@ export const SettingsWidget: React.FC = () => {
           const { widgets: w, notes: n } = parseImport(text);
           setWidgets(w);
           updateNotes(n);
-          playSound.playClick();
+          
           setImportMsg({
             type: 'success',
             text: `已导入 ${w.length} 个组件、${n.length} 条便签`,
@@ -145,12 +145,12 @@ export const SettingsWidget: React.FC = () => {
 
   const handleToggleSound = () => {
     // Play the confirmation click before muting so the user gets feedback.
-    playSound.playClick();
+    
     setSoundEnabled(!soundEnabled);
   };
 
   const handleReset = () => {
-    playSound.playClick();
+    
     resetLayout();
     setJustReset(true);
     setTimeout(() => setJustReset(false), 1500);
@@ -159,7 +159,7 @@ export const SettingsWidget: React.FC = () => {
   // 重置系统：恢复全部持久化配置（由确认弹窗触发）
   const [justResetSystem, setJustResetSystem] = useState(false);
   const handleResetSystem = () => {
-    playSound.playClick();
+    
     resetAll();
     setJustResetSystem(true);
     setTimeout(() => setJustResetSystem(false), 1500);
@@ -167,7 +167,7 @@ export const SettingsWidget: React.FC = () => {
 
   // 导出布局：将当前组件顺序、尺寸与便签序列化为 JSON 下载
   const handleExport = () => {
-    playSound.playClick();
+    
     const payload = {
       app: 'macOS 主页',
       version: 1,
@@ -215,7 +215,7 @@ export const SettingsWidget: React.FC = () => {
                 <button
                   key={String(opt.dark)}
                   onClick={() => {
-                    playSound.playClick();
+                    
                     setDarkMode(opt.dark);
                   }}
                   className={`flex items-center justify-center space-x-1 py-1.5 rounded-[10px] transition-colors active:scale-95 ${
@@ -263,7 +263,7 @@ export const SettingsWidget: React.FC = () => {
           {/* 壁纸 — 导航行 */}
           <button
             onClick={() => {
-              playSound.playClick();
+              
               openWallpaper();
             }}
             className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-left"
@@ -296,7 +296,7 @@ export const SettingsWidget: React.FC = () => {
                 <button
                   key={c.value}
                   onClick={() => {
-                    playSound.playClick();
+                    
                     setThemeColor(c.value);
                   }}
                   title={c.name}
@@ -337,7 +337,7 @@ export const SettingsWidget: React.FC = () => {
                   <button
                     key={v}
                     onClick={() => {
-                      playSound.playClick();
+                      
                       setFontVariant(v);
                     }}
                     className={`flex flex-col items-center justify-center py-1.5 rounded-[10px] transition-colors active:scale-95 ${

@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef } from 'react';
 import { getWidgetConfig } from '../data/widgetConfig';
 import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
-import { playSound } from '../utils/sound';
+
 
 export interface ContextMenuPosition {
   x: number;
@@ -123,7 +123,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 <button
                   key={sz}
                   onClick={() => {
-                    playSound.playClick();
+                    
                     onResizeWidget(targetWidget.id, sz);
                     onClose();
                   }}
@@ -140,7 +140,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
             <button
               onClick={() => {
-                playSound.playClick();
+                
                 onMoveToTopWidget(targetWidget.id);
                 onClose();
               }}
@@ -152,7 +152,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
             <button
               onClick={() => {
-                playSound.playClick();
+                
                 onDeleteWidget(targetWidget.id);
                 onClose();
               }}
@@ -170,7 +170,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Add Widget — opens the Add Widget modal directly */}
         <button
           onClick={() => {
-            playSound.playClick();
+            
             onOpenAddWidget();
             onClose();
           }}
@@ -186,7 +186,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Change Wallpaper */}
         <button
           onClick={() => {
-            playSound.playClick();
+            
             onOpenWallpaper();
             onClose();
           }}
@@ -199,7 +199,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Spotlight Search */}
         <button
           onClick={() => {
-            playSound.playClick();
+            
             onOpenSpotlight();
             onClose();
           }}
@@ -212,7 +212,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Settings */}
         <button
           onClick={() => {
-            playSound.playClick();
+            
             onOpenSettings();
             onClose();
           }}
@@ -230,7 +230,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              playSound.playClick();
+              
               onToggleEditMode();
               onClose();
             }}

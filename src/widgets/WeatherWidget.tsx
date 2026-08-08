@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { PRESET_DATA } from '../data/presetData';
 import { WeatherCondition } from '../types';
-import { playSound } from '../utils/sound';
+
 import {
   cityIdOf,
   CitySearchResult,
@@ -211,7 +211,7 @@ export const WeatherWidget: React.FC = () => {
     setSearchQuery('');
     setSearchResults([]);
     setSearchOpen(false);
-    playSound.playClick();
+    
   };
 
   const removeCity = (id: string) => {
@@ -325,7 +325,7 @@ export const WeatherWidget: React.FC = () => {
           </div>
           <button
             onClick={() => {
-              playSound.playClick();
+              
               locate();
             }}
             title="自动定位到当前位置"
@@ -340,7 +340,7 @@ export const WeatherWidget: React.FC = () => {
           </button>
           <button
             onClick={() => {
-              playSound.playClick();
+              
               setRefreshKey((k) => k + 1);
             }}
             title="刷新天气"
@@ -356,7 +356,7 @@ export const WeatherWidget: React.FC = () => {
             <div key={c.id} className="relative shrink-0">
               <button
                 onClick={() => {
-                  playSound.playClick();
+                  
                   selectCity(c.id);
                 }}
                 className={`px-2 py-0.5 rounded-md text-font-sm font-medium transition-colors whitespace-nowrap ${

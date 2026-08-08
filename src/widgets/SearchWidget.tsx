@@ -1,6 +1,6 @@
 import { ArrowRight, ExternalLink, Globe, Search } from 'lucide-react';
 import React, { useState } from 'react';
-import { playSound } from '../utils/sound';
+
 
 export type SearchEngineId = 'google' | 'bing' | 'baidu';
 
@@ -60,7 +60,7 @@ export const SearchWidget: React.FC = () => {
     SEARCH_ENGINES.find((e) => e.id === engineId) ?? SEARCH_ENGINES[0];
 
   const handleSelectEngine = (id: SearchEngineId) => {
-    playSound.playClick();
+    
     setEngineId(id);
     try {
       localStorage.setItem(STORAGE_KEY, id);
@@ -74,7 +74,7 @@ export const SearchWidget: React.FC = () => {
     const trimmed = query.trim();
     if (!trimmed) return;
 
-    playSound.playClick();
+    
     const targetUrl = currentEngine.url.replace(
       '%s',
       encodeURIComponent(trimmed),

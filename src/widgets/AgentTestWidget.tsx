@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { listAgentTools } from '../agent';
-import { playSound } from '../utils/sound';
+
 
 // 把 agent 工具清单格式化为大模型可理解的「可调用函数」描述
 const TOOLS = listAgentTools();
@@ -51,7 +51,7 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
   }, [messages, loading]);
 
   const handleClear = () => {
-    playSound.playClick();
+    
     setMessages([
       {
         id: 'welcome-' + Date.now(),
@@ -69,7 +69,7 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
     if (e) e.preventDefault();
     const trimmed = input.trim();
     if (!trimmed || loading) return;
-    playSound.playClick();
+    
 
     const userMsg: AgentChatMessage = {
       id: 'msg-' + Date.now(),

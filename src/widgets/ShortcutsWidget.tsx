@@ -14,7 +14,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Modal } from '../components/Modal';
 import { PRESET_DATA } from '../data/presetData';
 import { QuickShortcut } from '../types';
-import { playSound } from '../utils/sound';
+
 
 interface ShortcutsWidgetProps {
   /** 是否处于无头模态（放大）状态：网格区域填满模态高度，图标从左上开始流式排列 */
@@ -46,7 +46,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       icon: <Plus size={13} />,
       className: 'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
       onClick: () => {
-        playSound.playClick();
+        
         setShowAdd(true);
       },
     },
@@ -139,7 +139,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const handleAddShortcut = () => {
     if (!newTitle.trim() || !newUrl.trim()) return;
 
-    playSound.playClick();
+    
     const item: QuickShortcut = {
       id: `sc-${Date.now()}`,
       title: newTitle.trim(),
@@ -158,7 +158,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    playSound.playClick();
+    
     setShortcuts(shortcuts.filter((s) => s.id !== id));
   };
 

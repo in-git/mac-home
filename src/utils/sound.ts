@@ -15,40 +15,47 @@ class SoundEngine {
     return this.enabled;
   }
 
-  private initCtx() {
+  private initCtx(): AudioContext | null {
     if (!this.ctx && typeof window !== 'undefined') {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      // resume() 返回 Promise，但首次在用户手势内调用通常同步解锁，
+      // 即便未就绪，play 也会在 state 变为 running 后发声。
+      void this.ctx.resume();
     }
+    return this.ctx;
   }
 
   // Soft Apple click sound
   playClick() {
     if (!this.enabled) return;
     try {
-      this.initCtx();
-      if (!this.ctx) return;
+      const ctx = this.initCtx();
+      if (!ctx) return;
 
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.04);
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
 
-      gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(ctx.destination);
 
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.04);
+      osc.start(now);
+      osc.stop(now + 0.04);
     } catch {
       // Audio fallback
     }

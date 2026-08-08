@@ -1,7 +1,7 @@
 import { Bot, RefreshCw, Send, Sparkles, Trash2, User } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { API_ENDPOINTS } from '../utils/request';
-import { playSound } from '../utils/sound';
+
 
 export interface ChatMessage {
   id: string;
@@ -46,7 +46,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
   }, [messages, loading]);
 
   const handleClear = () => {
-    playSound.playClick();
+    
     setMessages([
       {
         id: 'welcome-' + Date.now(),
@@ -65,7 +65,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
-    playSound.playClick();
+    
 
     const userMsg: ChatMessage = {
       id: 'msg-' + Date.now(),

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Calendar as CalendarIcon, ToggleLeft, ToggleRight } from 'lucide-react';
-import { playSound } from '../utils/sound';
+
 
 export const ClockCalendarWidget: React.FC = () => {
   const [time, setTime] = useState(new Date());
@@ -55,7 +55,7 @@ export const ClockCalendarWidget: React.FC = () => {
 
         <button
           onClick={() => {
-            playSound.playClick();
+            
             setIsDigitalMode(!isDigitalMode);
           }}
           className="flex items-center space-x-1 text-font-sm text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"

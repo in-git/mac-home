@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, StickyNote, CloudSun, Clock, Compass, Sliders, ExternalLink } from 'lucide-react';
 import { StickyNote as StickyNoteType, WidgetType } from '../types';
-import { playSound } from '../utils/sound';
+
 
 interface Props {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export const SpotlightModal: React.FC<Props> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        playSound.playClick();
+        
         if (isOpen) onClose();
         else {
           // Open spotlight
@@ -98,7 +98,7 @@ export const SpotlightModal: React.FC<Props> = ({
                     <button
                       key={i}
                       onClick={() => {
-                        playSound.playClick();
+                        
                         onAddWidget(w.type);
                         onClose();
                       }}
@@ -123,7 +123,7 @@ export const SpotlightModal: React.FC<Props> = ({
                     key={n.id}
                     className="px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-start space-x-2 transition-colors cursor-pointer"
                     onClick={() => {
-                      playSound.playClick();
+                      
                       onAddWidget('sticky-notes');
                       onClose();
                     }}

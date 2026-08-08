@@ -10,7 +10,7 @@ import {
   WidgetSize,
   WidgetType,
 } from '../types';
-import { playSound } from '../utils/sound';
+
 
 // One-time migration from the previous per-key localStorage layout so existing
 // user data is not lost when switching to the single-store persist key.
@@ -80,7 +80,7 @@ export const useHomeStore = create<HomeState>()(
       setWidgets: (widgets) => set({ widgets }),
 
       addWidget: (type) => {
-        playSound.playClick();
+        
         const { widgets } = get();
         const count = widgets.filter((w) => w.type === type).length;
 
@@ -109,12 +109,12 @@ export const useHomeStore = create<HomeState>()(
       },
 
       deleteWidget: (id) => {
-        playSound.playClick();
+        
         set({ widgets: get().widgets.filter((w) => w.id !== id) });
       },
 
       resizeWidget: (id, newSize) => {
-        playSound.playClick();
+        
         set({
           widgets: get().widgets.map((w) =>
             w.id === id ? { ...w, size: newSize } : w,
@@ -123,7 +123,7 @@ export const useHomeStore = create<HomeState>()(
       },
 
       moveToTopWidget: (id) => {
-        playSound.playClick();
+        
         const { widgets } = get();
         const target = widgets.find((w) => w.id === id);
         if (!target) return;
@@ -132,7 +132,7 @@ export const useHomeStore = create<HomeState>()(
       },
 
       resetLayout: () => {
-        playSound.playClick();
+        
         set({
           widgets: PRESET_DATA.INITIAL_WIDGETS,
           wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
@@ -140,7 +140,7 @@ export const useHomeStore = create<HomeState>()(
       },
 
       resetAll: () => {
-        playSound.playClick();
+        
         set({
           widgets: PRESET_DATA.INITIAL_WIDGETS,
           wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
