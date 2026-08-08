@@ -1,6 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
+import { FONT_VARIANT_LABEL } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -39,7 +40,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       return;
     }
     if (locating) return;
-    
+
     setLocating(true);
     setLocCity(null);
     navigator.geolocation.getCurrentPosition(
@@ -97,7 +98,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
         {/* Dark mode tile */}
         <button
           onClick={() => {
-            
             onToggleDarkMode();
           }}
           className={`p-4 rounded-2xl flex flex-col items-center text-center gap-2 transition-all active:scale-[0.98] ${
@@ -169,7 +169,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
               <button
                 key={v}
                 onClick={() => {
-                  
                   setFontVariant(v);
                 }}
                 className={`py-2.5 rounded-xl border text-font-md font-bold transition-all active:scale-[0.98] ${
@@ -178,7 +177,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                     : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
                 }`}
               >
-                {v}
+                {FONT_VARIANT_LABEL[v]}
               </button>
             );
           })}

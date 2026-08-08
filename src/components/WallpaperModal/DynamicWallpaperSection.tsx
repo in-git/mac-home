@@ -1,0 +1,152 @@
+import { useEffect, useRef } from 'react';
+import {
+  createParticles,
+  dynamicPresets,
+  getWallpaperEffect,
+} from '../../data/wallpaperEffects';
+import MoltenMetalWallpaper from '../../effects/MoltenMetal';
+import { PlasmaWaveWallpaper } from '../../effects/PlasmaWave';
+import { ThreadsWallpaper } from '../../effects/Threads';
+import type { WallpaperConfig } from '../../types';
+
+interface DynamicWallpaperSectionProps {
+  wallpaper: WallpaperConfig;
+  isDarkMode: boolean;
+  onUpdateWallpaper: (patch: Partial<WallpaperConfig>) => void;
+  onToggleDarkMode: () => void;
+}
+
+/** Live miniature of a dynamic preset — renders the REAL effect, scaled to fit. */
+const PresetLivePreview: React.FC<{ presetId: string; isDark: boolean }> = ({
+  presetId,
+  isDark,
+}) => {
+  if (presetId === 'molten-metal') {
+    return <MoltenMetalWallpaper className="absolute inset-0" />;
+  }
+  if (presetId === 'threads') {
+    return (
+      <ThreadsWallpaper
+        className="absolute inset-0"
+        color={isDark ? [0.6, 0.6, 0.7] : [1, 1, 1]}
+      />
+    );
+  }
+  if (presetId === 'plasma-wave') {
+    return (
+      <PlasmaWaveWallpaper
+        className="absolute inset-0"
+        colors={isDark ? ['#A855F7', '#22D3EE'] : ['#C084FC', '#67E8F9']}
+      />
+    );
+  }
+  return <MiniCanvas2D presetId={presetId} isDark={isDark} />;
+};
+
+/** Tiny 2D canvas that drives the actual effect's `render` for a live thumbnail. */
+const MiniCanvas2D: React.FC<{ presetId: string; isDark: boolean }> = ({
+  presetId,
+  isDark,
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const particlesRef = useRef<ReturnType<typeof createParticles> | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const W = (canvas.width = 360);
+    const H = (canvas.height = 240);
+    particlesRef.current = createParticles(W, H);
+
+    let raf = 0;
+    const start = performance.now();
+    const loop = (now: number) => {
+      const effect = getWallpaperEffect(presetId);
+      if (effect) {
+        effect.render({
+          ctx,
+          width: W,
+          height: H,
+          time: (now - start) / 1000,
+          isDarkMode: isDark,
+          particles: particlesRef.current!,
+        });
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [presetId, isDark]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+  );
+};
+
+/** 动态效果面板组件：渲染所有动态预设的实时预览，点击后应用到桌面 */
+export const DynamicWallpaperSection: React.FC<DynamicWallpaperSectionProps> = ({
+  wallpaper,
+  isDarkMode,
+  onUpdateWallpaper,
+  onToggleDarkMode,
+}) => {
+  return (
+    <section>
+      <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+        动态效果
+      </h3>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {dynamicPresets.map((preset) => {
+          const isSelected = wallpaper.dynamicPreset === preset.id;
+          return (
+            <button
+              key={preset.id}
+              onClick={() => {
+                onUpdateWallpaper({
+                  type: 'dynamic',
+                  dynamicPreset: preset.id,
+                  // 清除静态字段，避免残留污染渲染分支。
+                  imageUrl: undefined,
+                });
+                // 预设配置了 isDarkMode 时，强制切换到暗色模式；
+                // 否则跟随全局模式，避免从强制深色预设切走后卡在暗色。
+                if (preset.isDarkMode && !isDarkMode) {
+                  onToggleDarkMode();
+                }
+              }}
+              className={`group relative aspect-[4/3] overflow-hidden rounded-xl border bg-black text-left transition-colors ${
+                isSelected
+                  ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+                  : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
+              }`}
+            >
+              <PresetLivePreview
+                presetId={preset.id}
+                isDark={preset.isDarkMode ?? isDarkMode}
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2.5 py-2">
+                <div className="truncate text-xs font-medium text-white">
+                  {preset.name}
+                </div>
+                <div className="truncate text-font-sm text-white/70">
+                  {preset.desc}
+                </div>
+              </div>
+              {isSelected && (
+                <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">
+                  当前
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+};

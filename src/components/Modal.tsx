@@ -1,8 +1,7 @@
+import { X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
-
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,6 +12,8 @@ interface ModalProps {
   icon?: React.ReactNode;
   /** Tailwind max-width utility for the card, e.g. 'max-w-2xl'. */
   maxWidth?: string;
+  /** Extra Tailwind classes merged onto the glass card, e.g. responsive overrides like 'md:max-w-4xl'. */
+  className?: string;
   /** Close when clicking the backdrop. Defaults to true. */
   closeOnBackdrop?: boolean;
   /** Show the X close button. Defaults to true (only meaningful with a title). */
@@ -33,13 +34,13 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'max-w-2xl',
   closeOnBackdrop = true,
   showCloseButton = true,
+  className = '',
   children,
 }) => {
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        
         onClose();
       }
     };
@@ -50,22 +51,21 @@ export const Modal: React.FC<ModalProps> = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-          <div
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/30 backdrop-blur-md"
-            onMouseDown={(e) => {
-              if (closeOnBackdrop && e.target === e.currentTarget) {
-                
-                onClose();
-              }
-            }}
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/30 backdrop-blur-md"
+          onMouseDown={(e) => {
+            if (closeOnBackdrop && e.target === e.currentTarget) {
+              onClose();
+            }
+          }}
+        >
+          <motion.div
+            initial={{ scale: 0.92, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.92, opacity: 0 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className={`w-full ${maxWidth} glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col ${className}`}
           >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
-              className={`w-full ${maxWidth} glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col`}
-            >
             {title && (
               <div className="px-6 py-4 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -75,7 +75,6 @@ export const Modal: React.FC<ModalProps> = ({
                 {showCloseButton && (
                   <button
                     onClick={() => {
-                      
                       onClose();
                     }}
                     className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"

@@ -157,7 +157,6 @@ export async function sendAgentChat(
       timestamp: now(),
     });
   }
-  console.log('执行次数');
 
   const systemPrompt = makeSystemPrompt();
   const produced: AgentChatMessage[] = [];

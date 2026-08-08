@@ -11,27 +11,53 @@ import { SpotlightModal } from './components/SpotlightModal';
 import { TopBar } from './components/TopBar';
 import { WallpaperModal } from './components/WallpaperModal';
 import { registerWidgetAction } from './data/widgetConfig';
+import { useShallow } from 'zustand/react/shallow';
 import { useHomeStore } from './store/useHomeStore';
 import { FONT_TIER_PX } from './types';
 
+// Actions are stable function references — read them once outside the render
+// path so they never trigger a re-render or a per-render subscription.
+const storeActions = {
+  setWidgets: useHomeStore.getState().setWidgets,
+  addWidget: useHomeStore.getState().addWidget,
+  deleteWidget: useHomeStore.getState().deleteWidget,
+  resizeWidget: useHomeStore.getState().resizeWidget,
+  moveToTopWidget: useHomeStore.getState().moveToTopWidget,
+  updateNotes: useHomeStore.getState().updateNotes,
+  updateWallpaper: useHomeStore.getState().updateWallpaper,
+  setDarkMode: useHomeStore.getState().setDarkMode,
+  setThemeColor: useHomeStore.getState().setThemeColor,
+};
+
 export default function App() {
-  // Persisted data + actions are handled by the zustand store.
-  const widgets = useHomeStore((s) => s.widgets);
-  const wallpaper = useHomeStore((s) => s.wallpaper);
-  const notes = useHomeStore((s) => s.notes);
-  const setWidgets = useHomeStore((s) => s.setWidgets);
-  const addWidget = useHomeStore((s) => s.addWidget);
-  const deleteWidget = useHomeStore((s) => s.deleteWidget);
-  const resizeWidget = useHomeStore((s) => s.resizeWidget);
-  const moveToTopWidget = useHomeStore((s) => s.moveToTopWidget);
-  const updateNotes = useHomeStore((s) => s.updateNotes);
-  const updateWallpaper = useHomeStore((s) => s.updateWallpaper);
-  const isDarkMode = useHomeStore((s) => s.isDarkMode);
-  const setDarkMode = useHomeStore((s) => s.setDarkMode);
-  const themeColor = useHomeStore((s) => s.themeColor);
-  const setThemeColor = useHomeStore((s) => s.setThemeColor);
-  const fontVariant = useHomeStore((s) => s.fontVariant);
-  const screenBrightness = useHomeStore((s) => s.screenBrightness);
+  // Single subscription for the data slice; useShallow avoids re-renders when
+  // none of these values actually change.
+  const {
+    widgets,
+    wallpaper,
+    notes,
+    isDarkMode,
+    themeColor,
+    fontVariant,
+    screenBrightness,
+  } = useHomeStore(
+    useShallow((s) => ({
+      widgets: s.widgets,
+      wallpaper: s.wallpaper,
+      notes: s.notes,
+      isDarkMode: s.isDarkMode,
+      themeColor: s.themeColor,
+      fontVariant: s.fontVariant,
+      screenBrightness: s.screenBrightness,
+    })),
+  );
+
+  const { setWidgets, addWidget, deleteWidget, resizeWidget, moveToTopWidget } =
+    storeActions;
+  const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
+    storeActions;
+
+  const toggleDarkMode = () => setDarkMode(!isDarkMode);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -59,6 +85,7 @@ export default function App() {
   }, [isDarkMode, themeColor]);
 
   // Write the three font-size CSS variables directly from the chosen font variant.
+  // Depends on fontVariant, so it must stay a separate effect.
   useEffect(() => {
     const root = document.documentElement;
     const t = FONT_TIER_PX[fontVariant];
@@ -67,29 +94,18 @@ export default function App() {
     root.style.setProperty('--font-lg', `${t.lg}px`);
   }, [fontVariant]);
 
-  // Register the "添加组件" action by widget id so IconWidget can resolve it at
-  // click time via getWidgetAction('widget-add'), independent of localStorage.
+  // One-time app startup: register the add-widget action, restore scheduled
+  // agent tasks, wire up global click sound, and expose openWallpaper() to the
+  // store so the Settings widget can open the modal without prop-drilling.
+  const openWallpaperModal = () => setIsWallpaperModalOpen(true);
   useEffect(() => {
     registerWidgetAction('widget-add', () => setIsAddWidgetModalOpen(true));
-  }, []);
-
-  // Restore any scheduled agent tasks that were pending before a page reload.
-  useEffect(() => {
     initScheduler();
-  }, []);
-
-  // 全局点击音效：事件委托，自动命中任意 <button> 或带 data-sound 的元素。
-  useEffect(() => {
-    const dispose = initGlobalSound();
-    return dispose;
-  }, []);
-
-  // Wire the store's openWallpaper() to the local wallpaper modal so the
-  // Settings widget can open it without prop-drilling through MuuriDashboard.
-  useEffect(() => {
-    useHomeStore.setState({
-      openWallpaper: () => setIsWallpaperModalOpen(true),
-    });
+    const disposeSound = initGlobalSound();
+    useHomeStore.setState({ openWallpaper: openWallpaperModal });
+    return () => {
+      disposeSound();
+    };
   }, []);
 
   // Main Right Click Handler
@@ -136,10 +152,10 @@ export default function App() {
       {/* Top macOS Navigation Bar */}
       <TopBar
         isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setDarkMode(!isDarkMode)}
+        onToggleDarkMode={toggleDarkMode}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
-        onOpenWallpaperModal={() => setIsWallpaperModalOpen(true)}
+        onOpenWallpaperModal={openWallpaperModal}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
       />
 
@@ -161,7 +177,7 @@ export default function App() {
             notes={notes}
             onUpdateNotes={updateNotes}
             isDarkMode={isDarkMode}
-            onToggleDarkMode={() => setDarkMode(!isDarkMode)}
+            onToggleDarkMode={toggleDarkMode}
           />
 
           {/* 右下角完成按钮（仅在编辑模式展示） */}
@@ -189,7 +205,7 @@ export default function App() {
         isDarkMode={isDarkMode}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
-        onOpenWallpaper={() => setIsWallpaperModalOpen(true)}
+        onOpenWallpaper={openWallpaperModal}
         onOpenSpotlight={() => setIsSpotlightOpen(true)}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
@@ -204,7 +220,7 @@ export default function App() {
         themeColor={themeColor}
         onUpdateWallpaper={updateWallpaper}
         onUpdateThemeColor={setThemeColor}
-        onToggleDarkMode={() => setDarkMode(!isDarkMode)}
+        onToggleDarkMode={toggleDarkMode}
       />
 
       {/* Spotlight Search Modal */}

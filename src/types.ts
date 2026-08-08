@@ -4,6 +4,13 @@
 //   C → --font-sm 14 / --font-md 16 / --font-lg 18
 export type FontVariant = 'A' | 'B' | 'C';
 
+/** 字号方案的 UI 展示名：小 / 中 / 大 */
+export const FONT_VARIANT_LABEL: Record<FontVariant, string> = {
+  A: '小',
+  B: '中',
+  C: '大',
+};
+
 export const FONT_TIER_PX: Record<
   FontVariant,
   { sm: number; md: number; lg: number }
@@ -183,6 +190,7 @@ export interface SystemStatus {
   isLayoutLocked: boolean;
 }
 
-export interface ToolTask{
-   name: string, args:any
+export interface ToolTask {
+  name: string;
+  args: any;
 }

@@ -15,9 +15,12 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { StickyNote as StickyNoteType, WidgetItem } from '../types';
+import {
+  FONT_VARIANT_LABEL,
+  StickyNote as StickyNoteType,
+  WidgetItem,
+} from '../types';
 import { playSound } from '../utils/sound';
-
 
 // Curated accent colors exposed in the settings panel. Each entry is a CSS
 // color used for the `--accent` CSS variable (drives buttons, rings, focus).
@@ -124,7 +127,7 @@ export const SettingsWidget: React.FC = () => {
           const { widgets: w, notes: n } = parseImport(text);
           setWidgets(w);
           updateNotes(n);
-          
+
           setImportMsg({
             type: 'success',
             text: `已导入 ${w.length} 个组件、${n.length} 条便签`,
@@ -146,12 +149,11 @@ export const SettingsWidget: React.FC = () => {
 
   const handleToggleSound = () => {
     // Play the confirmation click before muting so the user gets feedback.
-    
+
     setSoundEnabled(!soundEnabled);
   };
 
   const handleReset = () => {
-    
     resetLayout();
     setJustReset(true);
     setTimeout(() => setJustReset(false), 1500);
@@ -160,7 +162,6 @@ export const SettingsWidget: React.FC = () => {
   // 重置系统：恢复全部持久化配置（由确认弹窗触发）
   const [justResetSystem, setJustResetSystem] = useState(false);
   const handleResetSystem = () => {
-    
     resetAll();
     setJustResetSystem(true);
     setTimeout(() => setJustResetSystem(false), 1500);
@@ -168,7 +169,6 @@ export const SettingsWidget: React.FC = () => {
 
   // 导出布局：将当前组件顺序、尺寸与便签序列化为 JSON 下载
   const handleExport = () => {
-    
     const payload = {
       app: 'macOS 主页',
       version: 1,
@@ -216,7 +216,6 @@ export const SettingsWidget: React.FC = () => {
                 <button
                   key={String(opt.dark)}
                   onClick={() => {
-                    
                     setDarkMode(opt.dark);
                   }}
                   className={`flex items-center justify-center space-x-1 py-1.5 rounded-[10px] transition-colors active:scale-95 ${
@@ -264,7 +263,6 @@ export const SettingsWidget: React.FC = () => {
           {/* 壁纸 — 导航行 */}
           <button
             onClick={() => {
-              
               openWallpaper();
             }}
             className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-left"
@@ -297,7 +295,6 @@ export const SettingsWidget: React.FC = () => {
                 <button
                   key={c.value}
                   onClick={() => {
-                    
                     setThemeColor(c.value);
                   }}
                   title={c.name}
@@ -322,8 +319,8 @@ export const SettingsWidget: React.FC = () => {
           {/* 字体方案 — 分段控制器 */}
           <div className="rounded-[12px] p-3 bg-black/5 dark:bg-white/10">
             <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium mb-2">
-              <span className="font-bold leading-none">A</span>
-              <span>字体方案</span>
+              <span className="font-bold leading-none">字</span>
+              <span>字体大小</span>
             </div>
             <div className="grid grid-cols-3 p-1 rounded-[12px] bg-white/60 dark:bg-white/5">
               {(['A', 'B', 'C'] as const).map((v) => {
@@ -338,7 +335,6 @@ export const SettingsWidget: React.FC = () => {
                   <button
                     key={v}
                     onClick={() => {
-                      
                       setFontVariant(v);
                     }}
                     className={`flex flex-col items-center justify-center py-1.5 rounded-[10px] transition-colors active:scale-95 ${
@@ -347,7 +343,7 @@ export const SettingsWidget: React.FC = () => {
                         : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
                   >
-                    <span className="font-bold">{v}</span>
+                    <span className="font-bold">{FONT_VARIANT_LABEL[v]}</span>
                     <span className="font-mono opacity-80">{sample}</span>
                   </button>
                 );
