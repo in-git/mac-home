@@ -299,7 +299,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.12, ease: 'easeOut' }}
         style={{ top: `${adjustedY}px`, left: `${adjustedX}px`, width: '272px' }}
-        className="fixed z-50 p-2.5 rounded-3xl glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-[15px] text-slate-800 dark:text-slate-100 select-none"
+        className="fixed z-[70] p-2.5 rounded-3xl glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-[15px] text-slate-800 dark:text-slate-100 select-none"
       >
         {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
         {targetWidget ? (

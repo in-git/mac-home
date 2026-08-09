@@ -31,6 +31,26 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     const controls = new RoleControls();
 
+    // 监听外部 AI 对话发出的 Speak 事件（定义在 effect 作用域，供注册与卸载共用）
+    const handleRoleSpeak = (e: Event) => {
+      const customEvent = e as CustomEvent<{ text: string }>;
+      if (customEvent.detail?.text) {
+        setDialog({
+          text: customEvent.detail.text,
+          visible: true,
+        });
+
+        if (hideTimerId) clearTimeout(hideTimerId);
+        // AI 回复展示 5 秒后隐藏
+        hideTimerId = setTimeout(() => {
+          if (isDestroyed) return;
+          setDialog((prev) => ({ ...prev, visible: false }));
+          scheduleNextDialog();
+        }, 5000);
+      }
+    };
+    window.addEventListener('role-dialog-speak', handleRoleSpeak);
+
     // 随机弹出对话框调度
     const scheduleNextDialog = () => {
       const interval = getRandomInterval();
@@ -131,6 +151,7 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     return () => {
       isDestroyed = true;
+      window.removeEventListener('role-dialog-speak', handleRoleSpeak);
       if (timerId) clearTimeout(timerId);
       if (hideTimerId) clearTimeout(hideTimerId);
       controls.destroy();
@@ -141,13 +162,13 @@ export const RoleCharacterCanvas: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-30 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[190] overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
 
       {/* 随角色移动的对话框气泡 */}
       {dialog.visible && (
         <div
-          className="absolute z-40 px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-medium rounded-2xl shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100"
+          className="absolute z-40 max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-medium rounded-2xl shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap"
           style={{
             left: `${rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2}px`,
             top: `${rolePos.y - 12}px`,

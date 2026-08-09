@@ -145,7 +145,7 @@
 .muuri-item.muuri-item-releasing,
 .muuri-item-placeholder {
   will-change: transform;
-  z-index: 30;
+  z-index: 20;
 }
 
 .muuri-item-placeholder .glass-panel {

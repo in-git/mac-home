@@ -452,7 +452,7 @@ export const WeatherWidget: React.FC = () => {
           </div>
 
           {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-20 glass-panel rounded-xl p-1 max-h-56 overflow-y-auto shadow-xl">
+            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-xl p-1 max-h-56 overflow-y-auto shadow-xl">
               {searchResults.map((r) => (
                 <button
                   key={r.id}
@@ -472,7 +472,7 @@ export const WeatherWidget: React.FC = () => {
             </div>
           )}
           {searchQuery.trim() && !searching && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-20 glass-panel rounded-xl p-2.5 text-center text-font-sm text-slate-400">
+            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-xl p-2.5 text-center text-font-sm text-slate-400">
               未找到相关城市
             </div>
           )}

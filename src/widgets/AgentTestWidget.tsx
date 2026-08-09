@@ -89,6 +89,18 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
         model,
       });
       setMessages((prev) => [...prev, ...replyMsgs]);
+
+      // 提取最新的 assistant 文本回复发送给桌宠气泡显示
+      const lastAssistantMsg = [...replyMsgs]
+        .reverse()
+        .find((m) => m.role === 'assistant' && m.content && !m.error);
+      if (lastAssistantMsg) {
+        window.dispatchEvent(
+          new CustomEvent('role-dialog-speak', {
+            detail: { text: lastAssistantMsg.content },
+          }),
+        );
+      }
     } finally {
       setLoading(false);
     }

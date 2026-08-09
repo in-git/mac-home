@@ -239,7 +239,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setIsEditMode(false)}
-              className="fixed right-4 sm:right-6 bottom-5 z-40 flex items-center space-x-1.5 px-4 py-2 bg-[#007AFF] hover:bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-[12px] shadow-lg transition-all"
+              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[#007AFF] hover:bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-[12px] shadow-lg transition-all"
             >
               <Check size={14} strokeWidth={2.5} />
               <span>完成</span>

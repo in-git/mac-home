@@ -55,7 +55,7 @@ export const TopBar: React.FC<Props> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs font-medium border-b border-white/20 dark:border-white/10 select-none shadow-xs">
+    <header className="sticky top-0 z-50 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs font-medium border-b border-white/20 dark:border-white/10 select-none shadow-xs">
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
         <span className="font-semibold text-slate-800 dark:text-slate-100 hidden sm:inline">
