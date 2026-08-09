@@ -502,7 +502,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               <div className="muuri-item-content h-full w-full">
                 <div
                   style={widget.background ? { background: widget.background } : undefined}
-                  className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widget.size === 'icon-1-16' ? 'p-0' : 'p-4'} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
+                  className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widget.size === 'icon-1-16' ? 'p-0' : 'p-4'} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''}${isEditMode ? ' edit-wiggle' : ''}`}
                   onClick={(e) => {
                     if (isEditMode) return;
                     const target = e.target as HTMLElement;

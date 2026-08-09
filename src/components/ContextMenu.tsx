@@ -223,7 +223,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       key={g.id}
                       title={g.title}
                       onClick={() => {
-                        onChangeWidgetBackground(targetWidget.id, g.gradient);
+                        const t = g.theme === 'dark' || g.theme === 'light' ? g.theme : undefined;
+                        onChangeWidgetBackground(targetWidget.id, g.gradient, t);
                         setBgSubmenuOpen(false);
                         onClose();
                       }}

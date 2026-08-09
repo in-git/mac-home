@@ -357,3 +357,73 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+
+/* ===== 卡片背景文本自适应 =====
+   当卡片使用自定义背景（亮色/暗色）时，卡片内文本颜色跟随背景明暗，
+   而非系统主题。通过 .card-theme-light / .card-theme-dark 作用域覆盖
+   常用 Tailwind 文本类，与 .dark 系统主题完全解耦。 */
+
+.widget-card.card-theme-light {
+  --card-fg: #1d1d1f;
+  --card-fg-muted: #515154;
+  --card-fg-subtle: #86868b;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.widget-card.card-theme-dark {
+  --card-fg: #f5f5f7;
+  --card-fg-muted: #d1d1d6;
+  --card-fg-subtle: #a1a1a6;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* 覆盖卡片内常见文本色类（优先级高于 .dark 的 dark: 变体）。 */
+.widget-card.card-theme-light .text-slate-800,
+.widget-card.card-theme-light .text-slate-700,
+.widget-card.card-theme-light .text-slate-600,
+.widget-card.card-theme-light .text-slate-500,
+.widget-card.card-theme-light .text-slate-400,
+.widget-card.card-theme-light .text-slate-300,
+.widget-card.card-theme-light .text-slate-200,
+.widget-card.card-theme-light .text-slate-100,
+.widget-card.card-theme-light .text-slate-50,
+.widget-card.card-theme-light .text-black,
+.widget-card.card-theme-light .text-white,
+.widget-card.card-theme-light .text-gray-800,
+.widget-card.card-theme-light .text-gray-700,
+.widget-card.card-theme-light .text-gray-600,
+.widget-card.card-theme-light .text-gray-500,
+.widget-card.card-theme-light .text-gray-400,
+.widget-card.card-theme-light .text-gray-300,
+.widget-card.card-theme-light .text-gray-200,
+.widget-card.card-theme-light .text-apple-text {
+  color: var(--card-fg) !important;
+}
+
+.widget-card.card-theme-dark .text-slate-800,
+.widget-card.card-theme-dark .text-slate-700,
+.widget-card.card-theme-dark .text-slate-600,
+.widget-card.card-theme-dark .text-slate-500,
+.widget-card.card-theme-dark .text-slate-400,
+.widget-card.card-theme-dark .text-slate-300,
+.widget-card.card-theme-dark .text-slate-200,
+.widget-card.card-theme-dark .text-slate-100,
+.widget-card.card-theme-dark .text-slate-50,
+.widget-card.card-theme-dark .text-black,
+.widget-card.card-theme-dark .text-white,
+.widget-card.card-theme-dark .text-gray-800,
+.widget-card.card-theme-dark .text-gray-700,
+.widget-card.card-theme-dark .text-gray-600,
+.widget-card.card-theme-dark .text-gray-500,
+.widget-card.card-theme-dark .text-gray-400,
+.widget-card.card-theme-dark .text-gray-300,
+.widget-card.card-theme-dark .text-gray-200,
+.widget-card.card-theme-dark .text-apple-text {
+  color: var(--card-fg) !important;
+}
+
+/* 半透明/次要文字（如 opacity、muted 变体）统一用 subtle 色，避免叠在背景上突兀。 */
+.widget-card.card-theme-light [class*='text-'][class*='/'],
+.widget-card.card-theme-dark [class*='text-'][class*='/'] {
+  color: var(--card-fg-muted) !important;
+}

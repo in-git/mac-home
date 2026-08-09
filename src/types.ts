@@ -101,6 +101,9 @@ export interface WidgetItem {
   // background value (e.g. a `linear-gradient(...)` string) is accepted; when
   // set it overrides the default translucent glass-panel background.
   background?: string;
+  // 卡片背景的明暗分类（'light' | 'dark'），用于让卡片内文本自适应背景明暗，
+  // 独立于系统主题。由预设背景的 theme 字段在切换时写入。
+  backgroundTheme?: 'light' | 'dark';
   // Action callback resolved at runtime by id (see getWidgetAction in
   // widgetConfig). Functions are not serialized to localStorage, so this field is
   // only meaningful for widgets sourced from code (INITIAL_WIDGETS).

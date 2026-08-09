@@ -45,7 +45,11 @@ interface HomeState {
   deleteWidget: (id: string) => void;
   resizeWidget: (id: string, newSize: WidgetSize) => void;
   moveToTopWidget: (id: string) => void;
-  updateWidgetBackground: (id: string, background: string | undefined) => void;
+  updateWidgetBackground: (
+    id: string,
+    background: string | undefined,
+    backgroundTheme?: 'light' | 'dark',
+  ) => void;
   resetLayout: () => void;
   // 重置系统：恢复所有持久化配置（布局、壁纸、便签、外观、主题色、音效、字号、亮度）
   resetAll: () => void;
@@ -137,10 +141,12 @@ export const useHomeStore = create<HomeState>()(
         set({ widgets: [target, ...rest] });
       },
 
-      updateWidgetBackground: (id, background) => {
+      updateWidgetBackground: (id, background, backgroundTheme) => {
         set({
           widgets: get().widgets.map((w) =>
-            w.id === id ? { ...w, background } : w,
+            w.id === id
+              ? { ...w, background, backgroundTheme }
+              : w,
           ),
         });
       },
