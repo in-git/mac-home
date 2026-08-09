@@ -1,7 +1,7 @@
 import type React from 'react';
-import type { AIConfig, CardRadiusTier, StickyNote, WidgetItem } from '../../types';
+import type { AIConfig, CardRadiusTier } from '../../types';
 
-export type SettingsTab = 'appearance' | 'system' | 'ai';
+export type SettingsTab = 'appearance' | 'system' | 'ai' | 'pet';
 
 export interface AppearancePanelProps {
   isDarkMode: boolean;
@@ -31,4 +31,11 @@ export interface SystemPanelProps {
 export interface AIPanelProps {
   config: AIConfig;
   onChange: (patch: Partial<AIConfig>) => void;
+}
+
+export interface PetPanelProps {
+  enabled: boolean;
+  onToggleEnabled: () => void;
+  interval: number;
+  onIntervalChange: (seconds: number) => void;
 }

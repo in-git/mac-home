@@ -1,16 +1,8 @@
-import type { AgentChatMessage } from '@/agent/chat';
 import { AGENT_TOOLS } from '@/agent';
+import type { AgentChatMessage } from '@/agent/chat';
+import { MAX_PET_CHAT_MESSAGES, useHomeStore } from '@/store/useHomeStore';
 import { chatWithPet } from '@/utils/aiClient';
-import { useHomeStore } from '@/store/useHomeStore';
-import {
-  Bot,
-  RefreshCw,
-  Send,
-  Sparkles,
-  Terminal,
-  User,
-  Wrench,
-} from 'lucide-react';
+import { Send, Terminal, Wrench } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -41,8 +33,7 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
   const aiConfig = useHomeStore((s) => s.aiConfig);
   const petChatHistory = useHomeStore((s) => s.petChatHistory);
   const setPetChatHistory = useHomeStore((s) => s.setPetChatHistory);
-  // 持久化的跨轮对话历史上限（只存 user/assistant 文本），防止上下文无限增长
-  const MAX_PET_HISTORY = 20;
+  // 持久化的跨轮对话历史上限（最多 10 轮 = 20 条 user/assistant 文本，store 层统一截断）
 
   // Esc 关闭 + 打开时自动聚焦输入框
   useEffect(() => {
@@ -90,7 +81,10 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
       // 携带跨轮历史（chatWithPet 内部会安全清洗，只保留 user/assistant 文本，
       // 不会触发 OpenAI 兼容接口的 400 错误）。
       const historyForModel: import('@/utils/aiClient').ChatMessage[] =
-        petChatHistory.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+        petChatHistory.map((m) => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+        }));
       const reply = await chatWithPet(aiConfig, trimmed, historyForModel);
       const assistantMsg: AgentChatMessage = {
         id: 'cmd-assistant-' + Date.now(),
@@ -100,7 +94,9 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
       };
       setMessages((prev) => [...prev, assistantMsg]);
       // 把本轮 user + assistant 追加进持久化的跨轮历史（仅文本，剔除 error 标记）
-      const nextHistory = [...petChatHistory, userMsg, assistantMsg].slice(-MAX_PET_HISTORY);
+      const nextHistory = [...petChatHistory, userMsg, assistantMsg].slice(
+        -MAX_PET_CHAT_MESSAGES,
+      );
       setPetChatHistory(nextHistory);
       // 桌宠气泡由 chatWithPet 内部（执行 ToolTask 时）统一触发，这里不再重复派发
       // 单轮对话完成，关闭对话框（回复通过桌宠头顶气泡显示）
@@ -115,7 +111,9 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
       };
       setMessages((prev) => [...prev, errorMsg]);
       // 失败也应保留 user 输入到历史，便于下一轮模型理解上下文（不存 error 消息）
-      const nextHistory = [...petChatHistory, userMsg].slice(-MAX_PET_HISTORY);
+      const nextHistory = [...petChatHistory, userMsg].slice(
+        -MAX_PET_CHAT_MESSAGES,
+      );
       setPetChatHistory(nextHistory);
     } finally {
       setLoading(false);
@@ -142,9 +140,6 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
           onClick={(e) => e.stopPropagation()}
           className="w-full max-w-xl glass-panel rounded-2xl shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100 flex flex-col"
         >
-     
-
-      
           {/* 底部输入框（textarea 多行） */}
           <form
             onSubmit={handleSend}
@@ -175,7 +170,6 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
                 <Send size={11} />
               </button>
             </div>
-            
           </form>
 
           {/* 输入框下方的 agent 命令列表：点击把 title 填入输入框 */}
@@ -193,7 +187,10 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
                   title={tool.description}
                   className="group flex items-start gap-2.5 px-3 py-2.5 rounded-[12px] bg-black/[0.03] dark:bg-white/[0.06] hover:bg-[#007AFF]/10 dark:hover:bg-[#007AFF]/20 transition-colors text-left disabled:opacity-50 disabled:pointer-events-none w-full"
                 >
-                  <Wrench size={14} className="text-slate-400 dark:text-slate-500 shrink-0 mt-0.5 group-hover:text-[#007AFF]" />
+                  <Wrench
+                    size={14}
+                    className="text-slate-400 dark:text-slate-500 shrink-0 mt-0.5 group-hover:text-[#007AFF]"
+                  />
                   <div className="flex flex-col min-w-0">
                     <span className="text-xs text-slate-800 dark:text-slate-100 font-semibold">
                       {tool.title}

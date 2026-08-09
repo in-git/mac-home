@@ -1,9 +1,12 @@
 import { Check, ExternalLink, Key, Loader2, Sparkles } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import {
+  MAX_PET_CHAT_MESSAGES,
+  useHomeStore,
+} from '../../../store/useHomeStore';
 import { AI_PROVIDERS } from '../../../types';
 import { chatWithPet, testConnection } from '../../../utils/aiClient';
 import type { AIPanelProps } from '../types';
-import { useHomeStore } from '../../../store/useHomeStore';
 
 /**
  * AI 对接面板：参照 macOS 系统设置的卡片分组布局。
@@ -12,9 +15,10 @@ import { useHomeStore } from '../../../store/useHomeStore';
  */
 export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
   const [testing, setTesting] = useState(false);
-  const [testResult, setTestResult] = useState<
-    { ok: boolean; message: string } | null
-  >(null);
+  const [testResult, setTestResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
   // 对话式连接测试
   const [chatInput, setChatInput] = useState('');
   const [chatting, setChatting] = useState(false);
@@ -63,16 +67,38 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
       // 携带已持久化的桌宠对话历史，让连接测试也能延续上下文；
       // chatWithPet 内部会安全清洗（只保留 user/assistant 文本），不会触发 400。
       const historyForModel: import('../../../utils/aiClient').ChatMessage[] =
-        petChatHistory.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
-      const reply = await chatWithPet(config, text, historyForModel, controller.signal);
+        petChatHistory.map((m) => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+        }));
+      const reply = await chatWithPet(
+        config,
+        text,
+        historyForModel,
+        controller.signal,
+      );
       if (!reply) {
         setChatError('已连通，但模型未返回内容（请检查模型名）');
       } else {
         setChatReply(reply);
         // 测试成功：把本轮 user + 模型回复写入跨轮历史，便于真正对话时延续
-        const userMsg = { id: 'ai-test-user-' + Date.now(), role: 'user' as const, content: text, timestamp: new Date().toLocaleTimeString() };
-        const assistantMsg = { id: 'ai-test-assistant-' + Date.now(), role: 'assistant' as const, content: reply, timestamp: new Date().toLocaleTimeString() };
-        setPetChatHistory([...petChatHistory, userMsg, assistantMsg].slice(-20));
+        const userMsg = {
+          id: 'ai-test-user-' + Date.now(),
+          role: 'user' as const,
+          content: text,
+          timestamp: new Date().toLocaleTimeString(),
+        };
+        const assistantMsg = {
+          id: 'ai-test-assistant-' + Date.now(),
+          role: 'assistant' as const,
+          content: reply,
+          timestamp: new Date().toLocaleTimeString(),
+        };
+        setPetChatHistory(
+          [...petChatHistory, userMsg, assistantMsg].slice(
+            -MAX_PET_CHAT_MESSAGES,
+          ),
+        );
       }
     } catch (e) {
       setChatError(e instanceof Error ? e.message : String(e));
@@ -96,8 +122,9 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
       <div className="flex items-start space-x-2.5 rounded-xl bg-[#007AFF]/10 dark:bg-[#007AFF]/15 p-3 text-xs text-[#007AFF] dark:text-[#5AC8FA]">
         <Sparkles size={15} className="mt-0.5 shrink-0" />
         <span>
-          选择厂商并填写 API Key 后，可让本机的 AI 助手直接调用对应模型。自定义模式支持任意兼容
-          OpenAI 协议的接口（如本地 Ollama、vLLM）。还可选择「本地大模型」，走本机后端通道对接本地
+          选择厂商并填写 API Key 后，可让本机的 AI
+          助手直接调用对应模型。自定义模式支持任意兼容 OpenAI 协议的接口（如本地
+          Ollama、vLLM）。还可选择「本地大模型」，走本机后端通道对接本地
           Ollama。配置保存在本机，不会上传。
         </span>
       </div>
@@ -260,9 +287,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
               {chatReply}
             </div>
           )}
-          {chatError && (
-            <p className="text-sm text-[#FF3B30]">{chatError}</p>
-          )}
+          {chatError && <p className="text-sm text-[#FF3B30]">{chatError}</p>}
         </div>
       </section>
     </div>

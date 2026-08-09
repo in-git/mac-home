@@ -1,4 +1,4 @@
-import { Bot, Palette, Settings as SettingsIcon } from 'lucide-react';
+import { Bot, Palette, PawPrint, Settings as SettingsIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 
@@ -35,6 +35,15 @@ const TABS: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-[7px] bg-gradient-to-br from-violet-400 to-fuchsia-500 text-white">
         <Bot size={15} />
+      </span>
+    ),
+  },
+  {
+    id: 'pet',
+    label: '宠物',
+    icon: (
+      <span className="flex items-center justify-center w-7 h-7 rounded-[7px] bg-gradient-to-br from-orange-400 to-rose-500 text-white">
+        <PawPrint size={15} />
       </span>
     ),
   },

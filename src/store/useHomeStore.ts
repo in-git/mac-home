@@ -4,8 +4,8 @@ import { PRESET_DATA } from '../data/presetData';
 import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
 import {
   AIConfig,
-  DEFAULT_AI_CONFIG,
   CardRadiusTier,
+  DEFAULT_AI_CONFIG,
   FontVariant,
   StickyNote as StickyNoteType,
   WallpaperConfig,
@@ -14,6 +14,10 @@ import {
   WidgetType,
 } from '../types';
 
+// 桌宠对话历史上限：最多保留 10 轮（每轮 = 1 条 user + 1 条 assistant，
+// 即最多 20 条消息），超出时自动删除最早的记录。
+export const MAX_PET_CHAT_ROUNDS = 10;
+export const MAX_PET_CHAT_MESSAGES = MAX_PET_CHAT_ROUNDS * 2;
 
 // One-time migration from the previous per-key localStorage layout so existing
 // user data is not lost when switching to the single-store persist key.
@@ -44,6 +48,10 @@ interface HomeState {
   aiConfig: AIConfig;
   // 桌宠对话历史（跨轮上下文，持久化），只存 user/assistant 文本，不含 tool 消息
   petChatHistory: import('../agent/types').AgentChatMessage[];
+  // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
+  petAutoActivity: boolean;
+  // 桌宠自由活动触发间隔（秒）
+  petActivityInterval: number;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -74,7 +82,11 @@ interface HomeState {
   openWallpaper: () => void;
   setAiConfig: (patch: Partial<AIConfig>) => void;
   // 桌宠对话历史写入（追加本轮 user/assistant 消息）
-  setPetChatHistory: (messages: import('../agent/types').AgentChatMessage[]) => void;
+  setPetChatHistory: (
+    messages: import('../agent/types').AgentChatMessage[],
+  ) => void;
+  setPetAutoActivity: (value: boolean) => void;
+  setPetActivityInterval: (seconds: number) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -99,11 +111,13 @@ export const useHomeStore = create<HomeState>()(
       screenBrightness: 100,
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_AI_CONFIG),
       petChatHistory: [],
+      // 默认关闭自由活动（开启会持续消耗模型 token），间隔默认 10 秒
+      petAutoActivity: false,
+      petActivityInterval: 10,
 
       setWidgets: (widgets) => set({ widgets }),
 
       addWidget: (type) => {
-        
         const { widgets } = get();
         const count = widgets.filter((w) => w.type === type).length;
 
@@ -132,12 +146,10 @@ export const useHomeStore = create<HomeState>()(
       },
 
       deleteWidget: (id) => {
-        
         set({ widgets: get().widgets.filter((w) => w.id !== id) });
       },
 
       resizeWidget: (id, newSize) => {
-        
         set({
           widgets: get().widgets.map((w) =>
             w.id === id ? { ...w, size: newSize } : w,
@@ -146,7 +158,6 @@ export const useHomeStore = create<HomeState>()(
       },
 
       moveToTopWidget: (id) => {
-        
         const { widgets } = get();
         const target = widgets.find((w) => w.id === id);
         if (!target) return;
@@ -157,9 +168,7 @@ export const useHomeStore = create<HomeState>()(
       updateWidgetBackground: (id, background, backgroundTheme) => {
         set({
           widgets: get().widgets.map((w) =>
-            w.id === id
-              ? { ...w, background, backgroundTheme }
-              : w,
+            w.id === id ? { ...w, background, backgroundTheme } : w,
           ),
         });
       },
@@ -173,7 +182,6 @@ export const useHomeStore = create<HomeState>()(
       },
 
       resetLayout: () => {
-        
         set({
           widgets: PRESET_DATA.INITIAL_WIDGETS,
           wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
@@ -181,7 +189,6 @@ export const useHomeStore = create<HomeState>()(
       },
 
       resetAll: () => {
-        
         set({
           widgets: PRESET_DATA.INITIAL_WIDGETS,
           wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
@@ -195,6 +202,8 @@ export const useHomeStore = create<HomeState>()(
           cardRadius: 'large',
           screenBrightness: 100,
           aiConfig: DEFAULT_AI_CONFIG,
+          petAutoActivity: false,
+          petActivityInterval: 10,
         });
       },
 
@@ -211,7 +220,14 @@ export const useHomeStore = create<HomeState>()(
       setAiConfig: (patch) =>
         set({ aiConfig: { ...get().aiConfig, ...patch } }),
       setPetChatHistory: (messages) =>
-        set({ petChatHistory: messages }),
+        // 统一在 store 层截断到最近 10 轮，超出自动删除最早记录（调用方无需各自处理）
+        set({ petChatHistory: messages.slice(-MAX_PET_CHAT_MESSAGES) }),
+      setPetAutoActivity: (value) => set({ petAutoActivity: value }),
+      setPetActivityInterval: (seconds) =>
+        // 间隔限制在 5~600 秒之间，避免过密消耗 token 或过稀导致无感
+        set({
+          petActivityInterval: Math.max(5, Math.min(600, Math.round(seconds))),
+        }),
       // Registered by App on mount so the store can open the wallpaper modal
       // without threading the setter through the whole component tree.
       openWallpaper: () => {},
@@ -230,6 +246,8 @@ export const useHomeStore = create<HomeState>()(
         cardRadius: state.cardRadius,
         screenBrightness: state.screenBrightness,
         aiConfig: state.aiConfig,
+        petAutoActivity: state.petAutoActivity,
+        petActivityInterval: state.petActivityInterval,
       }),
     },
   ),

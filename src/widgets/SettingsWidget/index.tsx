@@ -1,34 +1,68 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useHomeStore } from '../../store/useHomeStore';
 import { playSound } from '../../utils/sound';
 import { parseImport } from './constants';
-import { AppearancePanel } from './panels/AppearancePanel';
-import { SystemPanel } from './panels/SystemPanel';
 import { AIPanel } from './panels/AIPanel';
+import { AppearancePanel } from './panels/AppearancePanel';
+import { PetPanel } from './panels/PetPanel';
+import { SystemPanel } from './panels/SystemPanel';
 import type { SettingsTab } from './types';
 
 export const SettingsWidget: React.FC<{
   activeTab: SettingsTab;
 }> = ({ activeTab }) => {
-  const isDarkMode = useHomeStore((s) => s.isDarkMode);
-  const setDarkMode = useHomeStore((s) => s.setDarkMode);
-  const themeColor = useHomeStore((s) => s.themeColor);
-  const setThemeColor = useHomeStore((s) => s.setThemeColor);
-  const soundEnabled = useHomeStore((s) => s.soundEnabled);
-  const setSoundEnabled = useHomeStore((s) => s.setSoundEnabled);
-  const fontVariant = useHomeStore((s) => s.fontVariant);
-  const setFontVariant = useHomeStore((s) => s.setFontVariant);
-  const cardRadius = useHomeStore((s) => s.cardRadius);
-  const setCardRadius = useHomeStore((s) => s.setCardRadius);
-  const openWallpaper = useHomeStore((s) => s.openWallpaper);
-  const resetLayout = useHomeStore((s) => s.resetLayout);
-  const setWidgets = useHomeStore((s) => s.setWidgets);
-  const updateNotes = useHomeStore((s) => s.updateNotes);
-  const widgets = useHomeStore((s) => s.widgets);
-  const notes = useHomeStore((s) => s.notes);
-  const resetAll = useHomeStore((s) => s.resetAll);
-  const aiConfig = useHomeStore((s) => s.aiConfig);
-  const setAiConfig = useHomeStore((s) => s.setAiConfig);
+  const {
+    isDarkMode,
+    setDarkMode,
+    themeColor,
+    setThemeColor,
+    soundEnabled,
+    setSoundEnabled,
+    fontVariant,
+    setFontVariant,
+    cardRadius,
+    setCardRadius,
+    openWallpaper,
+    resetLayout,
+    setWidgets,
+    updateNotes,
+    widgets,
+    notes,
+    resetAll,
+    aiConfig,
+    setAiConfig,
+    petAutoActivity,
+    setPetAutoActivity,
+    petActivityInterval,
+    setPetActivityInterval,
+  } = useHomeStore(
+    useShallow((s) => ({
+      isDarkMode: s.isDarkMode,
+      setDarkMode: s.setDarkMode,
+      themeColor: s.themeColor,
+      setThemeColor: s.setThemeColor,
+      soundEnabled: s.soundEnabled,
+      setSoundEnabled: s.setSoundEnabled,
+      fontVariant: s.fontVariant,
+      setFontVariant: s.setFontVariant,
+      cardRadius: s.cardRadius,
+      setCardRadius: s.setCardRadius,
+      openWallpaper: s.openWallpaper,
+      resetLayout: s.resetLayout,
+      setWidgets: s.setWidgets,
+      updateNotes: s.updateNotes,
+      widgets: s.widgets,
+      notes: s.notes,
+      resetAll: s.resetAll,
+      aiConfig: s.aiConfig,
+      setAiConfig: s.setAiConfig,
+      petAutoActivity: s.petAutoActivity,
+      setPetAutoActivity: s.setPetAutoActivity,
+      petActivityInterval: s.petActivityInterval,
+      setPetActivityInterval: s.setPetActivityInterval,
+    })),
+  );
 
   const [justReset, setJustReset] = useState(false);
   const [justResetSystem, setJustResetSystem] = useState(false);
@@ -154,6 +188,15 @@ export const SettingsWidget: React.FC<{
 
       {activeTab === 'ai' && (
         <AIPanel config={aiConfig} onChange={setAiConfig} />
+      )}
+
+      {activeTab === 'pet' && (
+        <PetPanel
+          enabled={petAutoActivity}
+          onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
+          interval={petActivityInterval}
+          onIntervalChange={setPetActivityInterval}
+        />
       )}
     </div>
   );

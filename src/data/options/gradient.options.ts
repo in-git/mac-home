@@ -50,116 +50,29 @@ export const STATIC_IMAGE_WALLPAPERS: PresetStaticWallpaper[] = [
 
 
 export const STATIC_WALLPAPERS: PresetStaticWallpaper[] = [
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #bdc3c7, #2c3e50)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #0f2027, #203a43, #2c5364)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #373b44, #4286f4)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #ff0099, #493240)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #c31432, #240b36)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #ed213a, #93291e)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #da4453, #89216b)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #ad5389, #3c1053)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #333333, #dd1818)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #c94b4b, #4b134f)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #23074d, #cc5333)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #0f0c29, #302b63, #24243e)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #03001e, #7302c0, #ec38bc, #fdeff9)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #642b73, #c64266)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #000000, #0f9b0f)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #000046, #1cb5e0)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #eb5757, #000000)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #20002c, #cb8cd4)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #c33764, #1d2671)"
-  },
-  {
-    "theme": "dark",
-    "gradient": "linear-gradient(to right, #44a08d, #093637)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #ee9ca7, #ffdde1)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #2193b0, #6dd5ed)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #2980b9, #6dd5fa, #ffffff)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #ffefba, #ffffff)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #d3cce3, #e9e4f0)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #ada996, #f2f2f2, #dbdbdb, #eaeaea)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #ef3b36, #ffffff)"
-  },
-  {
-    "theme": "light",
-    "gradient": "linear-gradient(to right, #fffc00, #ffffff)"
-  },
-]
+  // 暗色系（macOS 深色外观渐变）
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #5ee7df 0%, #b490ca 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #09203f 0%, #537895 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #232526 0%, #414345 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #ff512f 0%, #dd2476 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #ec008c 0%, #fc6767 100%)' },
+  { theme: 'dark', gradient: 'linear-gradient(135deg, #2af598 0%, #009efd 100%)' },
+  // 亮色系（macOS 浅色外观渐变）
+  { theme: 'light', gradient: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #c1dfc4 0%, #deecdd 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #e6dada 0%, #274046 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)' },
+  { theme: 'light', gradient: 'linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%)' },
+];
