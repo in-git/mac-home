@@ -7,7 +7,7 @@ import type {
   AgentChatOptions,
   ToolTask,
 } from './types';
-import { ChatUtils } from '../lib/chatUtils';
+import { ChatUtils } from '../utils/chatUtils';
 
 // 对话工具单例：now / normalizeReply / makeSystemPrompt / runTaskAsToolMessage
 // 采用惰性初始化，避免在循环依赖（chat.ts ↔ chatUtils.ts ↔ agent/index）下

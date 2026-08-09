@@ -10,7 +10,7 @@
 import type { AIConfig } from '../agent/config/aiConfig';
 import { DEFAULT_AI_CONFIG } from '../agent/config/aiConfig';
 import { executeAgentTool } from '../agent/index';
-import { ChatUtils } from '../lib/chatUtils';
+import { ChatUtils } from './chatUtils';
 
 // 复用 chatUtils 的系统提示词构建（含真实工具列表与 ReAct 规则）
 const chatUtils = new ChatUtils();

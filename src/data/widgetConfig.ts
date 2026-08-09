@@ -135,13 +135,13 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     showHeader: false,
   },
   application: {
-    title: '应用',
+    title: '迷你应用',
     maxInstances: Infinity,
     defaultSize: 'large',
-    sizeOptions: ['sm', 'third', 'wide', 'large', 'icon-1-8', 'icon-1-16'],
+    sizeOptions: ['sm', 'third', 'wide', 'large', 'icon-1-8'],
     isAddable: true,
     glyph: '🪟',
-    label: '应用',
+    label: '迷你应用',
     showHeader: true,
   },
 };

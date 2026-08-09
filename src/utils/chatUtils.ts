@@ -71,7 +71,7 @@ export class ChatUtils {
       .join('\n');
 
     return `
-    
+
 你是这个系统的助手，可以通过调用工具来读取或修改系统数据。
 
 ## 可用工具
