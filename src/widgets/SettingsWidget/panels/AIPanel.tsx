@@ -17,6 +17,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
 
   const selected = AI_PROVIDERS.find((p) => p.id === config.provider);
   const isCustom = config.provider === 'custom';
+  const isLocal = config.provider === 'local';
 
   // 切换厂商时，自动带出默认 BaseURL 与模型（除非用户已自定义）
   const handleProviderChange = (id: string) => {
@@ -56,7 +57,8 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
         <Sparkles size={15} className="mt-0.5 shrink-0" />
         <span>
           选择厂商并填写 API Key 后，可让本机的 AI 助手直接调用对应模型。自定义模式支持任意兼容
-          OpenAI 协议的接口（如本地 Ollama、vLLM）。配置保存在本机，不会上传。
+          OpenAI 协议的接口（如本地 Ollama、vLLM）。还可选择「本地大模型」，走本机后端通道对接本地
+          Ollama。配置保存在本机，不会上传。
         </span>
       </div>
 
@@ -86,41 +88,43 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
         </div>
       </section>
 
-      {/* API Key */}
-      <section>
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
-          API Key
-        </h3>
-        <div className="flex items-center space-x-2">
-          <div className="relative flex-1">
-            <Key
-              size={15}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              type="password"
-              value={config.apiKey}
-              onChange={(e) => onChange({ apiKey: e.target.value })}
-              placeholder="sk-...  （留空则使用后端默认通道）"
-              className="w-full pl-9 pr-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
-            />
+      {/* API Key（本地大模型走后端通道，无需 Key） */}
+      {!isLocal && (
+        <section>
+          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+            API Key
+          </h3>
+          <div className="flex items-center space-x-2">
+            <div className="relative flex-1">
+              <Key
+                size={15}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                type="password"
+                value={config.apiKey}
+                onChange={(e) => onChange({ apiKey: e.target.value })}
+                placeholder="sk-...  （留空则使用后端默认通道）"
+                className="w-full pl-9 pr-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
+              />
+            </div>
+            {selected?.docs && !isCustom && (
+              <a
+                href={selected.docs}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center space-x-1 px-3 py-2.5 rounded-xl bg-black/[0.04] dark:bg-white/[0.06] text-xs text-slate-500 hover:text-[#007AFF] transition-colors whitespace-nowrap"
+                title="获取 API Key"
+              >
+                <ExternalLink size={13} />
+                <span>获取</span>
+              </a>
+            )}
           </div>
-          {selected?.docs && !isCustom && (
-            <a
-              href={selected.docs}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center space-x-1 px-3 py-2.5 rounded-xl bg-black/[0.04] dark:bg-white/[0.06] text-xs text-slate-500 hover:text-[#007AFF] transition-colors whitespace-nowrap"
-              title="获取 API Key"
-            >
-              <ExternalLink size={13} />
-              <span>获取</span>
-            </a>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* 自定义 BaseURL（仅自定义厂商时显示） */}
+      {/* 接口地址：仅自定义厂商可编辑；本地大模型不暴露接口地址 */}
       {isCustom && (
         <section>
           <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
@@ -130,11 +134,11 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
             type="text"
             value={config.baseURL}
             onChange={(e) => onChange({ baseURL: e.target.value })}
-            placeholder="https://your-endpoint/v1"
+            placeholder="https://your-endpoint/v1/chat/completions"
             className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
           />
           <p className="mt-2 text-xs text-slate-400">
-            例如本地 Ollama：http://localhost:11434/v1
+            例如本地 Ollama：http://localhost:11434/v1/chat/completions
           </p>
         </section>
       )}
@@ -164,7 +168,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleTest}
-            disabled={testing || !config.apiKey || !config.model}
+            disabled={testing || !config.model}
             className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#007AFF] text-white text-sm font-medium hover:bg-[#0071EB] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
           >
             {testing ? (

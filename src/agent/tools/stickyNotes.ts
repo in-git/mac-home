@@ -1,7 +1,7 @@
 import { useHomeStore } from '../../store/useHomeStore';
 import type { NoteColor, StickyNote } from '../../types';
 import type { AgentTool, AgentToolCallResult } from '../types';
-import { ok, err } from '../result';
+import { ok, err } from '../config/result';
 
 /**
  * 便签组件（Sticky Notes）—— AI 可操作的便签数据入口。

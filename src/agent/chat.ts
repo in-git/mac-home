@@ -1,127 +1,61 @@
 import { API_ENDPOINTS, request } from '../utils/request';
-import { executeAgentTool, listAgentTools } from './index';
+import { askOnce } from '../utils/aiClient';
+import { useHomeStore } from '../store/useHomeStore';
+import type { AIConfig } from './config/aiConfig';
 import type {
   AgentChatMessage,
   AgentChatOptions,
-  AgentToolInvocation,
   ToolTask,
 } from './types';
+import { ChatUtils } from '../lib/chatUtils';
 
-function now(): string {
-  return new Date().toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
+// 对话工具单例：now / normalizeReply / makeSystemPrompt / runTaskAsToolMessage
+// 采用惰性初始化，避免在循环依赖（chat.ts ↔ chatUtils.ts ↔ agent/index）下
+// 于模块求值阶段访问尚未就绪的 ChatUtils，导致 "Cannot access 'ChatUtils'
+// before initialization"。
+let chatUtilsSingleton: ChatUtils | null = null;
+function getChatUtils(): ChatUtils {
+  if (!chatUtilsSingleton) chatUtilsSingleton = new ChatUtils();
+  return chatUtilsSingleton;
+}
+
+/**
+ * 按「系统设置 → AI」中的大模型配置请求模型，返回模型原始文本（即 ReAct 循环
+ * 期望的 JSON 字符串，供上层 JSON.parse）。
+ *
+ * 路由策略：
+ * - 若用户在设置中填写了自定义 BaseURL 或 API Key，则走前端直连
+ *   （OpenAI 兼容协议，真正的用户大模型）。
+ * - 否则回退到后端 /public/ai/chat 通道（后端自带默认模型）。
+ *
+ * @param config  本地保存的 AI 配置（来自设置）
+ * @param model   最终使用的模型名
+ * @param messages 本轮对话上下文
+ */
+async function callModel(
+  config: AIConfig,
+  model: string,
+  messages: { role: string; content: string }[],
+): Promise<string> {
+  // 自定义地址或填写了 Key → 前端直连用户配置的大模型（本地大模型走后端通道）
+  const useDirect =
+    config.provider !== 'local' &&
+    (!!(config.baseURL && config.baseURL.trim()) || !!config.apiKey);
+
+  if (useDirect) {
+    return askOnce(
+      { ...config, model },
+      messages as { role: 'system' | 'user' | 'assistant'; content: string }[],
+    );
+  }
+
+  // 回退：后端默认通道（后端自行决定模型，这里仍把 model 透传给后端备用）
+  const raw = await request.post<string>(API_ENDPOINTS.aiChat, {
+    model,
+    messages,
   });
-}
-
-/** 把后端返回的各类形态统一为模型 content 字符串 */
-function normalizeReply(raw: unknown): string {
-  if (typeof raw === 'string') {
-    try {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') {
-        const obj = parsed as Record<string, unknown>;
-        if (obj.message && typeof obj.message === 'object') {
-          const content = (obj.message as Record<string, unknown>).content;
-          if (typeof content === 'string') return content;
-        }
-        return raw;
-      }
-    } catch {
-      return raw;
-    }
-    return raw;
-  }
-  if (raw && typeof raw === 'object') {
-    const obj = raw as Record<string, unknown>;
-    if (obj.message && typeof obj.message === 'object') {
-      const content = (obj.message as Record<string, unknown>).content;
-      if (typeof content === 'string') return content;
-    }
-  }
-  return '';
-}
-
-/** 构造系统提示：声明可用工具 + ReAct 行为约定 */
-function makeSystemPrompt(): string {
-  const toolList = listAgentTools()
-    .map(
-      (t) =>
-        `- ${t.name}：${t.description}\n  参数：${JSON.stringify(t.parameters)}`,
-    )
-    .join('\n');
-
-  return `你是这个系统的助手，可以通过调用工具来读取或修改系统数据。
-
-## 可用工具
-${toolList}
-你需要处理用户提出的问题，通过调用前端的工具，或者回答文本
-## 工作规则
-你在每一轮必须按以下三种情况之一处理用户请求，并据此决定返回内容：
-
-
-**严格约束（务必遵守，否则工具无法执行）：**
-1. 返回内容必须是合法的 JSON,禁止输出 编造的字段或其他任何非 JSON 格式。
-2. \`type: 'tool'\` 时，\`content\` 必须是一个 JSON 字符串，格式固定为 \`{"name": 工具名, "args": 参数对象}\`。
-3. 其中 \`name\` **只能取「可用工具」列表中真实存在的工具名**，禁止自行编造、拼接或猜测不存在的工具名。
-4. \`args\` 的**键名必须与上面对应工具的「参数」定义完全一致**，只能传该工具声明过的参数，禁止自创新的键值对，参数值须符合其类型（例如枚举值只能取规定范围内的值，不要编造如 \`"C"\` 这样未声明的值）。
-5. 若用户请求所需的工具或参数不在「可用工具」列表中，不要硬造工具，改用 \`type: 'text'\` 如实告诉用户该能力暂不支持。
-
-
-### 情况一：命令可直接执行
-如果用户的请求不需要任何外部数据、仅凭现有能力即可完成（例如「打开深色模式」「切换主题色」这类直接操作），直接调用对应工具，**无需再问模型**。返回该工具任务并把 "continue" 设为 **false**：
-你需要返回这两个字段，让前端去执行，以达到用户的需求
-
-### 情况二： 你确定这是一个本系统无法执行的命令，列如帮我煮饭，帮我打工赚钱，则委婉拒绝，也要返回JSON
-
-### 情况三：如果用户的请求是系统内部的数据，你当前没有，则需要调用工具去执行，然后前端会返回给你数据，你对这个数据再继续处理，直到用户的问题被完全回答
-如果你需要前端给你返回数据，则要把continue设为true,没有数据，不要回答用户的问题
-
-**严格约束（务必遵守，否则工具无法执行）：**
-非常重要：任何情况下，你都只能返回这种格式！！！！！！
- type: "text"表示输出到输入框，用于回答用户问题，给用户看的 
- type: "tool"表示让前端执行工具，不在前端展示 
- "continue": boolean,是否继续下一轮对话，前端会根据这个值来判断是否继续请求模型 
-绝对不能为中文，按照下面格式返回标准JSON格式，确保能解析
-
-{
-  "tasks": [
-    {
-      "type": "tool",
-      "content": {
-        "name": "set_dark_mode",
-        "args": {
-          "enabled": true
-        }
-      }
-    },
-    {
-      "type": "text",
-      "content": "你的回答"
-    }
-  ],
-  "continue": false
-}
-
-`;
-}
-
-/** 执行单个工具任务，并封装为一条 tool 类型的对话消息（回填给模型） */
-async function runTaskAsToolMessage(task: ToolTask): Promise<AgentChatMessage> {
-  const invocation: AgentToolInvocation = {
-    name: task.name,
-    args: task.args ?? {},
-  };
-  const res = await executeAgentTool(invocation);
-  return {
-    id: 'tool-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
-    role: 'tool',
-    content: res.message,
-    timestamp: now(),
-    toolName: res.tool,
-    toolArgs: JSON.stringify(task.args ?? {}),
-    toolOk: res.ok,
-  };
+  // 后端返回 ollama 风格 JSON 字符串，取出 message.content
+  return getChatUtils().normalizeReply(raw);
 }
 
 /**
@@ -137,10 +71,16 @@ export async function sendAgentChat(
 ): Promise<AgentChatMessage[]> {
   const {
     userInput,
-    model = 'qwen2.5:3b',
+    model,
     maxRounds = 6,
     disableSelfCall = false,
   } = options;
+
+  // 模型参数优先用调用方传入，否则回退到「系统设置 → AI」中保存的大模型配置。
+  // 该配置通过 zustand persist 存储在本地（localStorage），不会上传。
+  const aiConfig = useHomeStore.getState().aiConfig;
+  // 模型优先用调用方传入，否则用「系统设置 → AI」中保存的配置（默认本地大模型 qwen2.5:3b）
+  const effectiveModel = (model || aiConfig.model || '').trim();
 
   // 维护运行期历史（复制外部传入的，避免污染 UI state）
   const history: AgentChatMessage[] = [...(options.history ?? [])];
@@ -154,38 +94,38 @@ export async function sendAgentChat(
       id: 'user-' + Date.now(),
       role: 'user',
       content: userInput,
-      timestamp: now(),
+      timestamp: getChatUtils().now(),
     });
   }
 
-  const systemPrompt = makeSystemPrompt();
+  const systemPrompt = getChatUtils().makeSystemPrompt();
   const produced: AgentChatMessage[] = [];
 
   for (let round = 0; round < maxRounds; round++) {
     const messages = [
       { role: 'system', content: systemPrompt },
-      ...history.map((m) => ({ role: m.role, content: m.content })),
+      // tool 角色消息在直连 OpenAI 协议下需转为 assistant，避免协议错误
+      ...history.map((m) => ({
+        role: m.role === 'tool' ? 'assistant' : m.role,
+        content: m.content,
+      })),
     ];
 
-    let raw: unknown;
+    let replyContent: string;
     try {
-      raw = await request.post<string>(API_ENDPOINTS.aiChat, {
-        model,
-        messages,
-      });
+      replyContent = await callModel(aiConfig, effectiveModel, messages);
     } catch (e) {
       const errMsg: AgentChatMessage = {
         id: 'err-' + Date.now(),
         role: 'assistant',
         content: `请求模型失败：${e instanceof Error ? e.message : String(e)}`,
-        timestamp: now(),
+        timestamp: getChatUtils().now(),
         error: true,
       };
       produced.push(errMsg);
       return produced;
     }
 
-    const replyContent = normalizeReply(raw);
     // 解析 + 清洗模型返回（递归摊平嵌套 JSON），直接得到可执行结构
     const cleaned = JSON.parse(replyContent);
 
@@ -217,7 +157,7 @@ export async function sendAgentChat(
         id: 'txt-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
         role: 'assistant',
         content: txt,
-        timestamp: now(),
+        timestamp: getChatUtils().now(),
       };
       history.push(textMsg);
       produced.push(textMsg);
@@ -225,7 +165,7 @@ export async function sendAgentChat(
 
     // 执行所有工具任务，并把执行结果回填到历史
     for (const task of filteredToolTasks) {
-      const toolMsg = await runTaskAsToolMessage(task);
+      const toolMsg = await getChatUtils().runTaskAsToolMessage(task);
       history.push(toolMsg);
       produced.push(toolMsg);
     }
@@ -241,9 +181,9 @@ export async function sendAgentChat(
           id: 'end-' + Date.now(),
           role: 'assistant',
           content: lastTool?.content || '（操作已完成，但未返回可读结果。）',
-          timestamp: now(),
-        };
-        history.push(endMsg);
+          timestamp: getChatUtils().now(),
+          };
+          history.push(endMsg);
         produced.push(endMsg);
       }
       return produced;
@@ -258,7 +198,7 @@ export async function sendAgentChat(
     id: 'to-' + Date.now(),
     role: 'assistant',
     content: '处理步骤过多，已自动停止。请简化你的问题后重试。',
-    timestamp: now(),
+    timestamp: getChatUtils().now(),
   };
   produced.push(timeoutMsg);
   return produced;

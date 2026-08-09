@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { listAgentTools } from '../agent';
+import { useHomeStore } from '../store/useHomeStore';
 
 // 把 agent 工具清单格式化为大模型可理解的「可调用函数」描述
 const TOOLS = listAgentTools();
@@ -38,7 +39,9 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [model] = useState('qwen2.5:3b');
+  // 模型来自「系统设置 → AI」中保存的本地大模型配置（持久化到本机）
+  const aiConfig = useHomeStore((s) => s.aiConfig);
+  const model = aiConfig.model;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -120,6 +123,12 @@ export const AgentTestWidget: React.FC<AgentTestWidgetProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
+          <span
+            className="text-font-sm px-2 py-0.5 rounded-[8px] bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono"
+            title={`当前模型（来自系统设置 → AI）：${model}`}
+          >
+            {model}
+          </span>
           <span
             className="text-font-sm px-2 py-0.5 rounded-[8px] bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono"
             title={`可调用工具：${TOOLS.map((t) => t.name).join(', ')}`}

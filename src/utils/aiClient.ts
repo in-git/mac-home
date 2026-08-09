@@ -7,12 +7,18 @@
  *
  * 注意：纯前端直连会把 API Key 暴露在浏览器，仅适用于个人本机使用。
  */
-import type { AIConfig } from '../types';
+import type { AIConfig } from '../agent/config/aiConfig';
+import { DEFAULT_AI_CONFIG } from '../agent/config/aiConfig';
 
-/** 解析出最终要请求的 baseURL（自定义优先于厂商预设） */
+/**
+ * 解析出最终要请求的地址。
+ * 注意：baseURL 即完整请求地址，不再自动追加 /chat/completions 后缀，
+ * 由用户在「系统设置 → AI」中填写完整路径（如 .../v1/chat/completions
+ * 或本机后端通道 /public/ai/chat）。
+ */
 export function resolveBaseURL(config: AIConfig): string {
   const url = (config.baseURL || '').trim().replace(/\/+$/, '');
-  return url || 'https://api.openai.com/v1';
+  return url || 'https://api.openai.com/v1/chat/completions';
 }
 
 export interface ChatMessage {
@@ -33,8 +39,9 @@ export async function askOnce(
   signal?: AbortSignal,
 ): Promise<string> {
   const baseURL = resolveBaseURL(config);
-  const model = (config.model || '').trim() || 'gpt-4o-mini';
-  const res = await fetch(`${baseURL}/chat/completions`, {
+  const model = (config.model || '').trim() || DEFAULT_AI_CONFIG.model;
+  // 直接请求用户配置的完整地址（不再自动追加 /chat/completions 后缀）
+  const res = await fetch(baseURL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

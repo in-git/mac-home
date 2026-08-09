@@ -1,6 +1,7 @@
 import { Bot, RefreshCw, Send, Sparkles, Trash2, User } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { API_ENDPOINTS } from '../utils/request';
+import { useHomeStore } from '../store/useHomeStore';
 
 
 export interface ChatMessage {
@@ -33,7 +34,9 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [model] = useState('qwen2.5:3b');
+  // 模型来自「系统设置 → AI」中保存的配置（持久化到本机）
+  const aiConfig = useHomeStore((s) => s.aiConfig);
+  const model = aiConfig.model;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {

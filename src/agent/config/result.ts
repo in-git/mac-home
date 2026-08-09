@@ -1,4 +1,4 @@
-import type { AgentToolCallResult } from './types';
+import type { AgentToolCallResult } from '../types';
 
 /** 构造一个成功的工具调用结果 */
 export function ok(

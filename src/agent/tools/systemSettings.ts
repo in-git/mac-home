@@ -1,7 +1,7 @@
 import { useHomeStore } from '../../store/useHomeStore';
 import type { FontVariant, WallpaperConfig } from '../../types';
 import type { AgentTool } from '../types';
-import { ok, err } from '../result';
+import { ok, err } from '../config/result';
 
 /**
  * 系统设置（System Settings）——全局唯一的设置操作入口。

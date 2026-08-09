@@ -1,5 +1,5 @@
 import type { AgentTool, AgentToolCallResult } from '../types';
-import { ok, err } from '../result';
+import { ok, err } from '../config/result';
 import { sendAgentChat } from '../chat';
 
 /**

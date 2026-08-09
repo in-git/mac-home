@@ -38,101 +38,11 @@ export const CARD_RADIUS_PX: Record<CardRadiusTier, number> = {
 };
 
 // ############################################################
-// AI 模型对接配置
+// AI 模型对接配置 —— 定义集中在 src/agent/config/aiConfig.ts
+// 此处仅重新导出，业务侧仍可从 '@/types' 引入，无需改动引用点。
 // ############################################################
-
-/** 内置主流 AI 厂商（OpenAI 兼容接口） */
-export interface AIProvider {
-  /** 唯一标识 */
-  id: string;
-  /** 展示名 */
-  label: string;
-  /** API Base URL（不含末尾 /chat/completions） */
-  baseURL: string;
-  /** 该厂商推荐的默认模型名 */
-  defaultModel: string;
-  /** 官网/文档地址，便于用户获取 KEY */
-  docs?: string;
-}
-
-/** 内置主流厂商预设 */
-export const AI_PROVIDERS: AIProvider[] = [
-  {
-    id: 'openai',
-    label: 'OpenAI',
-    baseURL: 'https://api.openai.com/v1',
-    defaultModel: 'gpt-4o-mini',
-    docs: 'https://platform.openai.com/api-keys',
-  },
-  {
-    id: 'deepseek',
-    label: 'DeepSeek',
-    baseURL: 'https://api.deepseek.com/v1',
-    defaultModel: 'deepseek-chat',
-    docs: 'https://platform.deepseek.com/api_keys',
-  },
-  {
-    id: 'qwen',
-    label: '通义千问',
-    baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-    defaultModel: 'qwen-plus',
-    docs: 'https://dashscope.console.aliyun.com/apiKey',
-  },
-  {
-    id: 'moonshot',
-    label: 'Kimi (Moonshot)',
-    baseURL: 'https://api.moonshot.cn/v1',
-    defaultModel: 'moonshot-v1-8k',
-    docs: 'https://platform.moonshot.cn/console/api-keys',
-  },
-  {
-    id: 'zhipu',
-    label: '智谱 GLM',
-    baseURL: 'https://open.bigmodel.cn/api/paitext/v1',
-    defaultModel: 'glm-4-flash',
-    docs: 'https://open.bigmodel.cn/usercenter/apikeys',
-  },
-  {
-    id: 'anthropic',
-    label: 'Claude (Azure/Official)',
-    baseURL: 'https://api.anthropic.com/v1',
-    defaultModel: 'claude-3-5-sonnet',
-    docs: 'https://console.anthropic.com/settings/keys',
-  },
-  {
-    id: 'gemini',
-    label: 'Gemini',
-    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    defaultModel: 'gemini-1.5-flash',
-    docs: 'https://aistudio.google.com/app/apikey',
-  },
-  {
-    id: 'custom',
-    label: '自定义',
-    baseURL: '',
-    defaultModel: '',
-  },
-];
-
-/** 用户在设置中保存的 AI 对接配置 */
-export interface AIConfig {
-  /** 选中的厂商 id（含 'custom'） */
-  provider: string;
-  /** 自定义厂商的 Base URL（当 provider==='custom' 或覆盖时使用） */
-  baseURL: string;
-  /** API Key */
-  apiKey: string;
-  /** 模型名（可手写，支持任意模型） */
-  model: string;
-}
-
-/** AI 配置默认值：默认走后端内置通道，不直连 */
-export const DEFAULT_AI_CONFIG: AIConfig = {
-  provider: 'openai',
-  baseURL: '',
-  apiKey: '',
-  model: 'gpt-4o-mini',
-};
+export type { AIProvider, AIConfig } from './agent/config/aiConfig';
+export { AI_PROVIDERS, DEFAULT_AI_CONFIG } from './agent/config/aiConfig';
 
 export type WidgetType =
   | 'sticky-notes'
