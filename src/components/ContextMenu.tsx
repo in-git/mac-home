@@ -56,15 +56,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
   const isDarkMode = useHomeStore((s) => s.isDarkMode);
 
-  // 按当前明暗模式筛选候选背景：亮色模式只显示 light，暗色模式只显示 dark（both 两端均显示）。
-  const backgroundOptions =
-    isDarkMode === null
-      ? PRESET_DATA.STATIC_WALLPAPERS
-      : PRESET_DATA.STATIC_WALLPAPERS.filter(
-          (w) =>
-            w.gradient &&
-            (!w.theme || w.theme === 'both' || w.theme === (isDarkMode ? 'dark' : 'light')),
-        );
+  // 卡片背景选项卡：手动切换亮色 / 暗色，而非按系统模式自动匹配。
+  const [bgTab, setBgTab] = useState<'light' | 'dark'>('light');
+
+  const backgroundOptions = PRESET_DATA.STATIC_WALLPAPERS.filter((w) => {
+    if (!w.gradient) return false;
+    if (!w.theme || w.theme === 'both') return true;
+    return w.theme === bgTab;
+  });
 
   const openBgSubmenu = () => {
     if (submenuLeaveTimer.current) {
@@ -197,9 +196,27 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 onMouseLeave={scheduleCloseBgSubmenu}
                 className="absolute left-full top-0 ml-3 w-72 p-5 rounded-3xl glass-panel bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/70 dark:border-white/20"
               >
-                <div className="px-1 mb-4 text-[15px] font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
+                <div className="px-1 mb-3 text-[15px] font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
                   卡片背景
                 </div>
+
+                {/* 亮色 / 暗色 选项卡，点击切换 */}
+                <div className="mb-4 flex p-1 rounded-2xl bg-black/5 dark:bg-white/10">
+                  {(['light', 'dark'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setBgTab(tab)}
+                      className={`flex-1 py-2 rounded-xl text-[14px] font-semibold transition-colors ${
+                        bgTab === tab
+                          ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      {tab === 'light' ? '亮色' : '暗色'}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="grid grid-cols-4 gap-3.5">
                   {gradients.map((g) => (
                     <button
