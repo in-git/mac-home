@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import { PRESET_DATA } from '../data/presetData';
 import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
 import {
+  AIConfig,
+  DEFAULT_AI_CONFIG,
   CardRadiusTier,
   FontVariant,
   StickyNote as StickyNoteType,
@@ -38,6 +40,8 @@ interface HomeState {
   cardRadius: CardRadiusTier;
   // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
   screenBrightness: number;
+  // AI 模型对接配置（厂商 / 自定义 BaseURL / KEY / 模型名）
+  aiConfig: AIConfig;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -66,6 +70,7 @@ interface HomeState {
   setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
   openWallpaper: () => void;
+  setAiConfig: (patch: Partial<AIConfig>) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -88,6 +93,7 @@ export const useHomeStore = create<HomeState>()(
       fontVariant: 'A',
       cardRadius: 'large',
       screenBrightness: 100,
+      aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_AI_CONFIG),
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -183,6 +189,7 @@ export const useHomeStore = create<HomeState>()(
           fontVariant: 'A',
           cardRadius: 'large',
           screenBrightness: 100,
+          aiConfig: DEFAULT_AI_CONFIG,
         });
       },
 
@@ -196,6 +203,8 @@ export const useHomeStore = create<HomeState>()(
       setCardRadius: (tier) => set({ cardRadius: tier }),
       setScreenBrightness: (value) =>
         set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
+      setAiConfig: (patch) =>
+        set({ aiConfig: { ...get().aiConfig, ...patch } }),
       // Registered by App on mount so the store can open the wallpaper modal
       // without threading the setter through the whole component tree.
       openWallpaper: () => {},
@@ -213,6 +222,7 @@ export const useHomeStore = create<HomeState>()(
         fontVariant: state.fontVariant,
         cardRadius: state.cardRadius,
         screenBrightness: state.screenBrightness,
+        aiConfig: state.aiConfig,
       }),
     },
   ),

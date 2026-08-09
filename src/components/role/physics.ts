@@ -1,8 +1,8 @@
 import { RolePhysicsConfig, RoleState } from './types';
 
 export const DEFAULT_PHYSICS_CONFIG: RolePhysicsConfig = {
-  roleWidth: 40,
-  roleHeight: 60, // 468x702 ratio (1 : 1.5), 缩小 50%
+  roleWidth: 52,
+  roleHeight: 78, // 468x702 ratio (1 : 1.5), 调大 30% (40*1.3 x 60*1.3)
   maxSpeed: 5.5,
   acceleration: 0.15, // 降低起步加速度，实现起步慢、慢慢变快的气韵与真实移动节奏
   friction: 0.92,

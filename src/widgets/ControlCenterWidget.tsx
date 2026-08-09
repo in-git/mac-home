@@ -1,7 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { CARD_RADIUS_LABEL, FONT_VARIANT_LABEL } from '../types';
+import { CARD_RADIUS_LABEL, CARD_RADIUS_PX, CardRadiusTier, FONT_VARIANT_LABEL } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -87,13 +87,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
           </div>
           <div className="min-w-0">
             <div className="font-semibold text-font-sm leading-tight">位置</div>
-            <div className="text-font-sm text-slate-400 truncate max-w-full">
-              {locating
-                ? '定位中…'
-                : locCoords
-                  ? `${locCity} · ${locCoords.lat.toFixed(2)},${locCoords.lon.toFixed(2)}`
-                  : '点击获取位置'}
-            </div>
+       
           </div>
         </button>
 
@@ -121,7 +115,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
             <div className="font-semibold text-font-sm leading-tight">
               {isDarkMode ? '深色模式' : '浅色模式'}
             </div>
-            <div className="text-font-sm opacity-70">点击切换</div>
           </div>
         </button>
       </div>
@@ -156,13 +149,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             </span>
             <span>字体大小</span>
           </span>
-          <span className="text-font-sm text-slate-400 font-mono">
-            {fontVariant === 'A'
-              ? '12 / 14 / 16'
-              : fontVariant === 'B'
-                ? '13 / 15 / 17'
-                : '14 / 16 / 18'}
-          </span>
+   
         </div>
         <div className="grid grid-cols-3 gap-2">
           {(['A', 'B', 'C'] as const).map((v) => {
@@ -186,40 +173,29 @@ export const ControlCenterWidget: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Card corner radius: small / medium / large */}
+      {/* bottom spacer: push the dropdown to the screen bottom */}
+      <div className="flex-1" />
+
+      {/* Card corner radius: dropdown pinned to the bottom of the screen */}
       <div className="glass-panel p-3.5 rounded-2xl">
-        <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center justify-between">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
             <span className="w-5 h-5 rounded-md bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>卡片圆角</span>
           </span>
-          <span className="text-font-sm text-slate-400 font-mono">
-            {cardRadius === 'small'
-              ? '16'
-              : cardRadius === 'medium'
-                ? '24'
-                : '32'}
-          </span>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {(['small', 'medium', 'large'] as const).map((v) => {
-            const active = cardRadius === v;
-            return (
-              <button
-                key={v}
-                onClick={() => setCardRadius(v)}
-                className={`py-2.5 rounded-xl border text-font-md font-bold transition-all active:scale-[0.98] ${
-                  active
-                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
-                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
-                }`}
-              >
+          <select
+            value={cardRadius}
+            onChange={(e) => setCardRadius(e.target.value as CardRadiusTier)}
+            className="appearance-none bg-black/5 dark:bg-white/10 text-font-sm font-medium rounded-lg py-1.5 pl-3 pr-7 outline-none focus:ring-2 focus:ring-[#007AFF]/50 cursor-pointer"
+          >
+            {(['tiny', 'small', 'medium', 'large'] as const).map((v) => (
+              <option key={v} value={v}>
                 {CARD_RADIUS_LABEL[v]}
-              </button>
-            );
-          })}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>

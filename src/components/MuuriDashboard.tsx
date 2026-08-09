@@ -17,6 +17,7 @@ import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { IconWidget } from '../widgets/IconWidget';
 import { SearchWidget } from '../widgets/SearchWidget';
 import { SettingsWidget } from '../widgets/SettingsWidget';
+import { SettingsModal } from '../views/SettingsModal';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget } from '../widgets/WeatherWidget';
@@ -126,7 +127,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         );
       case 'settings':
         // 网格中：渲染为图标，点击后打开无头模态显示完整设置面板
-        if (inModal) return <SettingsWidget />;
+        if (inModal) return <SettingsWidget activeTab={'appearance'} />;
         return (
           <div data-icon-grid className="h-full w-full">
             <IconWidget
@@ -691,27 +692,13 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           );
         })()}
 
-      {/* 设置弹窗：settings 以适中尺寸模态框呈现，点击外部遮罩或关闭按钮关闭 */}
-      {settingsModalOpen &&
-        (() => {
-          const settingsWidget = widgets.find((w) => w.type === 'settings');
-          if (!settingsWidget) return null;
-          return (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-              onClick={() => setSettingsModalOpen(false)}
-            >
-              <div
-                className="rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/15 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden bg-white dark:bg-[#1C1C1E]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex-1 min-h-0 overflow-y-auto">
-                  <SettingsWidget />
-                </div>
-              </div>
-            </div>
-          );
-        })()}
+      {/* 设置弹窗：复用全局 SettingsModal（左右布局 + 三选项卡） */}
+      {settingsModalOpen && (
+        <SettingsModal
+          isOpen={settingsModalOpen}
+          onClose={() => setSettingsModalOpen(false)}
+        />
+      )}
 
       {/* 内部浏览器：icon 组件配置 openInApp 后以全屏 iframe 打开其链接 */}
       <InternalBrowser

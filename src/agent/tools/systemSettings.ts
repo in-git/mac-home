@@ -144,6 +144,7 @@ const setFontVariantTool: AgentTool = {
 
 const setScreenBrightnessTool: AgentTool = {
   name: 'set_screen_brightness',
+  title: '设置屏幕亮度',
   description: '设置屏幕（壁纸/整体）亮度，范围 10% ~ 100%。',
   parameters: {
     value: {

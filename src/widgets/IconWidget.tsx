@@ -73,9 +73,15 @@ export function IconWidget({
   const title =
     kind === 'action' ? `${label}（功能）` : `${label}（打开链接）`;
 
-  // Inline style overrides for custom colors (only applied when provided).
+  // Inline style overrides for custom colors. The custom text color is applied
+  // to the button itself so both the SVG glyph (via currentColor) and the label
+  // text inherit the exact same color — they always stay in sync.
   const bgStyle = iconBgColor ? { backgroundColor: iconBgColor } : undefined;
-  const textStyle = iconTextColor ? { color: iconTextColor } : undefined;
+  const btnStyle = {
+    ...(bgStyle ?? {}),
+    ...(iconTextColor ? { color: iconTextColor } : {}),
+  };
+  const hasBtnStyle = Object.keys(btnStyle).length > 0;
 
   return (
     <button
@@ -84,18 +90,16 @@ export function IconWidget({
       // owns the custom onAction event (resolved by id via getWidgetAction).
       disabled={editing && kind !== 'action'}
       title={title}
-      style={bgStyle}
-      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
+      style={hasBtnStyle ? btnStyle : undefined}
+      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 text-slate-700 dark:text-slate-200 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
     >
       <GlyphIcon
         className={`${typo.glyph} leading-none`}
         strokeWidth={1.75}
-        style={textStyle}
       />
       {!iconOnly && (
         <span
-          className={`max-w-full truncate font-medium text-slate-700 dark:text-slate-200 ${typo.label}`}
-          style={textStyle}
+          className={`max-w-full truncate font-medium ${typo.label}`}
         >
           {label}
         </span>
