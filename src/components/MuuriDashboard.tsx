@@ -7,6 +7,7 @@ import {
   getWidgetAction,
   getWidgetConfig,
 } from '../data/widgetConfig';
+import { useHomeStore } from '../store/useHomeStore';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { AgentTestWidget } from '../widgets/AgentTestWidget';
 import { AiChatWidget } from '../widgets/AiChatWidget';
@@ -14,13 +15,12 @@ import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { IconWidget } from '../widgets/IconWidget';
-import { InternalBrowser } from './InternalBrowser';
-import { useHomeStore } from '../store/useHomeStore';
 import { SearchWidget } from '../widgets/SearchWidget';
 import { SettingsWidget } from '../widgets/SettingsWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget } from '../widgets/WeatherWidget';
+import { InternalBrowser } from './InternalBrowser';
 import { LoadingOverlay } from './LoadingOverlay';
 
 interface MuuriDashboardProps {
@@ -343,8 +343,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           dy = window.innerHeight - EDGE_MARGIN - rect.bottom;
         if (dx === 0 && dy === 0) return;
         const transform = el.style.transform || '';
-        const match =
-          /translate(?:3d)?\(\s*([-\d.]+)px,\s*([-\d.]+)px/.exec(transform);
+        const match = /translate(?:3d)?\(\s*([-\d.]+)px,\s*([-\d.]+)px/.exec(
+          transform,
+        );
         if (!match) return;
         const tx = parseFloat(match[1]) + dx;
         const ty = parseFloat(match[2]) + dy;
@@ -511,7 +512,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
                 <div
-                  style={widget.background ? { background: widget.background } : undefined}
+                  style={
+                    widget.background
+                      ? { background: widget.background }
+                      : undefined
+                  }
                   className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widget.size === 'icon-1-16' ? 'p-0' : 'p-4'} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''}${isEditMode ? ' edit-wiggle' : ''}`}
                   onClick={(e) => {
                     if (isEditMode) return;
@@ -558,27 +563,28 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         <div className="flex space-x-1.5 items-center">
                           {/* Green dot → left click cycles size, right click deletes.
                               Hidden when the widget has only one size option. */}
-                          {getWidgetConfig(widget.type).sizeOptions.length > 1 && (
-                          <Tooltip delay={150}>
-                            <Tooltip.Trigger className="inline-flex">
-                              <div
-                                data-no-drag
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  cycleWidgetSize(widget);
-                                }}
-                                onContextMenu={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  onDeleteWidget(widget.id);
-                                }}
-                                className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
-                              />
-                            </Tooltip.Trigger>
-                            <Tooltip.Content placement="top">
-                              切换比例
-                            </Tooltip.Content>
-                          </Tooltip>
+                          {getWidgetConfig(widget.type).sizeOptions.length >
+                            1 && (
+                            <Tooltip delay={150}>
+                              <Tooltip.Trigger className="inline-flex">
+                                <div
+                                  data-no-drag
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    cycleWidgetSize(widget);
+                                  }}
+                                  onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onDeleteWidget(widget.id);
+                                  }}
+                                  className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
+                                />
+                              </Tooltip.Trigger>
+                              <Tooltip.Content placement="top">
+                                切换比例
+                              </Tooltip.Content>
+                            </Tooltip>
                           )}
                           {/* Yellow dot → toggle headless modal (fixed centered).
                               放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
@@ -644,7 +650,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       disabled) but the card is still draggable from this area
                       because the event passes through to the .widget-card handle. */}
                   <div
-                    className={`flex-1${widget.size === 'icon-1-16' ? '' : ' pt-2'}${isEditMode ? ' pointer-events-none' : ''}`}
+                    className={`flex-1${widget.size === 'icon-1-16' ? '' : ' pt-0'}${isEditMode ? ' pointer-events-none' : ''}`}
                   >
                     {widget.id === expandedWidgetId
                       ? null

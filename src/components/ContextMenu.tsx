@@ -29,6 +29,7 @@ interface ContextMenuProps {
   onOpenWallpaper: () => void;
   onOpenAddWidget: () => void;
   onOpenSettings: () => void;
+  onEditIcon: (id: string) => void;
 }
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -156,6 +157,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         return {
           onClick: () => targetWidget && onDeleteWidget(targetWidget.id),
           visible: !!targetWidget,
+        };
+      case 'editIcon':
+        return {
+          onClick: () => targetWidget && onEditIcon(targetWidget.id),
+          visible:
+            !!targetWidget &&
+            (targetWidget.type === 'icon' ||
+              targetWidget.type === 'icon-grid'),
         };
       default:
         return null;

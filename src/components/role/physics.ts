@@ -1,13 +1,14 @@
 import { RolePhysicsConfig, RoleState } from './types';
 
 export const DEFAULT_PHYSICS_CONFIG: RolePhysicsConfig = {
-  roleWidth: 80,
-  roleHeight: 120, // 468x702 ratio (1 : 1.5)
-  maxSpeed: 9,
-  acceleration: 0.6,
-  friction: 0.94,
-  jumpForce: -15,
-  gravity: 0.8,
+  roleWidth: 40,
+  roleHeight: 60, // 468x702 ratio (1 : 1.5), 缩小 50%
+  maxSpeed: 5.5,
+  acceleration: 0.35,
+  friction: 0.92,
+  jumpForce: -8, // 模型缩小后微调跳跃冲量，保持舒适的弹跳高度
+  gravity: 0.6,
+  maxJumps: 2, // 支持二段跳
 };
 
 export const updateRolePhysics = (
@@ -37,10 +38,20 @@ export const updateRolePhysics = (
     }
   }
 
-  // Jump movement
-  if (isJump && state.isGrounded) {
-    state.vy = config.jumpForce;
-    state.isGrounded = false;
+  // 二级跳与跳跃控制（检测按键单次按下事件，避免长按连续消耗二段跳）
+  const isJumpJustPressed = isJump && !state.wasJumpPressed;
+  state.wasJumpPressed = isJump;
+
+  if (isJumpJustPressed) {
+    if (state.isGrounded) {
+      state.vy = config.jumpForce;
+      state.isGrounded = false;
+      state.jumpCount = 1;
+    } else if (state.jumpCount < config.maxJumps) {
+      // 二段跳
+      state.vy = config.jumpForce;
+      state.jumpCount += 1;
+    }
   }
 
   // Apply Gravity
@@ -56,6 +67,7 @@ export const updateRolePhysics = (
     state.y = groundY;
     state.vy = 0;
     state.isGrounded = true;
+    state.jumpCount = 0;
   }
 
   if (state.y < 0) {

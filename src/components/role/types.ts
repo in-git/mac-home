@@ -8,6 +8,7 @@ export interface RolePhysicsConfig {
   friction: number;
   jumpForce: number;
   gravity: number;
+  maxJumps: number;
 }
 
 export interface RoleState {
@@ -16,6 +17,8 @@ export interface RoleState {
   vx: number;
   vy: number;
   isGrounded: boolean;
+  jumpCount: number;
+  wasJumpPressed: boolean;
   facingDirection: 'idle' | 'left' | 'right';
   animFrameCounter: number;
 }

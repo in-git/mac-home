@@ -86,6 +86,8 @@ export const RoleCharacterCanvas: React.FC = () => {
         vx: 0,
         vy: 0,
         isGrounded: true,
+        jumpCount: 0,
+        wasJumpPressed: false,
         facingDirection: 'idle',
         animFrameCounter: 0,
       };
@@ -145,7 +147,7 @@ export const RoleCharacterCanvas: React.FC = () => {
       {/* 随角色移动的对话框气泡 */}
       {dialog.visible && (
         <div
-          className="absolute z-40 px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-medium rounded-2xl shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in zoom-in-95"
+          className="absolute z-40 px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-medium rounded-2xl shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100"
           style={{
             left: `${rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2}px`,
             top: `${rolePos.y - 12}px`,

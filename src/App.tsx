@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { initScheduler } from './agent/scheduler';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
+import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { RoleCharacterCanvas } from './components/RoleCharacterCanvas';
 import { TopBar } from './components/TopBar';
@@ -12,6 +13,7 @@ import { useHomeStore } from './store/useHomeStore';
 import { CARD_RADIUS_PX, FONT_TIER_PX } from './types';
 import { initGlobalSound } from './utils/sound';
 import { AddWidgetModal } from './views/AddWidgetModal';
+import { CommandDialog } from './views/CommandDialog';
 import { SettingsModal } from './views/SettingsModal';
 import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
@@ -25,6 +27,7 @@ const storeActions = {
   resizeWidget: useHomeStore.getState().resizeWidget,
   moveToTopWidget: useHomeStore.getState().moveToTopWidget,
   updateWidgetBackground: useHomeStore.getState().updateWidgetBackground,
+  updateWidget: useHomeStore.getState().updateWidget,
   updateNotes: useHomeStore.getState().updateNotes,
   updateWallpaper: useHomeStore.getState().updateWallpaper,
   setDarkMode: useHomeStore.getState().setDarkMode,
@@ -62,6 +65,7 @@ export default function App() {
     deleteWidget,
     resizeWidget,
     updateWidgetBackground,
+    updateWidget,
   } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
     storeActions;
@@ -77,6 +81,8 @@ export default function App() {
     useState<boolean>(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] =
     useState<boolean>(false);
+  // 图标编辑 Modal 当前编辑的 widget id（null 表示关闭）。
+  const [editIconId, setEditIconId] = useState<string | null>(null);
 
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] =
@@ -228,6 +234,7 @@ export default function App() {
         onOpenWallpaper={openWallpaperModal}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
+        onEditIcon={(id) => setEditIconId(id)}
       />
 
       {/* Wallpaper Setting Modal */}
@@ -262,6 +269,12 @@ export default function App() {
       <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
+      />
+
+      {/* Icon Edit Modal */}
+      <IconEditModal
+        widget={widgets.find((w) => w.id === editIconId) ?? null}
+        onClose={() => setEditIconId(null)}
       />
     </div>
   );
