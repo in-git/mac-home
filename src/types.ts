@@ -54,7 +54,8 @@ export type WidgetType =
   | 'shortcuts'
   | 'control-center'
   | 'settings'
-  | 'icon-grid';
+  | 'icon-grid'
+  | 'application';
 
 export type WidgetSize =
   | 'sm' // 1/4
@@ -120,6 +121,8 @@ export interface WidgetItem {
   // 仅 icon / icon-grid 组件：为 true 时点击在内部浏览器（iframe）打开 iconHref，
   // 而非新标签页。若目标站点禁止被 iframe 嵌入，则内部浏览器提供「在外部打开」降级。
   openInApp?: boolean;
+  // 仅 application 组件：直接渲染到 iframe 的 HTML 源码（经 srcDoc 注入）。
+  html?: string;
 }
 
 export type WallpaperType = 'dynamic' | 'static';

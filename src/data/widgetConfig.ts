@@ -134,6 +134,16 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     label: '图标',
     showHeader: false,
   },
+  application: {
+    title: '应用',
+    maxInstances: Infinity,
+    defaultSize: 'large',
+    sizeOptions: ['sm', 'third', 'wide', 'large', 'icon-1-8', 'icon-1-16'],
+    isAddable: true,
+    glyph: '🪟',
+    label: '应用',
+    showHeader: true,
+  },
 };
 
 /** Resolve the config for a widget type (falls back to a safe default). */

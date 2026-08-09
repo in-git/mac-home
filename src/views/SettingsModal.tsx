@@ -1,4 +1,4 @@
-import { Bot, Palette, PawPrint, Settings as SettingsIcon } from 'lucide-react';
+import { Bot, Palette, PawPrint, Settings as SettingsIcon, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 
@@ -80,6 +80,12 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
         >
           {/* 左侧栏：苹果系统设置风格，大图标 + 文字 */}
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-56 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
+            {/* 顶部标题：系统设置 */}
+            <div className="hidden sm:block px-2.5 pt-2 pb-3">
+              <h1 className="text-xl font-semibold text-slate-900 dark:text-white">
+                系统设置
+              </h1>
+            </div>
             {TABS.map((t) => {
               const active = activeTab === t.id;
               return (
@@ -109,6 +115,16 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
           {/* 右侧内容区 */}
           <div className="flex-1 min-w-0 flex flex-col">
+            {/* 右侧顶部：关闭按钮 */}
+            <div className="flex items-center justify-end px-3 h-11 shrink-0 border-b border-black/5 dark:border-white/10">
+              <button
+                onClick={onClose}
+                aria-label="关闭"
+                className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
             <div className="flex-1 overflow-y-auto">
               <SettingsWidget activeTab={activeTab} />
             </div>

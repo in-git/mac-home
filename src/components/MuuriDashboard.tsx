@@ -10,6 +10,7 @@ import {
 import { useHomeStore } from '../store/useHomeStore';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { AiChatWidget } from '../widgets/AiChatWidget';
+import { ApplicationWidget } from '../widgets/ApplicationWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
@@ -154,6 +155,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             />
           </div>
         );
+      }
+      case 'application': {
+        return <ApplicationWidget html={widget.html} />;
       }
       default:
         return null;
