@@ -82,6 +82,10 @@ export interface WidgetItem {
   // `iconBgColor` overrides the tile background. Both are any valid CSS color.
   iconTextColor?: string;
   iconBgColor?: string;
+  // Optional custom background for the whole widget card. Any valid CSS
+  // background value (e.g. a `linear-gradient(...)` string) is accepted; when
+  // set it overrides the default translucent glass-panel background.
+  background?: string;
   // Action callback resolved at runtime by id (see getWidgetAction in
   // widgetConfig). Functions are not serialized to localStorage, so this field is
   // only meaningful for widgets sourced from code (INITIAL_WIDGETS).

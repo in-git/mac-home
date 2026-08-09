@@ -380,7 +380,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
   // 兜底：即使 Muuri 初始化异常，loading 遮罩最多显示 1500ms 后也会隐藏。
   useEffect(() => {
-    const t = window.setTimeout(() => setIsLoading(false), 1500);
+    const t = window.setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(t);
   }, []);
 
@@ -467,6 +467,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
                 <div
+                  style={widget.background ? { background: widget.background } : undefined}
                   className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
                   onClick={(e) => {
                     // Custom onAction event: owned by the widget-card container, not
@@ -519,7 +520,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         shown on card hover (the card uses the `group` class). */}
                       <div className="flex items-center space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
                         <div className="flex space-x-1.5 items-center">
-                          {/* Green dot → left click cycles size, right click deletes */}
+                          {/* Green dot → left click cycles size, right click deletes.
+                              Hidden when the widget has only one size option. */}
+                          {getWidgetConfig(widget.type).sizeOptions.length > 1 && (
                           <Tooltip delay={150}>
                             <Tooltip.Trigger className="inline-flex">
                               <div
@@ -540,6 +543,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                               切换比例
                             </Tooltip.Content>
                           </Tooltip>
+                          )}
                           {/* Yellow dot → toggle headless modal (fixed centered).
                               放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
                           {enableHeadlessModal &&
@@ -619,7 +623,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
       {/* 首次加载全屏遮罩：由独立组件 LoadingOverlay 渲染（fixed 覆盖整个视口）。
           布局完成（或 1500ms 兜底）后隐藏，避免首帧看到卡片重叠/布局中的状态。 */}
-      <LoadingOverlay visible={isLoading} label="正在加载小组件…" />
+      <LoadingOverlay visible={isLoading} label="加载中..." />
 
       {/* 无头模态层：点击黄色按钮后，对应 widget 以 fixed 居中、无头、放大的模态框显示；
           点击外部遮罩则还原为普通网格 widget（position 由 fixed 改回网格流） */}

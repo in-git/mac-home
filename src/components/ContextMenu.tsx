@@ -1,15 +1,12 @@
-import {
-  ArrowUp,
-  Image as ImageIcon,
-  Lock,
-  Plus,
-  Search,
-  Settings as SettingsIcon,
-  Trash2,
-} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef } from 'react';
 import { getWidgetConfig } from '../data/widgetConfig';
+import {
+  DESKTOP_CONTEXT_MENU,
+  WIDGET_CONTEXT_MENU,
+  ContextMenuAction,
+  ContextMenuItemConfig,
+} from '../data/contextMenuConfig';
 import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
 
 export interface ContextMenuPosition {
@@ -24,12 +21,9 @@ interface ContextMenuProps {
   widgets: WidgetItem[];
   onDeleteWidget: (id: string) => void;
   onResizeWidget: (id: string, newSize: WidgetSize) => void;
-  onMoveToTopWidget: (id: string) => void;
-  isDarkMode: boolean;
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onOpenWallpaper: () => void;
-  onOpenSpotlight: () => void;
   onOpenAddWidget: () => void;
   onOpenSettings: () => void;
 }
@@ -40,12 +34,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   widgets,
   onDeleteWidget,
   onResizeWidget,
-  onMoveToTopWidget,
-  isDarkMode,
   isEditMode,
   onToggleEditMode,
   onOpenWallpaper,
-  onOpenSpotlight,
   onOpenAddWidget,
   onOpenSettings,
 }) => {
@@ -90,6 +81,61 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   const adjustedX = Math.min(position.x, screenW - menuWidth - 10);
   const adjustedY = Math.min(position.y, screenH - menuHeight - 10);
 
+  // Map an action id to its handler + whether it should currently render.
+  const resolveAction = (
+    action: ContextMenuAction,
+    item: ContextMenuItemConfig,
+  ): { onClick: () => void; visible: boolean } | null => {
+    switch (action) {
+      case 'addWidget':
+        return { onClick: onOpenAddWidget, visible: true };
+      case 'wallpaper':
+        return { onClick: onOpenWallpaper, visible: true };
+      case 'settings':
+        return { onClick: onOpenSettings, visible: true };
+      case 'toggleEditMode':
+        return {
+          onClick: onToggleEditMode,
+          visible: !isEditMode && !!item.showOnlyWhenEditLocked,
+        };
+      case 'removeWidget':
+        return {
+          onClick: () => targetWidget && onDeleteWidget(targetWidget.id),
+          visible: !!targetWidget,
+        };
+      default:
+        return null;
+    }
+  };
+
+  // Render a single configured menu item.
+  const renderItem = (item: ContextMenuItemConfig) => {
+    const resolved = resolveAction(item.action, item);
+    if (!resolved || !resolved.visible) return null;
+    const Icon = item.icon;
+    return (
+      <React.Fragment key={item.id}>
+        <button
+          onClick={() => {
+            resolved.onClick();
+            onClose();
+          }}
+          className={`w-full px-2.5 py-1.5 rounded-xl flex items-center space-x-2 text-left transition-colors ${
+            item.danger
+              ? 'hover:bg-red-500/10 text-red-500 font-medium'
+              : 'hover:bg-black/5 dark:hover:bg-white/10'
+          }`}
+        >
+          <Icon size={14} className={item.danger ? '' : 'text-[#007AFF]'} />
+          <span>{item.label}</span>
+        </button>
+        {item.dividerAfter && (
+          <div className="my-1 border-t border-black/5 dark:border-white/10" />
+        )}
+      </React.Fragment>
+    );
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -101,7 +147,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         style={{ top: `${adjustedY}px`, left: `${adjustedX}px` }}
         className="fixed z-50 w-56 p-1.5 rounded-2xl glass-panel bg-white/80 dark:bg-slate-900/85 backdrop-blur-3xl shadow-2xl border border-white/60 dark:border-white/15 text-xs text-slate-800 dark:text-slate-100 select-none overflow-hidden"
       >
-        {/* If right clicked on a widget */}
+        {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
         {targetWidget ? (
           <>
             <div className="px-2.5 py-1.5 mb-1 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
@@ -136,104 +182,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               ))}
             </div>
 
-            <button
-              onClick={() => {
-                onMoveToTopWidget(targetWidget.id);
-                onClose();
-              }}
-              className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center space-x-2 text-left transition-colors"
-            >
-              <ArrowUp size={14} className="text-[#007AFF]" />
-              <span>置于最前</span>
-            </button>
-
-            <button
-              onClick={() => {
-                onDeleteWidget(targetWidget.id);
-                onClose();
-              }}
-              className="w-full px-2.5 py-1.5 rounded-xl hover:bg-red-500/10 text-red-500 flex items-center space-x-2 text-left transition-colors font-medium"
-            >
-              <Trash2 size={14} />
-              <span>移除该组件</span>
-            </button>
-
             <div className="my-1 border-t border-black/5 dark:border-white/10" />
+
+            {WIDGET_CONTEXT_MENU.map(renderItem)}
           </>
-        ) : null}
-
-        {/* Global Context Menu Options */}
-        {/* Add Widget — opens the Add Widget modal directly */}
-        <button
-          onClick={() => {
-            onOpenAddWidget();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
-        >
-          <div className="flex items-center space-x-2">
-            <Plus size={14} className="text-[#007AFF]" />
-            <span>添加小组件...</span>
-          </div>
-          <span className="text-font-sm text-slate-400">›</span>
-        </button>
-
-        {/* Change Wallpaper */}
-        <button
-          onClick={() => {
-            onOpenWallpaper();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center space-x-2 text-left transition-colors"
-        >
-          <ImageIcon size={14} className="text-purple-500" />
-          <span>壁纸中心</span>
-        </button>
-
-        {/* Spotlight Search */}
-        <button
-          onClick={() => {
-            onOpenSpotlight();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center space-x-2 text-left transition-colors"
-        >
-          <Search size={14} className="text-blue-500" />
-          <span>聚焦搜索 (Spotlight)</span>
-        </button>
-
-        {/* Settings */}
-        <button
-          onClick={() => {
-            onOpenSettings();
-            onClose();
-          }}
-          className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
-        >
-          <div className="flex items-center space-x-2">
-            <SettingsIcon size={14} className="text-[#007AFF]" />
-            <span>设置</span>
-          </div>
-          <span className="text-font-sm text-slate-400">›</span>
-        </button>
-
-        {/* Toggle Edit Mode: 仅在已锁定（非编辑模式）时显示，文本为一把锁 */}
-        {!isEditMode && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-
-              onToggleEditMode();
-              onClose();
-            }}
-            className="w-full px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between text-left transition-colors"
-          >
-            <div className="flex items-center space-x-2">
-              <Lock size={14} className="text-slate-400" />
-              <span>布局</span>
-            </div>
-            <Lock size={14} className="text-slate-400" />
-          </button>
+        ) : (
+          /* Desktop (empty area) right-click */
+          <>{DESKTOP_CONTEXT_MENU.map(renderItem)}</>
         )}
       </motion.div>
     </AnimatePresence>

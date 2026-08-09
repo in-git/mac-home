@@ -52,8 +52,7 @@ export default function App() {
     })),
   );
 
-  const { setWidgets, addWidget, deleteWidget, resizeWidget, moveToTopWidget } =
-    storeActions;
+  const { setWidgets, addWidget, deleteWidget, resizeWidget } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
     storeActions;
 
@@ -204,12 +203,9 @@ export default function App() {
         widgets={widgets}
         onDeleteWidget={deleteWidget}
         onResizeWidget={resizeWidget}
-        onMoveToTopWidget={moveToTopWidget}
-        isDarkMode={isDarkMode}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaper={openWallpaperModal}
-        onOpenSpotlight={() => setIsSpotlightOpen(true)}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
       />

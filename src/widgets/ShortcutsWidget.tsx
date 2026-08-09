@@ -320,7 +320,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                 <div
                   className={`relative w-full aspect-square rounded-xl flex items-center justify-center shadow-sm ${
                     item.bgColor || 'bg-slate-800 text-white'
-                  } transition-transform group-hover/icon:scale-105`}
+                  } transition-transform `}
                 >
                   {getIcon(item.iconName, 'w-[30%] h-[30%]')}
                 </div>
