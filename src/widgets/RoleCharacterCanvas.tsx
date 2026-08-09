@@ -48,6 +48,38 @@ export const RoleCharacterCanvas: React.FC = () => {
     };
     window.addEventListener('role-dialog-speak', handleRoleSpeak);
 
+    // 监听 AI 桌宠工具（src/agent/pet）发出的动作指令：移动 / 跳跃 / 重置。
+    // 通过合成输入注入 ticker 物理循环，与键盘操作互不冲突。
+    let moveCmd: { direction: 'left' | 'right'; until: number } | null = null;
+    let jumpPattern: number[] = [];
+    let resetRequested = false;
+
+    const handleRoleMove = (e: Event) => {
+      const detail =
+        (e as CustomEvent<{ direction?: string; duration?: number }>).detail ??
+        {};
+      const direction =
+        detail.direction === 'left' || detail.direction === 'right'
+          ? detail.direction
+          : 'right';
+      const duration = Math.max(0, Number(detail.duration) || 1000);
+      moveCmd = { direction, until: performance.now() + duration };
+    };
+
+    const handleRoleJump = (e: Event) => {
+      const detail = (e as CustomEvent<{ double?: boolean }>).detail ?? {};
+      // 单跳：[按下]；二段跳：[按下, 松开, 再按下]，配合 wasJumpPressed 触发两次起跳
+      jumpPattern = detail.double === true ? [1, 0, 1] : [1];
+    };
+
+    const handleRoleReset = () => {
+      resetRequested = true;
+    };
+
+    window.addEventListener('role-move', handleRoleMove);
+    window.addEventListener('role-jump', handleRoleJump);
+    window.addEventListener('role-reset', handleRoleReset);
+
     const initPixi = async () => {
       const pixiApp = new Application();
       await pixiApp.init({
@@ -98,8 +130,39 @@ export const RoleCharacterCanvas: React.FC = () => {
       app.ticker.add(() => {
         if (!app) return;
 
+        // AI 指令：重置到屏幕中央底部
+        if (resetRequested) {
+          state.x = (app.screen.width - DEFAULT_PHYSICS_CONFIG.roleWidth) / 2;
+          state.y = app.screen.height - DEFAULT_PHYSICS_CONFIG.roleHeight;
+          state.vx = 0;
+          state.vy = 0;
+          state.isGrounded = true;
+          resetRequested = false;
+        }
+
+        // 合并键盘输入与 AI 合成输入
         const inputs = controls.getKeyState();
-        updateRolePhysics(state, inputs, app.screen, DEFAULT_PHYSICS_CONFIG);
+        let effLeft = inputs.isLeft;
+        let effRight = inputs.isRight;
+        let effJump = inputs.isJump;
+        if (moveCmd) {
+          if (performance.now() < moveCmd.until) {
+            if (moveCmd.direction === 'left') effLeft = true;
+            else effRight = true;
+          } else {
+            moveCmd = null;
+          }
+        }
+        if (jumpPattern.length > 0) {
+          if (jumpPattern.shift() === 1) effJump = true;
+        }
+
+        updateRolePhysics(
+          state,
+          { isLeft: effLeft, isRight: effRight, isJump: effJump },
+          app.screen,
+          DEFAULT_PHYSICS_CONFIG,
+        );
 
         // Sync Pixi Sprite Position
         sprite.x = state.x;
@@ -125,6 +188,9 @@ export const RoleCharacterCanvas: React.FC = () => {
     return () => {
       isDestroyed = true;
       window.removeEventListener('role-dialog-speak', handleRoleSpeak);
+      window.removeEventListener('role-move', handleRoleMove);
+      window.removeEventListener('role-jump', handleRoleJump);
+      window.removeEventListener('role-reset', handleRoleReset);
       if (hideTimerId) clearTimeout(hideTimerId);
       controls.destroy();
       if (app) {

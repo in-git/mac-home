@@ -26,89 +26,140 @@ export const DEFAULT_WALLPAPER: WallpaperConfig = {
 };
 
 /** 渐变 / 静态壁纸预设：每个均带渐变背景（无图时兜底生效） */
-export const STATIC_WALLPAPERS: PresetStaticWallpaper[] = [
-  {    theme: 'light',
+/** 静态图片壁纸预设：带 imageUrl，与渐变兜底预设区分 */
+export const STATIC_IMAGE_WALLPAPERS: PresetStaticWallpaper[] = [
+  {
+    theme: 'light',
     gradient: 'linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)',
     imageUrl:
       'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80',
   },
-  {    theme: 'dark',
+  {
+    theme: 'dark',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     imageUrl:
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
   },
-  {    theme: 'light',
+  {
+    theme: 'light',
     gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
     imageUrl:
       'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80',
   },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #00b09b 0%, #96c93d 100%)',
-  },
-  {    theme: 'light',
-    gradient: 'linear-gradient(135deg, #f7971e 0%, #ffd200 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #1b1f3b 0%, #3b2f63 45%, #6d5a8f 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #2a1a3e 0%, #5b3a7a 45%, #c06c9e 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #0a2e2a 0%, #0f5a52 50%, #2bb6a4 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #0d0d12 0%, #1c1c28 55%, #3a3a52 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #15102b 0%, #3a2b5c 50%, #6b4f9e 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #0b0b0f 0%, #1a1a22 50%, #2c2c38 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #1c1c1e 0%, #3a3a3c 50%, #636366 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #141433 0%, #2e2e6e 50%, #4f4fb0 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #05010f 0%, #1b0b3a 55%, #3d1f6e 100%)',
-  },
-  {    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #04111f 0%, #0a3a4a 50%, #1f8a8a 100%)',
-  },
 ];
+
+
+export const STATIC_WALLPAPERS: PresetStaticWallpaper[] = [
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #bdc3c7, #2c3e50)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #0f2027, #203a43, #2c5364)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #373b44, #4286f4)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #ff0099, #493240)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #c31432, #240b36)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #ed213a, #93291e)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #da4453, #89216b)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #ad5389, #3c1053)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #333333, #dd1818)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #c94b4b, #4b134f)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #23074d, #cc5333)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #0f0c29, #302b63, #24243e)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #03001e, #7302c0, #ec38bc, #fdeff9)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #642b73, #c64266)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #000000, #0f9b0f)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #000046, #1cb5e0)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #eb5757, #000000)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #20002c, #cb8cd4)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #c33764, #1d2671)"
+  },
+  {
+    "theme": "dark",
+    "gradient": "linear-gradient(to right, #44a08d, #093637)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #ee9ca7, #ffdde1)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #2193b0, #6dd5ed)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #2980b9, #6dd5fa, #ffffff)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #ffefba, #ffffff)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #d3cce3, #e9e4f0)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #ada996, #f2f2f2, #dbdbdb, #eaeaea)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #ef3b36, #ffffff)"
+  },
+  {
+    "theme": "light",
+    "gradient": "linear-gradient(to right, #fffc00, #ffffff)"
+  },
+]

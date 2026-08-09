@@ -1,10 +1,11 @@
+import { petTools } from '../pet';
 import type { AgentTool } from '../types';
 import { agentChatTool } from './agentChat';
 import { generalChatTool } from './generalChat';
 import { pageActionTools } from './pageActions';
 import { scheduledTaskTools } from './scheduledTask';
-import { systemSettingsTools } from './systemSettings';
 import { stickyNoteTools } from './stickyNotes';
+import { systemSettingsTools } from './systemSettings';
 
 /**
  * 工具注册表：新增 AI 功能模块时，在此把模块的 tools 数组合并进来即可，
@@ -15,6 +16,7 @@ export const AGENT_TOOLS: AgentTool[] = [
   ...scheduledTaskTools,
   ...pageActionTools,
   ...stickyNoteTools,
+  ...petTools,
   generalChatTool,
   agentChatTool,
 ];
@@ -23,5 +25,5 @@ export { agentChatTool } from './agentChat';
 export { generalChatTool } from './generalChat';
 export { pageActionTools } from './pageActions';
 export { scheduledTaskTools } from './scheduledTask';
-export { systemSettingsTools } from './systemSettings';
 export { stickyNoteTools } from './stickyNotes';
+export { systemSettingsTools } from './systemSettings';

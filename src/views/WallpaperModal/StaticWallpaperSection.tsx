@@ -217,10 +217,15 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
         </>
       )}
 
-      {/* 系统预设：本地渐变/图片壁纸 */}
+      {/* 系统预设：静态图片壁纸 + 渐变兜底壁纸 */}
       {sourceTab === 'preset' && (
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          {PRESET_DATA.STATIC_WALLPAPERS.map(renderWallpaperCard)}
+        <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {PRESET_DATA.STATIC_IMAGE_WALLPAPERS.map(renderWallpaperCard)}
+          </div>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {PRESET_DATA.STATIC_WALLPAPERS.map(renderWallpaperCard)}
+          </div>
         </div>
       )}
     </section>
