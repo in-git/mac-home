@@ -70,5 +70,12 @@ export const updateRolePhysics = (
     state.x = screen.width;
   }
 
-  state.animFrameCounter++;
+  // 动画帧计数累加：动画播放速率与水平实际速度 Math.abs(vx) 动态绑定
+  // 移动速度越快，AnimFrame 增加越快，切帧频率更高
+  const speed = Math.abs(state.vx);
+  if (speed > 0.1) {
+    state.animFrameCounter += speed / 3;
+  } else {
+    state.animFrameCounter = 0;
+  }
 };

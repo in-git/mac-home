@@ -109,6 +109,9 @@ export interface WidgetItem {
   // only meaningful for widgets sourced from code (INITIAL_WIDGETS).
   onAction?: () => void;
   iconHref?: string;
+  // 仅 icon / icon-grid 组件：为 true 时点击在内部浏览器（iframe）打开 iconHref，
+  // 而非新标签页。若目标站点禁止被 iframe 嵌入，则内部浏览器提供「在外部打开」降级。
+  openInApp?: boolean;
 }
 
 export type WallpaperType = 'dynamic' | 'static';

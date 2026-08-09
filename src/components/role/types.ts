@@ -25,3 +25,8 @@ export interface RoleTextures {
   leftFrames: Texture[];
   rightFrames: Texture[];
 }
+
+export interface DialogState {
+  text: string;
+  visible: boolean;
+}

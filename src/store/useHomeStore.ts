@@ -45,6 +45,8 @@ interface HomeState {
   deleteWidget: (id: string) => void;
   resizeWidget: (id: string, newSize: WidgetSize) => void;
   moveToTopWidget: (id: string) => void;
+  /** 局部更新某个 widget 的任意字段（用于图标编辑等）。 */
+  updateWidget: (id: string, patch: Partial<WidgetItem>) => void;
   updateWidgetBackground: (
     id: string,
     background: string | undefined,
@@ -147,6 +149,14 @@ export const useHomeStore = create<HomeState>()(
             w.id === id
               ? { ...w, background, backgroundTheme }
               : w,
+          ),
+        });
+      },
+
+      updateWidget: (id, patch) => {
+        set({
+          widgets: get().widgets.map((w) =>
+            w.id === id ? { ...w, ...patch } : w,
           ),
         });
       },

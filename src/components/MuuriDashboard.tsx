@@ -14,6 +14,8 @@ import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
 import { IconWidget } from '../widgets/IconWidget';
+import { InternalBrowser } from './InternalBrowser';
+import { useHomeStore } from '../store/useHomeStore';
 import { SearchWidget } from '../widgets/SearchWidget';
 import { SettingsWidget } from '../widgets/SettingsWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
@@ -75,6 +77,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const [expandedWidgetId, setExpandedWidgetId] = useState<string | null>(null);
   // 设置弹窗：settings 以适中尺寸的模态框呈现（非放大）。
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+
+  // 内部浏览器：当 icon 组件配置了 openInApp 时，以全屏 iframe 打开其链接。
+  const [internalBrowser, setInternalBrowser] = useState<{
+    url: string;
+    title?: string;
+  } | null>(null);
+
+  const updateWidget = useHomeStore((s) => s.updateWidget);
 
   // Helper to render widget content. `inModal` 为 true 时用于无头模态（弹窗）：
   // settings 在网格中显示为图标，在模态中渲染完整设置面板。
@@ -519,11 +529,18 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       const action = getWidgetAction(widget.id);
                       action?.();
                     } else if (widget.iconHref) {
-                      window.open(
-                        widget.iconHref,
-                        '_blank',
-                        'noopener,noreferrer',
-                      );
+                      if (widget.openInApp) {
+                        setInternalBrowser({
+                          url: widget.iconHref,
+                          title: widget.iconLabel ?? widget.title,
+                        });
+                      } else {
+                        window.open(
+                          widget.iconHref,
+                          '_blank',
+                          'noopener,noreferrer',
+                        );
+                      }
                     }
                   }}
                 >
@@ -689,6 +706,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             </div>
           );
         })()}
+
+      {/* 内部浏览器：icon 组件配置 openInApp 后以全屏 iframe 打开其链接 */}
+      <InternalBrowser
+        isOpen={!!internalBrowser}
+        url={internalBrowser?.url ?? ''}
+        title={internalBrowser?.title}
+        onClose={() => setInternalBrowser(null)}
+      />
     </div>
   );
 };

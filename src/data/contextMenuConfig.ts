@@ -2,6 +2,7 @@ import {
   Image as ImageIcon,
   Lock,
   Palette,
+  Pencil,
   Plus,
   Settings as SettingsIcon,
   Trash2,
@@ -31,6 +32,7 @@ export type ContextMenuAction =
   | 'settings'
   | 'toggleEditMode'
   | 'changeBackground'
+  | 'editIcon'
   | 'removeWidget';
 
 export interface ContextMenuItemConfig {
