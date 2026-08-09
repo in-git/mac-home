@@ -134,15 +134,6 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     label: '图标',
     showHeader: false,
   },
-  'agent-test': {
-    title: 'Agent 测试',
-    maxInstances: Infinity,
-    defaultSize: 'large',
-    sizeOptions: SIZE_OPTIONS_LARGE_WIDE,
-    isAddable: true,
-    glyph: '🛠️',
-    label: 'Agent 测试',
-  },
 };
 
 /** Resolve the config for a widget type (falls back to a safe default). */

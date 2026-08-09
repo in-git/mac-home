@@ -6,7 +6,7 @@ import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
-import { RoleCharacterCanvas } from './components/RoleCharacterCanvas';
+import { RoleCharacterCanvas } from './widgets/RoleCharacterCanvas';
 import { TopBar } from './components/TopBar';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
@@ -17,6 +17,7 @@ import { CommandDialog } from './views/CommandDialog';
 import { SettingsModal } from './views/SettingsModal';
 import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
+import { systemSettingsTools } from './agent/tools';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -155,6 +156,7 @@ export default function App() {
   // Global Enter-to-open-command-dialog. Ignored when an input/textarea/contenteditable
   // is focused so it never hijacks typing, and ignored if a modal is already open.
   useEffect(() => {
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return;
       const el = document.activeElement as HTMLElement | null;

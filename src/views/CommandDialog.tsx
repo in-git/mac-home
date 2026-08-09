@@ -1,6 +1,16 @@
 import type { AgentChatMessage } from '@/agent/chat';
-import { sendAgentChat } from '@/agent/chat';
-import { Bot, RefreshCw, Send, Sparkles, User, Wrench } from 'lucide-react';
+import { AGENT_TOOLS } from '@/agent';
+import { chatWithPet } from '@/utils/aiClient';
+import { useHomeStore } from '@/store/useHomeStore';
+import {
+  Bot,
+  RefreshCw,
+  Send,
+  Sparkles,
+  Terminal,
+  User,
+  Wrench,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -18,16 +28,17 @@ function now(): string {
 
 /**
  * 按 Enter 弹出的「和桌宠对话」输入框。
- * 复用 src/agent/chat 的 sendAgentChat 走 Agent ReAct 循环：
- * 输入内容 → 大模型返回（可调用系统工具）→ 回复展示在面板中，
+ * 复用 src/utils/aiClient 的 chatWithPet（内置桌宠系统提示词）进行单轮对话：
+ * 输入内容 → 大模型返回 → 回复展示在面板中，
  * 同时通过 role-dialog-speak 事件让桌宠头上气泡同步显示最终回复。
  */
 export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<AgentChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const aiConfig = useHomeStore((s) => s.aiConfig);
 
   // Esc 关闭 + 打开时自动聚焦输入框
   useEffect(() => {
@@ -66,32 +77,41 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
       content: trimmed,
       timestamp: now(),
     };
-    const newHistory = [...messages, userMsg];
-    setMessages(newHistory);
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
 
     try {
-      const replyMsgs = await sendAgentChat({
-        history: newHistory,
-        userInput: trimmed,
-      });
-      setMessages((prev) => [...prev, ...replyMsgs]);
-
-      // 把最终 AI 文本回复同步给桌宠气泡显示
-      const lastAssistantMsg = [...replyMsgs]
-        .reverse()
-        .find((m) => m.role === 'assistant' && m.content && !m.error);
-      if (lastAssistantMsg) {
-        window.dispatchEvent(
-          new CustomEvent('role-dialog-speak', {
-            detail: { text: lastAssistantMsg.content },
-          }),
-        );
-      }
+      // 用封装的桌宠对话方法（一整套闭环：内置提示词→解析→执行→触发气泡）
+      const reply = await chatWithPet(aiConfig, trimmed);
+      const assistantMsg: AgentChatMessage = {
+        id: 'cmd-assistant-' + Date.now(),
+        role: 'assistant',
+        content: reply,
+        timestamp: now(),
+      };
+      setMessages((prev) => [...prev, assistantMsg]);
+      // 桌宠气泡由 chatWithPet 内部（执行 ToolTask 时）统一触发，这里不再重复派发
+      // 单轮对话完成，关闭对话框（回复通过桌宠头顶气泡显示）
+      onClose();
+    } catch (err) {
+      const errorMsg: AgentChatMessage = {
+        id: 'cmd-err-' + Date.now(),
+        role: 'assistant',
+        content: `调用失败: ${err instanceof Error ? err.message : String(err)}`,
+        timestamp: now(),
+        error: true,
+      };
+      setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setLoading(false);
     }
+  };
+
+  // 点击命令列表：把该命令的 title 填入输入框（不自动执行）
+  const handleCommandClick = (title: string) => {
+    setInput((prev) => (prev ? prev + ' ' + title : title));
+    inputRef.current?.focus();
   };
 
   return (
@@ -108,137 +128,70 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
           onClick={(e) => e.stopPropagation()}
           className="w-full max-w-xl glass-panel rounded-2xl shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100 flex flex-col"
         >
-          {/* 顶部：宠物对话标题栏 */}
-          <div className="flex items-center px-4 py-3 border-b border-black/5 dark:border-white/10 shrink-0">
-            <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
-              <Bot size={16} />
-            </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <div className="text-sm font-semibold flex items-center gap-1.5">
-                <Sparkles size={13} className="text-[#007AFF]" />
-                和桌宠聊天
-              </div>
-              <div className="text-[11px] text-slate-400">
-                试试「开启黑暗模式」「记一条便签」…
-              </div>
-            </div>
-            <span className="text-xs text-nowrap text-slate-400 px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
-              ESC 退出
-            </span>
-          </div>
+     
 
-          {/* 消息列表 */}
-          <div
-            ref={scrollRef}
-            className="max-h-[40vh] overflow-y-auto p-3 space-y-3 text-xs min-h-0 select-text"
-          >
-            {messages.length === 0 && (
-              <div className="text-center text-slate-400 dark:text-slate-500 py-8">
-                按下 Enter 输入内容，桌宠会回复你哦~
-              </div>
-            )}
-
-            {messages.map((msg) => {
-              if (msg.role === 'tool') {
-                return (
-                  <div key={msg.id} className="flex items-start space-x-2">
-                    <div className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0">
-                      <Wrench size={12} />
-                    </div>
-                    <div className="max-w-[85%] px-2.5 py-2 rounded-[12px] rounded-tl-xs bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-amber-800 dark:text-amber-200 leading-relaxed break-words whitespace-pre-wrap">
-                      <div className="font-semibold flex items-center gap-1">
-                        <Wrench size={11} />
-                        {msg.toolName}
-                      </div>
-                      <div
-                        className={
-                          msg.toolOk
-                            ? 'text-emerald-600 dark:text-emerald-400 mt-0.5'
-                            : 'text-red-600 dark:text-red-400 mt-0.5'
-                        }
-                      >
-                        {msg.content}
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              const isUser = msg.role === 'user';
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}
-                >
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                      isUser
-                        ? 'bg-[#007AFF] text-white'
-                        : msg.error
-                          ? 'bg-red-500 text-white'
-                          : 'bg-emerald-500 text-white'
-                    }`}
-                  >
-                    {isUser ? <User size={12} /> : <Bot size={12} />}
-                  </div>
-                  <div
-                    className={`max-w-[80%] px-3 py-2 rounded-[14px] leading-relaxed break-words whitespace-pre-wrap ${
-                      isUser
-                        ? 'bg-[#007AFF] text-white rounded-tr-xs shadow-xs'
-                        : msg.error
-                          ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-tl-xs border border-red-200 dark:border-red-800/40'
-                          : 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-100 rounded-tl-xs'
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                </div>
-              );
-            })}
-
-            {loading && (
-              <div className="flex items-center space-x-2 text-slate-400 text-xs">
-                <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                  <Bot size={12} />
-                </div>
-                <div className="px-3 py-2 bg-black/5 dark:bg-white/10 rounded-[14px] rounded-tl-xs flex items-center space-x-1.5">
-                  <RefreshCw
-                    size={12}
-                    className="animate-spin text-[#007AFF]"
-                  />
-                  <span className="text-slate-500 dark:text-slate-400">
-                    桌宠思考中…
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 底部输入框 */}
+      
+          {/* 底部输入框（textarea 多行） */}
           <form
             onSubmit={handleSend}
             className="border-t border-black/5 dark:border-white/10 p-3 shrink-0"
           >
-            <div className="relative flex items-center">
-              <input
+            <div className="relative flex items-end">
+              <textarea
                 ref={inputRef}
-                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="对桌宠说点什么…"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                rows={2}
+                placeholder="对桌宠说点什么…（Enter 发送，Shift+Enter 换行）"
                 disabled={loading}
-                className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[12px] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50"
+                className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[12px] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50 resize-none scrollbar-thin"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[10px] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
+                className="absolute right-1.5 bottom-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[10px] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
               >
                 <span>发送</span>
                 <Send size={11} />
               </button>
             </div>
+            
           </form>
+
+          {/* 输入框下方的 agent 命令列表：点击把 title 填入输入框 */}
+          <div className="px-3 pb-3 shrink-0 border-t border-black/5 dark:border-white/10 pt-2">
+            <div className="flex items-center space-x-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
+              <Terminal size={12} className="text-[#007AFF]" />
+              <span>Agent 命令</span>
+            </div>
+            <div className="flex flex-col gap-2 max-h-72 overflow-y-auto scrollbar-thin">
+              {AGENT_TOOLS.map((tool) => (
+                <button
+                  key={tool.name}
+                  type="button"
+                  onClick={() => handleCommandClick(tool.title)}
+                  title={tool.description}
+                  className="group flex items-start gap-2.5 px-3 py-2.5 rounded-[12px] bg-black/[0.03] dark:bg-white/[0.06] hover:bg-[#007AFF]/10 dark:hover:bg-[#007AFF]/20 transition-colors text-left disabled:opacity-50 disabled:pointer-events-none w-full"
+                >
+                  <Wrench size={14} className="text-slate-400 dark:text-slate-500 shrink-0 mt-0.5 group-hover:text-[#007AFF]" />
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs text-slate-800 dark:text-slate-100 font-semibold">
+                      {tool.title}
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                      {tool.description}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>

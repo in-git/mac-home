@@ -150,25 +150,6 @@ export const updateNoteTool: AgentTool = {
   },
 };
 
-export const deleteNoteTool: AgentTool = {
-  name: `${PREFIX}delete`,
-  title: '删除便签',
-  description: '删除一条便签（按 id）。',
-  parameters: {
-    id: { type: 'string', description: '要删除的便签 id', required: true },
-  },
-  run: (args): AgentToolCallResult => {
-    const id = args.id;
-    if (typeof id !== 'string' || id.length === 0) {
-      return err(`${PREFIX}delete`, '参数 id 必须是非空字符串。');
-    }
-    const okDeleted = deleteNote(id);
-    if (!okDeleted) {
-      return err(`${PREFIX}delete`, `未找到 id 为「${id}」的便签。`);
-    }
-    return ok(`${PREFIX}delete`, `已删除便签（id=${id}）。`);
-  },
-};
 
 export const togglePinNoteTool: AgentTool = {
   name: `${PREFIX}toggle_pin`,
@@ -199,6 +180,5 @@ export const stickyNoteTools: AgentTool[] = [
   listNotesTool,
   createNoteTool,
   updateNoteTool,
-  deleteNoteTool,
   togglePinNoteTool,
 ];

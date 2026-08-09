@@ -5,9 +5,13 @@ import type {
   AgentToolInvocation,
 } from './types';
 
-const TOOL_MAP: Record<string, AgentTool> = Object.fromEntries(
-  AGENT_TOOLS.map((t) => [t.name, t]),
-);
+let toolMap: Record<string, AgentTool> | null = null;
+function getToolMap(): Record<string, AgentTool> {
+  if (!toolMap) {
+    toolMap = Object.fromEntries(AGENT_TOOLS.map((t) => [t.name, t]));
+  }
+  return toolMap;
+}
 
 export { AGENT_TOOLS } from './tools';
 export type {
@@ -36,7 +40,7 @@ export async function executeAgentTool(
   invocation: AgentToolInvocation,
 ): Promise<AgentToolCallResult> {
   const toolName = invocation?.name;
-  const tool = toolName ? TOOL_MAP[toolName] : undefined;
+  const tool = toolName ? getToolMap()[toolName] : undefined;
   if (!tool) {
     return {
       ok: false,

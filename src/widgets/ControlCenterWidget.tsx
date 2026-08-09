@@ -23,7 +23,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
 
   // 定位状态：idle 未定位 / locating 请求中 / done 成功 / error 失败
   const [locating, setLocating] = useState(false);
-  const [locCity, setLocCity] = useState<string | null>(null);
+  const [_, setLocCity] = useState<string | null>(null);
   const [locCoords, setLocCoords] = useState<{
     lat: number;
     lon: number;

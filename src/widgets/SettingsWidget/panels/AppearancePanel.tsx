@@ -12,6 +12,7 @@ import {
   FONT_VARIANT_LABEL,
 } from '../../../types';
 import { ACCENT_COLORS } from '../constants';
+import { SegmentedControl } from '../SegmentedControl';
 import type { AppearancePanelProps } from '../types';
 
 /**
@@ -38,28 +39,15 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
           <span className="font-medium text-slate-800 dark:text-slate-200">
             外观
           </span>
-          <div className="flex p-0.5 rounded-lg bg-black/5 dark:bg-white/10">
-            {[
-              { dark: false, label: '浅色', icon: <Sun size={13} /> },
-              { dark: true, label: '深色', icon: <Moon size={13} /> },
-            ].map((opt) => {
-              const active = isDarkMode === opt.dark;
-              return (
-                <button
-                  key={String(opt.dark)}
-                  onClick={() => setDarkMode(opt.dark)}
-                  className={`flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs transition-colors ${
-                    active
-                      ? 'bg-white dark:bg-[#3A3A3C] text-[#007AFF] dark:text-white shadow-xs font-medium'
-                      : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                >
-                  {opt.icon}
-                  <span>{opt.label}</span>
-                </button>
-              );
-            })}
-          </div>
+          <SegmentedControl
+            ariaLabel="外观模式"
+            value={isDarkMode ? 'dark' : 'light'}
+            onChange={(v) => setDarkMode(v === 'dark')}
+            options={[
+              { value: 'light', label: <span className="flex items-center space-x-1.5"><Sun size={13} /><span>浅色</span></span> },
+              { value: 'dark', label: <span className="flex items-center space-x-1.5"><Moon size={13} /><span>深色</span></span> },
+            ]}
+          />
         </div>
 
         {/* 墙纸 */}
@@ -128,24 +116,15 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
               px
             </div>
           </div>
-          <div className="flex p-0.5 rounded-lg bg-black/5 dark:bg-white/10">
-            {(['A', 'B', 'C'] as const).map((v) => {
-              const active = fontVariant === v;
-              return (
-                <button
-                  key={v}
-                  onClick={() => setFontVariant(v)}
-                  className={`px-3 py-1 rounded-md text-xs transition-colors font-medium ${
-                    active
-                      ? 'bg-white dark:bg-[#3A3A3C] text-[#007AFF] dark:text-white shadow-xs'
-                      : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                >
-                  {FONT_VARIANT_LABEL[v]}
-                </button>
-              );
-            })}
-          </div>
+          <SegmentedControl
+            ariaLabel="字体大小"
+            value={fontVariant}
+            onChange={setFontVariant}
+            options={(['A', 'B', 'C'] as const).map((v) => ({
+              value: v,
+              label: FONT_VARIANT_LABEL[v],
+            }))}
+          />
         </div>
 
         {/* 卡片圆角 */}
@@ -153,24 +132,15 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
           <span className="font-medium text-slate-800 dark:text-slate-200">
             卡片圆角
           </span>
-          <div className="flex p-0.5 rounded-lg bg-black/5 dark:bg-white/10">
-            {(['tiny', 'small', 'medium', 'large'] as const).map((v) => {
-              const active = cardRadius === v;
-              return (
-                <button
-                  key={v}
-                  onClick={() => setCardRadius(v)}
-                  className={`px-3 py-1 rounded-md text-xs transition-colors font-medium ${
-                    active
-                      ? 'bg-white dark:bg-[#3A3A3C] text-[#007AFF] dark:text-white shadow-xs'
-                      : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                >
-                  {CARD_RADIUS_LABEL[v]}
-                </button>
-              );
-            })}
-          </div>
+          <SegmentedControl
+            ariaLabel="卡片圆角"
+            value={cardRadius}
+            onChange={setCardRadius}
+            options={(['tiny', 'small', 'medium', 'large'] as const).map((v) => ({
+              value: v,
+              label: CARD_RADIUS_LABEL[v],
+            }))}
+          />
         </div>
       </div>
     </div>

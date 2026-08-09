@@ -54,8 +54,7 @@ export type WidgetType =
   | 'shortcuts'
   | 'control-center'
   | 'settings'
-  | 'icon-grid'
-  | 'agent-test';
+  | 'icon-grid';
 
 export type WidgetSize =
   | 'sm' // 1/4

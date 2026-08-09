@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { loadRoleTextures } from './role/assets';
 import { RoleControls } from './role/controls';
-import { getRandomGreeting, getRandomInterval } from './role/dialog';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './role/physics';
 import { DialogState, RoleState } from './role/types';
 
@@ -26,7 +25,6 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     let app: Application | null = null;
     let isDestroyed = false;
-    let timerId: NodeJS.Timeout | null = null;
     let hideTimerId: NodeJS.Timeout | null = null;
 
     const controls = new RoleControls();
@@ -45,32 +43,10 @@ export const RoleCharacterCanvas: React.FC = () => {
         hideTimerId = setTimeout(() => {
           if (isDestroyed) return;
           setDialog((prev) => ({ ...prev, visible: false }));
-          scheduleNextDialog();
         }, 5000);
       }
     };
     window.addEventListener('role-dialog-speak', handleRoleSpeak);
-
-    // 随机弹出对话框调度
-    const scheduleNextDialog = () => {
-      const interval = getRandomInterval();
-      timerId = setTimeout(() => {
-        if (isDestroyed) return;
-        setDialog({
-          text: getRandomGreeting(),
-          visible: true,
-        });
-
-        // 2.5 秒后自动隐藏气泡
-        if (hideTimerId) clearTimeout(hideTimerId);
-        hideTimerId = setTimeout(() => {
-          if (isDestroyed) return;
-          setDialog((prev) => ({ ...prev, visible: false }));
-          // 对话框关闭后再调度下一次显示
-          scheduleNextDialog();
-        }, 2500);
-      }, interval);
-    };
 
     const initPixi = async () => {
       const pixiApp = new Application();
@@ -118,9 +94,6 @@ export const RoleCharacterCanvas: React.FC = () => {
 
       setRolePos({ x: state.x, y: state.y });
 
-      // 启动对话框随机定时器
-      scheduleNextDialog();
-
       // Game Ticker Loop
       app.ticker.add(() => {
         if (!app) return;
@@ -152,7 +125,6 @@ export const RoleCharacterCanvas: React.FC = () => {
     return () => {
       isDestroyed = true;
       window.removeEventListener('role-dialog-speak', handleRoleSpeak);
-      if (timerId) clearTimeout(timerId);
       if (hideTimerId) clearTimeout(hideTimerId);
       controls.destroy();
       if (app) {

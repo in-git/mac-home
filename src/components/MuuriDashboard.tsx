@@ -9,7 +9,6 @@ import {
 } from '../data/widgetConfig';
 import { useHomeStore } from '../store/useHomeStore';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
-import { AgentTestWidget } from '../widgets/AgentTestWidget';
 import { AiChatWidget } from '../widgets/AiChatWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
@@ -101,8 +100,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         return <WeatherWidget />;
       case 'ai-chat':
         return <AiChatWidget isDarkMode={isDarkMode} />;
-      case 'agent-test':
-        return <AgentTestWidget isDarkMode={isDarkMode} expanded={inModal} />;
       case 'clock':
         return <ClockCalendarWidget />;
       case 'clock-mini':
@@ -591,8 +588,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                               放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
                           {enableHeadlessModal &&
                             (widget.type === 'sticky-notes' ||
-                              widget.type === 'shortcuts' ||
-                              widget.type === 'agent-test') && (
+                              widget.type === 'shortcuts') && (
                               <Tooltip delay={150}>
                                 <Tooltip.Trigger className="inline-flex">
                                   <div

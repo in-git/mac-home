@@ -132,7 +132,6 @@ export async function sendAgentChat(
     // 将清洗后的 task 列表拆为「工具任务」与「文本回复」
     const toolTasks: ToolTask[] = [];
     const textTasks: string[] = [];
-    console.log(cleaned);
 
     for (const t of cleaned.tasks) {
       if (t.type === 'tool') {
@@ -204,11 +203,4 @@ export async function sendAgentChat(
   return produced;
 }
 
-export type {
-  AgentChatMessage,
-  AgentChatOptions,
-  AgentRole,
-  ModelTask,
-  ParsedModel,
-  ToolTask,
-} from './types';
+export type { AgentChatMessage, AgentChatOptions, ToolTask } from './types';
