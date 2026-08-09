@@ -504,19 +504,10 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                   style={widget.background ? { background: widget.background } : undefined}
                   className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widget.size === 'icon-1-16' ? 'p-0' : 'p-4'} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
                   onClick={(e) => {
-                    // Custom onAction event: owned by the widget-card container, not
-                    // the inner icon button. When an icon-grid tile is clicked we
-                    // resolve its behaviour by id (action handler from presetData,
-                    // or a link to open). Clicks on header controls are marked
-                    // data-no-drag but still bubble here — we ignore those so the
-                    // green/red dot handlers remain authoritative.
                     if (isEditMode) return;
                     const target = e.target as HTMLElement;
                     if (target.closest('[data-no-drag]')) return;
-                    // Type-level default action (optional). Resolved & executed
-                    // centrally via WIDGET_CONFIG so the trigger lives in one place.
                     if (executeWidgetAction(widget.type)) return;
-                    // settings 图标点击 → 打开适中尺寸设置弹窗（非放大）
                     if (widget.type === 'settings') {
                       setSettingsModalOpen(true);
                       return;

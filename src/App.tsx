@@ -5,6 +5,7 @@ import { initScheduler } from './agent/scheduler';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { MuuriDashboard } from './components/MuuriDashboard';
+import { RoleCharacterCanvas } from './components/RoleCharacterCanvas';
 import { TopBar } from './components/TopBar';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
@@ -55,7 +56,13 @@ export default function App() {
     })),
   );
 
-  const { setWidgets, addWidget, deleteWidget, resizeWidget, updateWidgetBackground } = storeActions;
+  const {
+    setWidgets,
+    addWidget,
+    deleteWidget,
+    resizeWidget,
+    updateWidgetBackground,
+  } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
     storeActions;
 
@@ -159,6 +166,9 @@ export default function App() {
         isDarkMode={isDarkMode}
         screenBrightness={screenBrightness}
       />
+
+      {/* 2D Role Character Overlay */}
+      <RoleCharacterCanvas />
 
       {/* Top macOS Navigation Bar */}
       <TopBar
