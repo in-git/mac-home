@@ -39,6 +39,10 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const aiConfig = useHomeStore((s) => s.aiConfig);
+  const petChatHistory = useHomeStore((s) => s.petChatHistory);
+  const setPetChatHistory = useHomeStore((s) => s.setPetChatHistory);
+  // 持久化的跨轮对话历史上限（只存 user/assistant 文本），防止上下文无限增长
+  const MAX_PET_HISTORY = 20;
 
   // Esc 关闭 + 打开时自动聚焦输入框
   useEffect(() => {
@@ -82,8 +86,12 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      // 用封装的桌宠对话方法（一整套闭环：内置提示词→解析→执行→触发气泡）
-      const reply = await chatWithPet(aiConfig, trimmed);
+      // 用封装的桌宠对话方法（一整套闭环：内置提示词→解析→执行→触发气泡）；
+      // 携带跨轮历史（chatWithPet 内部会安全清洗，只保留 user/assistant 文本，
+      // 不会触发 OpenAI 兼容接口的 400 错误）。
+      const historyForModel: import('@/utils/aiClient').ChatMessage[] =
+        petChatHistory.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+      const reply = await chatWithPet(aiConfig, trimmed, historyForModel);
       const assistantMsg: AgentChatMessage = {
         id: 'cmd-assistant-' + Date.now(),
         role: 'assistant',
@@ -91,6 +99,9 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
         timestamp: now(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+      // 把本轮 user + assistant 追加进持久化的跨轮历史（仅文本，剔除 error 标记）
+      const nextHistory = [...petChatHistory, userMsg, assistantMsg].slice(-MAX_PET_HISTORY);
+      setPetChatHistory(nextHistory);
       // 桌宠气泡由 chatWithPet 内部（执行 ToolTask 时）统一触发，这里不再重复派发
       // 单轮对话完成，关闭对话框（回复通过桌宠头顶气泡显示）
       onClose();
@@ -103,6 +114,9 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
         error: true,
       };
       setMessages((prev) => [...prev, errorMsg]);
+      // 失败也应保留 user 输入到历史，便于下一轮模型理解上下文（不存 error 消息）
+      const nextHistory = [...petChatHistory, userMsg].slice(-MAX_PET_HISTORY);
+      setPetChatHistory(nextHistory);
     } finally {
       setLoading(false);
     }

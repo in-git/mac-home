@@ -6,8 +6,17 @@ import {
   WallpaperItem,
 } from '../../api/wallpaper';
 import { GlassTabs } from '../../components/GlassTabs';
-import { PRESET_DATA, PresetStaticWallpaper } from '../../data/presetData';
+import { PRESET_DATA } from '../../data/presetData';
 import type { WallpaperConfig } from '../../types';
+
+/** 壁纸卡片渲染项：在线壁纸（WallpaperItem）与系统预设（PresetStaticWallpaper）共用 */
+type WallpaperCardItem = {
+  id?: string;
+  title?: string;
+  imageUrl?: string;
+  thumbnailUrl?: string;
+  gradient?: string;
+};
 
 interface StaticWallpaperSectionProps {
   wallpaper: WallpaperConfig;
@@ -57,9 +66,9 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
     fetchWallpapers(1, selectedCat);
   }, [selectedCat]);
 
-  const handleSelectWallpaper = (item: PresetStaticWallpaper) => {
-    // 在线壁纸异步更新下载量（预设壁纸无 gradient 之外的区分，跳过上报）
-    if (!item.gradient) wallpaperApi.recordDownload(item.id).catch(() => {});
+  const handleSelectWallpaper = (item: WallpaperCardItem) => {
+    // 在线壁纸（带 id）异步更新下载量；系统预设以 gradient 为标识，无 id，跳过上报
+    if (item.id) wallpaperApi.recordDownload(item.id).catch(() => {});
 
     // thumbnailUrl 仅用于列表预览，实际壁纸用 imageUrl；无图时用 gradient 兜底
     onUpdateWallpaper({
@@ -70,24 +79,25 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
     });
   };
 
-  // 壁纸卡片统一渲染（在线壁纸与预设共用，均为 WallpaperItem 结构）
-  const renderWallpaperCard = (item: PresetStaticWallpaper) => {
+  // 壁纸卡片统一渲染（在线壁纸与预设共用，均以 gradient 作为唯一标识）
+  const renderWallpaperCard = (item: WallpaperCardItem) => {
     const imgSrc = item.thumbnailUrl || item.imageUrl;
     const isSelected =
       wallpaper.type === 'static' &&
       (wallpaper.imageUrl === item.imageUrl ||
         wallpaper.imageUrl === item.thumbnailUrl);
+    const label = item.title ?? item.gradient ?? '';
 
     return (
       <button
-        key={item.id}
+        key={item.gradient ?? item.id}
         onClick={() => handleSelectWallpaper(item)}
         className={`group relative aspect-[16/9] overflow-hidden rounded-lg border transition-transform ${
           isSelected
             ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
             : 'border-black/10 hover:scale-105 dark:border-white/10'
         }`}
-        title={item.title}
+        title={label}
         style={
           !imgSrc && item.gradient ? { background: item.gradient } : undefined
         }
@@ -95,14 +105,14 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
         {imgSrc && (
           <img
             src={imgSrc}
-            alt={item.title}
+            alt={label}
             loading="lazy"
             className="h-full w-full object-cover hover:scale-105 transition-transform"
           />
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
           <p className="truncate text-left text-font-sm font-medium text-white">
-            {item.title}
+            {label}
           </p>
         </div>
         {isSelected && (

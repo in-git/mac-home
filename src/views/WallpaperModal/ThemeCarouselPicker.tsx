@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import THEME_OPTIONS from '../../data/theme.options';
+import THEME_OPTIONS from '../../data/options/theme.options';
 import type { WallpaperConfig } from '../../types';
 import {
   buildWallpaperFilter,

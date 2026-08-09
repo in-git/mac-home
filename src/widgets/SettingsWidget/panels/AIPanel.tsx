@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { AI_PROVIDERS } from '../../../types';
 import { chatWithPet, testConnection } from '../../../utils/aiClient';
 import type { AIPanelProps } from '../types';
+import { useHomeStore } from '../../../store/useHomeStore';
 
 /**
  * AI 对接面板：参照 macOS 系统设置的卡片分组布局。
@@ -19,6 +20,8 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
   const [chatting, setChatting] = useState(false);
   const [chatReply, setChatReply] = useState<string | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
+  const petChatHistory = useHomeStore((s) => s.petChatHistory);
+  const setPetChatHistory = useHomeStore((s) => s.setPetChatHistory);
 
   const selected = AI_PROVIDERS.find((p) => p.id === config.provider);
   const isCustom = config.provider === 'custom';
@@ -57,11 +60,19 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
-      const reply = await chatWithPet(config, text, [], controller.signal);
+      // 携带已持久化的桌宠对话历史，让连接测试也能延续上下文；
+      // chatWithPet 内部会安全清洗（只保留 user/assistant 文本），不会触发 400。
+      const historyForModel: import('../../../utils/aiClient').ChatMessage[] =
+        petChatHistory.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+      const reply = await chatWithPet(config, text, historyForModel, controller.signal);
       if (!reply) {
         setChatError('已连通，但模型未返回内容（请检查模型名）');
       } else {
         setChatReply(reply);
+        // 测试成功：把本轮 user + 模型回复写入跨轮历史，便于真正对话时延续
+        const userMsg = { id: 'ai-test-user-' + Date.now(), role: 'user' as const, content: text, timestamp: new Date().toLocaleTimeString() };
+        const assistantMsg = { id: 'ai-test-assistant-' + Date.now(), role: 'assistant' as const, content: reply, timestamp: new Date().toLocaleTimeString() };
+        setPetChatHistory([...petChatHistory, userMsg, assistantMsg].slice(-20));
       }
     } catch (e) {
       setChatError(e instanceof Error ? e.message : String(e));

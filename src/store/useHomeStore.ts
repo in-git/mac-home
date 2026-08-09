@@ -42,6 +42,8 @@ interface HomeState {
   screenBrightness: number;
   // AI 模型对接配置（厂商 / 自定义 BaseURL / KEY / 模型名）
   aiConfig: AIConfig;
+  // 桌宠对话历史（跨轮上下文，持久化），只存 user/assistant 文本，不含 tool 消息
+  petChatHistory: import('../agent/types').AgentChatMessage[];
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -71,6 +73,8 @@ interface HomeState {
   setScreenBrightness: (value: number) => void;
   openWallpaper: () => void;
   setAiConfig: (patch: Partial<AIConfig>) => void;
+  // 桌宠对话历史写入（追加本轮 user/assistant 消息）
+  setPetChatHistory: (messages: import('../agent/types').AgentChatMessage[]) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -94,6 +98,7 @@ export const useHomeStore = create<HomeState>()(
       cardRadius: 'large',
       screenBrightness: 100,
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_AI_CONFIG),
+      petChatHistory: [],
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -205,6 +210,8 @@ export const useHomeStore = create<HomeState>()(
         set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
       setAiConfig: (patch) =>
         set({ aiConfig: { ...get().aiConfig, ...patch } }),
+      setPetChatHistory: (messages) =>
+        set({ petChatHistory: messages }),
       // Registered by App on mount so the store can open the wallpaper modal
       // without threading the setter through the whole component tree.
       openWallpaper: () => {},

@@ -1,13 +1,13 @@
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { getWidgetConfig } from '../data/widgetConfig';
 import {
-  DESKTOP_CONTEXT_MENU,
-  WIDGET_CONTEXT_MENU,
   ContextMenuAction,
   ContextMenuItemConfig,
+  DESKTOP_CONTEXT_MENU,
+  WIDGET_CONTEXT_MENU,
 } from '../data/contextMenuConfig';
 import { PRESET_DATA } from '../data/presetData';
+import { getWidgetConfig } from '../data/widgetConfig';
 import { useHomeStore } from '../store/useHomeStore';
 import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
 
@@ -23,7 +23,11 @@ interface ContextMenuProps {
   widgets: WidgetItem[];
   onDeleteWidget: (id: string) => void;
   onResizeWidget: (id: string, newSize: WidgetSize) => void;
-  onChangeWidgetBackground: (id: string, background: string | undefined) => void;
+  onChangeWidgetBackground: (
+    id: string,
+    background: string | undefined,
+    backgroundTheme?: 'light' | 'dark',
+  ) => void;
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onOpenWallpaper: () => void;
@@ -44,6 +48,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onOpenWallpaper,
   onOpenAddWidget,
   onOpenSettings,
+  onEditIcon,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   // Hover submenu state for the "切换卡片背景" widget action.
@@ -75,7 +80,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   };
 
   const scheduleCloseBgSubmenu = () => {
-    if (submenuLeaveTimer.current) window.clearTimeout(submenuLeaveTimer.current);
+    if (submenuLeaveTimer.current)
+      window.clearTimeout(submenuLeaveTimer.current);
     submenuLeaveTimer.current = window.setTimeout(
       () => setBgSubmenuOpen(false),
       120,
@@ -161,10 +167,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       case 'editIcon':
         return {
           onClick: () => targetWidget && onEditIcon(targetWidget.id),
-          visible:
-            !!targetWidget &&
-            (targetWidget.type === 'icon' ||
-              targetWidget.type === 'icon-grid'),
+          visible: !!targetWidget && targetWidget.type === 'icon-grid',
         };
       default:
         return null;
@@ -229,11 +232,18 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 <div className="grid grid-cols-4 gap-3.5">
                   {gradients.map((g) => (
                     <button
-                      key={g.id}
-                      title={g.title}
+                      key={g.gradient}
+                      title={g.gradient}
                       onClick={() => {
-                        const t = g.theme === 'dark' || g.theme === 'light' ? g.theme : undefined;
-                        onChangeWidgetBackground(targetWidget.id, g.gradient, t);
+                        const t =
+                          g.theme === 'dark' || g.theme === 'light'
+                            ? g.theme
+                            : undefined;
+                        onChangeWidgetBackground(
+                          targetWidget.id,
+                          g.gradient,
+                          t,
+                        );
                         setBgSubmenuOpen(false);
                         onClose();
                       }}
@@ -298,7 +308,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.12, ease: 'easeOut' }}
-        style={{ top: `${adjustedY}px`, left: `${adjustedX}px`, width: '272px' }}
+        style={{
+          top: `${adjustedY}px`,
+          left: `${adjustedX}px`,
+          width: '272px',
+        }}
         className="fixed z-[70] p-2.5 rounded-3xl glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-[15px] text-slate-800 dark:text-slate-100 select-none"
       >
         {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}

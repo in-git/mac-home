@@ -141,9 +141,17 @@ export async function chatWithPet(
     signal?: AbortSignal,
     maxRounds = 6,
 ): Promise<string> {
+    // 防御性清洗：本项目采用自定义 JSON 协议（非 OpenAI 标准 tool_calls）。
+    // 历史中若混入 role:'tool' 消息，多数 OpenAI 兼容端点会因其前缺少带
+    // tool_calls 的 assistant 而返回 400。故只保留 user/assistant 文本角色，
+    // 并剔除 system（避免重复系统提示词）。
+    const safeHistory: ChatMessage[] = history
+        .filter((m) => m.role === 'user' || m.role === 'assistant')
+        .map((m) => ({ role: m.role, content: m.content }));
+
     const messages: ChatMessage[] = [
         { role: 'system', content: chatUtils.makeSystemPrompt() },
-        ...history,
+        ...safeHistory,
         { role: 'user', content: userInput },
     ];
 
@@ -154,8 +162,6 @@ export async function chatWithPet(
         const raw = await askOnce(config, messages, signal);
         // 2. 清洗数据，转成可执行结构
         const { tasks, continue: shouldContinue } = parseModelResponse(raw);
-
-        let toolResult: string | null = null;
 
         // 3. 拆分任务：text 弹气泡，tool 执行
         for (const t of tasks) {
@@ -173,15 +179,11 @@ export async function chatWithPet(
                     : { name: '', args: {} };
                 if (name) {
                     const res = await executeAgentTool({ name, args: args ?? {} });
-                    toolResult = res.message;
+                
                     messages.push({
-                        role: 'assistant',
-                        content: JSON.stringify({
-                            type: 'tool',
-                            content: { name, args: args ?? {} },
-                        }),
+                        role: 'user',
+                        content: `已调用工具「${name}」，返回结果如下：\n${res.message}`,
                     });
-                    messages.push({ role: 'tool', content: res.message });
                 }
             }
         }
@@ -190,11 +192,6 @@ export async function chatWithPet(
         if (!shouldContinue) {
             break;
         }
-        // continue=true：把本轮工具结果作为上下文，发起下一轮对话
-        messages.push({
-            role: 'user',
-            content: toolResult ?? '（已执行工具，请继续处理）',
-        });
     }
 
     return lastText || '（没有收到可展示的回复。）';
