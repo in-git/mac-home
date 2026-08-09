@@ -8,7 +8,11 @@ import {
 } from '../types';
 
 /** 系统预设静态壁纸：兼容 WallpaperItem 字段，另带渐变背景（无图时兜底） */
-export type PresetStaticWallpaper = WallpaperItem & { gradient?: string };
+export type PresetStaticWallpaper = WallpaperItem & {
+  gradient?: string;
+  /** 明暗适配：亮色模式只显示 'light'，暗色模式只显示 'dark'；'both' 两端均显示 */
+  theme?: 'light' | 'dark' | 'both';
+};
 
 export const PRESET_DATA = {
   INITIAL_WIDGETS: [
@@ -80,6 +84,7 @@ export const PRESET_DATA = {
     {
       id: 'sonoma-light',
       title: 'Sonoma Light',
+      theme: 'light',
       gradient: 'linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)',
       imageUrl:
         'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80',
@@ -87,6 +92,7 @@ export const PRESET_DATA = {
     {
       id: 'sonoma-dusk',
       title: 'Sonoma Dusk',
+      theme: 'dark',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       imageUrl:
         'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
@@ -94,6 +100,7 @@ export const PRESET_DATA = {
     {
       id: 'ventura-bloom',
       title: 'Ventura Bloom',
+      theme: 'light',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
       imageUrl:
         'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80',
@@ -101,17 +108,80 @@ export const PRESET_DATA = {
     {
       id: 'minimal-slate',
       title: 'Studio Minimal Grey',
+      theme: 'light',
       gradient: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
     },
     {
       id: 'warm-cream',
       title: 'Warm Cream Studio',
+      theme: 'light',
       gradient: 'linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%)',
     },
     {
       id: 'dark-cyber-glass',
       title: 'Midnight Dark Glass',
+      theme: 'dark',
       gradient: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+    },
+    {
+      id: 'aurora-mint',
+      title: 'Aurora Mint',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    },
+    {
+      id: 'sunset-glow',
+      title: 'Sunset Glow',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)',
+    },
+    {
+      id: 'ocean-depth',
+      title: 'Ocean Depth',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
+    },
+    {
+      id: 'forest-mist',
+      title: 'Forest Mist',
+      theme: 'dark',
+      gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)',
+    },
+    {
+      id: 'lilac-dream',
+      title: 'Lilac Dream',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)',
+    },
+    {
+      id: 'peach-sunrise',
+      title: 'Peach Sunrise',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+    },
+    {
+      id: 'cobalt-night',
+      title: 'Cobalt Night',
+      theme: 'dark',
+      gradient: 'linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%)',
+    },
+    {
+      id: 'rose-quartz',
+      title: 'Rose Quartz',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
+    },
+    {
+      id: 'emerald-veil',
+      title: 'Emerald Veil',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #00b09b 0%, #96c93d 100%)',
+    },
+    {
+      id: 'amber-dusk',
+      title: 'Amber Dusk',
+      theme: 'light',
+      gradient: 'linear-gradient(135deg, #f7971e 0%, #ffd200 100%)',
     },
   ] as PresetStaticWallpaper[],
 

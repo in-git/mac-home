@@ -20,6 +20,21 @@ export const FONT_TIER_PX: Record<
   C: { sm: 14, md: 16, lg: 18 },
 };
 
+// 卡片圆角：大 / 中 / 小 三档，写入 CSS 变量 --card-radius 供全站卡片引用。
+export type CardRadiusTier = 'small' | 'medium' | 'large';
+
+export const CARD_RADIUS_LABEL: Record<CardRadiusTier, string> = {
+  small: '小',
+  medium: '中',
+  large: '大',
+};
+
+export const CARD_RADIUS_PX: Record<CardRadiusTier, number> = {
+  small: 16,
+  medium: 24,
+  large: 32,
+};
+
 export type WidgetType =
   | 'sticky-notes'
   | 'weather'

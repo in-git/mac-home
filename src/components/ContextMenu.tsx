@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getWidgetConfig } from '../data/widgetConfig';
 import {
   DESKTOP_CONTEXT_MENU,
@@ -7,6 +7,8 @@ import {
   ContextMenuAction,
   ContextMenuItemConfig,
 } from '../data/contextMenuConfig';
+import { PRESET_DATA } from '../data/presetData';
+import { useHomeStore } from '../store/useHomeStore';
 import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
 
 export interface ContextMenuPosition {
@@ -21,6 +23,7 @@ interface ContextMenuProps {
   widgets: WidgetItem[];
   onDeleteWidget: (id: string) => void;
   onResizeWidget: (id: string, newSize: WidgetSize) => void;
+  onChangeWidgetBackground: (id: string, background: string | undefined) => void;
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onOpenWallpaper: () => void;
@@ -34,6 +37,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   widgets,
   onDeleteWidget,
   onResizeWidget,
+  onChangeWidgetBackground,
   isEditMode,
   onToggleEditMode,
   onOpenWallpaper,
@@ -41,6 +45,42 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onOpenSettings,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
+  // Hover submenu state for the "切换卡片背景" widget action.
+  const [bgSubmenuOpen, setBgSubmenuOpen] = useState(false);
+  const submenuLeaveTimer = useRef<number | null>(null);
+
+  // Reset the submenu whenever the menu is (re)opened.
+  useEffect(() => {
+    setBgSubmenuOpen(false);
+  }, [position]);
+
+  const isDarkMode = useHomeStore((s) => s.isDarkMode);
+
+  // 按当前明暗模式筛选候选背景：亮色模式只显示 light，暗色模式只显示 dark（both 两端均显示）。
+  const backgroundOptions =
+    isDarkMode === null
+      ? PRESET_DATA.STATIC_WALLPAPERS
+      : PRESET_DATA.STATIC_WALLPAPERS.filter(
+          (w) =>
+            w.gradient &&
+            (!w.theme || w.theme === 'both' || w.theme === (isDarkMode ? 'dark' : 'light')),
+        );
+
+  const openBgSubmenu = () => {
+    if (submenuLeaveTimer.current) {
+      window.clearTimeout(submenuLeaveTimer.current);
+      submenuLeaveTimer.current = null;
+    }
+    setBgSubmenuOpen(true);
+  };
+
+  const scheduleCloseBgSubmenu = () => {
+    if (submenuLeaveTimer.current) window.clearTimeout(submenuLeaveTimer.current);
+    submenuLeaveTimer.current = window.setTimeout(
+      () => setBgSubmenuOpen(false),
+      120,
+    );
+  };
 
   // Close when clicking outside or pressing Escape
   useEffect(() => {
@@ -72,13 +112,22 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     ? widgets.find((w) => w.id === position.targetWidgetId)
     : null;
 
-  // Adjust coordinates so the context menu doesn't overflow screen boundaries
-  const menuWidth = 220;
-  const menuHeight = 360;
+  // Adjust coordinates so the context menu doesn't overflow screen boundaries.
+  // When a widget is targeted it can open the "切换卡片背景" flyout submenu
+  // (240px wide) to its right, so reserve extra horizontal room in that case.
+  const menuWidth = 272;
+  const submenuWidth = 280;
+  const menuHeight = 540;
   const screenW = window.innerWidth;
   const screenH = window.innerHeight;
 
-  const adjustedX = Math.min(position.x, screenW - menuWidth - 10);
+  const horizontalReserve = targetWidget
+    ? menuWidth + submenuWidth + 12
+    : menuWidth;
+  const adjustedX = Math.min(
+    position.x,
+    screenW - Math.max(horizontalReserve, menuWidth) - 10,
+  );
   const adjustedY = Math.min(position.y, screenH - menuHeight - 10);
 
   // Map an action id to its handler + whether it should currently render.
@@ -98,6 +147,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           onClick: onToggleEditMode,
           visible: !isEditMode && !!item.showOnlyWhenEditLocked,
         };
+      case 'changeBackground':
+        return {
+          // Hover (not click) opens the secondary submenu; no onClick action.
+          onClick: () => {},
+          visible: !!targetWidget,
+        };
       case 'removeWidget':
         return {
           onClick: () => targetWidget && onDeleteWidget(targetWidget.id),
@@ -113,6 +168,78 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     const resolved = resolveAction(item.action, item);
     if (!resolved || !resolved.visible) return null;
     const Icon = item.icon;
+
+    // "切换卡片背景" reveals a secondary submenu (flyout) on hover.
+    if (item.action === 'changeBackground' && targetWidget) {
+      const gradients = backgroundOptions;
+      return (
+        <React.Fragment key={item.id}>
+          <div
+            className="relative"
+            onMouseEnter={openBgSubmenu}
+            onMouseLeave={scheduleCloseBgSubmenu}
+          >
+            <button
+              onClick={resolved.onClick}
+              className={`w-full px-3 py-2.5 rounded-2xl flex items-center justify-between text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10`}
+            >
+              <span className="flex items-center space-x-3">
+                <Icon size={18} className="text-[#007AFF]" />
+                <span className="text-[15px]">{item.label}</span>
+              </span>
+              <span className="text-slate-400 text-lg leading-none">›</span>
+            </button>
+
+            {/* Hover secondary submenu — pops out to the right of the menu */}
+            {bgSubmenuOpen && (
+              <div
+                onMouseEnter={openBgSubmenu}
+                onMouseLeave={scheduleCloseBgSubmenu}
+                className="absolute left-full top-0 ml-3 w-72 p-5 rounded-3xl glass-panel bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/70 dark:border-white/20"
+              >
+                <div className="px-1 mb-4 text-[15px] font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
+                  卡片背景
+                </div>
+                <div className="grid grid-cols-4 gap-3.5">
+                  {gradients.map((g) => (
+                    <button
+                      key={g.id}
+                      title={g.title}
+                      onClick={() => {
+                        onChangeWidgetBackground(targetWidget.id, g.gradient);
+                        setBgSubmenuOpen(false);
+                        onClose();
+                      }}
+                      style={{ background: g.gradient }}
+                      className={`h-12 rounded-2xl border-2 transition-all duration-200 hover:scale-110 hover:shadow-lg ${
+                        targetWidget.background === g.gradient
+                          ? 'border-[#007AFF] ring-4 ring-[#007AFF]/40'
+                          : 'border-white/50 dark:border-white/15'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    onChangeWidgetBackground(targetWidget.id, undefined);
+                    setBgSubmenuOpen(false);
+                    onClose();
+                  }}
+                  className="mt-5 w-full rounded-2xl bg-black/5 dark:bg-white/10 py-3 text-[15px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+                >
+                  恢复默认（透明）
+                </button>
+              </div>
+            )}
+          </div>
+
+          {item.dividerAfter && (
+            <div className="my-1 border-t border-black/5 dark:border-white/10" />
+          )}
+        </React.Fragment>
+      );
+    }
+
     return (
       <React.Fragment key={item.id}>
         <button
@@ -120,14 +247,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             resolved.onClick();
             onClose();
           }}
-          className={`w-full px-2.5 py-1.5 rounded-xl flex items-center space-x-2 text-left transition-colors ${
+          className={`w-full px-3 py-2.5 rounded-2xl flex items-center space-x-3 text-left transition-colors ${
             item.danger
               ? 'hover:bg-red-500/10 text-red-500 font-medium'
               : 'hover:bg-black/5 dark:hover:bg-white/10'
           }`}
         >
-          <Icon size={14} className={item.danger ? '' : 'text-[#007AFF]'} />
-          <span>{item.label}</span>
+          <Icon size={18} className={item.danger ? '' : 'text-[#007AFF]'} />
+          <span className="text-[15px]">{item.label}</span>
         </button>
         {item.dividerAfter && (
           <div className="my-1 border-t border-black/5 dark:border-white/10" />
@@ -144,26 +271,26 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.12, ease: 'easeOut' }}
-        style={{ top: `${adjustedY}px`, left: `${adjustedX}px` }}
-        className="fixed z-50 w-56 p-1.5 rounded-2xl glass-panel bg-white/80 dark:bg-slate-900/85 backdrop-blur-3xl shadow-2xl border border-white/60 dark:border-white/15 text-xs text-slate-800 dark:text-slate-100 select-none overflow-hidden"
+        style={{ top: `${adjustedY}px`, left: `${adjustedX}px`, width: '272px' }}
+        className="fixed z-50 p-2.5 rounded-3xl glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-[15px] text-slate-800 dark:text-slate-100 select-none"
       >
         {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
         {targetWidget ? (
           <>
-            <div className="px-2.5 py-1.5 mb-1 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
-              <span className="font-bold text-font-sm uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
+            <div className="px-3 py-2 mb-1.5 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
+              <span className="font-bold text-[15px] uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
                 {targetWidget.title}
               </span>
-              <span className="text-font-sm px-1.5 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
+              <span className="text-[13px] px-2 py-0.5 rounded-lg bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
                 {targetWidget.size}
               </span>
             </div>
 
             {/* Widget Size Switching */}
-            <div className="px-2 py-1 text-font-sm text-slate-400 font-medium">
+            <div className="px-3 py-1.5 text-[13px] text-slate-400 font-medium">
               调整尺寸
             </div>
-            <div className="grid grid-cols-4 gap-1 px-1.5 mb-1.5">
+            <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
               {getWidgetConfig(targetWidget.type).sizeOptions.map((sz) => (
                 <button
                   key={sz}
@@ -171,9 +298,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     onResizeWidget(targetWidget.id, sz);
                     onClose();
                   }}
-                  className={`py-1 rounded-lg text-font-sm font-semibold transition-colors ${
+                  className={`py-1.5 rounded-xl text-[14px] font-semibold transition-colors ${
                     targetWidget.size === sz
-                      ? 'bg-[#007AFF] text-white shadow-xs'
+                      ? 'bg-[#007AFF] text-white shadow-md'
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
                   }`}
                 >

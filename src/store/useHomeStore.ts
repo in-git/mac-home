@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import { PRESET_DATA } from '../data/presetData';
 import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
 import {
+  CardRadiusTier,
   FontVariant,
   StickyNote as StickyNoteType,
   WallpaperConfig,
@@ -33,6 +34,8 @@ interface HomeState {
   soundEnabled: boolean;
   // 字体方案：A(12/14/16) / B(13/15/17) / C(14/16/18)
   fontVariant: FontVariant;
+  // 卡片圆角：small / medium / large
+  cardRadius: CardRadiusTier;
   // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
   screenBrightness: number;
 
@@ -54,6 +57,7 @@ interface HomeState {
   setThemeColor: (color: string) => void;
   setSoundEnabled: (value: boolean) => void;
   setFontVariant: (variant: FontVariant) => void;
+  setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
   openWallpaper: () => void;
 }
@@ -76,6 +80,7 @@ export const useHomeStore = create<HomeState>()(
       themeColor: '#007AFF',
       soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
       fontVariant: 'A',
+      cardRadius: 'large',
       screenBrightness: 100,
 
       setWidgets: (widgets) => set({ widgets }),
@@ -160,6 +165,7 @@ export const useHomeStore = create<HomeState>()(
           themeColor: '#007AFF',
           soundEnabled: true,
           fontVariant: 'A',
+          cardRadius: 'large',
           screenBrightness: 100,
         });
       },
@@ -171,6 +177,7 @@ export const useHomeStore = create<HomeState>()(
       setThemeColor: (color) => set({ themeColor: color }),
       setSoundEnabled: (value) => set({ soundEnabled: value }),
       setFontVariant: (variant) => set({ fontVariant: variant }),
+      setCardRadius: (tier) => set({ cardRadius: tier }),
       setScreenBrightness: (value) =>
         set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
       // Registered by App on mount so the store can open the wallpaper modal
@@ -188,6 +195,7 @@ export const useHomeStore = create<HomeState>()(
         themeColor: state.themeColor,
         soundEnabled: state.soundEnabled,
         fontVariant: state.fontVariant,
+        cardRadius: state.cardRadius,
         screenBrightness: state.screenBrightness,
       }),
     },

@@ -8,7 +8,7 @@ import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
-import { FONT_TIER_PX } from './types';
+import { CARD_RADIUS_PX, FONT_TIER_PX } from './types';
 import { initGlobalSound } from './utils/sound';
 import { AddWidgetModal } from './views/AddWidgetModal';
 import { SettingsModal } from './views/SettingsModal';
@@ -23,6 +23,7 @@ const storeActions = {
   deleteWidget: useHomeStore.getState().deleteWidget,
   resizeWidget: useHomeStore.getState().resizeWidget,
   moveToTopWidget: useHomeStore.getState().moveToTopWidget,
+  updateWidgetBackground: useHomeStore.getState().updateWidgetBackground,
   updateNotes: useHomeStore.getState().updateNotes,
   updateWallpaper: useHomeStore.getState().updateWallpaper,
   setDarkMode: useHomeStore.getState().setDarkMode,
@@ -39,6 +40,7 @@ export default function App() {
     isDarkMode,
     themeColor,
     fontVariant,
+    cardRadius,
     screenBrightness,
   } = useHomeStore(
     useShallow((s) => ({
@@ -48,11 +50,12 @@ export default function App() {
       isDarkMode: s.isDarkMode,
       themeColor: s.themeColor,
       fontVariant: s.fontVariant,
+      cardRadius: s.cardRadius,
       screenBrightness: s.screenBrightness,
     })),
   );
 
-  const { setWidgets, addWidget, deleteWidget, resizeWidget } = storeActions;
+  const { setWidgets, addWidget, deleteWidget, resizeWidget, updateWidgetBackground } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
     storeActions;
 
@@ -92,6 +95,12 @@ export default function App() {
     root.style.setProperty('--font-md', `${t.md}px`);
     root.style.setProperty('--font-lg', `${t.lg}px`);
   }, [fontVariant]);
+
+  // Write the card corner-radius CSS variable from the chosen radius tier.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--card-radius', `${CARD_RADIUS_PX[cardRadius]}px`);
+  }, [cardRadius]);
 
   // One-time app startup: register the add-widget action, restore scheduled
   // agent tasks, wire up global click sound, and expose openWallpaper() to the
@@ -203,6 +212,7 @@ export default function App() {
         widgets={widgets}
         onDeleteWidget={deleteWidget}
         onResizeWidget={resizeWidget}
+        onChangeWidgetBackground={updateWidgetBackground}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaper={openWallpaperModal}

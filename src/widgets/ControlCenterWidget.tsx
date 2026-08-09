@@ -1,7 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { FONT_VARIANT_LABEL } from '../types';
+import { CARD_RADIUS_LABEL, FONT_VARIANT_LABEL } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -16,6 +16,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
 }) => {
   const fontVariant = useHomeStore((s) => s.fontVariant);
   const setFontVariant = useHomeStore((s) => s.setFontVariant);
+  const cardRadius = useHomeStore((s) => s.cardRadius);
+  const setCardRadius = useHomeStore((s) => s.setCardRadius);
   const screenBrightness = useHomeStore((s) => s.screenBrightness);
   const setScreenBrightness = useHomeStore((s) => s.setScreenBrightness);
 
@@ -178,6 +180,43 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 }`}
               >
                 {FONT_VARIANT_LABEL[v]}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Card corner radius: small / medium / large */}
+      <div className="glass-panel p-3.5 rounded-2xl">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
+            <span className="w-5 h-5 rounded-md bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
+              <Sliders size={11} />
+            </span>
+            <span>卡片圆角</span>
+          </span>
+          <span className="text-font-sm text-slate-400 font-mono">
+            {cardRadius === 'small'
+              ? '16'
+              : cardRadius === 'medium'
+                ? '24'
+                : '32'}
+          </span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {(['small', 'medium', 'large'] as const).map((v) => {
+            const active = cardRadius === v;
+            return (
+              <button
+                key={v}
+                onClick={() => setCardRadius(v)}
+                className={`py-2.5 rounded-xl border text-font-md font-bold transition-all active:scale-[0.98] ${
+                  active
+                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
+                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
+                }`}
+              >
+                {CARD_RADIUS_LABEL[v]}
               </button>
             );
           })}

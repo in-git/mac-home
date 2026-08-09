@@ -16,6 +16,8 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
 import {
+  CARD_RADIUS_LABEL,
+  CardRadiusTier,
   FONT_VARIANT_LABEL,
   StickyNote as StickyNoteType,
   WidgetItem,
@@ -86,6 +88,8 @@ export const SettingsWidget: React.FC = () => {
   const setSoundEnabled = useHomeStore((s) => s.setSoundEnabled);
   const fontVariant = useHomeStore((s) => s.fontVariant);
   const setFontVariant = useHomeStore((s) => s.setFontVariant);
+  const cardRadius = useHomeStore((s) => s.cardRadius);
+  const setCardRadius = useHomeStore((s) => s.setCardRadius);
   const openWallpaper = useHomeStore((s) => s.openWallpaper);
   const resetLayout = useHomeStore((s) => s.resetLayout);
   const resetAll = useHomeStore((s) => s.resetAll);
@@ -345,6 +349,32 @@ export const SettingsWidget: React.FC = () => {
                   >
                     <span className="font-bold">{FONT_VARIANT_LABEL[v]}</span>
                     <span className="font-mono opacity-80">{sample}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 卡片圆角 — 分段控制器 */}
+          <div className="rounded-[12px] p-3 bg-black/5 dark:bg-white/10">
+            <div className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium mb-2">
+              <span className="font-bold leading-none">圆</span>
+              <span>卡片圆角</span>
+            </div>
+            <div className="grid grid-cols-3 p-1 rounded-[12px] bg-white/60 dark:bg-white/5">
+              {(['small', 'medium', 'large'] as const).map((v) => {
+                const active = cardRadius === v;
+                return (
+                  <button
+                    key={v}
+                    onClick={() => setCardRadius(v)}
+                    className={`flex flex-col items-center justify-center py-1.5 rounded-[10px] transition-colors active:scale-95 ${
+                      active
+                        ? 'bg-white dark:bg-slate-800 text-[#007AFF] shadow-xs font-medium'
+                        : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    <span className="font-bold">{CARD_RADIUS_LABEL[v]}</span>
                   </button>
                 );
               })}

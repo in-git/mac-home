@@ -311,6 +311,40 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       grid.on('dragStart', onDragStart);
       grid.on('dragReleaseStart', onDragEndAll);
 
+      // Keep the dragged card inside the window (collision against the viewport
+      // edges). Muuri packs cards without overlap at rest (built-in collision
+      // detection), but during a drag the card can be flung off-screen. On every
+      // drag frame we measure the card's real rect and nudge Muuri's transform
+      // back so it can never leave the visible area. Muuri recomputes the next
+      // frame from the pointer, so the correction is harmless and resets cleanly
+      // on release (the card animates back to its in-bounds layout slot).
+      const EDGE_MARGIN = 4;
+      const clampToViewport = (item: any) => {
+        const el = item.getElement() as HTMLElement;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        let dx = 0;
+        let dy = 0;
+        if (rect.left < EDGE_MARGIN) dx = EDGE_MARGIN - rect.left;
+        if (rect.right > window.innerWidth - EDGE_MARGIN)
+          dx = window.innerWidth - EDGE_MARGIN - rect.right;
+        if (rect.top < EDGE_MARGIN) dy = EDGE_MARGIN - rect.top;
+        if (rect.bottom > window.innerHeight - EDGE_MARGIN)
+          dy = window.innerHeight - EDGE_MARGIN - rect.bottom;
+        if (dx === 0 && dy === 0) return;
+        const transform = el.style.transform || '';
+        const match =
+          /translate(?:3d)?\(\s*([-\d.]+)px,\s*([-\d.]+)px/.exec(transform);
+        if (!match) return;
+        const tx = parseFloat(match[1]) + dx;
+        const ty = parseFloat(match[2]) + dy;
+        el.style.transform = transform.replace(
+          /translate(?:3d)?\([^)]*\)/,
+          `translate(${tx}px, ${ty}px)`,
+        );
+      };
+      grid.on('dragMove', clampToViewport);
+
       // Listen for drag end / reorder events
       grid.on('dragEnd', () => {
         skipLayoutRef.current = true;
@@ -461,14 +495,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             <div
               key={widget.id}
               data-widget-id={widget.id}
-              className={`muuri-item p-2.5 sm:p-3 z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
+              className={`muuri-item p-3 sm:p-4 z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
               onContextMenu={(e) => onContextMenuWidget(e, widget.id)}
             >
               {/* Muuri Required Item Content Wrapper */}
               <div className="muuri-item-content h-full w-full">
                 <div
                   style={widget.background ? { background: widget.background } : undefined}
-                  className={`widget-card h-full w-full glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
+                  className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widget.size === 'icon-1-16' ? 'p-0' : 'p-4'} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${isEditMode ? ' edit-wiggle' : ''}`}
                   onClick={(e) => {
                     // Custom onAction event: owned by the widget-card container, not
                     // the inner icon button. When an icon-grid tile is clicked we
@@ -492,12 +526,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                     const kind = widget.iconType;
                     if (kind === 'action') {
                       const action = getWidgetAction(widget.id);
-                      console.log('[widget-card] action clicked', {
-                        id: widget.id,
-                        label: widget.iconLabel,
-                        glyphName: widget.iconGlyph,
-                        action,
-                      });
                       action?.();
                     } else if (widget.iconHref) {
                       window.open(
@@ -510,7 +538,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                 >
                   {/* Widget Card Title & Control Bar */}
                   {showHeader && (
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-3">
                       {/* Title (left) */}
                       <span className="text-font-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1 select-none">
                         {widget.title}
@@ -608,7 +636,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                       disabled) but the card is still draggable from this area
                       because the event passes through to the .widget-card handle. */}
                   <div
-                    className={`flex-1${widget.size === 'icon-1-16' ? '' : ' pt-1'}${isEditMode ? ' pointer-events-none' : ''}`}
+                    className={`flex-1${widget.size === 'icon-1-16' ? '' : ' pt-2'}${isEditMode ? ' pointer-events-none' : ''}`}
                   >
                     {widget.id === expandedWidgetId
                       ? null

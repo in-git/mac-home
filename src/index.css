@@ -27,6 +27,9 @@
     --font-sm: 12px;
     --font-md: 14px;
     --font-lg: 16px;
+
+    /* 卡片圆角，由设置面板按档位写入（large/medium/small）。 */
+    --card-radius: 32px;
   }
 
   .dark {
