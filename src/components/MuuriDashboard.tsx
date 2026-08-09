@@ -270,7 +270,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             inner.className = 'muuri-item-content h-full w-full';
             const panel = document.createElement('div');
             panel.className =
-              'h-full w-full glass-panel rounded-[24px] border border-white/60 dark:border-white/15 backdrop-blur-2xl';
+              'h-full w-full glass-panel rounded-[var(--card-radius)] border border-white/60 dark:border-white/15 backdrop-blur-2xl';
             inner.appendChild(panel);
             el.appendChild(inner);
             return el;
@@ -636,7 +636,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                         {/* Drag Handle (only shown while editing) */}
                         {isEditMode && (
                           <div
-                            className="drag-handle p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
+                            className="drag-handle p-1 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
                             title="按住拖拽排列位置 (Muuri Grid)"
                           >
                             <GripHorizontal size={14} />
@@ -680,7 +680,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
               onClick={() => setExpandedWidgetId(null)}
             >
               <div
-                className="glass-panel rounded-[24px] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-[80vw] h-[80vh] flex flex-col overflow-hidden"
+                className="glass-panel rounded-[var(--card-radius)] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-[80vw] h-[80vh] flex flex-col overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* 无头：不渲染标题栏与控制栏 */}

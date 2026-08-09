@@ -181,7 +181,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               }}
               onClick={a.onClick}
               title={a.label}
-              className={`p-1 rounded-lg transition-transform active:scale-95 ${a.className} ${
+              className={`p-1 rounded-[var(--card-radius)] transition-transform active:scale-95 ${a.className} ${
                 i >= visibleCount ? 'hidden' : ''
               }`}
             >
@@ -193,7 +193,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               ref={moreRef}
               onClick={() => onExpand?.()}
               title="更多"
-              className={`p-1 rounded-lg bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-black/10 dark:hover:bg-white/15 transition-transform active:scale-95 ${
+              className={`p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-black/10 dark:hover:bg-white/15 transition-transform active:scale-95 ${
                 visibleCount >= actions.length ? 'hidden' : ''
               }`}
             >
@@ -225,7 +225,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               onChange={(e) => setNewTitle(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddShortcut()}
               placeholder="如 Google"
-              className="w-full px-3 py-2 rounded-lg bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
+              className="w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
             />
           </div>
           <div className="space-y-1.5">
@@ -238,7 +238,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               onChange={(e) => setNewUrl(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddShortcut()}
               placeholder="https://..."
-              className="w-full px-3 py-2 rounded-lg bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
+              className="w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
             />
           </div>
 
@@ -249,7 +249,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                 <button
                   key={name}
                   onClick={() => setNewIcon(name)}
-                  className={`p-2 rounded-lg flex items-center justify-center border transition-colors ${
+                  className={`p-2 rounded-[var(--card-radius)] flex items-center justify-center border transition-colors ${
                     newIcon === name
                       ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                       : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
@@ -268,7 +268,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                 <button
                   key={c}
                   onClick={() => setNewColor(c)}
-                  className={`h-8 rounded-lg ${c} border-2 transition-transform ${
+                  className={`h-8 rounded-[var(--card-radius)] ${c} border-2 transition-transform ${
                     newColor === c
                       ? 'border-[color:var(--accent)] scale-105'
                       : 'border-transparent'
@@ -285,14 +285,14 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                 setShowAdd(false);
                 resetAddForm();
               }}
-              className="px-3 py-1.5 rounded-lg text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="px-3 py-1.5 rounded-[var(--card-radius)] text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             >
               取消
             </button>
             <button
               type="button"
               onClick={handleAddShortcut}
-              className="px-4 py-1.5 rounded-lg bg-[#007AFF] text-white font-medium hover:bg-blue-600 transition-colors"
+              className="px-4 py-1.5 rounded-[var(--card-radius)] bg-[#007AFF] text-white font-medium hover:bg-blue-600 transition-colors"
             >
               确定添加
             </button>
@@ -314,11 +314,11 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               target="_blank"
               rel="noreferrer"
               onClick={() => playSound.playClick()}
-              className="group relative flex flex-col rounded-2xl transition-colors shadow-xs text-center aspect-square"
+              className="group relative flex flex-col rounded-[var(--card-radius)] transition-colors shadow-xs text-center aspect-square"
             >
               <div className="relative group/icon w-full flex-1">
                 <div
-                  className={`relative w-full aspect-square rounded-xl flex items-center justify-center shadow-sm ${
+                  className={`relative w-full aspect-square rounded-[var(--card-radius)] flex items-center justify-center shadow-sm ${
                     item.bgColor || 'bg-slate-800 text-white'
                   } transition-transform `}
                 >

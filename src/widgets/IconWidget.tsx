@@ -91,7 +91,7 @@ export function IconWidget({
       disabled={editing && kind !== 'action'}
       title={title}
       style={hasBtnStyle ? btnStyle : undefined}
-      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl bg-white/10 text-slate-700 dark:text-slate-200 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
+      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-[var(--card-radius)] bg-white/10 text-slate-700 dark:text-slate-200 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
     >
       <GlyphIcon
         className={`${typo.glyph} leading-none`}

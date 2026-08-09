@@ -143,7 +143,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
               onClick={() => {
                 setActiveNoteId(n.id);
               }}
-              className={`px-2.5 py-1 rounded-lg font-medium truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
+              className={`px-2.5 py-1 rounded-[var(--card-radius)] font-medium truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
                 activeNoteId === n.id
                   ? 'bg-[#007AFF] text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
@@ -157,7 +157,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
 
         <button
           onClick={handleAddNote}
-          className="p-1.5 rounded-lg bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs transition-transform active:scale-95 shrink-0"
+          className="p-1.5 rounded-[var(--card-radius)] bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs transition-transform active:scale-95 shrink-0"
           title="新建便签"
         >
           <Plus size={14} />
@@ -167,7 +167,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
       {/* Active Note Content Area */}
       {activeNote ? (
         <div
-          className={`relative flex-1 rounded-2xl p-3.5 border transition-colors flex flex-col justify-between shadow-xs ${
+          className={`relative flex-1 rounded-[var(--card-radius)] p-3.5 border transition-colors flex flex-col justify-between shadow-xs ${
             colorStyles[activeNote.color].bg
           } ${colorStyles[activeNote.color].text}`}
         >
@@ -186,7 +186,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
                 onClick={() => {
                   handleUpdateCurrent({ pinned: !activeNote.pinned });
                 }}
-                className={`p-1 rounded-md transition-colors ${
+                className={`p-1 rounded-[var(--card-radius)] transition-colors ${
                   activeNote.pinned
                     ? 'bg-black/10 dark:bg-white/20'
                     : 'hover:bg-black/5'
@@ -226,7 +226,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
               {/* Delete Note */}
               <button
                 onClick={() => handleDeleteNote(activeNote.id)}
-                className="p-1 rounded-md text-red-500 hover:bg-red-500/10 transition-colors"
+                className="p-1 rounded-[var(--card-radius)] text-red-500 hover:bg-red-500/10 transition-colors"
                 title="删除便签"
               >
                 <Trash2 size={12} />

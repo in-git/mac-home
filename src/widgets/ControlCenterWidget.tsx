@@ -75,7 +75,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
         {/* Location tile */}
         <button
           onClick={locate}
-          className="glass-panel p-4 rounded-2xl flex flex-col items-center text-center gap-2 transition-transform active:scale-[0.98]"
+          className="glass-panel p-4 rounded-[var(--card-radius)] flex flex-col items-center text-center gap-2 transition-transform active:scale-[0.98]"
         >
           <div
             className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
@@ -97,7 +97,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
           onClick={() => {
             onToggleDarkMode();
           }}
-          className={`p-4 rounded-2xl flex flex-col items-center text-center gap-2 transition-all active:scale-[0.98] ${
+          className={`p-4 rounded-[var(--card-radius)] flex flex-col items-center text-center gap-2 transition-all active:scale-[0.98] ${
             isDarkMode
               ? 'bg-slate-800 text-amber-300 border border-slate-700 shadow-md'
               : 'glass-panel'
@@ -121,7 +121,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       </div>
 
       {/* Brightness slider */}
-      <div className="glass-panel p-3.5 rounded-2xl">
+      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div>
           <div className="flex justify-between items-center text-font-sm text-slate-500 mb-1.5">
             <span className="flex items-center space-x-1.5 font-medium">
@@ -142,10 +142,10 @@ export const ControlCenterWidget: React.FC<Props> = ({
       </div>
 
       {/* Font size: A (12/14/16) / B (13/15/17) / C (14/16/18) */}
-      <div className="glass-panel p-3.5 rounded-2xl">
+      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="flex items-center justify-between mb-2.5">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
-            <span className="w-5 h-5 rounded-md bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
+            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>字体大小</span>
@@ -161,7 +161,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 onClick={() => {
                   setFontVariant(v);
                 }}
-                className={`py-2.5 rounded-xl border text-font-md font-bold transition-all active:scale-[0.98] ${
+                className={`py-2.5 rounded-[var(--card-radius)] border text-font-md font-bold transition-all active:scale-[0.98] ${
                   active
                     ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
                     : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
@@ -178,10 +178,10 @@ export const ControlCenterWidget: React.FC<Props> = ({
       <div className="flex-1" />
 
       {/* Card corner radius: dropdown pinned to the bottom of the screen */}
-      <div className="glass-panel p-3.5 rounded-2xl">
+      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="flex items-center justify-between">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
-            <span className="w-5 h-5 rounded-md bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
+            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>圆角</span>

@@ -66,7 +66,7 @@ export const SpotlightModal: React.FC<Props> = ({
           exit={{ y: -20, opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.15 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-xl glass-panel rounded-2xl shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100"
+          className="w-full max-w-xl glass-panel rounded-[var(--card-radius)] shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100"
         >
           {/* Spotlight Search Bar */}
           <div className="flex items-center px-4 py-3.5 border-b border-black/5 dark:border-white/10">
@@ -102,7 +102,7 @@ export const SpotlightModal: React.FC<Props> = ({
                         onAddWidget(w.type);
                         onClose();
                       }}
-                      className="w-full px-3 py-2 rounded-xl hover:bg-[#007AFF] hover:text-white flex items-center space-x-3 transition-colors text-left"
+                      className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[#007AFF] hover:text-white flex items-center space-x-3 transition-colors text-left"
                     >
                       <Icon size={16} />
                       <span className="font-medium">{w.name}</span>
@@ -121,7 +121,7 @@ export const SpotlightModal: React.FC<Props> = ({
                 {filteredNotes.map((n) => (
                   <div
                     key={n.id}
-                    className="px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-start space-x-2 transition-colors cursor-pointer"
+                    className="px-3 py-2 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 flex items-start space-x-2 transition-colors cursor-pointer"
                     onClick={() => {
                       
                       onAddWidget('sticky-notes');
@@ -146,7 +146,7 @@ export const SpotlightModal: React.FC<Props> = ({
                 href={`https://www.baidu.com/s?wd=${encodeURIComponent(query)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full px-3 py-2 rounded-xl hover:bg-[#007AFF] hover:text-white flex items-center justify-between transition-colors text-slate-600 dark:text-slate-300"
+                className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[#007AFF] hover:text-white flex items-center justify-between transition-colors text-slate-600 dark:text-slate-300"
               >
                 <div className="flex items-center space-x-2">
                   <ExternalLink size={14} />

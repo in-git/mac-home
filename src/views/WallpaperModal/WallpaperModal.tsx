@@ -79,7 +79,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+              className={`flex items-center space-x-2 rounded-[var(--card-radius)] px-3 py-2.5 text-left text-sm transition-colors ${
                 activeTab === tab.id
                   ? 'bg-[color:var(--accent)]/15 font-medium text-[color:var(--accent)] dark:text-[color:var(--accent)]'
                   : 'text-slate-600 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10'

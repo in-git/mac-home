@@ -71,8 +71,12 @@ export interface RequestConfig {
   onError?: (error: ApiError) => void;
 }
 
-/** 默认 token 存储 key */
-const TOKEN_KEY = 'token';
+/**
+ * 默认 token 存储 key。
+ * C 端约定见登录对接文档：浏览器 localStorage 的 `CLIENT_TOKEN`，
+ * 请求头名为 `token`（不带 Bearer 前缀）。
+ */
+const TOKEN_KEY = 'CLIENT_TOKEN';
 
 function createRequest(options: RequestConfig = {}) {
   const {
@@ -94,11 +98,11 @@ function createRequest(options: RequestConfig = {}) {
     headers: { 'Content-Type': 'application/json' },
   });
 
-  // 请求拦截：注入 token
+  // 请求拦截：注入 token（C 端约定 header 名为 `token`，不带 Bearer 前缀）
   instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = getToken();
     if (token) {
-      config.headers.set('Authorization', `Bearer ${token}`);
+      config.headers.set('token', token);
     }
     return config;
   });
@@ -209,3 +213,4 @@ function createRequest(options: RequestConfig = {}) {
 
 export const request = createRequest();
 export default request;
+export { createRequest };

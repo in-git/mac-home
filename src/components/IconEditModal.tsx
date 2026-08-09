@@ -54,7 +54,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 8 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="w-[420px] max-w-[92vw] p-6 rounded-3xl glass-panel bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.3)] border border-white/70 dark:border-white/20"
+            className="w-[420px] max-w-[92vw] p-6 rounded-[var(--card-radius)] glass-panel bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.3)] border border-white/70 dark:border-white/20"
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
@@ -62,7 +62,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
               </h2>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-[var(--card-radius)] text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               >
                 <X size={18} />
               </button>
@@ -77,7 +77,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
                   value={iconLabel}
                   onChange={(e) => setIconLabel(e.target.value)}
                   placeholder="图标显示名称"
-                  className="mt-1 w-full px-3 py-2 rounded-xl bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+                  className="mt-1 w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
                 />
               </label>
 
@@ -89,7 +89,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
                   value={iconHref}
                   onChange={(e) => setIconHref(e.target.value)}
                   placeholder="https://example.com"
-                  className="mt-1 w-full px-3 py-2 rounded-xl bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+                  className="mt-1 w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
                 />
               </label>
 
@@ -121,13 +121,13 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
             <div className="mt-6 flex justify-end gap-2">
               <button
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="px-4 py-2 rounded-[var(--card-radius)] text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               >
                 取消
               </button>
               <button
                 onClick={save}
-                className="px-4 py-2 rounded-xl text-sm font-medium bg-[#007AFF] text-white hover:bg-[#0066d6] transition-colors"
+                className="px-4 py-2 rounded-[var(--card-radius)] text-sm font-medium bg-[#007AFF] text-white hover:bg-[#0066d6] transition-colors"
               >
                 保存
               </button>

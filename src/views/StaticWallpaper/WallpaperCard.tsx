@@ -27,7 +27,7 @@ export const WallpaperCard: React.FC<WallpaperCardProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`group relative aspect-[16/9] overflow-hidden rounded-lg border transition-transform ${
+      className={`group relative aspect-[16/9] overflow-hidden rounded-[var(--card-radius)] border transition-transform ${
         isSelected
           ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
           : 'border-black/10 hover:scale-105 dark:border-white/10'

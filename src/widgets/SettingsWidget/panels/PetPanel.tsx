@@ -26,11 +26,11 @@ export const PetPanel: React.FC<PetPanelProps> = ({
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
       {/* 自由活动开关 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
             <span
-              className={`w-7 h-7 rounded-md flex items-center justify-center transition-colors ${
+              className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
                 enabled
                   ? 'bg-[#007AFF] text-white'
                   : 'bg-black/5 dark:bg-white/10 text-slate-400'
@@ -63,7 +63,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
       </div>
 
       {/* 触发间隔 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
           <span className="font-medium text-slate-800 dark:text-slate-200">
             触发间隔

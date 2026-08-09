@@ -26,7 +26,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
       {/* 外观模式与主题分组卡片 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         {/* 外观 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="font-medium text-slate-800 dark:text-slate-200">
@@ -93,7 +93,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
       </div>
 
       {/* 排版与排版尺寸分组 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         {/* 字体大小 */}
         <div className="flex items-center justify-between px-4 py-3">
           <div>

@@ -321,12 +321,12 @@ export const WeatherWidget: React.FC = () => {
 
   const renderSkeleton = () => (
     <div className="animate-pulse grid grid-cols-1 md:grid-cols-3 gap-3 my-1">
-      <div className="glass-panel p-3.5 rounded-2xl">
+      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="h-3 w-16 bg-slate-200 dark:bg-white/10 rounded mb-4" />
         <div className="h-9 w-20 bg-slate-200 dark:bg-white/10 rounded mb-2" />
         <div className="h-3 w-24 bg-slate-200 dark:bg-white/10 rounded" />
       </div>
-      <div className="md:col-span-2 glass-panel p-3.5 rounded-2xl">
+      <div className="md:col-span-2 glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="h-3 w-20 bg-slate-200 dark:bg-white/10 rounded mb-4" />
         <div className="flex items-center justify-between">
           {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -358,7 +358,7 @@ export const WeatherWidget: React.FC = () => {
             }}
             title="自动定位到当前位置"
             disabled={locating}
-            className="p-1 rounded-md text-slate-400 hover:text-[#007AFF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
+            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[#007AFF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
           >
             {locating ? (
               <Loader2 size={13} className="animate-spin" />
@@ -372,7 +372,7 @@ export const WeatherWidget: React.FC = () => {
               setRefreshKey((k) => k + 1);
             }}
             title="刷新天气"
-            className="p-1 rounded-md text-slate-400 hover:text-[#007AFF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[#007AFF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -387,7 +387,7 @@ export const WeatherWidget: React.FC = () => {
                   
                   selectCity(c.id);
                 }}
-                className={`px-2 py-0.5 rounded-md text-font-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-2 py-0.5 rounded-[var(--card-radius)] text-font-sm font-medium transition-colors whitespace-nowrap ${
                   c.id === selectedId
                     ? 'bg-[#007AFF] text-white shadow-xs'
                     : 'bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20'
@@ -413,7 +413,7 @@ export const WeatherWidget: React.FC = () => {
                 setTimeout(() => searchInputRef.current?.focus(), 50);
             }}
             title="添加城市"
-            className="shrink-0 p-1 rounded-md bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-[#007AFF] hover:text-white transition-colors"
+            className="shrink-0 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-[#007AFF] hover:text-white transition-colors"
           >
             <Plus size={12} />
           </button>
@@ -423,7 +423,7 @@ export const WeatherWidget: React.FC = () => {
       {/* City search panel */}
       {searchOpen && (
         <div className="relative mb-2">
-          <div className="flex items-center gap-1.5 glass-panel rounded-xl px-2.5 py-1.5">
+          <div className="flex items-center gap-1.5 glass-panel rounded-[var(--card-radius)] px-2.5 py-1.5">
             <Search size={14} className="text-slate-400 shrink-0" />
             <input
               ref={searchInputRef}
@@ -452,12 +452,12 @@ export const WeatherWidget: React.FC = () => {
           </div>
 
           {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-xl p-1 max-h-56 overflow-y-auto shadow-xl">
+            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-[var(--card-radius)] p-1 max-h-56 overflow-y-auto shadow-xl">
               {searchResults.map((r) => (
                 <button
                   key={r.id}
                   onClick={() => addCity(r)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left hover:bg-[#007AFF]/10 transition-colors"
+                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[var(--card-radius)] text-left hover:bg-[#007AFF]/10 transition-colors"
                 >
                   <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
                     {r.name}
@@ -472,7 +472,7 @@ export const WeatherWidget: React.FC = () => {
             </div>
           )}
           {searchQuery.trim() && !searching && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-xl p-2.5 text-center text-font-sm text-slate-400">
+            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-[var(--card-radius)] p-2.5 text-center text-font-sm text-slate-400">
               未找到相关城市
             </div>
           )}
@@ -480,7 +480,7 @@ export const WeatherWidget: React.FC = () => {
       )}
 
       {error && (
-        <div className="mb-2 px-2.5 py-1 rounded-lg bg-amber-500/10 text-font-sm text-amber-600 dark:text-amber-400">
+        <div className="mb-2 px-2.5 py-1 rounded-[var(--card-radius)] bg-amber-500/10 text-font-sm text-amber-600 dark:text-amber-400">
           {error}
         </div>
       )}
@@ -492,7 +492,7 @@ export const WeatherWidget: React.FC = () => {
           {/* Main Weather Hero Card */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-1">
             {/* Current Temp */}
-            <div className="glass-panel p-3.5 rounded-2xl flex flex-col justify-between bg-gradient-to-br from-blue-500/10 to-sky-400/10">
+            <div className="glass-panel p-3.5 rounded-[var(--card-radius)] flex flex-col justify-between bg-gradient-to-br from-blue-500/10 to-sky-400/10">
               <div className="flex items-center justify-between">
                 <span className="text-font-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   实时天气
@@ -514,7 +514,7 @@ export const WeatherWidget: React.FC = () => {
             </div>
 
             {/* Hourly Forecast Strip */}
-            <div className="md:col-span-2 glass-panel p-3.5 rounded-2xl flex flex-col justify-between">
+            <div className="md:col-span-2 glass-panel p-3.5 rounded-[var(--card-radius)] flex flex-col justify-between">
               <div className="text-font-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
                 逐小时预报
               </div>
@@ -560,7 +560,7 @@ export const WeatherWidget: React.FC = () => {
               {weather.dailyForecast.map((day, idx) => (
                 <div
                   key={idx}
-                  className="p-1.5 rounded-xl bg-black/5 dark:bg-white/5 flex flex-col items-center justify-between"
+                  className="p-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/5 flex flex-col items-center justify-between"
                 >
                   <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400">
                     {day.day}

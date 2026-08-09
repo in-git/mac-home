@@ -183,13 +183,13 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
 
         <div className="flex items-center space-x-2">
           {/* 模型名切换或指示 */}
-          <span className="text-font-sm px-2 py-0.5 rounded-[8px] bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono">
+          <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 font-mono">
             {model}
           </span>
           <button
             type="button"
             onClick={handleClear}
-            className="p-1 text-slate-400 hover:text-red-500 rounded-[8px] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            className="p-1 text-slate-400 hover:text-red-500 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             title="清空对话历史"
           >
             <Trash2 size={13} />
@@ -227,12 +227,12 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
                 className={`max-w-[80%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`p-2.5 rounded-[14px] leading-relaxed break-words whitespace-pre-wrap ${
+                  className={`p-2.5 rounded-[var(--card-radius)] leading-relaxed break-words whitespace-pre-wrap ${
                     isUser
-                      ? 'bg-[#007AFF] text-white rounded-tr-xs shadow-xs'
+                      ? 'bg-[#007AFF] text-white rounded-[var(--card-radius)] shadow-xs'
                       : msg.error
-                        ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-tl-xs border border-red-200 dark:border-red-800/40'
-                        : 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-100 rounded-tl-xs'
+                        ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-[var(--card-radius)] border border-red-200 dark:border-red-800/40'
+                        : 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)]'
                   }`}
                 >
                   {msg.content}
@@ -251,7 +251,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
             <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
               <Bot size={13} />
             </div>
-            <div className="px-3 py-2 bg-black/5 dark:bg-white/10 rounded-[14px] rounded-tl-xs flex items-center space-x-1.5">
+            <div className="px-3 py-2 bg-black/5 dark:bg-white/10 rounded-[var(--card-radius)] rounded-[var(--card-radius)] flex items-center space-x-1.5">
               <RefreshCw size={12} className="animate-spin text-[#007AFF]" />
               <span className="text-slate-500 dark:text-slate-400">
                 正在思考回复中...
@@ -270,12 +270,12 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
             onChange={(e) => setInput(e.target.value)}
             placeholder="输入消息，按 Enter 发送..."
             disabled={loading}
-            className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[12px] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50"
+            className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[10px] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
+            className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
           >
             <span>发送</span>
             <Send size={11} />

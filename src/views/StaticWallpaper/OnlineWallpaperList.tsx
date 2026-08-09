@@ -54,7 +54,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <button
             onClick={() => setSelectedCat('')}
-            className={`rounded-lg px-2.5 py-1 transition-colors ${
+            className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
               selectedCat === ''
                 ? 'bg-[color:var(--accent)] font-medium text-white'
                 : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -66,7 +66,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
             <button
               key={c.value}
               onClick={() => setSelectedCat(c.value)}
-              className={`rounded-lg px-2.5 py-1 transition-colors ${
+              className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
                 selectedCat === c.value
                   ? 'bg-[color:var(--accent)] font-medium text-white'
                   : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -107,7 +107,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
               <button
                 disabled={page <= 1 || loading}
                 onClick={() => fetchWallpapers(page - 1)}
-                className="rounded-md border px-2 py-1 disabled:opacity-40"
+                className="rounded-[var(--card-radius)] border px-2 py-1 disabled:opacity-40"
               >
                 上一页
               </button>
@@ -117,7 +117,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
               <button
                 disabled={page >= totalPages || loading}
                 onClick={() => fetchWallpapers(page + 1)}
-                className="rounded-md border px-2 py-1 disabled:opacity-40"
+                className="rounded-[var(--card-radius)] border px-2 py-1 disabled:opacity-40"
               >
                 下一页
               </button>

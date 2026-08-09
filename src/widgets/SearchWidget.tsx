@@ -89,7 +89,7 @@ export const SearchWidget: React.FC = () => {
         </div>
 
         {/* 12px 哑光容器 + 10px Pill 选中项 */}
-        <div className="flex items-center bg-black/5 dark:bg-white/10 p-0.5 rounded-[12px]">
+        <div className="flex items-center bg-black/5 dark:bg-white/10 p-0.5 rounded-[var(--card-radius)]">
           {SEARCH_ENGINES.map((engine) => {
             const isSelected = engine.id === engineId;
             return (
@@ -97,7 +97,7 @@ export const SearchWidget: React.FC = () => {
                 key={engine.id}
                 type="button"
                 onClick={() => handleSelectEngine(engine.id)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-[10px] transition-colors ${
+                className={`px-2.5 py-1 text-xs font-medium rounded-[var(--card-radius)] transition-colors ${
                   isSelected
                     ? 'bg-white dark:bg-slate-800 text-[#007AFF] shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -123,14 +123,14 @@ export const SearchWidget: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={currentEngine.placeholder}
-            className="w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[12px] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
+            className="w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
           />
 
           {/* 右侧直接提交按钮（遵循 UI 规范 严格 2:1 或正方形操作，使用 Apple 蓝） */}
           <button
             type="submit"
             disabled={!query.trim()}
-            className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[10px] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
+            className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
           >
             <span>搜索</span>
             <ArrowRight size={12} />

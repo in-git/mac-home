@@ -117,7 +117,7 @@ export const DynamicWallpaperSection: React.FC<
             onToggleDarkMode();
           }
         }}
-        className={`group relative aspect-[4/3] overflow-hidden rounded-xl border bg-black text-left transition-colors ${
+        className={`group relative aspect-[4/3] overflow-hidden rounded-[var(--card-radius)] border bg-black text-left transition-colors ${
           isSelected
             ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
             : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'

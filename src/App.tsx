@@ -8,6 +8,7 @@ import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';
+import { getStoredUser, LoginUser } from './api/auth';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
 import { CARD_RADIUS_PX, FONT_TIER_PX } from './types';
@@ -80,6 +81,14 @@ export default function App() {
     storeActions;
 
   const toggleDarkMode = () => setDarkMode(!isDarkMode);
+
+  // 登录态：初始化时从 localStorage 读取已登录用户
+  const [currentUser, setCurrentUser] = useState<LoginUser | null>(() =>
+    getStoredUser(),
+  );
+
+  const handleLoginSuccess = (user: LoginUser) => setCurrentUser(user);
+  const handleLogout = () => setCurrentUser(null);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -275,6 +284,9 @@ export default function App() {
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaperModal={openWallpaperModal}
+        currentUser={currentUser}
+        onLoginSuccess={handleLoginSuccess}
+        onLogout={handleLogout}
       />
 
       {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
@@ -303,7 +315,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setIsEditMode(false)}
-              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[#007AFF] hover:bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-[12px] shadow-lg transition-all"
+              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[#007AFF] hover:bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-[var(--card-radius)] shadow-lg transition-all"
             >
               <Check size={14} strokeWidth={2.5} />
               <span>完成</span>

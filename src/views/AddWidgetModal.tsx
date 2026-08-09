@@ -88,14 +88,14 @@ export const AddWidgetModal: React.FC<Props> = ({
                 onAddWidget(t.type);
                 onClose();
               }}
-              className={`flex flex-col items-center gap-2 rounded-[12px] bg-black/5 px-3 py-3.5 transition-colors dark:bg-white/10 ${
+              className={`flex flex-col items-center gap-2 rounded-[var(--card-radius)] bg-black/5 px-3 py-3.5 transition-colors dark:bg-white/10 ${
                 disabled
                   ? 'cursor-not-allowed opacity-50'
                   : 'hover:bg-black/10 active:scale-95 dark:hover:bg-white/15'
               }`}
             >
               <span
-                className={`flex h-9 w-9 items-center justify-center rounded-[10px] ${WIDGET_ICON_BUBBLE[t.type]}`}
+                className={`flex h-9 w-9 items-center justify-center rounded-[var(--card-radius)] ${WIDGET_ICON_BUBBLE[t.type]}`}
               >
                 <Icon size={18} strokeWidth={1.75} />
               </span>

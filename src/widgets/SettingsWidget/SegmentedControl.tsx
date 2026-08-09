@@ -26,7 +26,7 @@ export function SegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className={`flex p-0.5 rounded-lg bg-black/5 dark:bg-white/10 ${className}`}
+      className={`flex p-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 ${className}`}
     >
       {options.map((opt) => {
         const active = value === opt.value;
@@ -36,7 +36,7 @@ export function SegmentedControl<T extends string>({
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.value)}
-            className={`px-3 py-1 rounded-md text-xs transition-colors font-medium ${
+            className={`px-3 py-1 rounded-[var(--card-radius)] text-xs transition-colors font-medium ${
               active
                 ? 'bg-white dark:bg-[#3A3A3C] text-[#007AFF] dark:text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'

@@ -31,12 +31,12 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
   return (
     <div className=" px-5 py-6 space-y-6 text-sm">
       {/* 基础系统偏好 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         {/* 点击音效 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
             <span
-              className={`w-7 h-7 rounded-md flex items-center justify-center transition-colors ${
+              className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
                 soundEnabled
                   ? 'bg-[#007AFF] text-white'
                   : 'bg-black/5 dark:bg-white/10 text-slate-400'
@@ -55,11 +55,11 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
       </div>
 
       {/* 布局配置与备份数据 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         {/* 导出布局 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-md flex items-center justify-center bg-[#007AFF]/15 text-[#007AFF]">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-[#007AFF]/15 text-[#007AFF]">
               <Download size={15} />
             </span>
             <div>
@@ -73,7 +73,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </span>
           <button
             onClick={onExport}
-            className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs font-medium transition-colors"
+            className="px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs font-medium transition-colors"
           >
             导出
           </button>
@@ -82,7 +82,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
         {/* 恢复默认布局 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-md flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
               <RotateCcw size={15} />
             </span>
             <div>
@@ -96,7 +96,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </span>
           <button
             onClick={onReset}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs font-medium transition-colors ${
               justReset
                 ? 'bg-[#28C840]/15 text-[#28C840]'
                 : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15'
@@ -109,7 +109,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
         {/* 导入配置 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-md flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
               <Upload size={15} />
             </span>
             <div>
@@ -150,7 +150,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               if (file) onImportFile(file);
             }}
             onClick={() => fileInputRef.current?.click()}
-            className={`px-3 py-1.5 rounded-lg border border-dashed text-xs font-medium cursor-pointer transition-colors ${
+            className={`px-3 py-1.5 rounded-[var(--card-radius)] border border-dashed text-xs font-medium cursor-pointer transition-colors ${
               isDragging
                 ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
                 : 'border-black/15 dark:border-white/20 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15'
@@ -173,10 +173,10 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
       </div>
 
       {/* 危险区/擦除恢复 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-xl overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-md flex items-center justify-center bg-red-500/15 text-red-500">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-red-500/15 text-red-500">
               <RefreshCw size={15} />
             </span>
             <div>
@@ -189,7 +189,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
 
           <AlertDialog>
             <AlertDialog.Trigger
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs font-medium transition-colors ${
                 justResetSystem
                   ? 'bg-[#28C840]/15 text-[#28C840]'
                   : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'

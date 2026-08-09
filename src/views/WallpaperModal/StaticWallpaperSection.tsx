@@ -92,7 +92,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
       <button
         key={item.gradient ?? item.id}
         onClick={() => handleSelectWallpaper(item)}
-        className={`group relative aspect-[16/9] overflow-hidden rounded-lg border transition-transform ${
+        className={`group relative aspect-[16/9] overflow-hidden rounded-[var(--card-radius)] border transition-transform ${
           isSelected
             ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
             : 'border-black/10 hover:scale-105 dark:border-white/10'
@@ -145,7 +145,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
             <div className="flex flex-wrap items-center gap-1.5 text-xs">
               <button
                 onClick={() => setSelectedCat('')}
-                className={`rounded-lg px-2.5 py-1 transition-colors ${
+                className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
                   selectedCat === ''
                     ? 'bg-[color:var(--accent)] font-medium text-white'
                     : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -157,7 +157,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
                 <button
                   key={c.value}
                   onClick={() => setSelectedCat(c.value)}
-                  className={`rounded-lg px-2.5 py-1 transition-colors ${
+                  className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
                     selectedCat === c.value
                       ? 'bg-[color:var(--accent)] font-medium text-white'
                       : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -192,7 +192,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
                   <button
                     disabled={page <= 1 || loading}
                     onClick={() => fetchWallpapers(page - 1)}
-                    className="rounded-md border px-2 py-1 disabled:opacity-40"
+                    className="rounded-[var(--card-radius)] border px-2 py-1 disabled:opacity-40"
                   >
                     上一页
                   </button>
@@ -202,7 +202,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
                   <button
                     disabled={page >= totalPages || loading}
                     onClick={() => fetchWallpapers(page + 1)}
-                    className="rounded-md border px-2 py-1 disabled:opacity-40"
+                    className="rounded-[var(--card-radius)] border px-2 py-1 disabled:opacity-40"
                   >
                     下一页
                   </button>
