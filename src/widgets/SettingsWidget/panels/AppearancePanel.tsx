@@ -1,10 +1,4 @@
-import {
-  Check,
-  ChevronRight,
-  Image as ImageIcon,
-  Moon,
-  Sun,
-} from 'lucide-react';
+import { Check, Moon, Sun } from 'lucide-react';
 import React from 'react';
 import {
   CARD_RADIUS_LABEL,
@@ -28,7 +22,6 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
   setFontVariant,
   cardRadius,
   setCardRadius,
-  openWallpaper,
 }) => {
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
@@ -44,30 +37,27 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
             value={isDarkMode ? 'dark' : 'light'}
             onChange={(v) => setDarkMode(v === 'dark')}
             options={[
-              { value: 'light', label: <span className="flex items-center space-x-1.5"><Sun size={13} /><span>浅色</span></span> },
-              { value: 'dark', label: <span className="flex items-center space-x-1.5"><Moon size={13} /><span>深色</span></span> },
+              {
+                value: 'light',
+                label: (
+                  <span className="flex items-center space-x-1.5">
+                    <Sun size={13} />
+                    <span>浅色</span>
+                  </span>
+                ),
+              },
+              {
+                value: 'dark',
+                label: (
+                  <span className="flex items-center space-x-1.5">
+                    <Moon size={13} />
+                    <span>深色</span>
+                  </span>
+                ),
+              },
             ]}
           />
         </div>
-
-        {/* 墙纸 */}
-        <button
-          onClick={openWallpaper}
-          className="w-full flex items-center justify-between px-4 py-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors text-left"
-        >
-          <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-md flex items-center justify-center bg-[#007AFF]/15 text-[#007AFF]">
-              <ImageIcon size={15} />
-            </span>
-            <span className="font-medium text-slate-800 dark:text-slate-200">
-              墙纸设置
-            </span>
-          </span>
-          <span className="flex items-center space-x-1 text-slate-400 text-xs">
-            <span>选定墙纸</span>
-            <ChevronRight size={14} />
-          </span>
-        </button>
 
         {/* 强调色 */}
         <div className="flex items-center justify-between px-4 py-3">
@@ -136,10 +126,12 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
             ariaLabel="卡片圆角"
             value={cardRadius}
             onChange={setCardRadius}
-            options={(['tiny', 'small', 'medium', 'large'] as const).map((v) => ({
-              value: v,
-              label: CARD_RADIUS_LABEL[v],
-            }))}
+            options={(['tiny', 'small', 'medium', 'large'] as const).map(
+              (v) => ({
+                value: v,
+                label: CARD_RADIUS_LABEL[v],
+              }),
+            )}
           />
         </div>
       </div>

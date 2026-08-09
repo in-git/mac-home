@@ -28,18 +28,10 @@ export class RoleControls {
   };
 
   public getKeyState() {
-    const isLeft =
-      this.activeKeys.has('ArrowLeft') ||
-      this.activeKeys.has('KeyA') ||
-      this.activeKeys.has('a');
-    const isRight =
-      this.activeKeys.has('ArrowRight') ||
-      this.activeKeys.has('KeyD') ||
-      this.activeKeys.has('d');
+    const isLeft = this.activeKeys.has('ArrowLeft');
+    const isRight = this.activeKeys.has('ArrowRight');
     const isJump =
       this.activeKeys.has('ArrowUp') ||
-      this.activeKeys.has('KeyW') ||
-      this.activeKeys.has('w') ||
       this.activeKeys.has('Space') ||
       this.activeKeys.has(' ');
 

@@ -23,7 +23,6 @@ export const SettingsWidget: React.FC<{
     setFontVariant,
     cardRadius,
     setCardRadius,
-    openWallpaper,
     resetLayout,
     setWidgets,
     updateNotes,
@@ -48,7 +47,6 @@ export const SettingsWidget: React.FC<{
       setFontVariant: s.setFontVariant,
       cardRadius: s.cardRadius,
       setCardRadius: s.setCardRadius,
-      openWallpaper: s.openWallpaper,
       resetLayout: s.resetLayout,
       setWidgets: s.setWidgets,
       updateNotes: s.updateNotes,
@@ -167,7 +165,6 @@ export const SettingsWidget: React.FC<{
           setFontVariant={setFontVariant}
           cardRadius={cardRadius}
           setCardRadius={setCardRadius}
-          openWallpaper={openWallpaper}
         />
       )}
 

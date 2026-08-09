@@ -2,6 +2,7 @@ import { AGENT_TOOLS } from '@/agent';
 import type { AgentChatMessage } from '@/agent/chat';
 import { MAX_PET_CHAT_MESSAGES, useHomeStore } from '@/store/useHomeStore';
 import { chatWithPet } from '@/utils/aiClient';
+import { toast } from '@heroui/react';
 import { Send, Terminal, Wrench } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -99,8 +100,8 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
       );
       setPetChatHistory(nextHistory);
       // 桌宠气泡由 chatWithPet 内部（执行 ToolTask 时）统一触发，这里不再重复派发
-      // 单轮对话完成，关闭对话框（回复通过桌宠头顶气泡显示）
-      onClose();
+      // 单轮对话完成，给出成功提示（回复通过桌宠头顶气泡显示）
+      toast.success('桌宠已收到，正在处理 ✨');
     } catch (err) {
       const errorMsg: AgentChatMessage = {
         id: 'cmd-err-' + Date.now(),
@@ -153,7 +154,9 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    handleSend();
+                    // 立即关闭对话框，后台继续处理请求
+                    onClose();
+                    void handleSend();
                   }
                 }}
                 rows={2}

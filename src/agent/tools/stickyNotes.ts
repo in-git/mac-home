@@ -93,9 +93,9 @@ export const listNotesTool: AgentTool = {
 export const createNoteTool: AgentTool = {
   name: `${PREFIX}create`,
   title: '新建便签',
-  description: '新建一条便签。可指定标题(title)、内容(content)、颜色(color)。',
+  description: '新建一条便签。可指定标题(title)，必须、内容(content)，根据用户内容创建、颜色(color)。',
   parameters: {
-    title: { type: 'string', description: '便签标题', required: false },
+    title: { type: 'string', description: '便签标题', required: true },
     content: { type: 'string', description: '便签正文内容', required: false },
     color: {
       type: 'string',

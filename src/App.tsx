@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { Toast } from '@heroui/react';
 import { useShallow } from 'zustand/react/shallow';
 import { initScheduler } from './agent/scheduler';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
@@ -126,14 +127,12 @@ export default function App() {
   }, [cardRadius]);
 
   // One-time app startup: register the add-widget action, restore scheduled
-  // agent tasks, wire up global click sound, and expose openWallpaper() to the
-  // store so the Settings widget can open the modal without prop-drilling.
+  // agent tasks, and wire up global click sound.
   const openWallpaperModal = () => setIsWallpaperModalOpen(true);
   useEffect(() => {
     registerWidgetAction('widget-add', () => setIsAddWidgetModalOpen(true));
     initScheduler();
     const disposeSound = initGlobalSound();
-    useHomeStore.setState({ openWallpaper: openWallpaperModal });
     return () => {
       disposeSound();
     };
@@ -210,11 +209,12 @@ export default function App() {
     });
   };
 
-  // Global Enter-to-open-command-dialog. Ignored when an input/textarea/contenteditable
+  // Global "/"-to-open-command-dialog. Ignored when an input/textarea/contenteditable
   // is focused so it never hijacks typing, and ignored if a modal is already open.
+  // 使用 e.code === 'Slash' 以兼容中文/英文输入法下按 / 键。
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Enter') return;
+      if (e.code !== 'Slash' && e.key !== '/') return;
       const el = document.activeElement as HTMLElement | null;
       const typing =
         !!el &&
@@ -373,6 +373,8 @@ export default function App() {
         isOpen={isCommandOpen}
         onClose={() => setIsCommandOpen(false)}
       />
+
+      <Toast.Provider placement="top" />
     </div>
   );
 }

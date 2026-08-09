@@ -1,7 +1,8 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
+import { Select, ListBox } from '@heroui/react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { CARD_RADIUS_LABEL, CARD_RADIUS_PX, CardRadiusTier, FONT_VARIANT_LABEL } from '../types';
+import { CARD_RADIUS_LABEL, CardRadiusTier, FONT_VARIANT_LABEL } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -183,19 +184,31 @@ export const ControlCenterWidget: React.FC<Props> = ({
             <span className="w-5 h-5 rounded-md bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
               <Sliders size={11} />
             </span>
-            <span>卡片圆角</span>
+            <span>圆角</span>
           </span>
-          <select
+          <Select
+            aria-label="卡片圆角"
             value={cardRadius}
-            onChange={(e) => setCardRadius(e.target.value as CardRadiusTier)}
-            className="appearance-none bg-black/5 dark:bg-white/10 text-font-sm font-medium rounded-lg py-1.5 pl-3 pr-7 outline-none focus:ring-2 focus:ring-[#007AFF]/50 cursor-pointer"
+            onChange={(key) => {
+              if (key != null) setCardRadius(String(key) as CardRadiusTier);
+            }}
+            variant="secondary"
+            className="w-32"
           >
-            {(['tiny', 'small', 'medium', 'large'] as const).map((v) => (
-              <option key={v} value={v}>
-                {CARD_RADIUS_LABEL[v]}
-              </option>
-            ))}
-          </select>
+            <Select.Trigger className="bg-black/5 dark:bg-white/10 border-0">
+              <Select.Value />
+              <Select.Indicator />
+            </Select.Trigger>
+            <Select.Popover>
+              <ListBox>
+                {(['tiny', 'small', 'medium', 'large'] as const).map((v) => (
+                  <ListBox.Item key={v} id={v}>
+                    {CARD_RADIUS_LABEL[v]}
+                  </ListBox.Item>
+                ))}
+              </ListBox>
+            </Select.Popover>
+          </Select>
         </div>
       </div>
     </div>

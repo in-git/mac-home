@@ -79,7 +79,6 @@ interface HomeState {
   setFontVariant: (variant: FontVariant) => void;
   setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
-  openWallpaper: () => void;
   setAiConfig: (patch: Partial<AIConfig>) => void;
   // 桌宠对话历史写入（追加本轮 user/assistant 消息）
   setPetChatHistory: (
@@ -228,9 +227,6 @@ export const useHomeStore = create<HomeState>()(
         set({
           petActivityInterval: Math.max(5, Math.min(600, Math.round(seconds))),
         }),
-      // Registered by App on mount so the store can open the wallpaper modal
-      // without threading the setter through the whole component tree.
-      openWallpaper: () => {},
     }),
     {
       name: 'apple-homepage-store',

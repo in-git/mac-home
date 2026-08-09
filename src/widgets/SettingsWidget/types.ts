@@ -12,7 +12,6 @@ export interface AppearancePanelProps {
   setFontVariant: (v: 'A' | 'B' | 'C') => void;
   cardRadius: CardRadiusTier;
   setCardRadius: (v: CardRadiusTier) => void;
-  openWallpaper: () => void;
 }
 
 export interface SystemPanelProps {
