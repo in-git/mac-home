@@ -83,6 +83,8 @@ export default function App() {
     useState<boolean>(false);
   // 图标编辑 Modal 当前编辑的 widget id（null 表示关闭）。
   const [editIconId, setEditIconId] = useState<string | null>(null);
+  // 命令对话框（按 Enter 在屏幕正下方弹出）。
+  const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
 
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] =
@@ -150,6 +152,32 @@ export default function App() {
     });
   };
 
+  // Global Enter-to-open-command-dialog. Ignored when an input/textarea/contenteditable
+  // is focused so it never hijacks typing, and ignored if a modal is already open.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter') return;
+      const el = document.activeElement as HTMLElement | null;
+      const typing =
+        !!el &&
+        (el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA' ||
+          el.isContentEditable);
+      if (typing || isCommandOpen) return;
+      if (
+        isSpotlightOpen ||
+        isWallpaperModalOpen ||
+        isAddWidgetModalOpen ||
+        isSettingsModalOpen
+      )
+        return;
+      e.preventDefault();
+      setIsCommandOpen(true);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCommandOpen, isSpotlightOpen, isWallpaperModalOpen, isAddWidgetModalOpen, isSettingsModalOpen]);
+
   // Clicking outside <main> (e.g. background/topbar/empty desktop margin outside main) exits edit mode.
   const handleRootClick = (e: React.MouseEvent) => {
     if (!isEditMode) return;
@@ -183,7 +211,6 @@ export default function App() {
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaperModal={openWallpaperModal}
-        onOpenSpotlight={() => setIsSpotlightOpen(true)}
       />
 
       {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
@@ -275,6 +302,12 @@ export default function App() {
       <IconEditModal
         widget={widgets.find((w) => w.id === editIconId) ?? null}
         onClose={() => setEditIconId(null)}
+      />
+
+      {/* Command Dialog (opened by pressing Enter) */}
+      <CommandDialog
+        isOpen={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
       />
     </div>
   );

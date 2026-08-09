@@ -1,40 +1,73 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CornerDownLeft, Search } from 'lucide-react';
-import { StickyNote, CloudSun, Clock, Compass, Sliders } from 'lucide-react';
-import { StickyNoteType, WidgetType } from '../types';
+import {
+  CornerDownLeft,
+  Search,
+  RefreshCw,
+  ExternalLink,
+  Clock,
+  StickyNote,
+  Settings,
+  MessageSquare,
+  Bot,
+} from 'lucide-react';
+import { AGENT_TOOLS } from '../agent/tools';
+import type { AgentTool } from '../agent/types';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  notes: StickyNoteType[];
-  onAddWidget: (type: WidgetType) => void;
 }
 
-interface CommandItem {
-  id: string;
-  name: string;
+/** 按工具名归类到合适的图标。 */
+function iconForTool(name: string): React.ComponentType<{ size?: number; className?: string }> {
+  if (name === 'refresh_page') return RefreshCw;
+  if (name === 'open_link') return ExternalLink;
+  if (name.startsWith('create_scheduled_task') || name.startsWith('cancel_scheduled_task') || name.startsWith('list_scheduled_tasks'))
+    return Clock;
+  if (name.startsWith('sticky_')) return StickyNote;
+  if (name.startsWith('set_') || name === 'reset_settings') return Settings;
+  if (name === 'general_chat') return MessageSquare;
+  if (name === 'agent_chat') return Bot;
+  return Settings;
+}
+
+interface ToolCommand {
+  tool: AgentTool;
   icon: React.ComponentType<{ size?: number; className?: string }>;
-  run: () => void;
 }
 
 /**
  * Command palette dialog anchored to the bottom-center of the screen.
  * Opened by pressing Enter anywhere on the desktop (when no input is focused).
+ * Lists the commands from src/agent/tools and runs the selected one directly.
  */
-export const CommandDialog: React.FC<Props> = ({
-  isOpen,
-  onClose,
-  notes,
-  onAddWidget,
-}) => {
+export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
+  const [result, setResult] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const commands = useMemo<ToolCommand[]>(
+    () =>
+      AGENT_TOOLS.map((tool) => ({ tool, icon: iconForTool(tool.name) })),
+    [],
+  );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return commands;
+    return commands.filter(
+      (c) =>
+        c.tool.name.toLowerCase().includes(q) ||
+        c.tool.description.toLowerCase().includes(q),
+    );
+  }, [query, commands]);
 
   // Esc to close + auto-focus the input on open.
   useEffect(() => {
     if (!isOpen) return;
     setQuery('');
+    setResult(null);
     const focusTimer = setTimeout(() => inputRef.current?.focus(), 0);
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -50,43 +83,16 @@ export const CommandDialog: React.FC<Props> = ({
     };
   }, [isOpen, onClose]);
 
-  const widgetCommands: CommandItem[] = [
-    { id: 'weather', name: '添加 天气预报小组件', icon: CloudSun, run: () => onAddWidget('weather') },
-    { id: 'sticky', name: '添加 便签小组件', icon: StickyNote, run: () => onAddWidget('sticky-notes') },
-    { id: 'clock', name: '添加 时钟与日历', icon: Clock, run: () => onAddWidget('clock') },
-    { id: 'control', name: '添加 控制中心', icon: Sliders, run: () => onAddWidget('control-center') },
-    { id: 'shortcuts', name: '添加 快捷导航 Launchpad', icon: Compass, run: () => onAddWidget('shortcuts') },
-  ].map((c) => ({
-    ...c,
-    run: () => {
-      c.run();
-      onClose();
-    },
-  }));
-
-  const noteCommands: CommandItem[] = notes
-    .filter(
-      (n) =>
-        n.title.toLowerCase().includes(query.toLowerCase()) ||
-        n.content.toLowerCase().includes(query.toLowerCase()),
-    )
-    .map((n) => ({
-      id: `note-${n.id}`,
-      name: n.title || '未命名便签',
-      icon: StickyNote,
-      run: () => onClose(),
-    }));
-
-  const filteredWidget = widgetCommands.filter((c) =>
-    c.name.toLowerCase().includes(query.toLowerCase()),
-  );
-
-  const groups: { title: string; items: CommandItem[] }[] = [
-    ...(filteredWidget.length ? [{ title: '功能 & 小组件', items: filteredWidget }] : []),
-    ...(noteCommands.length ? [{ title: '便签卡片', items: noteCommands }] : []),
-  ];
-
   if (!isOpen) return null;
+
+  const runCommand = async (cmd: ToolCommand) => {
+    try {
+      const res = await cmd.tool.run({});
+      setResult(`${res.ok ? '✓' : '✗'} ${cmd.tool.name}：${res.message}`);
+    } catch (e) {
+      setResult(`✗ ${cmd.tool.name} 执行出错：${(e as Error).message}`);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -120,36 +126,43 @@ export const CommandDialog: React.FC<Props> = ({
 
           {/* Results */}
           <div className="max-h-80 overflow-y-auto p-2 space-y-3 text-xs">
-            {groups.length === 0 && (
+            {filtered.length === 0 && (
               <div className="px-3 py-6 text-center text-slate-400 dark:text-slate-500">
-                没有匹配的结果
+                没有匹配的命令
               </div>
             )}
-            {groups.map((g) => (
-              <div key={g.title}>
-                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                  {g.title}
-                </div>
-                {g.items.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={item.run}
-                      className="w-full px-3 py-2 rounded-xl hover:bg-[#007AFF] hover:text-white flex items-center space-x-3 transition-colors text-left"
-                    >
-                      <Icon size={16} />
-                      <span className="font-medium flex-1">{item.name}</span>
-                      <CornerDownLeft
-                        size={13}
-                        className="opacity-50 shrink-0"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            ))}
+            {filtered.map((cmd) => {
+              const Icon = cmd.icon;
+              return (
+                <button
+                  key={cmd.tool.name}
+                  onClick={() => runCommand(cmd)}
+                  className="w-full px-3 py-2 rounded-xl hover:bg-[#007AFF] hover:text-white flex items-start space-x-3 transition-colors text-left"
+                >
+                  <Icon size={16} className="mt-0.5 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium flex items-center gap-2">
+                      <span>{cmd.tool.title}</span>
+                      <CornerDownLeft size={13} className="opacity-50 shrink-0" />
+                    </div>
+                    <div className="opacity-70 line-clamp-1">
+                      {cmd.tool.description}
+                    </div>
+                    <div className="text-[10px] opacity-50 mt-0.5 font-mono">
+                      {cmd.tool.name}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
+
+          {/* Result Footer */}
+          {result && (
+            <div className="border-t border-black/5 dark:border-white/10 px-4 py-3 text-xs text-slate-600 dark:text-slate-300 bg-black/5 dark:bg-white/5">
+              {result}
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>

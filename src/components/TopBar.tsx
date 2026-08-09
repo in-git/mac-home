@@ -3,7 +3,6 @@ import {
   CloudSun,
   Image as ImageIcon,
   Moon,
-  Search,
   Sun,
   Volume2,
   Wifi,
@@ -17,7 +16,6 @@ interface Props {
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onOpenWallpaperModal: () => void;
-  onOpenSpotlight: () => void;
   weatherTemp?: string;
 }
 
@@ -27,7 +25,6 @@ export const TopBar: React.FC<Props> = ({
   isEditMode,
   onToggleEditMode,
   onOpenWallpaperModal,
-  onOpenSpotlight,
   weatherTemp = '26°C',
 }) => {
   const [timeStr, setTimeStr] = useState('');
@@ -66,20 +63,7 @@ export const TopBar: React.FC<Props> = ({
         </span>
       </div>
 
-      {/* Center Spotlight Search Trigger */}
-      <button
-        onClick={() => {
-          
-          onOpenSpotlight();
-        }}
-        className="px-3 py-0.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 flex items-center space-x-2 transition-colors cursor-pointer border border-black/5 dark:border-white/5"
-      >
-        <Search size={12} className="text-slate-400" />
-        <span className="text-font-sm">聚焦搜索...</span>
-        <span className="text-font-sm opacity-50 px-1 py-0.2 rounded bg-black/10 dark:bg-white/10">
-          ⌘K
-        </span>
-      </button>
+      {/* Center spacer */}
 
       {/* Right Controls */}
       <div className="flex items-center space-x-2 sm:space-x-3 text-slate-700 dark:text-slate-200">

@@ -4,7 +4,7 @@ export const DEFAULT_PHYSICS_CONFIG: RolePhysicsConfig = {
   roleWidth: 40,
   roleHeight: 60, // 468x702 ratio (1 : 1.5), 缩小 50%
   maxSpeed: 5.5,
-  acceleration: 0.35,
+  acceleration: 0.15, // 降低起步加速度，实现起步慢、慢慢变快的气韵与真实移动节奏
   friction: 0.92,
   jumpForce: -8, // 模型缩小后微调跳跃冲量，保持舒适的弹跳高度
   gravity: 0.6,
@@ -82,12 +82,17 @@ export const updateRolePhysics = (
     state.x = screen.width;
   }
 
-  // 动画帧计数累加：动画播放速率与水平实际速度 Math.abs(vx) 动态绑定
-  // 移动速度越快，AnimFrame 增加越快，切帧频率更高
-  const speed = Math.abs(state.vx);
-  if (speed > 0.1) {
-    state.animFrameCounter += speed / 3;
+  // 动画帧计数累加：
+  // 1. 在空中/跳跃状态时 (!state.isGrounded)，使用降低一档的固定低频率累加 (0.15)
+  // 2. 在地面行走时，降低一档帧速率累加系数 (speed * 0.45)
+  if (!state.isGrounded) {
+    state.animFrameCounter += 0.15; // 降低一档空中切帧频率 (原 0.25)
   } else {
-    state.animFrameCounter = 0;
+    const speed = Math.abs(state.vx);
+    if (speed > 0.1) {
+      state.animFrameCounter += speed * 0.45; // 降低一档地面切帧系数 (原 0.8)
+    } else {
+      state.animFrameCounter = 0;
+    }
   }
 };

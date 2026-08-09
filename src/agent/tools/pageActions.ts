@@ -8,6 +8,7 @@ import type { AgentTool } from '../types';
 
 const refreshPageTool: AgentTool = {
   name: 'refresh_page',
+  title: '刷新页面',
   description: '刷新当前页面（重新加载主页）。',
   parameters: {},
   run: () => {
@@ -18,6 +19,7 @@ const refreshPageTool: AgentTool = {
 
 const openLinkTool: AgentTool = {
   name: 'open_link',
+  title: '打开链接',
   description: '在新标签页中打开指定的网址链接。',
   parameters: {
     url: {

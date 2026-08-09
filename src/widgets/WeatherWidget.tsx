@@ -36,6 +36,13 @@ const LOCATION_TRIED_KEY = 'weather-location-tried';
 
 const DEFAULT_CITIES: WeatherCity[] = [
   {
+    id: cityIdOf(23.1291, 113.2644),
+    name: '广州',
+    country: '中国',
+    latitude: 23.1291,
+    longitude: 113.2644,
+  },
+  {
     id: cityIdOf(31.2304, 121.4737),
     name: '上海',
     country: '中国',
@@ -62,13 +69,6 @@ const DEFAULT_CITIES: WeatherCity[] = [
     country: '中国',
     latitude: 30.2741,
     longitude: 120.1551,
-  },
-  {
-    id: cityIdOf(35.6762, 139.6503),
-    name: '东京',
-    country: '日本',
-    latitude: 35.6762,
-    longitude: 139.6503,
   },
 ];
 
@@ -222,24 +222,52 @@ export const WeatherWidget: React.FC = () => {
     if (id === selectedId) selectCity(next[0].id);
   };
 
-  /** 自动定位：Geolocation 获取坐标 → 反向解析城市 → 切换到该城市 */
+  /** 自动定位：坐标 → 反向解析城市 → 切换到该城市 */
   const locate = async () => {
-    if (!('geolocation' in navigator)) {
-      setError('当前浏览器不支持自动定位');
-      return;
-    }
     if (locating) return;
     setLocating(true);
     setError(null);
-    try {
-      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: false,
-          timeout: 8000,
-          maximumAge: 10 * 60 * 1000,
+
+    // 1. 优先浏览器 Geolocation（仅安全上下文可用：https 或 localhost）
+    let coords: { latitude: number; longitude: number } | null = null;
+    if (window.isSecureContext && 'geolocation' in navigator) {
+      try {
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: false,
+            timeout: 8000,
+            maximumAge: 10 * 60 * 1000,
+          });
         });
-      });
-      const { latitude, longitude } = pos.coords;
+        coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+      } catch {
+        coords = null; // 拒绝授权/超时/非安全上下文 → 走 IP 回退
+      }
+    }
+
+    // 2. IP 地理定位回退（无需授权，http 局域网下也能用）
+    if (!coords) {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+            coords = { latitude: data.latitude, longitude: data.longitude };
+          }
+        }
+      } catch {
+        coords = null;
+      }
+    }
+
+    if (!coords) {
+      setError('定位失败，已为你显示默认城市');
+      setLocating(false);
+      return;
+    }
+
+    const { latitude, longitude } = coords;
+    try {
       const cityName = await reverseGeocodeCityName(latitude, longitude);
       if (cityName) {
         // 优先用正向地理编码规范化为标准城市坐标
@@ -258,7 +286,7 @@ export const WeatherWidget: React.FC = () => {
         longitude,
       });
     } catch {
-      setError('定位失败，请在浏览器设置中允许位置权限');
+      setError('定位失败，已为你显示默认城市');
     } finally {
       setLocating(false);
     }

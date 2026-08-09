@@ -115,8 +115,8 @@ export const RoleCharacterCanvas: React.FC = () => {
         // 更新 React 状态以同步气泡位置
         setRolePos({ x: state.x, y: state.y });
 
-        // Texture / Animation switching
-        const frameIndex = Math.floor(state.animFrameCounter / 8) % 3;
+        // Texture / Animation switching (6帧除数，降低一档切帧频率)
+        const frameIndex = Math.floor(state.animFrameCounter / 6) % 3;
         if (state.facingDirection === 'left') {
           sprite.texture = textures.leftFrames[frameIndex];
         } else if (state.facingDirection === 'right') {

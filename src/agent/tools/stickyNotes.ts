@@ -73,6 +73,7 @@ const PREFIX = 'sticky_';
 
 export const listNotesTool: AgentTool = {
   name: `${PREFIX}list`,
+  title: '列出便签',
   description: '读取当前所有便签列表（含 id、标题、内容摘要、颜色、是否置顶）。',
   parameters: {},
   run: (): AgentToolCallResult => {
@@ -91,6 +92,7 @@ export const listNotesTool: AgentTool = {
 
 export const createNoteTool: AgentTool = {
   name: `${PREFIX}create`,
+  title: '新建便签',
   description: '新建一条便签。可指定标题(title)、内容(content)、颜色(color)。',
   parameters: {
     title: { type: 'string', description: '便签标题', required: false },
@@ -114,6 +116,7 @@ export const createNoteTool: AgentTool = {
 
 export const updateNoteTool: AgentTool = {
   name: `${PREFIX}update`,
+  title: '修改便签',
   description:
     '修改一条便签。必须提供 id，可修改 title/content/color/pinned 等字段。',
   parameters: {
@@ -149,6 +152,7 @@ export const updateNoteTool: AgentTool = {
 
 export const deleteNoteTool: AgentTool = {
   name: `${PREFIX}delete`,
+  title: '删除便签',
   description: '删除一条便签（按 id）。',
   parameters: {
     id: { type: 'string', description: '要删除的便签 id', required: true },
@@ -168,6 +172,7 @@ export const deleteNoteTool: AgentTool = {
 
 export const togglePinNoteTool: AgentTool = {
   name: `${PREFIX}toggle_pin`,
+  title: '切换便签置顶',
   description: '切换某条便签的置顶状态（置顶/取消置顶）。',
   parameters: {
     id: { type: 'string', description: '要切换置顶的便签 id', required: true },

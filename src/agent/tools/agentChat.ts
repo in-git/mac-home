@@ -14,6 +14,7 @@ import { sendAgentChat } from '../chat';
  */
 export const agentChatTool: AgentTool = {
   name: 'agent_chat',
+  title: '深度对话 / 自我追问',
   description:
     '当需要进一步向自己提问、整合信息或重新检索时调用。输入 query，返回一轮对话后的自然语言结果。',
   parameters: {

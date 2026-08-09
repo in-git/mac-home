@@ -51,6 +51,7 @@ export function resetSystemSettings(): void {
 
 const setDarkModeTool: AgentTool = {
   name: 'set_dark_mode',
+  title: '切换深色模式',
   description: '开启或关闭系统的深色（暗黑）模式。',
   parameters: {
     enabled: {
@@ -76,6 +77,7 @@ const setDarkModeTool: AgentTool = {
 
 const setThemeColorTool: AgentTool = {
   name: 'set_theme_color',
+  title: '设置主题色',
   description: '设置系统的主题强调色（用于按钮、高亮等）。',
   parameters: {
     color: {
@@ -99,6 +101,7 @@ const setThemeColorTool: AgentTool = {
 
 const setSoundEnabledTool: AgentTool = {
   name: 'set_sound_enabled',
+  title: '开关系统音效',
   description: '开启或关闭系统音效（如点击音）。',
   parameters: {
     enabled: {
@@ -119,6 +122,7 @@ const setSoundEnabledTool: AgentTool = {
 
 const setFontVariantTool: AgentTool = {
   name: 'set_font_variant',
+  title: '设置字号方案',
   description: '设置系统字号方案（整体字体大小档位）。',
   parameters: {
     variant: {
@@ -163,6 +167,7 @@ const setScreenBrightnessTool: AgentTool = {
 
 const setWallpaperTool: AgentTool = {
   name: 'set_wallpaper',
+  title: '设置桌面壁纸',
   description:
     '设置桌面壁纸。支持传入渐变色（gradient）、纯色（imageUrl 或 gradient）、预设（preset）以及模糊/亮度微调。',
   parameters: {
@@ -215,6 +220,7 @@ const setWallpaperTool: AgentTool = {
 
 const resetSettingsTool: AgentTool = {
   name: 'reset_settings',
+  title: '重置所有设置',
   description:
     '将主页的所有系统设置恢复为默认值，包括桌面布局、壁纸、便签、深色模式、主题色、音效开关、字号方案和屏幕亮度。',
   parameters: {

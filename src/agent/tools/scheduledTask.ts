@@ -14,6 +14,7 @@ import {
 
 const createScheduledTaskTool: AgentTool = {
   name: 'create_scheduled_task',
+  title: '创建定时任务',
   description:
     '创建一个定时任务：延迟指定毫秒数后自动执行某个系统功能工具（如 set_dark_mode、set_font_variant）。delay 默认 0 表示立即执行。',
   parameters: {
@@ -75,6 +76,7 @@ const createScheduledTaskTool: AgentTool = {
 
 const listScheduledTasksTool: AgentTool = {
   name: 'list_scheduled_tasks',
+  title: '列出定时任务',
   description: '列出当前所有定时任务（含执行状态）。',
   parameters: {},
   run: () => {
@@ -96,6 +98,7 @@ const listScheduledTasksTool: AgentTool = {
 
 const cancelScheduledTaskTool: AgentTool = {
   name: 'cancel_scheduled_task',
+  title: '取消定时任务',
   description: '按 id 取消一个尚未执行的定时任务。',
   parameters: {
     id: {

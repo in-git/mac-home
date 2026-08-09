@@ -6,6 +6,7 @@ import type { AgentTool } from '../types';
  */
 export const generalChatTool: AgentTool = {
   name: 'general_chat',
+  title: '通用 AI 对话',
   description: '处理与系统设置无关的通用 AI 对话请求。',
   parameters: {
     query: {

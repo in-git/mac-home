@@ -21,6 +21,8 @@ export interface AgentToolCallResult {
 export interface AgentTool {
   /** 工具唯一名，AI 调用时按此匹配 */
   name: string;
+  /** 工具标题，用于 UI 展示 */
+  title: string;
   /** 给 AI 看的功能描述 */
   description: string;
   /** 参数定义，供 AI 生成调用参数 */
