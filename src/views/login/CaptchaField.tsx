@@ -18,7 +18,7 @@ export function CaptchaField({ value, onChange, base64, onRefresh }: Props) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="图形验证码"
-        className="w-full bg-transparent text-[14px] outline-none placeholder:text-slate-400"
+        className="w-full bg-transparent text-font-md outline-none placeholder:text-slate-400"
       />
       <button
         type="button"

@@ -139,7 +139,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <h2 className="text-[26px] font-semibold tracking-tight text-slate-900 dark:text-white">
             {view === 'login' ? '登录' : '创建账户'}
           </h2>
-          <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-font-sm text-slate-500 dark:text-slate-400">
             {view === 'login'
               ? '欢迎回来，请登录您的账户'
               : '填写信息以注册新账户'}
@@ -153,7 +153,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             onChange={(e) => setAccount(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder="账号"
-            className="w-full bg-transparent text-[14px] outline-none placeholder:text-slate-400"
+            className="w-full bg-transparent text-font-md outline-none placeholder:text-slate-400"
           />
         </AuthField>
 
@@ -164,7 +164,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder={view === 'login' ? '密码' : '设置登录密码'}
-            className="w-full bg-transparent text-[14px] outline-none placeholder:text-slate-400"
+            className="w-full bg-transparent text-font-md outline-none placeholder:text-slate-400"
           />
         </AuthField>
 
@@ -176,7 +176,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         />
 
         {error && (
-          <p className="px-1 text-[12px] text-red-500 dark:text-red-400">
+          <p className="px-1 text-font-sm text-red-500 dark:text-red-400">
             {error}
           </p>
         )}
@@ -185,14 +185,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           type="button"
           disabled={loading}
           onClick={handleSubmit}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] py-3 text-[15px] font-medium text-white shadow-sm transition-all duration-150 hover:bg-[color:var(--accent-hover)] active:scale-[0.985] disabled:opacity-60"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] py-3 text-font-md font-medium text-white shadow-sm transition-all duration-150 hover:bg-[color:var(--accent-hover)] active:scale-[0.985] disabled:opacity-60"
         >
           {loading && <Loader2 size={17} className="animate-spin" />}
           {loading ? '处理中…' : view === 'login' ? '登录' : '注册'}
         </button>
 
         {/* 切换登录 / 注册（非 tabbar，底部文字链接） */}
-        <p className="pt-1 text-center text-[12px] text-slate-400">
+        <p className="pt-1 text-center text-font-sm text-slate-400">
           {view === 'login' ? (
             <>
               还没有账户？{' '}

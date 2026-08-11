@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import type { WidgetProps, WebSite } from '../../types';
 import { siteApi, type SiteItem } from '../../api/site';
 import { WebListItem } from './WebListItem';
-import { WebPreview } from './WebPreview';
 
 interface WebListWidgetProps extends WidgetProps {
   /** 要展示的网页条目列表（手动配置，优先级高于接口拉取） */
@@ -17,8 +16,9 @@ function toSiteItem(site: WebSite): SiteItem {
 }
 
 /**
- * 网页列表组件：拉取（或接收）站点数据，以列表展示，点击后在组件内预览区打开，
- * 同时调用后端 click 接口使点击量 +1。无 websites 时从 /public/site/page 拉取公开站点。
+ * 网页列表组件：拉取（或接收）站点数据，以卡片网格展示，点击后在组件内预览区打开，
+ * 同时提供「直接访问」外链入口并调用后端 click 接口使点击量 +1。
+ * 无 websites 时从 /public/site/page 拉取公开站点。
  */
 export const WebListWidget: React.FC<WebListWidgetProps> = ({ websites, html }) => {
   const [items, setItems] = useState<SiteItem[]>([]);
@@ -56,9 +56,14 @@ export const WebListWidget: React.FC<WebListWidgetProps> = ({ websites, html }) 
       .finally(() => setLoading(false));
   }, [websites]);
 
+  // 选中后切换预览（不额外计次，计次在「直接访问」时触发）
   const handleSelect = (site: SiteItem) => {
     setActive(site);
-    // 点击量 +1：调用后端接口并在本地即时自增反馈
+  };
+
+  // 直接访问：新窗口打开外链 + 调用后端 click 接口使点击量 +1
+  const handleDirectVisit = (site: SiteItem) => {
+    if (site.link) window.open(site.link, '_blank', 'noopener,noreferrer');
     if (site.id) {
       siteApi.recordClick(site.id).catch(() => {});
       setItems((prev) =>
@@ -71,7 +76,7 @@ export const WebListWidget: React.FC<WebListWidgetProps> = ({ websites, html }) 
 
   if (loading && items.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-xs text-slate-400 dark:text-slate-500">
+      <div className="flex h-full w-full items-center justify-center text-font-sm text-slate-400 dark:text-slate-500">
         加载站点中…
       </div>
     );
@@ -79,21 +84,21 @@ export const WebListWidget: React.FC<WebListWidgetProps> = ({ websites, html }) 
 
   return (
     <div className="flex h-full w-full gap-2">
-      {/* 网页列表 */}
-      <div className="flex w-32 shrink-0 flex-col gap-1 overflow-auto pr-1">
-        {items.map((site) => (
-          <WebListItem
-            key={site.id ?? site.link}
-            site={site}
-            active={active?.id === site.id || active?.link === site.link}
-            onSelect={handleSelect}
-          />
-        ))}
+      {/* 网页卡片列表（网格） */}
+      <div className="flex w-48 shrink-0 flex-col gap-2 overflow-auto pr-1">
+        <div className="grid grid-cols-1 gap-2">
+          {items.map((site) => (
+            <WebListItem
+              key={site.id ?? site.link}
+              site={site}
+              active={active?.id === site.id || active?.link === site.link}
+              onSelect={handleSelect}
+              onDirectVisit={handleDirectVisit}
+            />
+          ))}
+        </div>
       </div>
-      {/* 预览区 */}
-      <div className="min-w-0 flex-1 overflow-hidden rounded-lg border border-black/5 dark:border-white/10">
-        <WebPreview url={active?.link ?? null} />
-      </div>
+
     </div>
   );
 };

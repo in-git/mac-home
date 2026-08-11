@@ -10,13 +10,11 @@ import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
 import { useAppInit } from './hooks/useAppInit';
 import { useBwsConnection } from './hooks/useBwsConnection';
-import { useCommandShortcut } from './hooks/useCommandShortcut';
 import { useGreeting } from './hooks/useGreeting';
 import { usePetAutoActivity } from './hooks/usePetAutoActivity';
 import { useThemeVariables } from './hooks/useThemeVariables';
 import { useHomeStore } from './store/useHomeStore';
 import { AddWidgetModal } from './views/AddWidgetModal';
-import { CommandDialog } from './views/CommandDialog';
 import { SettingsModal } from './views/SettingsModal';
 import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
@@ -97,8 +95,6 @@ export default function App() {
     useState<boolean>(false);
   // 图标编辑 Modal 当前编辑的 widget id（null 表示关闭）。
   const [editIconId, setEditIconId] = useState<string | null>(null);
-  // 命令对话框（按 Enter 在屏幕正下方弹出）。
-  const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
 
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] =
@@ -143,18 +139,6 @@ export default function App() {
       targetWidgetId: widgetId,
     });
   };
-
-  // Global "/"-to-open-command-dialog. Ignored when an input/textarea/contenteditable
-  // is focused so it never hijacks typing, and ignored if a modal is already open.
-  // 使用 e.code === 'Slash' 以兼容中文/英文输入法下按 / 键。
-  useCommandShortcut({
-    isCommandOpen,
-    isSpotlightOpen,
-    isWallpaperModalOpen,
-    isAddWidgetModalOpen,
-    isSettingsModalOpen,
-    onOpen: () => setIsCommandOpen(true),
-  });
 
   // Clicking outside <main> (e.g. background/topbar/empty desktop margin outside main) exits edit mode.
   const handleRootClick = (e: React.MouseEvent) => {
@@ -293,12 +277,6 @@ export default function App() {
       <IconEditModal
         widget={widgets.find((w) => w.id === editIconId) ?? null}
         onClose={() => setEditIconId(null)}
-      />
-
-      {/* Command Dialog (opened by pressing Enter) */}
-      <CommandDialog
-        isOpen={isCommandOpen}
-        onClose={() => setIsCommandOpen(false)}
       />
 
       <Toast.Provider placement="top" />

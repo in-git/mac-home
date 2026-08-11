@@ -32,6 +32,8 @@
     --font-sm: 12px;
     --font-md: 14px;
     --font-lg: 16px;
+    /* 最小档：派生自 sm，随字号档位一起缩放，避免小号文字写死像素。 */
+    --font-xs: calc(var(--font-sm) - 2px);
 
     /* 卡片圆角，由设置面板按档位写入（tiny/small/medium/large）。 */
     --card-radius: 24px;
@@ -223,6 +225,10 @@
   .text-font-lg {
     font-size: var(--font-lg);
     line-height: 1.45;
+  }
+  .text-font-xs {
+    font-size: var(--font-xs);
+    line-height: 1.3;
   }
 }
 

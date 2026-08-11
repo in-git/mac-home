@@ -225,6 +225,8 @@ export interface QuickShortcut {
   bgColor?: string;
   imageUrl?: string;
   thumbnailUrl?: string;
+  /** 访问次数，显示在卡片右上角（icon + 数字） */
+  count?: number;
 }
 
 export interface SystemStatus {

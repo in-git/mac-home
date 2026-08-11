@@ -14,7 +14,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Skeleton } from '@heroui/react';
+import { Skeleton, toast } from '@heroui/react';
 import { Modal } from '../components/Modal';
 import { siteApi, SiteCategory, SiteIdentity, SiteItem } from '../api/site';
 import { PRESET_DATA } from '../data/presetData';
@@ -192,15 +192,34 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       bgColor: item.background || 'bg-slate-800 text-white',
       imageUrl: item.cover || item.logo,
       thumbnailUrl: item.logo,
+      count: item.count ?? 0,
     };
     setShortcuts((prev) => [...prev, shortcut]);
     siteApi.recordClick(item.id).catch(() => {});
-    setShowAdd(false);
+    // 不关闭弹窗，用全局 Toast 显示添加成功提示
+    toast.success(`已添加「${item.name || '未命名'}」到快捷导航`);
+  };
+
+  // 在外部打开站点链接
+  const handleOpenSite = (item: SiteItem) => {
+    if (item.link) window.open(item.link, '_blank', 'noreferrer');
+    playSound.playClick();
   };
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setShortcuts((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  // 点击卡片在外部打开，并本地递增访问次数（与「添加」逻辑互不冲突）
+  const handleOpen = (s: QuickShortcut) => {
+    playSound.playClick();
+    setShortcuts((prev) =>
+      prev.map((item) =>
+        item.id === s.id ? { ...item, count: (item.count ?? 0) + 1 } : item,
+      ),
+    );
   };
 
   const isImageShortcut = (s: QuickShortcut) => !!s.thumbnailUrl || !!s.imageUrl;
@@ -303,7 +322,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
             {/* Identity filter */}
             {identities.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="text-slate-400 text-[11px] mr-1">身份</span>
+                <span className="text-slate-400 text-font-xs mr-1">身份</span>
                 <button
                   onClick={() => setSelectedIdentity('')}
                   className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
@@ -333,7 +352,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
             {/* Category filter */}
             {categories.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="text-slate-400 text-[11px] mr-1">分类</span>
+                <span className="text-slate-400 text-font-xs mr-1">分类</span>
                 <button
                   onClick={() => setSelectedCat('')}
                   className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
@@ -370,13 +389,13 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                 {items.map((item) => {
                   const imgSrc = item.cover || item.logo;
                   return (
-                    <button
+                    <div
                       key={item.id}
-                      onClick={() => handleAddFromSite(item)}
-                      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40 transition-all bg-white dark:bg-white/5 min-h-[160px]"
-                      title={item.name}
+                      onClick={() => handleOpenSite(item)}
+                      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40 transition-all bg-white dark:bg-white/5 min-h-[160px] cursor-pointer"
+                      title={`打开 ${item.name}`}
                     >
-                      <div className="aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                      <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                         {imgSrc ? (
                           <img
                             src={imgSrc}
@@ -392,29 +411,36 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                             {(item.name || '?').charAt(0).toUpperCase()}
                           </div>
                         )}
+                        {item.count !== undefined && item.count > 0 && (
+                          <span className="absolute top-1 right-1 flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/45 text-white text-font-xs font-medium leading-none shadow-sm backdrop-blur-sm">
+                            <ExternalLink size={8} />
+                            {item.count > 999 ? '999+' : item.count}
+                          </span>
+                        )}
                       </div>
                       <div className="p-2 text-left">
                         <p className="truncate text-xs font-semibold text-slate-800 dark:text-slate-100">
                           {item.name}
                         </p>
                         {item.des && (
-                          <p className="truncate text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          <p className="truncate text-font-xs text-slate-500 dark:text-slate-400 mt-0.5">
                             {item.des}
                           </p>
                         )}
-                        {item.count !== undefined && item.count > 0 && (
-                          <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
-                            <ExternalLink size={8} />
-                            {item.count} 次访问
-                          </p>
-                        )}
                       </div>
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-colors opacity-0 group-hover:opacity-100">
-                        <span className="rounded-full bg-[color:var(--accent)] px-3 py-1 text-xs font-medium text-white">
-                          + 添加
-                        </span>
-                      </div>
-                    </button>
+                 
+                      {/* 添加按钮：不关闭弹窗、不触发外部打开 */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddFromSite(item);
+                        }}
+                        className="absolute bottom-2 right-2 p-1.5 rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
+                        title="添加到快捷导航"
+                      >
+                        <Plus size={13} />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -471,7 +497,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
               href={item.url}
               target="_blank"
               rel="noreferrer"
-              onClick={() => playSound.playClick()}
+              onClick={() => handleOpen(item)}
               className="group relative flex flex-col rounded-[var(--card-radius)] transition-colors shadow-xs text-center aspect-square"
             >
               <div className="relative group/icon w-full flex-1">

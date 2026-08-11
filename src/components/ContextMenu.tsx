@@ -196,7 +196,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             >
               <span className="flex items-center space-x-3">
                 <Icon size={18} className="text-[color:var(--accent)]" />
-                <span className="text-[15px]">{item.label}</span>
+                <span className="text-font-md">{item.label}</span>
               </span>
               <span className="text-slate-400 text-lg leading-none">›</span>
             </button>
@@ -208,7 +208,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 onMouseLeave={scheduleCloseBgSubmenu}
                 className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] glass-panel bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/70 dark:border-white/20"
               >
-                <div className="px-1 mb-3 text-[15px] font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
+                <div className="px-1 mb-3 text-font-md font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
                   卡片背景
                 </div>
 
@@ -218,7 +218,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     <button
                       key={tab}
                       onClick={() => setBgTab(tab)}
-                      className={`flex-1 py-2 rounded-[var(--card-radius)] text-[14px] font-semibold transition-colors ${
+                      className={`flex-1 py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
                         bgTab === tab
                           ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow'
                           : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -262,7 +262,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     setBgSubmenuOpen(false);
                     onClose();
                   }}
-                  className="mt-5 w-full rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 py-3 text-[15px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+                  className="mt-5 w-full rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 py-3 text-font-md font-semibold text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
                 >
                   恢复默认（透明）
                 </button>
@@ -291,7 +291,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           }`}
         >
           <Icon size={18} className={item.danger ? '' : 'text-[color:var(--accent)]'} />
-          <span className="text-[15px]">{item.label}</span>
+          <span className="text-font-md">{item.label}</span>
         </button>
         {item.dividerAfter && (
           <div className="my-1 border-t border-black/5 dark:border-white/10" />
@@ -313,22 +313,22 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           left: `${adjustedX}px`,
           width: '272px',
         }}
-        className="fixed z-[70] p-2.5 rounded-[var(--card-radius)] glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-[15px] text-slate-800 dark:text-slate-100 select-none"
+        className="fixed z-[70] p-2.5 rounded-[var(--card-radius)] glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
       >
         {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
         {targetWidget ? (
           <>
             <div className="px-3 py-2 mb-1.5 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
-              <span className="font-bold text-[15px] uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
+              <span className="font-bold text-font-md uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">
                 {targetWidget.title}
               </span>
-              <span className="text-[13px] px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
+              <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
                 {targetWidget.size}
               </span>
             </div>
 
             {/* Widget Size Switching */}
-            <div className="px-3 py-1.5 text-[13px] text-slate-400 font-medium">
+            <div className="px-3 py-1.5 text-font-sm text-slate-400 font-medium">
               调整尺寸
             </div>
             <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
@@ -339,7 +339,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     onResizeWidget(targetWidget.id, sz);
                     onClose();
                   }}
-                  className={`py-1.5 rounded-[var(--card-radius)] text-[14px] font-semibold transition-colors ${
+                  className={`py-1.5 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
                     targetWidget.size === sz
                       ? 'bg-[color:var(--accent)] text-white shadow-md'
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'

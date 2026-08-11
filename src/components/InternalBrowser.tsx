@@ -129,14 +129,14 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
       </div>
 
       {/* 内容区 */}
-      <div className="relative flex-1 bg-white dark:bg-slate-950">
+      <div className="relative flex-1 bg-white dark:bg-slate-950"  onClick={openExternal}>
         {loadError ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-6">
             <p className="text-slate-600 dark:text-slate-300">
               该网站不允许在内部浏览器中嵌入显示。
             </p>
             <button
-              onClick={openExternal}
+             
               className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] transition-colors"
             >
               <ExternalLink size={16} />

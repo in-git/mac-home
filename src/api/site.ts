@@ -16,7 +16,7 @@ export interface SiteIdentity {
 }
 
 export interface SiteItem {
-  id: string;
+  id?: string;
   name: string;
   logo?: string;
   des?: string;
