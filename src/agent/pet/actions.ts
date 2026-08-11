@@ -11,13 +11,22 @@ export interface PetActionResult {
   message: string;
 }
 
+/** 让桌宠说话的参数（在头顶弹出对话气泡） */
+export interface PetSpeakOptions {
+  /** 气泡展示时长（毫秒），默认 5000 */
+  duration?: number;
+}
+
 /** 让桌宠说话（在头顶弹出对话气泡） */
-export function petSpeak(text: string): PetActionResult {
+export function petSpeak(text: string, opts?: PetSpeakOptions): PetActionResult {
   const content = text.trim();
   if (!content) {
     return { ok: false, message: '说话内容不能为空。' };
   }
-  dispatchPetEvent(PET_EVENT_SPEAK, { text: content });
+  dispatchPetEvent(PET_EVENT_SPEAK, {
+    text: content,
+    duration: opts?.duration,
+  });
   return { ok: true, message: `桌宠已说话：「${content}」` };
 }
 

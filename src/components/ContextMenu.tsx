@@ -195,7 +195,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               className={`w-full px-3 py-2.5 rounded-[var(--card-radius)] flex items-center justify-between text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10`}
             >
               <span className="flex items-center space-x-3">
-                <Icon size={18} className="text-[#007AFF]" />
+                <Icon size={18} className="text-[color:var(--accent)]" />
                 <span className="text-[15px]">{item.label}</span>
               </span>
               <span className="text-slate-400 text-lg leading-none">›</span>
@@ -250,7 +250,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       style={{ background: g.gradient }}
                       className={`h-12 rounded-[var(--card-radius)] border-2 transition-all duration-200 hover:scale-110 hover:shadow-lg ${
                         targetWidget.background === g.gradient
-                          ? 'border-[#007AFF] ring-4 ring-[#007AFF]/40'
+                          ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
                           : 'border-white/50 dark:border-white/15'
                       }`}
                     />
@@ -290,7 +290,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               : 'hover:bg-black/5 dark:hover:bg-white/10'
           }`}
         >
-          <Icon size={18} className={item.danger ? '' : 'text-[#007AFF]'} />
+          <Icon size={18} className={item.danger ? '' : 'text-[color:var(--accent)]'} />
           <span className="text-[15px]">{item.label}</span>
         </button>
         {item.dividerAfter && (
@@ -341,7 +341,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                   }}
                   className={`py-1.5 rounded-[var(--card-radius)] text-[14px] font-semibold transition-colors ${
                     targetWidget.size === sz
-                      ? 'bg-[#007AFF] text-white shadow-md'
+                      ? 'bg-[color:var(--accent)] text-white shadow-md'
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
                   }`}
                 >

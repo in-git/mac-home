@@ -9,6 +9,7 @@ import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from '../StaticWallpaper';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
+import { THEME_COLORS } from '../../data/options';
 
 interface WallpaperModalProps {
   isOpen: boolean;
@@ -33,17 +34,6 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'dynamic', label: '动态效果', icon: <Palette size={16} /> },
   { id: 'static', label: '静态壁纸', icon: <ImageIcon size={16} /> },
   { id: 'adjust', label: '桌面主题', icon: <SunMedium size={16} /> },
-];
-
-const THEME_COLORS = [
-  '#007AFF',
-  '#FF3B30',
-  '#FF9500',
-  '#FFCC00',
-  '#34C759',
-  '#AF52DE',
-  '#FF2D55',
-  '#5AC8FA',
 ];
 
 export const WallpaperModal: React.FC<WallpaperModalProps> = ({

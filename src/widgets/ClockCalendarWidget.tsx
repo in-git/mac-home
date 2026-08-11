@@ -49,7 +49,7 @@ export const ClockCalendarWidget: React.FC = () => {
       {/* Widget Header */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10 text-xs">
         <div className="flex items-center space-x-2">
-          <Clock size={16} className="text-[#007AFF]" />
+          <Clock size={16} className="text-[color:var(--accent)]" />
           <span className="font-bold tracking-tight">时间 & 日历</span>
         </div>
 
@@ -68,7 +68,7 @@ export const ClockCalendarWidget: React.FC = () => {
       <div className="my-2 flex items-center justify-center">
         {isDigitalMode ? (
           <div className="text-center">
-            <div className="text-lg font-extrabold tracking-tight font-mono text-[#007AFF] drop-shadow-xs">
+            <div className="text-lg font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs">
               {formattedTime}
             </div>
             <div className="text-xs font-medium text-slate-500 mt-1">{formattedDate}</div>
@@ -119,7 +119,7 @@ export const ClockCalendarWidget: React.FC = () => {
                 key={day}
                 className={`p-1 rounded-full font-medium transition-colors ${
                   isToday
-                    ? 'bg-[#007AFF] text-white font-bold shadow-xs'
+                    ? 'bg-[color:var(--accent)] text-white font-bold shadow-xs'
                     : 'hover:bg-black/5 dark:hover:bg-white/10'
                 }`}
               >

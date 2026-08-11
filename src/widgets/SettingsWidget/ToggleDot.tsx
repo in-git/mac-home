@@ -4,7 +4,7 @@ import React from 'react';
 export const ToggleDot: React.FC<{ active: boolean }> = ({ active }) => (
   <span
     className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${
-      active ? 'bg-[#007AFF]' : 'bg-black/15 dark:bg-white/15'
+      active ? 'bg-[color:var(--accent)]' : 'bg-black/15 dark:bg-white/15'
     }`}
   >
     <span

@@ -119,7 +119,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
       <h2 className="text-font-lg font-bold tracking-tight">AI</h2>
 
       {/* 提示 */}
-      <div className="flex items-start space-x-2.5 rounded-[var(--card-radius)] bg-[#007AFF]/10 dark:bg-[#007AFF]/15 p-3 text-xs text-[#007AFF] dark:text-[#5AC8FA]">
+      <div className="flex items-start space-x-2.5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 dark:bg-[color:var(--accent)]/15 p-3 text-xs text-[color:var(--accent)] dark:text-[#5AC8FA]">
         <Sparkles size={15} className="mt-0.5 shrink-0" />
         <span>
           选择厂商并填写 API Key 后，可让本机的 AI
@@ -143,12 +143,12 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
                 onClick={() => handleProviderChange(p.id)}
                 className={`flex items-center justify-between px-3 py-2.5 rounded-[var(--card-radius)] border text-sm font-medium transition-colors active:scale-95 ${
                   active
-                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF] dark:text-white'
+                    ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] dark:text-white'
                     : 'border-black/10 dark:border-white/15 hover:bg-black/[0.03] dark:hover:bg-white/5'
                 }`}
               >
                 <span>{p.label}</span>
-                {active && <Check size={14} className="text-[#007AFF]" />}
+                {active && <Check size={14} className="text-[color:var(--accent)]" />}
               </button>
             );
           })}
@@ -172,7 +172,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
                 value={config.apiKey}
                 onChange={(e) => onChange({ apiKey: e.target.value })}
                 placeholder="sk-...  （留空则使用后端默认通道）"
-                className="w-full pl-9 pr-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
+                className="w-full pl-9 pr-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
               />
             </div>
             {selected?.docs && !isCustom && (
@@ -180,7 +180,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
                 href={selected.docs}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center space-x-1 px-3 py-2.5 rounded-[var(--card-radius)] bg-black/[0.04] dark:bg-white/[0.06] text-xs text-slate-500 hover:text-[#007AFF] transition-colors whitespace-nowrap"
+                className="flex items-center space-x-1 px-3 py-2.5 rounded-[var(--card-radius)] bg-black/[0.04] dark:bg-white/[0.06] text-xs text-slate-500 hover:text-[color:var(--accent)] transition-colors whitespace-nowrap"
                 title="获取 API Key"
               >
                 <ExternalLink size={13} />
@@ -202,7 +202,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
             value={config.baseURL}
             onChange={(e) => onChange({ baseURL: e.target.value })}
             placeholder="https://your-endpoint/v1/chat/completions"
-            className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm font-mono outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
+            className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm font-mono outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
           />
           <p className="mt-2 text-xs text-slate-400">
             例如本地 Ollama：http://localhost:11434/v1/chat/completions
@@ -220,7 +220,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
           value={config.model}
           onChange={(e) => onChange({ model: e.target.value })}
           placeholder="例如 gpt-4o-mini / deepseek-chat / qwen-plus"
-          className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm font-mono outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
+          className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm font-mono outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
         />
         <p className="mt-2 text-xs text-slate-400">
           支持该厂商下的任意模型，可手写填入。
@@ -236,7 +236,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
           <button
             onClick={handleTest}
             disabled={testing || !config.model}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[#007AFF] text-white text-sm font-medium hover:bg-[#0071EB] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
           >
             {testing ? (
               <Loader2 size={15} className="animate-spin" />
@@ -271,12 +271,12 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
               }}
               placeholder="对桌宠说点什么…"
               disabled={chatting}
-              className="flex-1 px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50"
+              className="flex-1 px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400 disabled:opacity-50"
             />
             <button
               onClick={handleChatTest}
               disabled={chatting || !chatInput.trim() || !config.model}
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[#007AFF] text-white text-sm font-medium hover:bg-[#0071EB] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >
               {chatting && <Loader2 size={15} className="animate-spin" />}
               <span>{chatting ? '发送中…' : '发送'}</span>

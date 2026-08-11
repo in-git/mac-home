@@ -177,7 +177,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
       {/* 顶部工具栏：标识与模型名/清空 */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10 shrink-0">
         <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-          <Sparkles size={13} className="text-[#007AFF]" />
+          <Sparkles size={13} className="text-[color:var(--accent)]" />
           <span>AI 助手</span>
         </div>
 
@@ -213,7 +213,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
                   isUser
-                    ? 'bg-[#007AFF] text-white'
+                    ? 'bg-[color:var(--accent)] text-white'
                     : msg.error
                       ? 'bg-red-500 text-white'
                       : 'bg-emerald-500 text-white'
@@ -229,7 +229,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
                 <div
                   className={`p-2.5 rounded-[var(--card-radius)] leading-relaxed break-words whitespace-pre-wrap ${
                     isUser
-                      ? 'bg-[#007AFF] text-white rounded-[var(--card-radius)] shadow-xs'
+                      ? 'bg-[color:var(--accent)] text-white rounded-[var(--card-radius)] shadow-xs'
                       : msg.error
                         ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-[var(--card-radius)] border border-red-200 dark:border-red-800/40'
                         : 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)]'
@@ -252,7 +252,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
               <Bot size={13} />
             </div>
             <div className="px-3 py-2 bg-black/5 dark:bg-white/10 rounded-[var(--card-radius)] rounded-[var(--card-radius)] flex items-center space-x-1.5">
-              <RefreshCw size={12} className="animate-spin text-[#007AFF]" />
+              <RefreshCw size={12} className="animate-spin text-[color:var(--accent)]" />
               <span className="text-slate-500 dark:text-slate-400">
                 正在思考回复中...
               </span>
@@ -270,12 +270,12 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
             onChange={(e) => setInput(e.target.value)}
             placeholder="输入消息，按 Enter 发送..."
             disabled={loading}
-            className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50"
+            className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400 disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
+            className="absolute right-1.5 px-3 py-1.5 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
           >
             <span>发送</span>
             <Send size={11} />

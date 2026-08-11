@@ -38,7 +38,7 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(opt.value)}
             className={`px-3 py-1 rounded-[var(--card-radius)] text-xs transition-colors font-medium ${
               active
-                ? 'bg-white dark:bg-[#3A3A3C] text-[#007AFF] dark:text-white shadow-xs'
+                ? 'bg-white dark:bg-[#3A3A3C] text-[color:var(--accent)] dark:text-white shadow-xs'
                 : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
           >

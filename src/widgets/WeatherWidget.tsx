@@ -367,7 +367,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
       {/* City Header & Selector */}
       <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-2 shrink-0">
-          <MapPin size={14} className="text-[#007AFF]" />
+          <MapPin size={14} className="text-[color:var(--accent)]" />
           <div className="font-bold text-sm tracking-tight whitespace-nowrap">
             {selectedCity
               ? `${selectedCity.name}, ${selectedCity.country}`
@@ -380,7 +380,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
             }}
             title="自动定位到当前位置"
             disabled={locating}
-            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[#007AFF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
+            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
           >
             {locating ? (
               <Loader2 size={13} className="animate-spin" />
@@ -394,7 +394,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
               setRefreshKey((k) => k + 1);
             }}
             title="刷新天气"
-            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[#007AFF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -411,7 +411,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                 }}
                 className={`px-2 py-0.5 rounded-[var(--card-radius)] text-font-sm font-medium transition-colors whitespace-nowrap ${
                   c.id === selectedId
-                    ? 'bg-[#007AFF] text-white shadow-xs'
+                    ? 'bg-[color:var(--accent)] text-white shadow-xs'
                     : 'bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20'
                 }`}
               >
@@ -435,7 +435,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                 setTimeout(() => searchInputRef.current?.focus(), 50);
             }}
             title="添加城市"
-            className="shrink-0 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-[#007AFF] hover:text-white transition-colors"
+            className="shrink-0 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-[color:var(--accent)] hover:text-white transition-colors"
           >
             <Plus size={12} />
           </button>
@@ -479,7 +479,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                 <button
                   key={r.id}
                   onClick={() => addCity(r)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[var(--card-radius)] text-left hover:bg-[#007AFF]/10 transition-colors"
+                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[var(--card-radius)] text-left hover:bg-[color:var(--accent)]/10 transition-colors"
                 >
                   <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
                     {r.name}

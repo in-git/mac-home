@@ -77,7 +77,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
                   value={iconLabel}
                   onChange={(e) => setIconLabel(e.target.value)}
                   placeholder="图标显示名称"
-                  className="mt-1 w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+                  className="mt-1 w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50"
                 />
               </label>
 
@@ -89,7 +89,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
                   value={iconHref}
                   onChange={(e) => setIconHref(e.target.value)}
                   placeholder="https://example.com"
-                  className="mt-1 w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+                  className="mt-1 w-full px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50"
                 />
               </label>
 
@@ -106,7 +106,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
                   type="button"
                   onClick={() => setOpenInApp((v) => !v)}
                   className={`relative w-12 h-7 rounded-full transition-colors shrink-0 ${
-                    openInApp ? 'bg-[#007AFF]' : 'bg-black/15 dark:bg-white/15'
+                    openInApp ? 'bg-[color:var(--accent)]' : 'bg-black/15 dark:bg-white/15'
                   }`}
                 >
                   <span
@@ -127,7 +127,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
               </button>
               <button
                 onClick={save}
-                className="px-4 py-2 rounded-[var(--card-radius)] text-sm font-medium bg-[#007AFF] text-white hover:bg-[#0066d6] transition-colors"
+                className="px-4 py-2 rounded-[var(--card-radius)] text-sm font-medium bg-[color:var(--accent)] text-white hover:bg-[color:var(--accent-hover)] transition-colors"
               >
                 保存
               </button>

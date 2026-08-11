@@ -115,7 +115,7 @@ export const TopBar: React.FC<Props> = ({
         ) : (
           <button
             onClick={() => setIsLoginOpen(true)}
-            className="flex items-center space-x-1 px-2 py-0.5 rounded-[var(--card-radius)] bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF]/20 transition-colors"
+            className="flex items-center space-x-1 px-2 py-0.5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] hover:bg-[color:var(--accent)]/20 transition-colors"
           >
             <UserIcon size={14} />
             <span>登录</span>

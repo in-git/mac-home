@@ -145,7 +145,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="flex items-center justify-between mb-2.5">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
-            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
+            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>字体大小</span>
@@ -163,7 +163,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 }}
                 className={`py-2.5 rounded-[var(--card-radius)] border text-font-md font-bold transition-all active:scale-[0.98] ${
                   active
-                    ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
+                    ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                     : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
                 }`}
               >
@@ -181,7 +181,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="flex items-center justify-between">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
-            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
+            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>圆角</span>

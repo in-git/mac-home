@@ -31,7 +31,7 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     // 监听外部 AI 对话发出的 Speak 事件（定义在 effect 作用域，供注册与卸载共用）
     const handleRoleSpeak = (e: Event) => {
-      const customEvent = e as CustomEvent<{ text: string }>;
+      const customEvent = e as CustomEvent<{ text: string; duration?: number }>;
       if (customEvent.detail?.text) {
         setDialog({
           text: customEvent.detail.text,
@@ -39,11 +39,12 @@ export const RoleCharacterCanvas: React.FC = () => {
         });
 
         if (hideTimerId) clearTimeout(hideTimerId);
-        // AI 回复展示 5 秒后隐藏
+        // 展示指定时长后隐藏，默认 5 秒
+        const duration = Math.max(0, Number(customEvent.detail.duration) || 5000);
         hideTimerId = setTimeout(() => {
           if (isDestroyed) return;
           setDialog((prev) => ({ ...prev, visible: false }));
-        }, 5000);
+        }, duration);
       }
     };
     window.addEventListener('role-dialog-speak', handleRoleSpeak);

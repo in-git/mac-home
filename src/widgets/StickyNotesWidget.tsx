@@ -58,7 +58,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
     glass: {
       bg: 'glass-panel border-white/40 dark:border-white/10',
       text: 'text-slate-900 dark:text-slate-100',
-      accent: 'bg-[#007AFF]',
+      accent: 'bg-[color:var(--accent)]',
     },
   };
 
@@ -145,7 +145,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
               }}
               className={`px-2.5 py-1 rounded-[var(--card-radius)] font-medium truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
                 activeNoteId === n.id
-                  ? 'bg-[#007AFF] text-white shadow-xs'
+                  ? 'bg-[color:var(--accent)] text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
               }`}
             >
@@ -157,7 +157,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
 
         <button
           onClick={handleAddNote}
-          className="p-1.5 rounded-[var(--card-radius)] bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs transition-transform active:scale-95 shrink-0"
+          className="p-1.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white hover:bg-[color:var(--accent-hover)] shadow-xs transition-transform active:scale-95 shrink-0"
           title="新建便签"
         >
           <Plus size={14} />
@@ -218,7 +218,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
                     }}
                     className={`w-3.5 h-3.5 rounded-full border border-black/10 transition-transform ${
                       colorStyles[c].accent
-                    } ${activeNote.color === c ? 'scale-125 ring-2 ring-[#007AFF]' : 'hover:scale-110'}`}
+                    } ${activeNote.color === c ? 'scale-125 ring-2 ring-[color:var(--accent)]' : 'hover:scale-110'}`}
                   />
                 ))}
               </div>
@@ -249,7 +249,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
                     {item.completed ? (
                       <CheckSquare
                         size={14}
-                        className="text-[#007AFF] shrink-0"
+                        className="text-[color:var(--accent)] shrink-0"
                       />
                     ) : (
                       <Square size={14} className="text-slate-400 shrink-0" />

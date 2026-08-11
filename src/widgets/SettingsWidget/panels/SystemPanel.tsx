@@ -48,7 +48,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             <span
               className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
                 soundEnabled
-                  ? 'bg-[#007AFF] text-white'
+                  ? 'bg-[color:var(--accent)] text-white'
                   : 'bg-black/5 dark:bg-white/10 text-slate-400'
               }`}
             >
@@ -69,7 +69,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
         {/* 导出布局 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-[#007AFF]/15 text-[#007AFF]">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-[color:var(--accent)]/15 text-[color:var(--accent)]">
               <Download size={15} />
             </span>
             <div>
@@ -162,7 +162,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             onClick={() => fileInputRef.current?.click()}
             className={`px-3 py-1.5 rounded-[var(--card-radius)] border border-dashed text-xs font-medium cursor-pointer transition-colors ${
               isDragging
-                ? 'border-[#007AFF] bg-[#007AFF]/10 text-[#007AFF]'
+                ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                 : 'border-black/15 dark:border-white/20 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15'
             }`}
           >

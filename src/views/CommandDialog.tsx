@@ -161,12 +161,12 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
                 rows={2}
                 placeholder="对桌宠说点什么…（Enter 发送，Shift+Enter 换行）"
                 disabled={loading}
-                className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400 disabled:opacity-50 resize-none scrollbar-thin"
+                className="w-full pl-3 pr-20 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400 disabled:opacity-50 resize-none scrollbar-thin"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="absolute right-1.5 bottom-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
+                className="absolute right-1.5 bottom-1.5 px-3 py-1.5 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
               >
                 <span>发送</span>
                 <Send size={11} />
@@ -177,7 +177,7 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
           {/* 输入框下方的 agent 命令列表：点击把 title 填入输入框 */}
           <div className="px-3 pb-3 shrink-0 border-t border-black/5 dark:border-white/10 pt-2">
             <div className="flex items-center space-x-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
-              <Terminal size={12} className="text-[#007AFF]" />
+              <Terminal size={12} className="text-[color:var(--accent)]" />
               <span>Agent 命令</span>
             </div>
             <div className="flex flex-col gap-2 max-h-72 overflow-y-auto scrollbar-thin">
@@ -187,11 +187,11 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
                   type="button"
                   onClick={() => handleCommandClick(tool.title)}
                   title={tool.description}
-                  className="group flex items-start gap-2.5 px-3 py-2.5 rounded-[var(--card-radius)] bg-black/[0.03] dark:bg-white/[0.06] hover:bg-[#007AFF]/10 dark:hover:bg-[#007AFF]/20 transition-colors text-left disabled:opacity-50 disabled:pointer-events-none w-full"
+                  className="group flex items-start gap-2.5 px-3 py-2.5 rounded-[var(--card-radius)] bg-black/[0.03] dark:bg-white/[0.06] hover:bg-[color:var(--accent)]/10 dark:hover:bg-[color:var(--accent)]/20 transition-colors text-left disabled:opacity-50 disabled:pointer-events-none w-full"
                 >
                   <Wrench
                     size={14}
-                    className="text-slate-400 dark:text-slate-500 shrink-0 mt-0.5 group-hover:text-[#007AFF]"
+                    className="text-slate-400 dark:text-slate-500 shrink-0 mt-0.5 group-hover:text-[color:var(--accent)]"
                   />
                   <div className="flex flex-col min-w-0">
                     <span className="text-xs text-slate-800 dark:text-slate-100 font-semibold">

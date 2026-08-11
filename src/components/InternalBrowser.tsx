@@ -113,7 +113,7 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
               navigate(/^https?:\/\//.test(v) ? v : `https://${v}`);
             }
           }}
-          className="flex-1 mx-2 px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+          className="flex-1 mx-2 px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50"
           spellCheck={false}
         />
         <button className={toolBtn} onClick={openExternal} title="在外部浏览器打开">
@@ -137,7 +137,7 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
             </p>
             <button
               onClick={openExternal}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--card-radius)] bg-[#007AFF] text-white text-sm font-medium hover:bg-[#0066d6] transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] transition-colors"
             >
               <ExternalLink size={16} />
               在外部浏览器打开

@@ -39,9 +39,9 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   application: AppWindow,
 };
 
-/** 图标气泡哑光底色（主色以 Apple 蓝 #007AFF 点缀） */
+/** 图标气泡哑光底色（主色以主题色点缀） */
 const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
-  search: 'bg-[#007AFF]/10 text-[#007AFF]',
+  search: 'bg-[color:var(--accent)]/10 text-[color:var(--accent)]',
   'ai-chat': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
   weather: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
   'sticky-notes': 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
@@ -70,7 +70,7 @@ export const AddWidgetModal: React.FC<Props> = ({
       isOpen={isOpen}
       onClose={onClose}
       title="选择添加组件"
-      icon={<Plus size={18} className="text-[#007AFF]" />}
+      icon={<Plus size={18} className="text-[color:var(--accent)]" />}
       maxWidth="max-w-md"
     >
       <div className="p-4 grid grid-cols-3 gap-2">

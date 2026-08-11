@@ -74,7 +74,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
                   title={c.name}
                   className={`relative w-5 h-5 rounded-full transition-transform hover:scale-110 active:scale-95 ${
                     active
-                      ? 'ring-2 ring-offset-2 ring-[#007AFF] dark:ring-white/80'
+                      ? 'ring-2 ring-offset-2 ring-[color:var(--accent)] dark:ring-white/80'
                       : ''
                   }`}
                   style={{ backgroundColor: c.value }}

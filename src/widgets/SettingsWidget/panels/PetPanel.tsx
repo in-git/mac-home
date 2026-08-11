@@ -21,7 +21,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
             <span
               className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
                 enabled
-                  ? 'bg-[#007AFF] text-white'
+                  ? 'bg-[color:var(--accent)] text-white'
                   : 'bg-black/5 dark:bg-white/10 text-slate-400'
               }`}
             >

@@ -162,6 +162,11 @@ export function getStoredToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+/** 是否已登录：存在有效的 token 即视为已登录 */
+export function isLoggedIn(): boolean {
+  return !!getStoredToken();
+}
+
 export function getStoredUser(): LoginUser | null {
   const raw = localStorage.getItem(USER_KEY);
   if (!raw) return null;

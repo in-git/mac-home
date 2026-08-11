@@ -9,6 +9,8 @@ import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
+import { bwsClient, type WsUserOnlineData, type WSMessage } from './api/websocket';
+import { petSpeak } from './agent/pet/actions';
 import { registerWidgetAction } from './data/widgetConfig';
 import { useHomeStore } from './store/useHomeStore';
 import { CARD_RADIUS_PX, FONT_TIER_PX } from './types';
@@ -23,6 +25,16 @@ import { RoleCharacterCanvas } from './widgets/RoleCharacterCanvas';
 
 // 进入页面打招呼只触发一次（module 级 flag，StrictMode 双挂载下也只会发起一次模型请求）
 let greetingDispatchedRef = false;
+
+// Darken a hex color by a percentage (0-100) to produce a hover variant.
+function darkenHex(hex: string, percent: number): string {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, Math.min(255, (num >> 16) - amt));
+  const G = Math.max(0, Math.min(255, ((num >> 8) & 0xff) - amt));
+  const B = Math.max(0, Math.min(255, (num & 0xff) - amt));
+  return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
+}
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -115,6 +127,7 @@ export default function App() {
       root.classList.remove('dark');
     }
     root.style.setProperty('--accent', themeColor);
+    root.style.setProperty('--accent-hover', darkenHex(themeColor, 12));
   }, [isDarkMode, themeColor]);
 
   // Write the three font-size CSS variables directly from the chosen font variant.
@@ -203,6 +216,29 @@ export default function App() {
     return () => window.clearTimeout(timerRef.current);
   }, [petAutoActivity]);
 
+  // B 端 WebSocket 对接：进入界面即建立连接，监听用户上线事件并让桌宠气泡提示。
+  // 文档见 md/B端WebSocket对接文档.md：端点 /bws，心跳 ping/pong，鉴权 token。
+  useEffect(() => {
+    bwsClient.connect();
+
+    const offMessage = bwsClient.onMessage((msg: WSMessage) => {
+      if (msg.type !== 'USER_ONLINE') return;
+      const data = (msg.data ?? {}) as WsUserOnlineData;
+      const name = data.userName || data.account || data.userId || '一位用户';
+      petSpeak(`${name} 上线了，打个招呼吧~`, { duration: 5000 });
+    });
+
+    const offStatus = bwsClient.onStatus((status) => {
+      console.info(`[BWS] 连接状态：${status}`);
+    });
+
+    return () => {
+      offMessage();
+      offStatus();
+      bwsClient.disconnect();
+    };
+  }, []);
+
   // Main Right Click Handler
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -278,7 +314,7 @@ export default function App() {
     <div
       onClick={handleRootClick}
       onContextMenu={handleContextMenu}
-      className="relative h-screen w-full flex flex-col overflow-y-hidden font-sans overflow-x-hidden selection:bg-[#007AFF] selection:text-white"
+      className="relative h-screen w-full flex flex-col overflow-y-hidden font-sans overflow-x-hidden selection:bg-[color:var(--accent)] selection:text-white"
     >
       {/* Dynamic Canvas Background */}
       <DynamicWallpaperCanvas
@@ -333,7 +369,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setIsEditMode(false)}
-              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[#007AFF] hover:bg-blue-600 active:scale-95 text-white text-xs font-semibold rounded-[var(--card-radius)] shadow-lg transition-all"
+              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] active:scale-95 text-white text-xs font-semibold rounded-[var(--card-radius)] shadow-lg transition-all"
             >
               <Check size={14} strokeWidth={2.5} />
               <span>完成</span>

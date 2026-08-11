@@ -19,7 +19,7 @@ export const SEARCH_ENGINES: SearchEngine[] = [
     url: 'https://www.google.com/search?q=%s',
     placeholder: '用 Google 搜索...',
     iconBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-    badgeColor: 'bg-[#007AFF] text-white',
+    badgeColor: 'bg-[color:var(--accent)] text-white',
   },
   {
     id: 'bing',
@@ -84,7 +84,7 @@ export const SearchWidget: React.FC = () => {
       {/* 引擎分段切换器 (Segmented Control 遵循 UI 规范 12px / 10px 圆角与哑光底色) */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-          <Globe size={13} className="text-[#007AFF]" />
+          <Globe size={13} className="text-[color:var(--accent)]" />
           <span>搜索</span>
         </div>
 
@@ -99,7 +99,7 @@ export const SearchWidget: React.FC = () => {
                 onClick={() => handleSelectEngine(engine.id)}
                 className={`px-2.5 py-1 text-xs font-medium rounded-[var(--card-radius)] transition-colors ${
                   isSelected
-                    ? 'bg-white dark:bg-slate-800 text-[#007AFF] shadow-xs'
+                    ? 'bg-white dark:bg-slate-800 text-[color:var(--accent)] shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -123,14 +123,14 @@ export const SearchWidget: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={currentEngine.placeholder}
-            className="w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[#007AFF]/50 placeholder:text-slate-400"
+            className="w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
           />
 
           {/* 右侧直接提交按钮（遵循 UI 规范 严格 2:1 或正方形操作，使用 Apple 蓝） */}
           <button
             type="submit"
             disabled={!query.trim()}
-            className="absolute right-1.5 px-3 py-1.5 bg-[#007AFF] hover:bg-blue-600 text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
+            className="absolute right-1.5 px-3 py-1.5 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] text-white rounded-[var(--card-radius)] text-xs font-medium transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center space-x-1 shadow-xs"
           >
             <span>搜索</span>
             <ArrowRight size={12} />
@@ -150,7 +150,7 @@ export const SearchWidget: React.FC = () => {
           href={currentEngine.url.replace('%s', '')}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center space-x-0.5 hover:text-[#007AFF] transition-colors"
+          className="flex items-center space-x-0.5 hover:text-[color:var(--accent)] transition-colors"
         >
           <span>访问主页</span>
           <ExternalLink size={10} />

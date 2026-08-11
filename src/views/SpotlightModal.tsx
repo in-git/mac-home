@@ -70,7 +70,7 @@ export const SpotlightModal: React.FC<Props> = ({
         >
           {/* Spotlight Search Bar */}
           <div className="flex items-center px-4 py-3.5 border-b border-black/5 dark:border-white/10">
-            <Search size={20} className="text-[#007AFF] shrink-0 mr-3" />
+            <Search size={20} className="text-[color:var(--accent)] shrink-0 mr-3" />
             <input
               type="text"
               autoFocus
@@ -102,7 +102,7 @@ export const SpotlightModal: React.FC<Props> = ({
                         onAddWidget(w.type);
                         onClose();
                       }}
-                      className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[#007AFF] hover:text-white flex items-center space-x-3 transition-colors text-left"
+                      className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[color:var(--accent)] hover:text-white flex items-center space-x-3 transition-colors text-left"
                     >
                       <Icon size={16} />
                       <span className="font-medium">{w.name}</span>
@@ -146,7 +146,7 @@ export const SpotlightModal: React.FC<Props> = ({
                 href={`https://www.baidu.com/s?wd=${encodeURIComponent(query)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[#007AFF] hover:text-white flex items-center justify-between transition-colors text-slate-600 dark:text-slate-300"
+                className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[color:var(--accent)] hover:text-white flex items-center justify-between transition-colors text-slate-600 dark:text-slate-300"
               >
                 <div className="flex items-center space-x-2">
                   <ExternalLink size={14} />

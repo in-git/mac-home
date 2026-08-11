@@ -9,6 +9,11 @@
    and text stays black on a dark background. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --accent: #007AFF;
+  --accent-hover: #0066d6;
+}
+
 @layer base {
   :root {
     --apple-bg: #f5f5f7;

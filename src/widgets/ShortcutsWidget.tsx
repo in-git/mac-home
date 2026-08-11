@@ -44,7 +44,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       key: 'add',
       label: '添加网址',
       icon: <Plus size={13} />,
-      className: 'bg-[#007AFF] text-white hover:bg-blue-600 shadow-xs',
+      className: 'bg-[color:var(--accent)] text-white hover:bg-[color:var(--accent-hover)] shadow-xs',
       onClick: () => {
         setShowAdd(true);
       },
@@ -168,7 +168,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         className="flex items-center justify-between pb-2 mb-2 border-b border-black/5 dark:border-white/10"
       >
         <div className="flex items-center space-x-2">
-          <Compass size={16} className="text-[#007AFF]" />
+          <Compass size={16} className="text-[color:var(--accent)]" />
           <span className="font-bold text-sm tracking-tight">快捷导航</span>
         </div>
 
@@ -211,7 +211,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
           resetAddForm();
         }}
         title="添加快捷网址"
-        icon={<Plus size={16} className="text-[#007AFF]" />}
+        icon={<Plus size={16} className="text-[color:var(--accent)]" />}
         maxWidth="max-w-md"
       >
         <div className="p-6 space-y-4">
@@ -292,7 +292,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
             <button
               type="button"
               onClick={handleAddShortcut}
-              className="px-4 py-1.5 rounded-[var(--card-radius)] bg-[#007AFF] text-white font-medium hover:bg-blue-600 transition-colors"
+              className="px-4 py-1.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white font-medium hover:bg-[color:var(--accent-hover)] transition-colors"
             >
               确定添加
             </button>
