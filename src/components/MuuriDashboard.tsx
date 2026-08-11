@@ -141,33 +141,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
       muuriInstanceRef.current = grid;
 
-      // 首屏布局：关键是不能在 item 尺寸未就绪时就切到 absolute。
-      // 当前 CSS 兜底让 .muuri-item 在加 .muuri-laid-out 之前保持 relative
-      // （走普通文档流，互不重叠）。这里反复轮询测量，直到【所有】item 都
-      // 测到有效宽高（图片/字体/异步组件均已渲染），才一次性切 absolute +
-      // 无动画布局。任何中间态都不会出现 absolute 卡片塌到 (0,0)。
-      let settleTries = 0;
-      const settleTimer = setInterval(() => {
+      // 最小首屏布局：等一帧让 DOM（图片/字体/异步组件）尺寸就绪后，
+      // 一次性切 absolute + 无动画布局。替代原先的 50ms×60 次轮询。
+      const layoutRaf = requestAnimationFrame(() => {
         const container = containerRef.current;
-        if (!container) {
-          clearInterval(settleTimer);
-          return;
-        }
-        const els = Array.from(
-          container.querySelectorAll<HTMLElement>('.muuri-item'),
-        );
-        // 没有 item 时继续等（极少数初始化竞态）。
-        const allMeasured =
-          els.length > 0 &&
-          els.every((el) => el.offsetWidth > 0 && el.offsetHeight > 0);
-        settleTries += 1;
-        if (allMeasured || settleTries >= 60) {
-          // 收尾：清定时器，切 absolute，刷新测量并执行首次布局（无动画）。
-          clearInterval(settleTimer);
-          container.classList.add('muuri-laid-out');
-          grid.refreshItems().layout(true);
-        }
-      }, 50);
+        if (!container || !muuriInstanceRef.current) return;
+        container.classList.add('muuri-laid-out');
+        grid.refreshItems().layout(true);
+      });
 
       // Listen for drag end / reorder events
       grid.on('dragEnd', () => {
@@ -193,18 +174,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         onUpdateWidgetOrder(reorderedWidgets);
       });
 
-      // Window resize layout adjustment
-      const handleResize = () => {
-        if (muuriInstanceRef.current) {
-          muuriInstanceRef.current.refreshItems().layout();
-        }
-      };
-
-      window.addEventListener('resize', handleResize);
-
       cleanupRef.current = () => {
-        clearInterval(settleTimer);
-        window.removeEventListener('resize', handleResize);
+        cancelAnimationFrame(layoutRaf);
         if (muuriInstanceRef.current) {
           muuriInstanceRef.current.destroy();
           muuriInstanceRef.current = null;
