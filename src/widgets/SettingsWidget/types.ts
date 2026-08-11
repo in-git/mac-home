@@ -35,6 +35,4 @@ export interface AIPanelProps {
 export interface PetPanelProps {
   enabled: boolean;
   onToggleEnabled: () => void;
-  interval: number;
-  onIntervalChange: (seconds: number) => void;
 }

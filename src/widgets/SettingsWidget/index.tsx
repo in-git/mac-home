@@ -33,8 +33,6 @@ export const SettingsWidget: React.FC<{
     setAiConfig,
     petAutoActivity,
     setPetAutoActivity,
-    petActivityInterval,
-    setPetActivityInterval,
   } = useHomeStore(
     useShallow((s) => ({
       isDarkMode: s.isDarkMode,
@@ -57,8 +55,6 @@ export const SettingsWidget: React.FC<{
       setAiConfig: s.setAiConfig,
       petAutoActivity: s.petAutoActivity,
       setPetAutoActivity: s.setPetAutoActivity,
-      petActivityInterval: s.petActivityInterval,
-      setPetActivityInterval: s.setPetActivityInterval,
     })),
   );
 
@@ -185,15 +181,13 @@ export const SettingsWidget: React.FC<{
 
       {activeTab === 'ai' && (
         <>
-          <AIPanel config={aiConfig} onChange={setAiConfig} />
+          <PetPanel
+            enabled={petAutoActivity}
+            onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
+          />
 
           <div className="mt-6 pt-5 border-t border-black/5 dark:border-white/10">
-            <PetPanel
-              enabled={petAutoActivity}
-              onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
-              interval={petActivityInterval}
-              onIntervalChange={setPetActivityInterval}
-            />
+            <AIPanel config={aiConfig} onChange={setAiConfig} />
           </div>
         </>
       )}

@@ -50,8 +50,6 @@ interface HomeState {
   petChatHistory: import('../agent/types').AgentChatMessage[];
   // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
   petAutoActivity: boolean;
-  // 桌宠自由活动触发间隔（秒）
-  petActivityInterval: number;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -85,7 +83,6 @@ interface HomeState {
     messages: import('../agent/types').AgentChatMessage[],
   ) => void;
   setPetAutoActivity: (value: boolean) => void;
-  setPetActivityInterval: (seconds: number) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -110,9 +107,8 @@ export const useHomeStore = create<HomeState>()(
       screenBrightness: 100,
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_AI_CONFIG),
       petChatHistory: [],
-      // 默认关闭自由活动（开启会持续消耗模型 token），间隔默认 10 秒
+      // 默认关闭自由活动（开启会持续消耗模型 token）
       petAutoActivity: false,
-      petActivityInterval: 10,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -202,7 +198,6 @@ export const useHomeStore = create<HomeState>()(
           screenBrightness: 100,
           aiConfig: DEFAULT_AI_CONFIG,
           petAutoActivity: false,
-          petActivityInterval: 10,
         });
       },
 
@@ -222,11 +217,6 @@ export const useHomeStore = create<HomeState>()(
         // 统一在 store 层截断到最近 10 轮，超出自动删除最早记录（调用方无需各自处理）
         set({ petChatHistory: messages.slice(-MAX_PET_CHAT_MESSAGES) }),
       setPetAutoActivity: (value) => set({ petAutoActivity: value }),
-      setPetActivityInterval: (seconds) =>
-        // 间隔限制在 5~600 秒之间，避免过密消耗 token 或过稀导致无感
-        set({
-          petActivityInterval: Math.max(5, Math.min(600, Math.round(seconds))),
-        }),
     }),
     {
       name: 'apple-homepage-store',
@@ -243,7 +233,6 @@ export const useHomeStore = create<HomeState>()(
         screenBrightness: state.screenBrightness,
         aiConfig: state.aiConfig,
         petAutoActivity: state.petAutoActivity,
-        petActivityInterval: state.petActivityInterval,
       }),
     },
   ),

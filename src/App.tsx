@@ -65,9 +65,8 @@ export default function App() {
     })),
   );
 
-  // 桌宠自由活动配置（是否开启 + 触发间隔秒数），驱动下面的定时器 effect
+  // 桌宠自由活动配置（是否开启），驱动下面的定时器 effect
   const petAutoActivity = useHomeStore((s) => s.petAutoActivity);
-  const petActivityInterval = useHomeStore((s) => s.petActivityInterval);
 
   const {
     setWidgets,
@@ -160,9 +159,9 @@ export default function App() {
     });
   }, []);
 
-  // 每 petActivityInterval 秒触发一次「模型驱动桌宠自主活动」：把当前设备
-  // 宽度上报给模型，由模型随机决定本次动作（移动 / 跳跃 / 说一句对话问候），
-  // 配合 RoleCharacterCanvas 的物理循环执行。
+  // 模型定时驱动桌宠自主活动：把当前设备宽度上报给模型，由模型随机决定本次
+  // 动作（移动 / 跳跃 / 说一句对话问候），配合 RoleCharacterCanvas 的物理循环执行。
+  // 每次触发后在 10~60 秒之间随机选取下一次延迟，让活动更自然。
   // 仅在设置中开启「宠物 → 自由活动」时运行；busy ref 防止上一次请求
   // 未结束时堆积新一轮请求。
   const petActivityBusyRef = useRef(false);
@@ -192,9 +191,17 @@ export default function App() {
         });
     };
 
-    const timer = setInterval(drivePetActivity, petActivityInterval * 1000);
-    return () => clearInterval(timer);
-  }, [petAutoActivity, petActivityInterval]);
+    // 每次触发后，在 10~60 秒之间随机选取下一次延迟，让桌宠活动更自然。
+    const scheduleNext = () => {
+      const delay = 10000 + Math.random() * 50000; // 10s ~ 60s
+      return window.setTimeout(() => {
+        drivePetActivity();
+        timerRef.current = scheduleNext();
+      }, delay);
+    };
+    const timerRef = { current: scheduleNext() };
+    return () => window.clearTimeout(timerRef.current);
+  }, [petAutoActivity]);
 
   // Main Right Click Handler
   const handleContextMenu = (e: React.MouseEvent) => {
