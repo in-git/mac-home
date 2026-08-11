@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import THEME_OPTIONS from '../../data/options/theme.options';
 import type { WallpaperConfig } from '../../types';
 import {
@@ -80,10 +80,12 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
   );
 
   // 打开面板时定位到当前已应用的主题（若匹配）。
-  // 作为 prop 传给 DepthCarousel，仅在挂载时生效一次。
-  const initialIndex = Math.max(
-    0,
-    THEME_OPTIONS.findIndex((o) => isThemeSelected(o, wallpaper)),
+  // 必须仅在挂载时取值一次：若每次随 wallpaper 变化，会作为新 prop 传入
+  // DepthCarousel → CircularGallery，而 initialIndex 恰在 CircularGallery 的
+  // useEffect 依赖中，会触发 WebGL 场景销毁并异步重建（等待字体加载），
+  // 重建间隙 canvas 被移除 → 卡片白屏。用 useState 惰性初始化锁定初值。
+  const [initialIndex] = useState(() =>
+    Math.max(0, THEME_OPTIONS.findIndex((o) => isThemeSelected(o, wallpaper))),
   );
 
   const items = useMemo(
@@ -99,12 +101,21 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
   const active = THEME_OPTIONS[activeIndex];
   const isApplied = isThemeSelected(active, wallpaper);
 
-  // 滑动/选中过程中 onActiveChange 会跨过多个卡片中心、连续触发，
-  // 若每次都更新全局壁纸会导致背景反复重绘而“闪一下”。
-  // 因此 UI 文字即时更新，而背景应用延迟到选择稳定后（防抖）再执行。
+  // 滑动过程中 onActiveChange 会跨过多张卡片连续触发。
+  // 用 requestAnimationFrame 合并：同一帧内的多次触发只应用最后一次，
+  // 既避免背景反复重绘闪烁，又不像 setTimeout 那样产生 250ms 延迟与白屏。
   const onUpdateRef = useRef(onUpdateWallpaper);
   onUpdateRef.current = onUpdateWallpaper;
-  const applyTimer = useRef<number | undefined>(undefined);
+  const pendingIndex = useRef<number | undefined>(undefined);
+  const applyRaf = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (applyRaf.current !== undefined) {
+        cancelAnimationFrame(applyRaf.current);
+      }
+    };
+  }, []);
 
   return (
     <div>
@@ -132,10 +143,16 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
           showIndicators
           onChange={(index) => {
             setActiveIndex(index);
-            window.clearTimeout(applyTimer.current);
-            applyTimer.current = window.setTimeout(() => {
-              onUpdateRef.current(themeOptionToPatch(THEME_OPTIONS[index]));
-            }, 250);
+            pendingIndex.current = index;
+            if (applyRaf.current === undefined) {
+              applyRaf.current = requestAnimationFrame(() => {
+                applyRaf.current = undefined;
+                const idx = pendingIndex.current;
+                if (idx !== undefined) {
+                  onUpdateRef.current(themeOptionToPatch(THEME_OPTIONS[idx]));
+                }
+              });
+            }
           }}
         />
       </div>

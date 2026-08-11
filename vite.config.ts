@@ -11,6 +11,13 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, 'src'),
       },
     },
+    // sockjs-client / stompjs 等旧 UMD 包在浏览器端引用 Node 的 global，需注入 polyfill
+    define: {
+      global: 'globalThis',
+    },
+    optimizeDeps: {
+      include: ['sockjs-client', 'stompjs'],
+    },
     server: {
     port:14579,
 

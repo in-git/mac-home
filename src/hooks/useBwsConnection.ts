@@ -1,32 +1,28 @@
 import { useEffect } from 'react';
-import { bwsClient, type WSMessage, type WsUserOnlineData } from '../api/websocket';
-import { petSpeak } from '../agent/pet/actions';
+import { bwsClient, WsMessage, WsUserOnlineData } from '../api/websocket';
 
-/**
- * B 端 WebSocket 对接：进入界面即建立连接，监听用户上线事件并让桌宠气泡提示。
- * 文档见 md/B端WebSocket对接文档.md：端点 /bws，心跳 ping/pong，鉴权 token。
- *
- * 订阅与连接的生命周期与挂载它的组件一致：挂载时连接并订阅，卸载时取消订阅
- * 并断开连接，避免重复建连。
- */
+// 监听 SOCKET 推送，处理「用户上线」等业务事件
 export function useBwsConnection() {
   useEffect(() => {
+    const off = bwsClient.onMessage((msg: WsMessage) => {
+      // 仅处理用户上线事件（参照 socket-test.html：module = USER, type = ONLINE）
+      if (msg.module === 'USER' && msg.type === 'ONLINE') {
+        const data = (msg.data ?? {}) as WsUserOnlineData;
+        const name = data.userName || data.account || data.userId || '一位用户';
+
+        // 触发桌宠气泡提示（上线问候）
+        window.dispatchEvent(
+          new CustomEvent('pet-show-bubble', {
+            detail: { text: `${name} 上线了，打个招呼吧~` },
+          }),
+        );
+      }
+    });
+
     bwsClient.connect();
 
-    const offMessage = bwsClient.onMessage((msg: WSMessage) => {
-      if (msg.type !== 'USER_ONLINE') return;
-      const data = (msg.data ?? {}) as WsUserOnlineData;
-      const name = data.userName || data.account || data.userId || '一位用户';
-      petSpeak(`${name} 上线了，打个招呼吧~`, { duration: 5000 });
-    });
-
-    const offStatus = bwsClient.onStatus((status) => {
-      console.info(`[BWS] 连接状态：${status}`);
-    });
-
     return () => {
-      offMessage();
-      offStatus();
+      off();
       bwsClient.disconnect();
     };
   }, []);

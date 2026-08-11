@@ -2,6 +2,7 @@ import {
   Image as ImageIcon,
   Palette,
   SunMedium,
+  RotateCcw,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { WallpaperConfig } from '../../types';
@@ -33,6 +34,44 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'adjust', label: '桌面主题', icon: <SunMedium size={16} /> },
 ];
 
+/** 可微调的滤镜项，集中配置后用 map 渲染，避免重复 JSX */
+type FilterKey =
+  | 'blur'
+  | 'brightness'
+  | 'contrast'
+  | 'saturation'
+  | 'hue'
+  | 'sepia'
+  | 'grayscale'
+  | 'invert';
+
+interface FilterConfig {
+  key: FilterKey;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  /** 缺省时的中性值，同时作为重置值 */
+  fallback: number;
+  /** 数值格式化展示 */
+  format: (value: number) => string;
+}
+
+const FILTERS: FilterConfig[] = [
+  { key: 'blur', label: '桌面模糊', min: 0, max: 40, step: 1, fallback: 0, format: (v) => `${v}px` },
+  { key: 'brightness', label: '亮度', min: 20, max: 120, step: 1, fallback: 100, format: (v) => `${v}%` },
+  { key: 'contrast', label: '对比度', min: 0.5, max: 2, step: 0.05, fallback: 1, format: (v) => v.toFixed(2) },
+  { key: 'saturation', label: '饱和度', min: 0, max: 2, step: 0.05, fallback: 1, format: (v) => v.toFixed(2) },
+  { key: 'hue', label: '色相', min: 0, max: 360, step: 1, fallback: 0, format: (v) => `${v}°` },
+  { key: 'sepia', label: '怀旧', min: 0, max: 1, step: 0.05, fallback: 0, format: (v) => `${Math.round(v * 100)}%` },
+  { key: 'grayscale', label: '灰度', min: 0, max: 1, step: 0.05, fallback: 0, format: (v) => `${Math.round(v * 100)}%` },
+  { key: 'invert', label: '反相', min: 0, max: 1, step: 0.05, fallback: 0, format: (v) => `${Math.round(v * 100)}%` },
+];
+
+const RESET_VALUES = Object.fromEntries(
+  FILTERS.map((f) => [f.key, f.fallback]),
+) as Record<FilterKey, number>;
+
 export const WallpaperModal: React.FC<WallpaperModalProps> = ({
   isOpen,
   onClose,
@@ -56,18 +95,18 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
       <div
         className={`flex min-h-0 flex-1 min-h-[80vh] md:min-h-[60vh] ${contentClassName}`}
       >
-        {/* 竖向 Tab 导航 */}
+        {/* 侧边 Tab 导航：Apple Settings 风格 */}
         <nav
-          className={`flex w-44 shrink-0 flex-col gap-1 border-r border-black/5 p-3 dark:border-white/10 ${navClassName}`}
+          className={`flex w-44 shrink-0 flex-col gap-0.5 border-r border-black/[0.06] bg-black/[0.02] p-2.5 dark:border-white/[0.08] dark:bg-white/[0.02] ${navClassName}`}
         >
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 rounded-[var(--card-radius)] px-3 py-2.5 text-left text-sm transition-colors ${
+              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-left text-[13px] transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-[color:var(--accent)]/15 font-medium text-[color:var(--accent)] dark:text-[color:var(--accent)]'
-                  : 'text-slate-600 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10'
+                  ? 'bg-white font-medium text-[#1d1d1f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-white/10 dark:text-[#f5f5f7]'
+                  : 'text-[#6e6e73] hover:bg-black/[0.04] dark:text-[#aeaeb2] dark:hover:bg-white/[0.06]'
               }`}
             >
               {tab.icon}
@@ -77,7 +116,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
         </nav>
 
         {/* 右侧内容面板 */}
-        <div className="min-w-0 flex-1 overflow-y-auto p-5">
+        <div className="min-w-0 flex-1 overflow-y-auto p-6">
           {activeTab === 'dynamic' ? (
             <DynamicWallpaperSection
               wallpaper={wallpaper}
@@ -91,10 +130,10 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               onUpdateWallpaper={onUpdateWallpaper}
             />
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* 桌面主题：3D 卡片轮播选择 */}
               <section>
-                <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                <h3 className="mb-4 text-base font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">
                   桌面主题
                 </h3>
                 <ThemeCarouselPicker
@@ -104,54 +143,56 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               </section>
 
               {/* 手动微调 */}
-              <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                {/* 模糊调节 */}
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700 dark:text-slate-200">
-                      桌面模糊
-                    </span>
-                    <span className="tabular-nums text-slate-500 dark:text-slate-400">
-                      {wallpaper.blur}px
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0}
-                    max={40}
-                    value={wallpaper.blur}
-                    onChange={(e) =>
-                      onUpdateWallpaper({ blur: Number(e.target.value) })
-                    }
-                    className="w-full accent-[var(--accent)]"
-                  />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">
+                    手动微调
+                  </h3>
+                  <button
+                    onClick={() => onUpdateWallpaper(RESET_VALUES)}
+                    className="flex items-center gap-1 rounded-full bg-black/[0.05] px-3 py-1 text-xs font-medium text-[color:var(--accent)] transition-colors hover:bg-black/[0.08] dark:bg-white/[0.08] dark:hover:bg-white/[0.12]"
+                  >
+                    <RotateCcw size={12} />
+                    重置滤镜
+                  </button>
                 </div>
-
-                {/* 亮度调节 */}
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700 dark:text-slate-200">
-                      亮度
-                    </span>
-                    <span className="tabular-nums text-slate-500 dark:text-slate-400">
-                      {wallpaper.brightness}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={20}
-                    max={120}
-                    value={wallpaper.brightness}
-                    onChange={(e) =>
-                      onUpdateWallpaper({ brightness: Number(e.target.value) })
-                    }
-                    className="w-full accent-[var(--accent)]"
-                  />
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {FILTERS.map((filter) => {
+                    const value = wallpaper[filter.key] ?? filter.fallback;
+                    return (
+                      <div
+                        key={filter.key}
+                        className="rounded-2xl border border-black/[0.06] bg-white/80 p-4 backdrop-blur-sm transition-shadow hover:shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-white/[0.04]"
+                      >
+                        <div className="mb-2 flex items-center justify-between text-[13px]">
+                          <span className="font-medium text-[#1d1d1f] dark:text-[#f5f5f7]">
+                            {filter.label}
+                          </span>
+                          <span className="tabular-nums text-[#6e6e73] dark:text-[#aeaeb2]">
+                            {filter.format(value)}
+                          </span>
+                        </div>
+                        <input
+                          type="range"
+                          min={filter.min}
+                          max={filter.max}
+                          step={filter.step}
+                          value={value}
+                          onChange={(e) =>
+                            onUpdateWallpaper({
+                              [filter.key]: Number(e.target.value),
+                            } as Partial<WallpaperConfig>)
+                          }
+                          className="h-1 w-full cursor-pointer appearance-none rounded-full bg-black/10 accent-[color:var(--accent)] dark:bg-white/20"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 dark:text-slate-500">
-                拖动或点击最前方卡片切换主题，也可用下方滑块手动微调，效果实时作用于桌面背景与顶部菜单栏。
+              <p className="text-xs leading-relaxed text-[#86868b] dark:text-[#86868b]">
+                拖动或点击最前方卡片切换主题，也可用上方滑块手动微调，效果实时作用于桌面背景与顶部菜单栏。
               </p>
             </div>
           )}
