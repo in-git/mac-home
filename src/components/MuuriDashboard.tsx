@@ -45,6 +45,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  // 防止 ResizeObserver 与 Muuri layout 互相触发导致的重新布局死循环。
+  const relayoutScheduledRef = useRef(false);
 
   // Cycle a widget through its available sizes on each click of the green dot.
   const cycleWidgetSize = (widget: WidgetItem) => {
@@ -141,6 +143,50 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
       muuriInstanceRef.current = grid;
 
+      // 卡片内容高度变化（便签输入、图标网格增减、异步组件/图片加载完成等）
+      // 会改变 .muuri-item 的实际高度，但 Muuri 不会自动重新测量，导致框架
+      // 之间的间距 / 位置错乱。用 ResizeObserver 监听每个 item 的尺寸，
+      // 高度变化后重新测量并布局，使框架间距始终与卡片高度保持一致。
+      const ro = new ResizeObserver(() => {
+        const container = containerRef.current;
+        if (
+          muuriInstanceRef.current &&
+          container &&
+          container.classList.contains('muuri-laid-out') &&
+          !relayoutScheduledRef.current
+        ) {
+          // debounce：用 rAF 合并同一帧内的多次尺寸变化，并置标志防止
+          // refreshItems().layout() 触发的尺寸回调再次进入造成死循环。
+          relayoutScheduledRef.current = true;
+          requestAnimationFrame(() => {
+            relayoutScheduledRef.current = false;
+            if (muuriInstanceRef.current) {
+              muuriInstanceRef.current.refreshItems().layout();
+            }
+          });
+        }
+      });
+      // 监听每个已存在 item 的内容元素（尺寸变化来自内层 glass-panel）。
+      const observeItems = () => {
+        containerRef.current
+          ?.querySelectorAll<HTMLElement>('.muuri-item .muuri-item-content')
+          .forEach((el) => ro.observe(el));
+      };
+      observeItems();
+      // 后续 add 进来的 item 也需要在布局后补观察。
+      grid.on('add', () => {
+        observeItems();
+      });
+
+      cleanupRef.current = () => {
+        ro.disconnect();
+        cancelAnimationFrame(layoutRaf);
+        if (muuriInstanceRef.current) {
+          muuriInstanceRef.current.destroy();
+          muuriInstanceRef.current = null;
+        }
+      };
+
       // 最小首屏布局：等一帧让 DOM（图片/字体/异步组件）尺寸就绪后，
       // 一次性切 absolute + 无动画布局。替代原先的 50ms×60 次轮询。
       const layoutRaf = requestAnimationFrame(() => {
@@ -174,13 +220,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         onUpdateWidgetOrder(reorderedWidgets);
       });
 
-      cleanupRef.current = () => {
-        cancelAnimationFrame(layoutRaf);
-        if (muuriInstanceRef.current) {
-          muuriInstanceRef.current.destroy();
-          muuriInstanceRef.current = null;
-        }
-      };
     });
 
     return () => {
