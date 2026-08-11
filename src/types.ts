@@ -214,6 +214,8 @@ export interface QuickShortcut {
   iconName: string;
   category: string;
   bgColor?: string;
+  imageUrl?: string;
+  thumbnailUrl?: string;
 }
 
 export interface SystemStatus {

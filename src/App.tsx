@@ -1,40 +1,26 @@
 import { Check } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Toast } from '@heroui/react';
 import { useShallow } from 'zustand/react/shallow';
-import { initScheduler } from './agent/scheduler';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
-import { bwsClient, type WsUserOnlineData, type WSMessage } from './api/websocket';
-import { petSpeak } from './agent/pet/actions';
-import { registerWidgetAction } from './data/widgetConfig';
+import { useAppInit } from './hooks/useAppInit';
+import { useBwsConnection } from './hooks/useBwsConnection';
+import { useCommandShortcut } from './hooks/useCommandShortcut';
+import { useGreeting } from './hooks/useGreeting';
+import { usePetAutoActivity } from './hooks/usePetAutoActivity';
+import { useThemeVariables } from './hooks/useThemeVariables';
 import { useHomeStore } from './store/useHomeStore';
-import { CARD_RADIUS_PX, FONT_TIER_PX } from './types';
-import { chatWithPet } from './utils/aiClient';
-import { initGlobalSound } from './utils/sound';
 import { AddWidgetModal } from './views/AddWidgetModal';
 import { CommandDialog } from './views/CommandDialog';
 import { SettingsModal } from './views/SettingsModal';
 import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/RoleCharacterCanvas';
-
-// 进入页面打招呼只触发一次（module 级 flag，StrictMode 双挂载下也只会发起一次模型请求）
-let greetingDispatchedRef = false;
-
-// Darken a hex color by a percentage (0-100) to produce a hover variant.
-function darkenHex(hex: string, percent: number): string {
-  const num = parseInt(hex.replace('#', ''), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = Math.max(0, Math.min(255, (num >> 16) - amt));
-  const G = Math.max(0, Math.min(255, ((num >> 8) & 0xff) - amt));
-  const B = Math.max(0, Math.min(255, (num & 0xff) - amt));
-  return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
-}
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -118,126 +104,24 @@ export default function App() {
   const [contextMenuPos, setContextMenuPos] =
     useState<ContextMenuPosition | null>(null);
 
-  // Apply persisted dark mode + theme color + font scale to the document root.
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDarkMode) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    root.style.setProperty('--accent', themeColor);
-    root.style.setProperty('--accent-hover', darkenHex(themeColor, 12));
-  }, [isDarkMode, themeColor]);
-
-  // Write the three font-size CSS variables directly from the chosen font variant.
-  // Depends on fontVariant, so it must stay a separate effect.
-  useEffect(() => {
-    const root = document.documentElement;
-    const t = FONT_TIER_PX[fontVariant];
-    root.style.setProperty('--font-sm', `${t.sm}px`);
-    root.style.setProperty('--font-md', `${t.md}px`);
-    root.style.setProperty('--font-lg', `${t.lg}px`);
-  }, [fontVariant]);
-
-  // Write the card corner-radius CSS variable from the chosen radius tier.
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--card-radius', `${CARD_RADIUS_PX[cardRadius]}px`);
-  }, [cardRadius]);
+  // Apply persisted dark mode + theme color + font scale + card radius to the
+  // document root via CSS variables.
+  useThemeVariables({ isDarkMode, themeColor, fontVariant, cardRadius });
 
   // One-time app startup: register the add-widget action, restore scheduled
   // agent tasks, and wire up global click sound.
   const openWallpaperModal = () => setIsWallpaperModalOpen(true);
-  useEffect(() => {
-    registerWidgetAction('widget-add', () => setIsAddWidgetModalOpen(true));
-    initScheduler();
-    const disposeSound = initGlobalSound();
-    return () => {
-      disposeSound();
-    };
-  }, []);
+  useAppInit({ onOpenAddWidget: () => setIsAddWidgetModalOpen(true) });
 
-  // 进入页面时，给模型发送一条打招呼指令，让模型随机让桌宠说一句问候语。
-  // 仅在首次进入时触发一次（module 级 flag 防止 StrictMode 双执行）。
-  useEffect(() => {
-    if (greetingDispatchedRef) return;
-    greetingDispatchedRef = true;
-    const aiConfig = useHomeStore.getState().aiConfig;
-    const greetingPrompt =
-      '你刚进入用户桌面，请以桌宠的身份随机挑一句简短友好的打招呼用语' +
-      '（10~20 字，语气活泼自然，不要复述指令），直接输出这句话即可。';
-    chatWithPet(aiConfig, greetingPrompt, []).catch((err) => {
-      console.warn('进入页面打招呼失败（忽略）：', err);
-    });
-  }, []);
+  // 进入页面打招呼（仅触发一次）。
+  useGreeting();
 
-  // 模型定时驱动桌宠自主活动：把当前设备宽度上报给模型，由模型随机决定本次
-  // 动作（移动 / 跳跃 / 说一句对话问候），配合 RoleCharacterCanvas 的物理循环执行。
-  // 每次触发后在 10~60 秒之间随机选取下一次延迟，让活动更自然。
-  // 仅在设置中开启「宠物 → 自由活动」时运行；busy ref 防止上一次请求
-  // 未结束时堆积新一轮请求。
-  const petActivityBusyRef = useRef(false);
-  useEffect(() => {
-    if (!petAutoActivity) return;
+  // 桌宠定时自主活动（仅在设置开启时运行）。
+  usePetAutoActivity(petAutoActivity);
 
-    const drivePetActivity = () => {
-      if (petActivityBusyRef.current) return;
-      petActivityBusyRef.current = true;
-      const aiConfig = useHomeStore.getState().aiConfig;
-      const deviceWidth = window.innerWidth;
-      const activityPrompt =
-        `现在是桌宠定时自主活动时刻。当前设备宽度为 ${deviceWidth} 像素。` +
-        '请随机选择以下三种动作之一执行：' +
-        '1) 调用 pet_move 工具让桌宠向左或向右移动一次（方向可自由选择，' +
-        '移动距离请结合设备宽度合理取值，建议 80~300 像素，注意不要移出屏幕）；' +
-        '2) 调用 pet_jump 工具让桌宠跳一下（可偶尔二段跳）；' +
-        '3) 调用 pet_speak 工具，让桌宠随口说一句简短、活泼的对话问候语' +
-        '（10~20 字，符合桌宠身份，不要复述指令）。' +
-        '三种动作随机选取，避免每次固定同一种。';
-      chatWithPet(aiConfig, activityPrompt, [])
-        .catch((err) => {
-          console.warn('定时驱动桌宠自主活动失败（忽略）：', err);
-        })
-        .finally(() => {
-          petActivityBusyRef.current = false;
-        });
-    };
-
-    // 每次触发后，在 10~60 秒之间随机选取下一次延迟，让桌宠活动更自然。
-    const scheduleNext = () => {
-      const delay = 10000 + Math.random() * 50000; // 10s ~ 60s
-      return window.setTimeout(() => {
-        drivePetActivity();
-        timerRef.current = scheduleNext();
-      }, delay);
-    };
-    const timerRef = { current: scheduleNext() };
-    return () => window.clearTimeout(timerRef.current);
-  }, [petAutoActivity]);
-
-  // B 端 WebSocket 对接：进入界面即建立连接，监听用户上线事件并让桌宠气泡提示。
-  // 文档见 md/B端WebSocket对接文档.md：端点 /bws，心跳 ping/pong，鉴权 token。
-  useEffect(() => {
-    bwsClient.connect();
-
-    const offMessage = bwsClient.onMessage((msg: WSMessage) => {
-      if (msg.type !== 'USER_ONLINE') return;
-      const data = (msg.data ?? {}) as WsUserOnlineData;
-      const name = data.userName || data.account || data.userId || '一位用户';
-      petSpeak(`${name} 上线了，打个招呼吧~`, { duration: 5000 });
-    });
-
-    const offStatus = bwsClient.onStatus((status) => {
-      console.info(`[BWS] 连接状态：${status}`);
-    });
-
-    return () => {
-      offMessage();
-      offStatus();
-      bwsClient.disconnect();
-    };
-  }, []);
+  // B 端 WebSocket 对接：监听用户上线事件并让桌宠气泡提示。
+  // 详见 md/B端WebSocket对接文档.md。
+  useBwsConnection();
 
   // Main Right Click Handler
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -263,35 +147,14 @@ export default function App() {
   // Global "/"-to-open-command-dialog. Ignored when an input/textarea/contenteditable
   // is focused so it never hijacks typing, and ignored if a modal is already open.
   // 使用 e.code === 'Slash' 以兼容中文/英文输入法下按 / 键。
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== 'Slash' && e.key !== '/') return;
-      const el = document.activeElement as HTMLElement | null;
-      const typing =
-        !!el &&
-        (el.tagName === 'INPUT' ||
-          el.tagName === 'TEXTAREA' ||
-          el.isContentEditable);
-      if (typing || isCommandOpen) return;
-      if (
-        isSpotlightOpen ||
-        isWallpaperModalOpen ||
-        isAddWidgetModalOpen ||
-        isSettingsModalOpen
-      )
-        return;
-      e.preventDefault();
-      setIsCommandOpen(true);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [
+  useCommandShortcut({
     isCommandOpen,
     isSpotlightOpen,
     isWallpaperModalOpen,
     isAddWidgetModalOpen,
     isSettingsModalOpen,
-  ]);
+    onOpen: () => setIsCommandOpen(true),
+  });
 
   // Clicking outside <main> (e.g. background/topbar/empty desktop margin outside main) exits edit mode.
   const handleRootClick = (e: React.MouseEvent) => {
@@ -400,9 +263,7 @@ export default function App() {
         onClose={() => setIsWallpaperModalOpen(false)}
         wallpaper={wallpaper}
         isDarkMode={isDarkMode}
-        themeColor={themeColor}
         onUpdateWallpaper={updateWallpaper}
-        onUpdateThemeColor={setThemeColor}
         onToggleDarkMode={toggleDarkMode}
       />
 
