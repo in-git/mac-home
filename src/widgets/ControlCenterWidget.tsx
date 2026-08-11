@@ -68,7 +68,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="h-full flex flex-col gap-2 p-2 text-slate-800 dark:text-slate-100">
+    <div className="h-full flex flex-col gap-2 text-slate-800 dark:text-slate-100">
       {/* Module grid: 2 columns of equal square-ish tiles */}
       <div className="grid grid-cols-2 gap-2">
         {/* Location tile */}
@@ -96,7 +96,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
           onClick={() => {
             onToggleDarkMode();
           }}
-          className={`p-4 rounded-[var(--card-radius)] flex flex-col items-center text-center gap-2 transition-all active:scale-[0.98] ${
+          className={`p-4 rounded-[var(--card-radius)] flex flex-col items-center text-center gap-2  active:scale-[0.98] ${
             isDarkMode
               ? 'bg-slate-800 text-amber-300 border border-slate-700 shadow-md'
               : 'glass-panel'
@@ -212,7 +212,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 type="button"
                 onClick={() => setCardRadius(v)}
                 aria-label={CARD_RADIUS_LABEL[v]}
-                className={`flex flex-col items-center gap-1 py-1.5 rounded-lg transition-all active:scale-[0.97] ${
+                className={`flex flex-col items-center gap-1 py-1.5 rounded-lg  active:scale-[0.97] ${
                   active
                     ? ''
                     : 'hover:bg-white/50 dark:hover:bg-white/5'

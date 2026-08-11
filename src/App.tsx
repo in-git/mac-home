@@ -217,7 +217,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setIsEditMode(false)}
-              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] active:scale-95 text-white text-xs font-semibold rounded-[var(--card-radius)] shadow-lg transition-all"
+              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] active:scale-95 text-white text-xs font-semibold rounded-[var(--card-radius)] shadow-lg"
             >
               <Check size={14} strokeWidth={2.5} />
               <span>完成</span>

@@ -34,7 +34,7 @@ export const GlassTabs: React.FC<GlassTabsProps> = ({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(item.id)}
-            className={`flex-1 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${
+            className={`flex-1 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium duration-300 ${
               isActive
                 ? 'bg-white/60 text-[color:var(--accent)] shadow-md shadow-black/10 backdrop-blur-sm dark:bg-white/20 dark:text-white'
                 : 'text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white'

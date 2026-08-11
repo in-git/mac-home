@@ -43,7 +43,7 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd }) => {
   return (
     <div
       onClick={() => onOpen(item)}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40 transition-all bg-white dark:bg-white/5 min-h-[160px] cursor-pointer"
+      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40  bg-white dark:bg-white/5 min-h-[160px] cursor-pointer"
       title={`打开 ${item.name}`}
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -67,7 +67,7 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd }) => {
           </div>
         )}
         {item.count !== undefined && item.count > 0 && (
-          <span className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/55 text-white text-[12px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md transition-all duration-200 group-hover:scale-105 group-hover:bg-black/65">
+          <span className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/55 text-white text-[12px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
             <ExternalLink size={12} className="opacity-90" />
             {item.count > 999 ? '999+' : item.count}
           </span>

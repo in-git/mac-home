@@ -28,24 +28,24 @@ export const DEFAULT_WALLPAPER: WallpaperConfig = {
 /** 渐变 / 静态壁纸预设：每个均带渐变背景（无图时兜底生效） */
 /** 静态图片壁纸预设：带 imageUrl，与渐变兜底预设区分 */
 export const STATIC_IMAGE_WALLPAPERS: PresetStaticWallpaper[] = [
-  {
-    theme: 'light',
-    gradient: 'linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)',
-    imageUrl:
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80',
-  },
-  {
-    theme: 'dark',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    imageUrl:
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-  },
-  {
-    theme: 'light',
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    imageUrl:
-      'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80',
-  },
+  // {
+  //   theme: 'light',
+  //   gradient: 'linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)',
+  //   imageUrl:
+  //     'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80',
+  // },
+  // {
+  //   theme: 'dark',
+  //   gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  //   imageUrl:
+  //     'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+  // },
+  // {
+  //   theme: 'light',
+  //   gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  //   imageUrl:
+  //     'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1920&q=80',
+  // },
 ];
 
 

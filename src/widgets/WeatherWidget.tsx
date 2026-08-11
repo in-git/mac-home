@@ -27,89 +27,10 @@ import {
   searchCity,
   WeatherCity,
 } from '../utils/weatherApi';
+import { useHomeStore } from '../store/useHomeStore';
 
-const STORAGE_KEY = 'weather-cities';
-/** 当前选中城市的 id（持久化，保证下次进入恢复上一次的查看/定位城市） */
-const SELECTED_KEY = 'weather-selected-id';
 /** 首次加载自动定位标记（只自动尝试一次，避免每次刷新都弹授权） */
 const LOCATION_TRIED_KEY = 'weather-location-tried';
-
-const DEFAULT_CITIES: WeatherCity[] = [
-  {
-    id: cityIdOf(23.1291, 113.2644),
-    name: '广州',
-    country: '中国',
-    latitude: 23.1291,
-    longitude: 113.2644,
-  },
-  {
-    id: cityIdOf(31.2304, 121.4737),
-    name: '上海',
-    country: '中国',
-    latitude: 31.2304,
-    longitude: 121.4737,
-  },
-  {
-    id: cityIdOf(39.9042, 116.4074),
-    name: '北京',
-    country: '中国',
-    latitude: 39.9042,
-    longitude: 116.4074,
-  },
-  {
-    id: cityIdOf(22.5431, 114.0579),
-    name: '深圳',
-    country: '中国',
-    latitude: 22.5431,
-    longitude: 114.0579,
-  },
-  {
-    id: cityIdOf(30.2741, 120.1551),
-    name: '杭州',
-    country: '中国',
-    latitude: 30.2741,
-    longitude: 120.1551,
-  },
-];
-
-function loadCities(): WeatherCity[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as WeatherCity[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-  } catch {
-    // 忽略损坏的本地数据
-  }
-  return DEFAULT_CITIES;
-}
-
-function saveCities(cities: WeatherCity[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cities));
-  } catch {
-    // 忽略存储失败
-  }
-}
-
-function loadSelectedId(cities: WeatherCity[]): string {
-  try {
-    const raw = localStorage.getItem(SELECTED_KEY);
-    if (raw && cities.some((c) => c.id === raw)) return raw;
-  } catch {
-    // 忽略损坏的本地数据
-  }
-  return cities[0]?.id ?? '';
-}
-
-function saveSelectedId(id: string) {
-  try {
-    localStorage.setItem(SELECTED_KEY, id);
-  } catch {
-    // 忽略存储失败
-  }
-}
 
 /** 卡片天气汇总，用于同步给顶部状态栏（以卡片为准） */
 export interface WeatherSummary {
@@ -136,8 +57,11 @@ const AQI_LABEL_CN: Record<string, string> = {
 export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => void }> = ({
   onWeatherChange,
 }) => {
-  const [cities, setCities] = useState<WeatherCity[]>(loadCities);
-  const [selectedId, setSelectedId] = useState<string>(() => loadSelectedId(loadCities()));
+  // 城市列表与选中项统一由主页 store（zustand + persist）持久化，避免组件内散落的 localStorage 调用
+  const cities = useHomeStore((s) => s.weatherCities);
+  const selectedId = useHomeStore((s) => s.selectedCityId);
+  const setWeatherCities = useHomeStore((s) => s.setWeatherCities);
+  const setSelectedCityId = useHomeStore((s) => s.setSelectedCityId);
   const [weather, setWeather] = useState<WeatherCondition | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,10 +76,9 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
 
   const selectedCity = cities.find((c) => c.id === selectedId) ?? cities[0];
 
-  /** 切换选中城市并持久化，保证下次进入恢复 */
+  /** 切换选中城市（store 自动持久化，保证下次进入恢复） */
   const selectCity = (id: string) => {
-    setSelectedId(id);
-    saveSelectedId(id);
+    setSelectedCityId(id);
   };
 
   // 加载选中城市的实时天气
@@ -225,23 +148,18 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
           longitude: result.longitude,
         },
       ];
-      setCities(next);
-      saveCities(next);
+      setWeatherCities(next);
     }
-    setSelectedId(id);
-    saveSelectedId(id);
+    setSelectedCityId(id);
     setSearchQuery('');
     setSearchResults([]);
     setSearchOpen(false);
-    
   };
 
   const removeCity = (id: string) => {
     const next = cities.filter((c) => c.id !== id);
     if (next.length === 0) return; // 至少保留一个城市
-    saveCities(next);
-    setCities(next);
-    if (id === selectedId) selectCity(next[0].id);
+    setWeatherCities(next); // store 会自动在被删城市为选中项时回退选中
   };
 
   /** 自动定位：坐标 → 反向解析城市 → 切换到该城市 */
@@ -343,19 +261,55 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
 
   const renderSkeleton = () => (
     <div className="animate-pulse grid grid-cols-1 md:grid-cols-3 gap-3 my-1">
-      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
-        <div className="h-3 w-16 bg-slate-200 dark:bg-white/10 rounded mb-4" />
-        <div className="h-9 w-20 bg-slate-200 dark:bg-white/10 rounded mb-2" />
-        <div className="h-3 w-24 bg-slate-200 dark:bg-white/10 rounded" />
+      {/* 实时天气：对应主卡片（高度与数据卡完全一致） */}
+      <div className="glass-panel p-3.5 rounded-[var(--card-radius)] flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <div className="h-3.5 w-16 bg-slate-200 dark:bg-white/10 rounded" />
+          <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-white/10" />
+        </div>
+        <div className="my-1">
+          <div className="h-7 w-16 bg-slate-200 dark:bg-white/10 rounded" />
+          <div className="h-4 w-14 bg-slate-200 dark:bg-white/10 rounded mt-1.5" />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="h-3.5 w-12 bg-slate-200 dark:bg-white/10 rounded" />
+          <div className="h-3.5 w-12 bg-slate-200 dark:bg-white/10 rounded" />
+        </div>
       </div>
-      <div className="md:col-span-2 glass-panel p-3.5 rounded-[var(--card-radius)]">
-        <div className="h-3 w-20 bg-slate-200 dark:bg-white/10 rounded mb-4" />
+
+      {/* 逐小时预报：对应 col-span-2 卡片 */}
+      <div className="md:col-span-2 glass-panel p-3.5 rounded-[var(--card-radius)] flex flex-col justify-between">
+        <div className="h-3.5 w-20 bg-slate-200 dark:bg-white/10 rounded mb-2" />
         <div className="flex items-center justify-between">
           {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <div className="h-3.5 w-6 bg-slate-200 dark:bg-white/10 rounded" />
+              <div className="w-4 h-4 rounded-full bg-slate-200 dark:bg-white/10" />
+              <div className="h-3 w-6 bg-slate-200 dark:bg-white/10 rounded" />
+            </div>
+          ))}
+        </div>
+        {/* 天气参数(湿度/风速/AQI) */}
+        <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/10 grid grid-cols-3 gap-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-3.5 w-full bg-slate-200 dark:bg-white/10 rounded" />
+          ))}
+        </div>
+      </div>
+
+      {/* 5天预报：对应底部 5 列 */}
+      <div className="md:col-span-3 pt-2 border-t border-black/5 dark:border-white/10">
+        <div className="grid grid-cols-5 gap-1.5 text-center">
+          {[0, 1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="w-8 h-14 bg-slate-200 dark:bg-white/10 rounded"
-            />
+              className="p-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/5 flex flex-col items-center justify-between gap-1"
+            >
+              <div className="h-3.5 w-6 bg-slate-200 dark:bg-white/10 rounded" />
+              <div className="w-3.5 h-3.5 rounded-full bg-slate-200 dark:bg-white/10" />
+              <div className="h-3.5 w-6 bg-slate-200 dark:bg-white/10 rounded" />
+              <div className="h-3.5 w-4 bg-slate-200 dark:bg-white/10 rounded" />
+            </div>
           ))}
         </div>
       </div>

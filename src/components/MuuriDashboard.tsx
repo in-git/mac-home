@@ -17,11 +17,11 @@ import { IconWidget } from '../widgets/IconWidget';
 import { SearchWidget } from '../widgets/SearchWidget';
 import { SettingsWidget } from '../widgets/SettingsWidget';
 import { SettingsModal } from '../views/SettingsModal';
-import { ShortcutsWidget } from '../views/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../widgets/WeatherWidget';
 import { InternalBrowser } from './InternalBrowser';
 import { LoadingOverlay } from './LoadingOverlay';
+import { ShortcutsWidget } from '@/views/ShortcutsWidget';
 
 interface MuuriDashboardProps {
   widgets: WidgetItem[];
@@ -508,7 +508,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             <div
               key={widget.id}
               data-widget-id={widget.id}
-              className={`muuri-item p-3 sm:p-4 z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
+              className={`muuri-item ${widget.size === 'icon-1-16' ? 'p-2' : 'p-3 sm:p-4'} z-10 ${sizeClasses}${widget.id === expandedWidgetId ? ' hidden' : ''}`}
               onContextMenu={(e) => onContextMenuWidget(e, widget.id)}
             >
               {/* Muuri Required Item Content Wrapper */}

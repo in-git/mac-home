@@ -248,7 +248,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                         onClose();
                       }}
                       style={{ background: g.gradient }}
-                      className={`h-12 rounded-[var(--card-radius)] border-2 transition-all duration-200 hover:scale-110 hover:shadow-lg ${
+                      className={`h-12 rounded-[var(--card-radius)] border-2 hover:scale-110 hover:shadow-lg ${
                         targetWidget.background === g.gradient
                           ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
                           : 'border-white/50 dark:border-white/15'

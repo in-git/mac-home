@@ -43,11 +43,7 @@ export const WallpaperCard: React.FC<WallpaperCardProps> = ({
           className="h-full w-full object-cover hover:scale-105 transition-transform"
         />
       )}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
-        <p className="truncate text-left text-font-sm font-medium text-white">
-          {label}
-        </p>
-      </div>
+    
       {isSelected && (
         <span className="absolute inset-0 inline-flex items-center justify-center bg-black/30">
           <span className="rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">

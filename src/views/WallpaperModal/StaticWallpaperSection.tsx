@@ -38,28 +38,35 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
 
   // 加载壁纸分类列表
   useEffect(() => {
-    wallpaperApi
-      .getCategoryList()
-      .then((res) => {
+    (async () => {
+      try {
+        const res = await wallpaperApi.getCategoryList();
         if (Array.isArray(res)) setCategories(res);
-      })
-      .catch(() => {});
+      } catch {
+        // 忽略加载失败
+      }
+    })();
   }, []);
 
   // 加载壁纸列表
-  const fetchWallpapers = (p = 1, cat = selectedCat) => {
+  const fetchWallpapers = async (p = 1, cat = selectedCat) => {
     setLoading(true);
-    wallpaperApi
-      .getPage({ current: p, size: 12, categoryTag: cat || undefined })
-      .then((res) => {
-        if (res && Array.isArray(res.records)) {
-          setItems(res.records);
-          setPage(res.current ?? p);
-          setTotalPages(res.pages ?? 1);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    try {
+      const res = await wallpaperApi.getPage({
+        current: p,
+        size: 12,
+        categoryTag: cat || undefined,
+      });
+      if (res && Array.isArray(res.records)) {
+        setItems(res.records);
+        setPage(res.current ?? p);
+        setTotalPages(res.pages ?? 1);
+      }
+    } catch {
+      // 忽略加载失败
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -220,9 +227,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
       {/* 系统预设：静态图片壁纸 + 渐变兜底壁纸 */}
       {sourceTab === 'preset' && (
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {PRESET_DATA.STATIC_IMAGE_WALLPAPERS.map(renderWallpaperCard)}
-          </div>
+          
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             {PRESET_DATA.STATIC_WALLPAPERS.map(renderWallpaperCard)}
           </div>

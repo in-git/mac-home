@@ -205,3 +205,12 @@ export async function fetchWeather(
 export function cityIdOf(latitude: number, longitude: number): string {
   return `city-${latitude.toFixed(2)}-${longitude.toFixed(2)}`;
 }
+
+/** 天气卡片默认城市（广州/上海/北京/深圳/杭州），首次启动后由 store 的 persist 接管。 */
+export const DEFAULT_WEATHER_CITIES: WeatherCity[] = [
+  { id: cityIdOf(23.1291, 113.2644), name: '广州', country: '中国', latitude: 23.1291, longitude: 113.2644 },
+  { id: cityIdOf(31.2304, 121.4737), name: '上海', country: '中国', latitude: 31.2304, longitude: 121.4737 },
+  { id: cityIdOf(39.9042, 116.4074), name: '北京', country: '中国', latitude: 39.9042, longitude: 116.4074 },
+  { id: cityIdOf(22.5431, 114.0579), name: '深圳', country: '中国', latitude: 22.5431, longitude: 114.0579 },
+  { id: cityIdOf(30.2741, 120.1551), name: '杭州', country: '中国', latitude: 30.2741, longitude: 120.1551 },
+];

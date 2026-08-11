@@ -58,6 +58,8 @@ export type WidgetType =
 
 export type WidgetSize =
   | 'sm' // 1/4
+  | 'fifth' // 1/5
+  | 'sixth' // 1/6
   | 'third' // 1/3
   | 'wide' // 1/2
   | 'large' // 1:1
@@ -77,6 +79,8 @@ export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
   large: '1:1',
   'icon-1-8': '1:8',
   'icon-1-16': '1:16',
+  fifth: '1/5',
+  sixth: '1/6'
 };
 
 // Props shared by every widget component. `editing` reflects whether the

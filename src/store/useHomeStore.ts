@@ -13,6 +13,7 @@ import {
   WidgetSize,
   WidgetType,
 } from '../types';
+import { DEFAULT_WEATHER_CITIES, WeatherCity } from '../utils/weatherApi';
 
 // 桌宠对话历史上限：最多保留 10 轮（每轮 = 1 条 user + 1 条 assistant，
 // 即最多 20 条消息），超出时自动删除最早的记录。
@@ -50,6 +51,10 @@ interface HomeState {
   petChatHistory: import('../agent/types').AgentChatMessage[];
   // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
   petAutoActivity: boolean;
+  // 天气卡片已添加的城市列表（持久化，跟随主页整体存储）
+  weatherCities: WeatherCity[];
+  // 当前选中的天气城市 id（持久化，保证下次进入恢复上次的查看/定位城市）
+  selectedCityId: string;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -83,6 +88,10 @@ interface HomeState {
     messages: import('../agent/types').AgentChatMessage[],
   ) => void;
   setPetAutoActivity: (value: boolean) => void;
+  // 天气城市：整体替换列表（增/删/改后调用），并在被删城市为当前选中时回退选中项
+  setWeatherCities: (cities: WeatherCity[]) => void;
+  // 切换当前选中的天气城市
+  setSelectedCityId: (id: string) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -109,6 +118,10 @@ export const useHomeStore = create<HomeState>()(
       petChatHistory: [],
       // 默认关闭自由活动（开启会持续消耗模型 token）
       petAutoActivity: false,
+      // 天气默认城市（广州/上海/北京/深圳/杭州），首次启动后由 persist 接管
+      weatherCities: DEFAULT_WEATHER_CITIES,
+      // 默认选中第一个城市
+      selectedCityId: DEFAULT_WEATHER_CITIES[0]?.id ?? '',
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -217,6 +230,15 @@ export const useHomeStore = create<HomeState>()(
         // 统一在 store 层截断到最近 10 轮，超出自动删除最早记录（调用方无需各自处理）
         set({ petChatHistory: messages.slice(-MAX_PET_CHAT_MESSAGES) }),
       setPetAutoActivity: (value) => set({ petAutoActivity: value }),
+      setWeatherCities: (cities) =>
+        set((state) => ({
+          weatherCities: cities,
+          // 若被删除的城市恰好是当前选中项，则回退到列表中第一个城市
+          selectedCityId: cities.some((c) => c.id === state.selectedCityId)
+            ? state.selectedCityId
+            : cities[0]?.id ?? '',
+        })),
+      setSelectedCityId: (id) => set({ selectedCityId: id }),
     }),
     {
       name: 'apple-homepage-store',
@@ -233,6 +255,8 @@ export const useHomeStore = create<HomeState>()(
         screenBrightness: state.screenBrightness,
         aiConfig: state.aiConfig,
         petAutoActivity: state.petAutoActivity,
+        weatherCities: state.weatherCities,
+        selectedCityId: state.selectedCityId,
       }),
     },
   ),
