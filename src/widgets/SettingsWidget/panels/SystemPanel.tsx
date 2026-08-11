@@ -1,4 +1,4 @@
-import { AlertDialog, Button } from '@heroui/react';
+import { Button } from '@heroui/react';
 import {
   Download,
   RefreshCw,
@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ToggleDot } from '../ToggleDot';
+import { confirm } from '@/utils/confirm';
 import type { SystemPanelProps } from '../types';
 
 /**
@@ -28,6 +29,15 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
   onResetSystem,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+
+  const handleResetSystem = () =>
+    confirm({
+      title: '重置系统？',
+      body: '将恢复默认布局、墙纸、便签、外观、主题色、点击音效、字号与屏幕亮度等所有设置，此操作不可撤销。',
+      confirmText: '确定重置',
+      danger: true,
+      onConfirm: onResetSystem,
+    });
   return (
     <div className=" px-5 py-6 space-y-6 text-sm">
       {/* 基础系统偏好 */}
@@ -187,41 +197,16 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             </div>
           </span>
 
-          <AlertDialog>
-            <AlertDialog.Trigger
-              className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs font-medium transition-colors ${
-                justResetSystem
-                  ? 'bg-[#28C840]/15 text-[#28C840]'
-                  : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'
-              }`}
-            >
-              <span>{justResetSystem ? '已全部重置' : '重置系统'}</span>
-            </AlertDialog.Trigger>
-            <AlertDialog.Backdrop variant="blur">
-              <AlertDialog.Container>
-                <AlertDialog.Dialog>
-                  <AlertDialog.Header>
-                    <AlertDialog.Heading>重置系统？</AlertDialog.Heading>
-                  </AlertDialog.Header>
-                  <AlertDialog.Body>
-                    将恢复默认布局、墙纸、便签、外观、主题色、点击音效、字号与屏幕亮度等所有设置，此操作不可撤销。
-                  </AlertDialog.Body>
-                  <AlertDialog.Footer>
-                    <Button slot="close" variant="tertiary">
-                      取消
-                    </Button>
-                    <Button
-                      slot="close"
-                      variant="danger"
-                      onPress={onResetSystem}
-                    >
-                      确定重置
-                    </Button>
-                  </AlertDialog.Footer>
-                </AlertDialog.Dialog>
-              </AlertDialog.Container>
-            </AlertDialog.Backdrop>
-          </AlertDialog>
+          <Button
+            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs font-medium transition-colors ${
+              justResetSystem
+                ? 'bg-[#28C840]/15 text-[#28C840]'
+                : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'
+            }`}
+            onPress={handleResetSystem}
+          >
+            {justResetSystem ? '已全部重置' : '重置系统'}
+          </Button>
         </div>
       </div>
     </div>
