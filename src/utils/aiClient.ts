@@ -11,6 +11,7 @@ import type { AIConfig } from '../agent/config/aiConfig';
 import { DEFAULT_AI_CONFIG } from '../agent/config/aiConfig';
 import { executeAgentTool } from '../agent/index';
 import { ChatUtils } from './chatUtils';
+import { request, API_ENDPOINTS } from './request';
 
 // 复用 chatUtils 的系统提示词构建（含真实工具列表与 ReAct 规则）
 const chatUtils = new ChatUtils();
@@ -159,7 +160,27 @@ export async function chatWithPet(
 
     for (let round = 0; round < maxRounds; round++) {
         // 1. 向模型发起对话
-        const raw = await askOnce(config, messages, signal);
+        // 本地大模型（默认 provider=local）走后端 /public/ai/chat 通道，
+        // 与其他 OpenAI 兼容厂商的前端直连区分开：本地通道返回 ollama 风格
+        // 结构（data 内为 ollama 响应的 JSON 字符串），需经 normalizeReply 解析。
+        let raw: string;
+        if (config.provider === 'local') {
+            const payload = {
+                model: config.model?.trim() || undefined,
+                messages: messages.map((m) => ({
+                    role: m.role,
+                    content: m.content,
+                })),
+            };
+            const data = await request.post<string>(
+                API_ENDPOINTS.aiChat,
+                payload,
+                { signal },
+            );
+            raw = chatUtils.normalizeReply(data);
+        } else {
+            raw = await askOnce(config, messages, signal);
+        }
         // 2. 清洗数据，转成可执行结构
         const { tasks, continue: shouldContinue } = parseModelResponse(raw);
 

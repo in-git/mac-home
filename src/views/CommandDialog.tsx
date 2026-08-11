@@ -101,7 +101,6 @@ export const CommandDialog: React.FC<Props> = ({ isOpen, onClose }) => {
       setPetChatHistory(nextHistory);
       // 桌宠气泡由 chatWithPet 内部（执行 ToolTask 时）统一触发，这里不再重复派发
       // 单轮对话完成，给出成功提示（回复通过桌宠头顶气泡显示）
-      toast.success('桌宠已收到，正在处理 ✨');
     } catch (err) {
       const errorMsg: AgentChatMessage = {
         id: 'cmd-err-' + Date.now(),

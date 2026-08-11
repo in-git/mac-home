@@ -1,88 +1,169 @@
-# AI 大模型对接文档
+# Ollama 云端部署 · 对接文档
 
-底座：云端 Ollama 网关 `https://a46120a2561f5ff2c.gz1.agentos-app.net`，`ai.ollama.base-url` 指向它。
+基于 [Ollama](https://github.com/ollama/ollama) 的本地大模型运行时，已通过 AgentOS 发布到公网，并附带一个苹果风格的控制台（对话演示 + 本文档）。
 
-## 一、接口
+> **服务地址**：将下方示例中的 `BASE_URL` 替换为你的分享链接即可。  
+> 所有 Ollama 原生 API 均挂载在 `BASE_URL/api/...` 下。
 
-| 方法 | 路径              | 鉴权         | 说明                          |
-| ---- | ----------------- | ------------ | ----------------------------- |
-| POST | `/public/ai/chat` | 无（免登录） | 多轮对话（同步），Ollama 协议 |
+---
 
-## 二、请求
+## 1. 架构一览
 
-`POST /public/ai/chat`，`Content-Type: application/json`
+```
+公网用户 ──HTTPS──▶ AgentOS 分享链接 (PORT)
+                       │
+                       ▼
+                  FastAPI 网关 (本仓库 ollama-gateway)
+                       │  反向代理 /api/*
+                       ▼
+             Ollama 运行时 (127.0.0.1:11434，仅本机)
+                       │
+                       ▼
+                   本地模型权重 (/root/.ollama)
+```
 
-| 字段       | 类型     | 必填 | 说明                                                    |
-| ---------- | -------- | ---- | ------------------------------------------------------- |
-| `model`    | string   | 否   | 不传走 `ai.ollama.default-model`（默认 `qwen2.5:3b`）    |
-| `messages` | object[] | 是   | 多轮对话需回传完整历史 user/assistant                   |
-| `stream`   | bool     | 否   | 后端强制 `false`，前端传啥都被覆盖                       |
-| `format`   | string   | 否   | `json` 强制 JSON 输出                                   |
-| `options`  | object   | 否   | 模型参数（`temperature`/`top_p`/`top_k`/`num_predict`） |
-| `tools`    | object[] | 否   | 工具调用定义                                            |
+- 原始 Ollama 仅监听本机，外部只能经由网关访问，更安全。
+- 网关同时托管控制台页面（访问分享链接根路径 `/` 即可看到）。
 
-`messages` 单条：
+---
 
-| 字段       | 类型     | 必填 | 说明                                     |
-| ---------- | -------- | ---- | ---------------------------------------- |
-| `role`     | string   | 是   | `system`/`user`/`assistant`/`tool`       |
-| `content`  | string   | 是   | 文本内容                                 |
-| `images`   | string[] | 否   | base64 图片（多模态）                    |
+## 2. 快速开始
 
-```json
-{
+```bash
+# 健康检查
+curl https://a46120a2561f5ff2c.gz1.agentos-app.net/healthz
+
+# 查看版本
+curl https://a46120a2561f5ff2c.gz1.agentos-app.net/api/version
+
+# 列出已加载模型
+curl https://a46120a2561f5ff2c.gz1.agentos-app.net/api/tags
+```
+
+---
+
+## 3. API 速查
+
+| 方法     | 路径                | 说明                        |
+| ------ | ----------------- | ------------------------- |
+| GET    | `/api/version`    | 服务版本                      |
+| POST   | `/api/generate`   | 单次文本生成                    |
+| POST   | `/api/chat`       | 多轮对话（支持 `stream:true` 流式） |
+| POST   | `/api/embeddings` | 文本向量化                     |
+| POST   | `/api/show`       | 查看模型详情 / Modelfile        |
+| DELETE | `/api/delete`     | 删除模型                      |
+
+> 已移除的公开接口：`/api/tags`、`/api/pull`、`/api/ps`。模型管理请在部署机上用 `ollama` CLI 操作。
+
+完整参数见 Ollama 官方文档：<https://github.com/ollama/ollama/blob/main/docs/api.md>
+
+---
+
+## 4. 调用示例
+
+### 4.1 curl
+
+```bash
+# 对话（流式，逐 token 返回）
+curl -N https://a46120a2561f5ff2c.gz1.agentos-app.net/api/chat -d '{
   "model": "qwen2.5:3b",
-  "messages": [{ "role": "user", "content": "你好" }]
-}
+  "messages": [{"role":"user","content":"用一句话解释什么是大模型"}],
+  "stream": true
+}'
+
+# 单次生成
+curl https://a46120a2561f5ff2c.gz1.agentos-app.net/api/generate -d '{
+  "model": "qwen2.5:3b",
+  "prompt": "写一首关于夏天的短诗",
+  "stream": false
+}'
+
+# 向量化
+curl https://a46120a2561f5ff2c.gz1.agentos-app.net/api/embeddings -d '{
+  "model": "qwen2.5:3b",
+  "prompt": "你好，世界"
+}'
 ```
 
-## 三、响应
+### 4.2 Python（标准库即可，无额外依赖）
 
-`data` 是 Ollama 返回的原始 JSON 字符串，前端需 `JSON.parse(res.data)`。
+```python
+import requests
 
-```json
-{
-  "code": 200,
-  "message": "操作成功",
-  "data": "{\"message\":{\"role\":\"assistant\",\"content\":\"你好\"},\"done\":true}"
-}
+BASE = "https://a46120a2561f5ff2c.gz1.agentos-app.net"
+
+# 非流式对话
+r = requests.post(f"{BASE}/api/chat", json={
+    "model": "qwen2.5:3b",
+    "messages": [{"role": "user", "content": "你好"}],
+    "stream": False,
+}, timeout=120)
+print(r.json()["message"]["content"])
+
+# 流式对话
+with requests.post(f"{BASE}/api/chat", json={
+    "model": "qwen2.5:3b",
+    "messages": [{"role": "user", "content": "讲个冷笑话"}],
+    "stream": True,
+}, stream=True, timeout=120) as r:
+    for line in r.iter_lines():
+        if line:
+            print(line)
 ```
 
-解析后关键字段：
+### 4.3 Python（官方 ollama SDK）
 
-| 字段              | 类型     | 说明                       |
-| ----------------- | -------- | -------------------------- |
-| `message.content` | string   | 回复正文                   |
-| `message.tool_calls` | object[] | 工具调用（若有）       |
-| `done`            | bool     | 是否结束                   |
-| `eval_count`      | int      | 生成 token 数              |
+```bash
+pip install ollama
+```
 
-## 四、前端示例
+```python
+from ollama import Client
+
+c = Client(host="https://a46120a2561f5ff2c.gz1.agentos-app.net")
+print(c.chat(model="qwen2.5:3b",
+             messages=[{"role": "user", "content": "你好"}]).message.content)
+```
+
+### 4.4 JavaScript / Node
 
 ```js
-import http from '@/utils/http';
-
-const res = await http.post('/public/ai/chat', {
-  model: 'qwen2.5:3b',
-  messages: [{ role: 'user', content: '你好' }],
+const res = await fetch("https://a46120a2561f5ff2c.gz1.agentos-app.net/api/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    model: "qwen2.5:3b",
+    messages: [{ role: "user", content: "你好" }],
+    stream: false,
+  }),
 });
-const ollamaResp = JSON.parse(res.data);
-console.log(ollamaResp.message?.content);
+const data = await res.json();
+console.log(data.message.content);
 ```
 
-## 五、错误码
+---
 
-| 场景                       | HTTP | `message` 示例                          |
-| -------------------------- | ---- | --------------------------------------- |
-| 网关不可达 / 4xx / 5xx     | 500  | `AI 大模型调用失败: ...`                |
-| 请求体非合法 JSON          | 500  | `请求体不是合法 JSON: ...`              |
-| `ai.ollama.base-url` 未配  | 500  | `AI 大模型 BASE_URL 未配置...`          |
-| 网关业务错误（模型不存在） | 200  | 原样放 `data` 字符串，`code=200`        |
+## 5. 本地自建（可选）
 
-## 六、硬约束
+```bash
+# 1. 安装 Ollama（Linux）
+curl -fsSL https://ollama.com/install.sh | sh
 
-1. 不传 `model` 走 `ai.ollama.default-model`，前端别 hardcode。
-2. 多轮对话保留完整 `messages` 数组（Ollama 无状态）。
-3. `/public/**` 全部免登录，新接口挂此下，勿重复加白名单。
-4. 同步接口 `data` 是字符串，前端 `JSON.parse` 一次。
-5. 超时 300s，loading 文案要友好。
+# 2. 拉取模型
+ollama pull qwen2.5:3b
+
+# 3. 启动网关
+cd ollama-gateway
+pip install -r requirements.txt
+PORT=8000 OLLAMA_HOST=127.0.0.1:11434 bash start.sh
+# 然后访问 http://localhost:8000
+```
+
+---
+
+## 6. 安全提示
+
+- 网关默认**无任何鉴权**，任何拿到分享链接的人都可调用模型并拉取模型。  
+  如需鉴权，请在网关 `main.py` 的代理路由前增加 API Key / 鉴权中间件。
+- 不要在公网暴露原始 Ollama 端口（11434）；本方案已将其限制为本机。
+- 模型权重与对话内容均存储在部署机本地，请注意数据合规。

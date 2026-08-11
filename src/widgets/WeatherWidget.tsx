@@ -111,6 +111,13 @@ function saveSelectedId(id: string) {
   }
 }
 
+/** 卡片天气汇总，用于同步给顶部状态栏（以卡片为准） */
+export interface WeatherSummary {
+  cityName: string;
+  country: string;
+  temp: number | null;
+}
+
 const CONDITION_TEXT: Record<string, string> = {
   sunny: '晴朗',
   cloudy: '多云',
@@ -126,7 +133,9 @@ const AQI_LABEL_CN: Record<string, string> = {
   Unhealthy: '重度',
 };
 
-export const WeatherWidget: React.FC = () => {
+export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => void }> = ({
+  onWeatherChange,
+}) => {
   const [cities, setCities] = useState<WeatherCity[]>(loadCities);
   const [selectedId, setSelectedId] = useState<string>(() => loadSelectedId(loadCities()));
   const [weather, setWeather] = useState<WeatherCondition | null>(null);
@@ -171,6 +180,19 @@ export const WeatherWidget: React.FC = () => {
       cancelled = true;
     };
   }, [selectedId, refreshKey]);
+
+  // 把当前选中城市与天气同步给父级（顶部状态栏以卡片为准）
+  const onWeatherChangeRef = useRef(onWeatherChange);
+  onWeatherChangeRef.current = onWeatherChange;
+  useEffect(() => {
+    const cb = onWeatherChangeRef.current;
+    if (!cb) return;
+    cb({
+      cityName: selectedCity?.name ?? '',
+      country: selectedCity?.country ?? '',
+      temp: weather ? weather.temp : null,
+    });
+  }, [selectedCity, weather]);
 
   // 城市搜索（300ms 防抖）
   useEffect(() => {

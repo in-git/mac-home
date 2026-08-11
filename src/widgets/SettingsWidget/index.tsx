@@ -184,16 +184,18 @@ export const SettingsWidget: React.FC<{
       )}
 
       {activeTab === 'ai' && (
-        <AIPanel config={aiConfig} onChange={setAiConfig} />
-      )}
+        <>
+          <AIPanel config={aiConfig} onChange={setAiConfig} />
 
-      {activeTab === 'pet' && (
-        <PetPanel
-          enabled={petAutoActivity}
-          onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
-          interval={petActivityInterval}
-          onIntervalChange={setPetActivityInterval}
-        />
+          <div className="mt-6 pt-5 border-t border-black/5 dark:border-white/10">
+            <PetPanel
+              enabled={petAutoActivity}
+              onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
+              interval={petActivityInterval}
+              onIntervalChange={setPetActivityInterval}
+            />
+          </div>
+        </>
       )}
     </div>
   );

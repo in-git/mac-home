@@ -20,7 +20,7 @@ import { SettingsWidget } from '../widgets/SettingsWidget';
 import { SettingsModal } from '../views/SettingsModal';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
-import { WeatherWidget } from '../widgets/WeatherWidget';
+import { WeatherWidget, WeatherSummary } from '../widgets/WeatherWidget';
 import { InternalBrowser } from './InternalBrowser';
 import { LoadingOverlay } from './LoadingOverlay';
 
@@ -37,6 +37,8 @@ interface MuuriDashboardProps {
   onToggleDarkMode: () => void;
   /** 是否在 widget 控制栏显示黄色按钮（点击后该 widget 以无头模态框居中显示） */
   enableHeadlessModal?: boolean;
+  /** 卡片天气变化回调（顶部状态栏以卡片为准） */
+  onWeatherChange?: (s: WeatherSummary) => void;
 }
 
 export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
@@ -51,6 +53,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   isDarkMode,
   onToggleDarkMode,
   enableHeadlessModal = true,
+  onWeatherChange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
@@ -98,7 +101,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           <StickyNotesWidget notes={notes} onUpdateNotes={onUpdateNotes} />
         );
       case 'weather':
-        return <WeatherWidget />;
+        return <WeatherWidget onWeatherChange={onWeatherChange} />;
       case 'ai-chat':
         return <AiChatWidget isDarkMode={isDarkMode} />;
       case 'clock':

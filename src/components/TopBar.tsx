@@ -21,6 +21,7 @@ interface Props {
   onToggleEditMode: () => void;
   onOpenWallpaperModal: () => void;
   weatherTemp?: string;
+  weatherCity?: string;
   currentUser?: LoginUser | null;
   onLoginSuccess: (user: LoginUser) => void;
   onLogout: () => void;
@@ -32,7 +33,8 @@ export const TopBar: React.FC<Props> = ({
   isEditMode,
   onToggleEditMode,
   onOpenWallpaperModal,
-  weatherTemp = '26°C',
+  weatherTemp,
+  weatherCity,
   currentUser,
   onLoginSuccess,
   onLogout,
@@ -120,11 +122,16 @@ export const TopBar: React.FC<Props> = ({
           </button>
         )}
 
-        {/* Weather Quick Stat */}
-        <div className="hidden md:flex items-center space-x-1 text-font-sm font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-[var(--card-radius)]">
-          <CloudSun size={13} className="text-amber-500" />
-          <span>上海 {weatherTemp}</span>
-        </div>
+        {/* Weather Quick Stat（位置与温度以天气卡片为准同步） */}
+        {weatherTemp && (
+          <div className="hidden md:flex items-center space-x-1 text-font-sm font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-[var(--card-radius)]">
+            <CloudSun size={13} className="text-amber-500" />
+            <span>
+              {weatherCity ? `${weatherCity} ` : ''}
+              {weatherTemp}
+            </span>
+          </div>
+        )}
 
         {/* Wallpaper Picker Toggle */}
         <button

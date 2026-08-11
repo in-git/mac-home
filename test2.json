@@ -1,9 +1,0 @@
-{
-  "tasks": [
-    {
-      "type": "tool",
-      "content": {"name": "set_dark_mode", "args": {"enabled": true}}
-    }
-  ],
-  "continue": false
-}

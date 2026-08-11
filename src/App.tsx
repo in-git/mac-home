@@ -75,7 +75,6 @@ export default function App() {
     deleteWidget,
     resizeWidget,
     updateWidgetBackground,
-    updateWidget,
   } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
     storeActions;
@@ -261,6 +260,13 @@ export default function App() {
     }
   };
 
+  // 天气状态：以天气卡片为准，同步给顶部状态栏
+  const [weatherInfo, setWeatherInfo] = useState<{
+    cityName: string;
+    country: string;
+    temp: number | null;
+  }>({ cityName: '', country: '', temp: null });
+
   return (
     <div
       onClick={handleRootClick}
@@ -287,6 +293,10 @@ export default function App() {
         currentUser={currentUser}
         onLoginSuccess={handleLoginSuccess}
         onLogout={handleLogout}
+        weatherCity={weatherInfo.cityName || weatherInfo.country}
+        weatherTemp={
+          weatherInfo.temp != null ? `${weatherInfo.temp}°` : undefined
+        }
       />
 
       {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
@@ -308,6 +318,7 @@ export default function App() {
             onUpdateNotes={updateNotes}
             isDarkMode={isDarkMode}
             onToggleDarkMode={toggleDarkMode}
+            onWeatherChange={setWeatherInfo}
           />
 
           {/* 右下角完成按钮（仅在编辑模式展示） */}

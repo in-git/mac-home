@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { AIConfig, CardRadiusTier } from '../../types';
 
-export type SettingsTab = 'appearance' | 'system' | 'ai' | 'pet';
+export type SettingsTab = 'appearance' | 'system' | 'ai';
 
 export interface AppearancePanelProps {
   isDarkMode: boolean;
