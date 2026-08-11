@@ -77,42 +77,45 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const [visibleCount, setVisibleCount] = useState(actions.length);
 
   const fetchSites = useCallback(
-    (p = 1, cat = selectedCat, identity = selectedIdentity, kw = searchKeyword) => {
+    async (p = 1, cat = selectedCat, identity = selectedIdentity, kw = searchKeyword) => {
       setLoading(true);
       const params: Record<string, unknown> = { current: p, size: 12 };
       if (cat) params.categoryId = cat;
       if (identity) params.identityId = identity;
       if (kw) params.searchKey = kw;
-      siteApi
-        .getPage(params as Parameters<typeof siteApi.getPage>[0])
-        .then((res) => {
-          if (res && Array.isArray(res.records)) {
-            setItems(res.records);
-            setPage(res.current ?? p);
-            setTotalPages(res.pages ?? 1);
-          }
-        })
-        .catch(() => {})
-        .finally(() => setLoading(false));
+      try {
+        const res = await siteApi.getPage(
+          params as Parameters<typeof siteApi.getPage>[0],
+        );
+        if (res && Array.isArray(res.records)) {
+          setItems(res.records);
+          setPage(res.current ?? p);
+          setTotalPages(res.pages ?? 1);
+        }
+      } catch {
+        /* noop */
+      } finally {
+        setLoading(false);
+      }
     },
     [selectedCat, selectedIdentity, searchKeyword],
   );
 
   useEffect(() => {
     if (!showAdd) return;
-    siteApi
-      .getIdentityList()
-      .then((res) => {
-        if (Array.isArray(res)) setIdentities(res);
-      })
-      .catch(() => {});
-    siteApi
-      .getCategoryTree()
-      .then((res) => {
-        if (Array.isArray(res)) setCategories(flattenCategories(res));
-      })
-      .catch(() => {});
-    fetchSites(1, '', '', '');
+    (async () => {
+      try {
+        const [identityRes, categoryRes] = await Promise.all([
+          siteApi.getIdentityList(),
+          siteApi.getCategoryTree(),
+        ]);
+        if (Array.isArray(identityRes)) setIdentities(identityRes);
+        if (Array.isArray(categoryRes)) setCategories(flattenCategories(categoryRes));
+        fetchSites(1, '', '', '');
+      } catch {
+        /* noop */
+      }
+    })();
   }, [showAdd]);
 
   useEffect(() => {
@@ -183,10 +186,16 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   };
 
   const handleAddFromSite = (item: SiteItem) => {
+    const url = item.link || '#';
+    // 去重：已存在相同 URL 的快捷项则提示并跳过，避免重复添加
+    if (shortcuts.some((s) => s.url === url)) {
+      toast.warning(`「${item.name || '未命名'}」已在快捷导航中`);
+      return;
+    }
     const shortcut: QuickShortcut = {
       id: `sc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       title: item.name || item.des?.slice(0, 20) || '未命名',
-      url: item.link || '#',
+      url,
       iconName: 'Globe',
       category: item.categoryList?.[0]?.name || item.module || '站点',
       bgColor: item.background || 'bg-slate-800 text-white',
@@ -194,8 +203,17 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       thumbnailUrl: item.logo,
       count: item.count ?? 0,
     };
-    setShortcuts((prev) => [...prev, shortcut]);
-    siteApi.recordClick(item.id).catch(() => {});
+    // 再次以函数式更新兜底，防止极速连点导致的竞态重复
+    setShortcuts((prev) =>
+      prev.some((s) => s.url === url) ? prev : [...prev, shortcut]
+    );
+    void (async () => {
+      try {
+        await siteApi.recordClick(item.id);
+      } catch {
+        /* noop */
+      }
+    })();
     // 不关闭弹窗，用全局 Toast 显示添加成功提示
     toast.success(`已添加「${item.name || '未命名'}」到快捷导航`);
   };
@@ -290,8 +308,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         }}
         title="站点库"
         icon={<Globe size={16} className="text-[color:var(--accent)]" />}
-        maxWidth="max-w-5xl"
-        className="w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw]"
+        className="w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[60vw] min-h-[80vh] md:min-h-[70vh]"
       >
         <div className="flex flex-col h-full max-h-[75vh]">
           {/* Filter Bar */}
@@ -412,8 +429,8 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                           </div>
                         )}
                         {item.count !== undefined && item.count > 0 && (
-                          <span className="absolute top-1 right-1 flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/45 text-white text-font-xs font-medium leading-none shadow-sm backdrop-blur-sm">
-                            <ExternalLink size={8} />
+                          <span className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/55 text-white text-[12px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md transition-all duration-200 group-hover:scale-105 group-hover:bg-black/65">
+                            <ExternalLink size={12} className="opacity-90" />
                             {item.count > 999 ? '999+' : item.count}
                           </span>
                         )}

@@ -51,17 +51,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
         </div>
       </div>
 
-      {/* 触发间隔说明 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
-        <div className="flex items-center justify-between px-4 py-3">
-          <span className="font-medium text-slate-800 dark:text-slate-200">
-            触发间隔
-          </span>
-          <span className="text-sm text-slate-500 dark:text-slate-400">
-            随机 10 ~ 60 秒
-          </span>
-        </div>
-      </div>
+
     </div>
   );
 };

@@ -34,6 +34,8 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
       imageUrl: item.imageUrl || item.thumbnailUrl,
       gradient: item.gradient,
       dynamicPreset: undefined,
+      blur: 0,
+      brightness: 0
     });
   };
 

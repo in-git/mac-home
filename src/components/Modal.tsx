@@ -64,7 +64,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.92, opacity: 0 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`w-full ${maxWidth} glass-panel rounded-[var(--card-radius)] shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 max-h-[85vh] flex flex-col ${className}`}
+            className={` glass-panel rounded-[var(--card-radius)] shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 flex flex-col ${className}`}
           >
             {title && (
               <div className="px-6 py-4 border-b border-black/5 dark:border-white/10 flex items-center justify-between">

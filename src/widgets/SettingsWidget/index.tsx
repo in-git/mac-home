@@ -185,10 +185,7 @@ export const SettingsWidget: React.FC<{
             enabled={petAutoActivity}
             onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
           />
-
-          <div className="mt-6 pt-5 border-t border-black/5 dark:border-white/10">
             <AIPanel config={aiConfig} onChange={setAiConfig} />
-          </div>
         </>
       )}
     </div>
