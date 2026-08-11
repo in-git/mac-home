@@ -445,7 +445,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                           </p>
                         )}
                       </div>
-                 
+
                       {/* 添加按钮：不关闭弹窗、不触发外部打开 */}
                       <button
                         onClick={(e) => {
@@ -554,14 +554,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
             </a>
           ))}
         </div>
-      </div>
-
-      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex justify-between items-center text-font-sm text-slate-400">
-        <span>已关联 {shortcuts.length} 个书签</span>
-        <span className="flex items-center space-x-1">
-          <ExternalLink size={10} />
-          <span>新标签页打开</span>
-        </span>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ import { IconWidget } from '../widgets/IconWidget';
 import { SearchWidget } from '../widgets/SearchWidget';
 import { SettingsWidget } from '../widgets/SettingsWidget';
 import { SettingsModal } from '../views/SettingsModal';
-import { ShortcutsWidget } from '../widgets/ShortcutsWidget';
+import { ShortcutsWidget } from '../views/ShortcutsWidget';
 import { StickyNotesWidget } from '../widgets/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../widgets/WeatherWidget';
 import { InternalBrowser } from './InternalBrowser';

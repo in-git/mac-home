@@ -41,7 +41,7 @@ export interface WidgetTypeConfig {
   onAction?: () => void;
 }
 
-export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
+export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   search: {
     title: '网络搜索',
     maxInstances: Infinity,
@@ -87,15 +87,6 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     glyph: '⏰',
     label: '时钟',
   },
-  shortcuts: {
-    title: '快捷导航',
-    maxInstances: Infinity,
-    defaultSize: 'sm',
-    sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
-    isAddable: true,
-    glyph: '🔗',
-    label: '快捷导航',
-  },
   'control-center': {
     title: '控制中心',
     maxInstances: 1,
@@ -137,9 +128,24 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
   },
 };
 
+/**
+ * 兜底配置：用于未在 WIDGET_CONFIG 中注册的组件类型（例如已迁移为独立视图、
+ * 不从「添加组件」注册但仍可被渲染/添加的 shortcuts）。保证 getWidgetConfig /
+ * canAddWidget 等调用在缺省类型下也能取得合理的 title、sizeOptions、maxInstances。
+ */
+const FALLBACK_CONFIG: WidgetTypeConfig = {
+  title: '组件',
+  maxInstances: Infinity,
+  defaultSize: 'sm',
+  sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
+  isAddable: false,
+  glyph: '🔗',
+  label: '组件',
+};
+
 /** Resolve the config for a widget type (falls back to a safe default). */
 export function getWidgetConfig(type: WidgetType): WidgetTypeConfig {
-  return WIDGET_CONFIG[type];
+  return WIDGET_CONFIG[type] ?? FALLBACK_CONFIG;
 }
 
 /**
@@ -158,7 +164,7 @@ export function executeWidgetAction(type: WidgetType): boolean {
 
 /** Whether another instance of `type` may be added given the current count. */
 export function canAddWidget(type: WidgetType, currentCount: number): boolean {
-  const max = WIDGET_CONFIG[type].maxInstances;
+  const max = getWidgetConfig(type).maxInstances;
   return max === Infinity || currentCount < max;
 }
 

@@ -279,7 +279,7 @@ export default function App() {
         onClose={() => setEditIconId(null)}
       />
 
-      <Toast.Provider placement="top" />
+      <Toast.Provider placement="top" className="z-[200]" />
     </div>
   );
 }
