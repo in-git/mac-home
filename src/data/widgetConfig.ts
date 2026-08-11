@@ -51,15 +51,6 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     glyph: '🔍',
     label: '网络搜索',
   },
-  'ai-chat': {
-    title: 'AI 大模型助手',
-    maxInstances: Infinity,
-    defaultSize: 'large',
-    sizeOptions: SIZE_OPTIONS_LARGE_WIDE,
-    isAddable: true,
-    glyph: '🤖',
-    label: 'AI 聊天',
-  },
   weather: {
     title: '天气预报',
     maxInstances: 1,
@@ -135,13 +126,13 @@ export const WIDGET_CONFIG: Record<WidgetType, WidgetTypeConfig> = {
     showHeader: false,
   },
   application: {
-    title: '迷你应用',
+    title: '网页列表',
     maxInstances: Infinity,
     defaultSize: 'large',
     sizeOptions: ['sm', 'third', 'wide', 'large', 'icon-1-8'],
     isAddable: true,
-    glyph: '🪟',
-    label: '迷你应用',
+    glyph: '🌐',
+    label: '网页列表',
     showHeader: true,
   },
 };

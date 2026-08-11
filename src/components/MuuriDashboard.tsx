@@ -9,8 +9,7 @@ import {
 } from '../data/widgetConfig';
 import { useHomeStore } from '../store/useHomeStore';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
-import { AiChatWidget } from '../widgets/AiChatWidget';
-import { MiniAppWidget } from '../widgets/MiniAppWidget';
+import { WebListWidget } from '../widgets/WebListWidget';
 import { ClockCalendarWidget } from '../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../widgets/ClockWidget';
 import { ControlCenterWidget } from '../widgets/ControlCenterWidget';
@@ -102,8 +101,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         );
       case 'weather':
         return <WeatherWidget onWeatherChange={onWeatherChange} />;
-      case 'ai-chat':
-        return <AiChatWidget isDarkMode={isDarkMode} />;
       case 'clock':
         return <ClockCalendarWidget />;
       case 'clock-mini':
@@ -160,7 +157,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         );
       }
       case 'application': {
-        return <MiniAppWidget html={widget.html} />;
+        return <WebListWidget websites={widget.websites} html={widget.html} />;
       }
       default:
         return null;

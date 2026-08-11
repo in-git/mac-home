@@ -48,7 +48,6 @@ export type WidgetType =
   | 'sticky-notes'
   | 'weather'
   | 'search'
-  | 'ai-chat'
   | 'clock'
   | 'clock-mini'
   | 'shortcuts'
@@ -123,6 +122,16 @@ export interface WidgetItem {
   openInApp?: boolean;
   // 仅 application 组件：直接渲染到 iframe 的 HTML 源码（经 srcDoc 注入）。
   html?: string;
+  // 仅 application（网页列表）组件：要展示的网页条目列表。
+  websites?: WebSite[];
+}
+
+/** 网页列表（application）组件中的单个网页条目 */
+export interface WebSite {
+  /** 站点名称，展示在列表里 */
+  title: string;
+  /** 站点地址，点击后在内置预览区以 iframe 打开 */
+  url: string;
 }
 
 export type WallpaperType = 'dynamic' | 'static';

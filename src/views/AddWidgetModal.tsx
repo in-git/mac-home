@@ -1,7 +1,6 @@
 import {
   AlarmClock,
   AppWindow,
-  Bot,
   Clock,
   CloudSun,
   Compass,
@@ -27,7 +26,6 @@ interface Props {
 /** 每个小组件类型对应的细线性图标（遵循 Apple HIG 细线性图标风格） */
 const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   search: Search,
-  'ai-chat': Bot,
   weather: CloudSun,
   'sticky-notes': StickyNote,
   clock: Clock,
@@ -42,7 +40,6 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
 /** 图标气泡哑光底色（主色以主题色点缀） */
 const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
   search: 'bg-[color:var(--accent)]/10 text-[color:var(--accent)]',
-  'ai-chat': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
   weather: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
   'sticky-notes': 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
   clock: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
