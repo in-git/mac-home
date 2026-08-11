@@ -23,6 +23,8 @@ interface WidgetCardProps {
   onDeleteWidget: (id: string) => void;
   onExpand: (id: string) => void;
   onClick: (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => void;
+  /** 卡片整体右键菜单回调（参数与 App.handleContextMenuWidget 一致：事件 + widgetId）。 */
+  onContextMenuWidget?: (e: React.MouseEvent, widgetId: string) => void;
 }
 
 // 单个 widget 的卡片：外层包裹（供 Muuri 测量） + 玻璃面板（header 控制栏 + 内容区）。
@@ -41,6 +43,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onDeleteWidget,
   onExpand,
   onClick,
+  onContextMenuWidget,
 }) => {
   const sizeClasses = getItemSizeClasses(widget.size);
   const showHeader = widget.showHeader !== false;
@@ -63,6 +66,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
             widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
           onClick={(e) => onClick(e, widget)}
+          onContextMenu={(e) => onContextMenuWidget?.(e, widget.id)}
         >
           {/* Widget Card Title & Control Bar */}
           {showHeader && (

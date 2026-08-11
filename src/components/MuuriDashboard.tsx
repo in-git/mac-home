@@ -130,14 +130,44 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           if (target && target.closest('[data-no-drag]')) return false;
           return true;
         },
+        // 对齐到左上角并启用 fillGaps：卡片从左上角开始排布，松手后自动回填
+        // 上方/中间的空隙，而非固定按原顺序堆叠。
+        layout: {
+          fillGaps: true,
+          alignRight: false,
+          alignBottom: false,
+        },
       });
 
       muuriInstanceRef.current = grid;
 
-      // 切换 item 到绝对定位（CSS 依据此 class），并立即（无动画）执行首次
-      // 布局。两步在同一帧内同步完成，用户看不到任何重叠状态。
-      containerRef.current.classList.add('muuri-laid-out');
-      grid.refreshItems().layout(true);
+      // 首屏布局：关键是不能在 item 尺寸未就绪时就切到 absolute。
+      // 当前 CSS 兜底让 .muuri-item 在加 .muuri-laid-out 之前保持 relative
+      // （走普通文档流，互不重叠）。这里反复轮询测量，直到【所有】item 都
+      // 测到有效宽高（图片/字体/异步组件均已渲染），才一次性切 absolute +
+      // 无动画布局。任何中间态都不会出现 absolute 卡片塌到 (0,0)。
+      let settleTries = 0;
+      const settleTimer = setInterval(() => {
+        const container = containerRef.current;
+        if (!container) {
+          clearInterval(settleTimer);
+          return;
+        }
+        const els = Array.from(
+          container.querySelectorAll<HTMLElement>('.muuri-item'),
+        );
+        // 没有 item 时继续等（极少数初始化竞态）。
+        const allMeasured =
+          els.length > 0 &&
+          els.every((el) => el.offsetWidth > 0 && el.offsetHeight > 0);
+        settleTries += 1;
+        if (allMeasured || settleTries >= 60) {
+          // 收尾：清定时器，切 absolute，刷新测量并执行首次布局（无动画）。
+          clearInterval(settleTimer);
+          container.classList.add('muuri-laid-out');
+          grid.refreshItems().layout(true);
+        }
+      }, 50);
 
       // Listen for drag end / reorder events
       grid.on('dragEnd', () => {
@@ -173,6 +203,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       window.addEventListener('resize', handleResize);
 
       cleanupRef.current = () => {
+        clearInterval(settleTimer);
         window.removeEventListener('resize', handleResize);
         if (muuriInstanceRef.current) {
           muuriInstanceRef.current.destroy();
@@ -235,7 +266,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     }
 
     const timer = setTimeout(() => {
-      if (muuriInstanceRef.current) {
+      // 首屏时若容器尚未切到 absolute（.muuri-laid-out），布局交给初始化
+      // 的 settle 轮询负责，避免 relative 阶段抢先 layout 与首屏布局竞争。
+      const container = containerRef.current;
+      if (
+        muuriInstanceRef.current &&
+        container &&
+        container.classList.contains('muuri-laid-out')
+      ) {
         muuriInstanceRef.current.refreshItems().layout();
       }
     }, 50);
@@ -262,6 +300,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             onDeleteWidget={onDeleteWidget}
             onExpand={setExpandedWidgetId}
             onClick={handleCardClick}
+            onContextMenuWidget={onContextMenuWidget}
           />
         ))}
       </div>
