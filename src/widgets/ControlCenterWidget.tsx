@@ -1,8 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
-import { Select, ListBox } from '@heroui/react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { CARD_RADIUS_LABEL, CardRadiusTier, FONT_VARIANT_LABEL } from '../types';
+import { CARD_RADIUS_LABEL, CARD_RADIUS_PX, FONT_VARIANT_LABEL } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -152,23 +151,37 @@ export const ControlCenterWidget: React.FC<Props> = ({
           </span>
    
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="relative grid grid-cols-3 gap-1 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
+          {/* 苹果风格滑块高亮：跟随选中项移动 */}
+          <span
+            aria-hidden
+            className="absolute top-1 bottom-1 rounded-[calc(var(--card-radius)-4px)] bg-white dark:bg-slate-700 shadow-sm transition-transform duration-200 ease-out"
+            style={{
+              width: 'calc((100% - 0.5rem) / 3)',
+              transform: `translateX(${(['A', 'B', 'C'].indexOf(fontVariant)) * 100}%)`,
+            }}
+          />
           {(['A', 'B', 'C'] as const).map((v) => {
             const active = fontVariant === v;
             return (
-              <button
+              <label
                 key={v}
-                onClick={() => {
-                  setFontVariant(v);
-                }}
-                className={`py-2.5 rounded-[var(--card-radius)] border text-font-md font-bold transition-all active:scale-[0.98] ${
+                className={`relative z-10 py-2 text-font-md font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
                   active
-                    ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
-                    : 'border-black/10 dark:border-white/10 text-slate-500 hover:bg-white/60 dark:hover:bg-white/5'
+                    ? 'text-slate-900 dark:text-white'
+                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                 }`}
               >
+                <input
+                  type="radio"
+                  name="fontVariant"
+                  value={v}
+                  checked={active}
+                  onChange={() => setFontVariant(v)}
+                  className="sr-only"
+                />
                 {FONT_VARIANT_LABEL[v]}
-              </button>
+              </label>
             );
           })}
         </div>
@@ -177,38 +190,52 @@ export const ControlCenterWidget: React.FC<Props> = ({
       {/* bottom spacer: push the dropdown to the screen bottom */}
       <div className="flex-1" />
 
-      {/* Card corner radius: dropdown pinned to the bottom of the screen */}
+      {/* Card corner radius: visual picker pinned to the bottom of the screen */}
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
             <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>圆角</span>
           </span>
-          <Select
-            aria-label="卡片圆角"
-            value={cardRadius}
-            onChange={(key) => {
-              if (key != null) setCardRadius(String(key) as CardRadiusTier);
-            }}
-            variant="secondary"
-            className="w-32"
-          >
-            <Select.Trigger className="bg-black/5 dark:bg-white/10 border-0">
-              <Select.Value />
-              <Select.Indicator />
-            </Select.Trigger>
-            <Select.Popover>
-              <ListBox>
-                {(['tiny', 'small', 'medium', 'large'] as const).map((v) => (
-                  <ListBox.Item key={v} id={v}>
-                    {CARD_RADIUS_LABEL[v]}
-                  </ListBox.Item>
-                ))}
-              </ListBox>
-            </Select.Popover>
-          </Select>
+          <span className="text-font-sm font-mono text-slate-500">
+            {CARD_RADIUS_LABEL[cardRadius]} · {CARD_RADIUS_PX[cardRadius]}px
+          </span>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {(['tiny', 'small', 'medium', 'large'] as const).map((v) => {
+            const active = cardRadius === v;
+            return (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setCardRadius(v)}
+                aria-label={CARD_RADIUS_LABEL[v]}
+                className={`flex flex-col items-center gap-1 py-1.5 rounded-lg transition-all active:scale-[0.97] ${
+                  active
+                    ? ''
+                    : 'hover:bg-white/50 dark:hover:bg-white/5'
+                }`}
+              >
+                <span
+                  className={`w-7 h-7 border border-black/10 dark:border-white/15 transition-colors ${
+                    active
+                      ? 'bg-[color:var(--accent)]'
+                      : 'bg-black/10 dark:bg-white/10'
+                  }`}
+                  style={{ borderRadius: CARD_RADIUS_PX[v] }}
+                />
+                <span
+                  className={`text-font-xs font-bold ${
+                    active ? 'text-[color:var(--accent)]' : 'text-slate-400'
+                  }`}
+                >
+                  {CARD_RADIUS_PX[v]}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

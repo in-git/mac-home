@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import React, { useRef, useState } from 'react';
-import { Toast } from '@heroui/react';
+import { ToastProvider } from './components/Toast';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -158,6 +158,7 @@ export default function App() {
   }>({ cityName: '', country: '', temp: null });
 
   return (
+    <ToastProvider>
     <div
       onClick={handleRootClick}
       onContextMenu={handleContextMenu}
@@ -279,7 +280,7 @@ export default function App() {
         onClose={() => setEditIconId(null)}
       />
 
-      <Toast.Provider placement="top" className="z-[200]" />
     </div>
+    </ToastProvider>
   );
 }
