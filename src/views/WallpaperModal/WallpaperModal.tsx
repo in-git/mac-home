@@ -9,16 +9,13 @@ import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from '../StaticWallpaper';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
-import { THEME_COLORS } from '../../data/options';
 
 interface WallpaperModalProps {
   isOpen: boolean;
   onClose: () => void;
   wallpaper: WallpaperConfig;
   isDarkMode: boolean;
-  themeColor: string;
   onUpdateWallpaper: (patch: Partial<WallpaperConfig>) => void;
-  onUpdateThemeColor: (color: string) => void;
   onToggleDarkMode: () => void;
   /** 追加到 Modal 玻璃卡片上的 Tailwind 类，可覆盖宽度等做响应式 */
   className?: string;
@@ -152,46 +149,6 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                     }
                     className="w-full accent-[var(--accent)]"
                   />
-                </div>
-              </div>
-
-              {/* 主题色 */}
-              <div>
-                <div className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
-                  主题色
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {THEME_COLORS.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => onUpdateThemeColor(c)}
-                      className={`h-7 w-7 rounded-full border transition-transform ${
-                        themeColor.toLowerCase() === c.toLowerCase()
-                          ? 'scale-110 border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
-                          : 'border-black/10 hover:scale-110 dark:border-white/20'
-                      }`}
-                      style={{ background: c }}
-                      title={c}
-                    />
-                  ))}
-                  <label
-                    className="relative h-7 w-7 cursor-pointer overflow-hidden rounded-full border border-black/10 dark:border-white/20"
-                    title="自定义主题色"
-                  >
-                    <span
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)',
-                      }}
-                    />
-                    <input
-                      type="color"
-                      value={themeColor}
-                      onChange={(e) => onUpdateThemeColor(e.target.value)}
-                      className="absolute inset-0 cursor-pointer opacity-0"
-                    />
-                  </label>
                 </div>
               </div>
 
