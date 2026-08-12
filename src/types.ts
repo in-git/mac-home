@@ -64,6 +64,8 @@ export type WidgetSize =
   | 'sm' // 1/4
   | 'fifth' // 1/5
   | 'sixth' // 1/6
+  | 'tenth' // 1/10
+  | 'twelfth' // 1/12
   | 'third' // 1/3
   | 'wide' // 1/2
   | 'large' // 1:1
@@ -84,7 +86,9 @@ export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
   'icon-1-8': '1:8',
   'icon-1-16': '1:16',
   fifth: '1/5',
-  sixth: '1/6'
+  sixth: '1/6',
+  tenth: '1/10',
+  twelfth: '1/12'
 };
 
 // Props shared by every widget component. `editing` reflects whether the
@@ -146,7 +150,13 @@ export interface WebSite {
   url: string;
 }
 
-export type WallpaperType = 'dynamic' | 'static';
+/**
+ * 壁纸类型，三类完全区分：
+ *  - `dynamic`  动效壁纸：由组件 / canvas 实现（dynamicPreset 决定具体动效）
+ *  - `static`   静态壁纸：图片壁纸（imageUrl）
+ *  - `gradient` 渐变壁纸：纯 CSS 渐变背景（gradient）
+ */
+export type WallpaperType = 'dynamic' | 'static' | 'gradient';
 
 export type DynamicPreset =
   | 'aurora'
@@ -169,9 +179,13 @@ export type DynamicPreset =
   | 'plasma-wave';
 
 export interface WallpaperConfig {
+  /** 壁纸类型：决定渲染哪种壁纸（见 WallpaperType 注释） */
   type: WallpaperType;
+  /** 仅 dynamic：动效预设 id */
   dynamicPreset?: DynamicPreset;
+  /** 仅 static：静态图片地址 */
   imageUrl?: string;
+  /** 仅 gradient：CSS 渐变背景字符串 */
   gradient?: string;
   blur: number; // 0 to 20px
   brightness: number; // 50% to 120%

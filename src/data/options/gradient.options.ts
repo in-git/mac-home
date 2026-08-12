@@ -10,7 +10,7 @@ export type PresetStaticWallpaper = {
   thumbnailUrl?: string;
 };
 
-/** 默认壁纸（渐变兜底）：无图时的背景渐变 */
+/** 默认壁纸：动效壁纸（aurora），由 canvas 渲染，不携带其它类型的字段 */
 export const DEFAULT_WALLPAPER: WallpaperConfig = {
   type: 'dynamic',
   dynamicPreset: 'aurora',
@@ -22,7 +22,6 @@ export const DEFAULT_WALLPAPER: WallpaperConfig = {
   sepia: 0,
   grayscale: 0,
   invert: 0,
-  gradient: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
 };
 
 /** 渐变 / 静态壁纸预设：每个均带渐变背景（无图时兜底生效） */

@@ -14,8 +14,6 @@ export const SIZE_OPTIONS_ALL: WidgetSize[] = ['sm', 'wide', 'large'];
 /** 宽 / 大。 */
 export const SIZE_OPTIONS_WIDE_LARGE: WidgetSize[] = ['wide', 'large'];
 
-/** 大 / 宽。 */
-export const SIZE_OPTIONS_LARGE_WIDE: WidgetSize[] = ['large', 'wide'];
 
 /** 宽 / 极小 / 大。 */
 export const SIZE_OPTIONS_WIDE_SM_LARGE: WidgetSize[] = ['wide', 'sm', 'large'];
@@ -31,6 +29,15 @@ export const SIZE_OPTIONS_SM_ONLY: WidgetSize[] = ['sm'];
 
 /** 图标尺寸（1x8 / 1x16）。 */
 export const SIZE_OPTIONS_ICON: WidgetSize[] = ['icon-1-8', 'icon-1-16'];
+
+/** 图标网格专用：1/12 / 1/10 / 1/6 及图标尺寸。 */
+export const SIZE_OPTIONS_ICON_GRID: WidgetSize[] = [
+  'icon-1-8',
+  'icon-1-16',
+  'twelfth',
+  'tenth',
+  'sixth',
+];
 
 /** 网络搜索专用：宽 / 大 / 极小。 */
 export const SIZE_OPTIONS_SEARCH: WidgetSize[] = ['wide', 'large', 'sm'];

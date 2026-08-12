@@ -1,8 +1,9 @@
 import { WidgetSize, WidgetType } from '../types';
 import type { SiteItem } from '../api/site';
+import type { MouseEvent } from 'react';
 import {
   SIZE_OPTIONS_ICON,
-  SIZE_OPTIONS_LARGE_WIDE,
+  SIZE_OPTIONS_ICON_GRID,
   SIZE_OPTIONS_SEARCH,
   SIZE_OPTIONS_SM_ONLY,
   SIZE_OPTIONS_SM_WIDE_LARGE,
@@ -45,12 +46,14 @@ export interface WidgetTypeConfig {
   /** Optional click handler invoked when the widget card is clicked (non-editing
    *  mode). Defined at the type level. Optional — omit to use no default action. */
   onAction?: () => void;
+  /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。可选。 */
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（如站点库新增的站点）。 */
   shortcuts?: SiteItem[];
   /** 图标型组件（icon-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
   site?: SiteItem;
   /** 卡片内容区内边距：'p-2' 常规留白，'p-0' 内容满铺（如横幅动效等全卡展示组件）。 */
-  padding?: 'p-2' | 'p-0';
+  padding?: 'p-2' | 'p-0'|'p-4';
 }
 
 export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
@@ -63,7 +66,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🔍',
     label: '网络搜索',
     category: 'system',
-    padding: 'p-2',
+    padding: 'p-4',
   },
   weather: {
     title: '天气预报',
@@ -74,7 +77,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⛅',
     label: '天气预报',
     category: 'system',
-    padding: 'p-2',
+    padding: 'p-4',
   },
   'sticky-notes': {
     title: '便签笔记',
@@ -85,7 +88,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '📝',
     label: '便签',
     category: 'system',
-    padding: 'p-2',
+    padding: 'p-4',
   },
   clock: {
     title: '时钟日历',
@@ -96,6 +99,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🕒',
     label: '时间 & 日历',
     category: 'system',
+    padding: 'p-4',
   },
   'clock-mini': {
     title: '时钟',
@@ -106,7 +110,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⏰',
     label: '时钟',
     category: 'system',
-    padding: 'p-2',
+    padding: 'p-4',
   },
   'control-center': {
     title: '控制中心',
@@ -117,6 +121,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🎛️',
     label: '控制中心',
     category: 'system',
+    padding: 'p-4',
   },
   settings: {
     title: '系统设置',
@@ -128,18 +133,19 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '系统设置',
     category: 'system',
     showHeader: false,
-    padding: 'p-2',
+    padding: 'p-4',
   },
   'icon-grid': {
     title: '图标',
     maxInstances: Infinity,
     defaultSize: 'icon-1-8',
-    sizeOptions: SIZE_OPTIONS_ICON,
+    sizeOptions: SIZE_OPTIONS_ICON_GRID,
     isAddable: false,
     glyph: '🧩',
     label: '图标',
     category: 'system',
     showHeader: false,
+    padding: 'p-4',
   },
   shortcuts: {
     title: '快捷导航',
@@ -151,7 +157,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '快捷导航',
     category: 'system',
     shortcuts: [],
-    padding: 'p-2',
+    padding: 'p-4',
   },
   application: {
     title: '网页列表',
@@ -162,6 +168,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🌐',
     label: '网页',
     category: 'web',
+    padding: 'p-4',
   },
 
   banner: {
@@ -209,6 +216,22 @@ export function executeWidgetAction(type: WidgetType): boolean {
   const entry = Object.entries(WIDGET_CONFIG).find(([t]) => t === type);
   if (entry?.[1].onAction) {
     entry[1].onAction();
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Find a widget type's optional `onClick` by type and execute it with the click
+ * event if present. Returns `true` when a handler was executed.
+ */
+export function executeWidgetClick(
+  type: WidgetType,
+  event: MouseEvent<HTMLDivElement>,
+): boolean {
+  const entry = Object.entries(WIDGET_CONFIG).find(([t]) => t === type);
+  if (entry?.[1].onClick) {
+    entry[1].onClick(event);
     return true;
   }
   return false;

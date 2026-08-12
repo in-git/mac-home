@@ -17,6 +17,10 @@ interface Props {
   screenBrightness?: number;
 }
 
+/** 无有效壁纸内容时的兜底渐变背景 */
+const FALLBACK_GRADIENT =
+  'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)';
+
 export const DynamicWallpaperCanvas: React.FC<Props> = ({
   wallpaper,
   isDarkMode,
@@ -113,6 +117,12 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none select-none">
+      {/*
+        按壁纸类型完全区分渲染：
+        - dynamic  → 动效壁纸：WebGL 类预设用独立组件，其余用 2D canvas
+        - static   → 静态壁纸：渲染图片
+        - gradient → 渐变壁纸：渲染 CSS 渐变背景
+      */}
       {wallpaper.type === 'dynamic' &&
       wallpaper.dynamicPreset === 'molten-metal' ? (
         <MoltenMetalWallpaper className="absolute inset-0" />
@@ -135,20 +145,22 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
           ref={canvasRef}
           className="absolute inset-0 w-full h-full object-cover"
         />
-      ) : wallpaper.imageUrl ? (
+      ) : wallpaper.type === 'static' && wallpaper.imageUrl ? (
         <img
           src={wallpaper.imageUrl}
           alt="Desktop Wallpaper"
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
         />
-      ) : (
+      ) : wallpaper.type === 'gradient' ? (
         <div
           className="absolute inset-0 w-full h-full transition-opacity duration-700"
-          style={{
-            background:
-              wallpaper.gradient ||
-              'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-          }}
+          style={{ background: wallpaper.gradient || FALLBACK_GRADIENT }}
+        />
+      ) : (
+        /* 数据异常兜底：无有效内容时使用默认渐变 */
+        <div
+          className="absolute inset-0 w-full h-full transition-opacity duration-700"
+          style={{ background: FALLBACK_GRADIENT }}
         />
       )}
 

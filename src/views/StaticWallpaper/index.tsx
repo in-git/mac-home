@@ -14,16 +14,14 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
 }) => {
   const handleSelect = (item: ImageWallpaperItem) => {
     onUpdateWallpaper({
-      type: 'image',
+      type: 'static',
       imageUrl: item.imageUrl,
-      thumbnailUrl: item.thumbnailUrl,
-      random: false,
       gradient: undefined,
     });
   };
 
   // 当前已选图片壁纸的标识（缩略图优先，回退原图），用于列表高亮
-  const selectedKey = wallpaper.thumbnailUrl ?? wallpaper.imageUrl;
+  const selectedKey = wallpaper.imageUrl 
 
   return (
     <div className="space-y-6">

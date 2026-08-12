@@ -107,7 +107,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
       <div className="muuri-item-content h-full w-full">
         <div
           style={widget.background ? { background: widget.background } : undefined}
-          className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widgetPadding} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${
+          className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widgetPadding} shadow-[0_12px_40px_rgba(0,0,0,0.10)]  backdrop-blur-2xl flex flex-col justify-between group${
             widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
           onClick={handleCardClick}

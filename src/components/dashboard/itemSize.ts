@@ -18,6 +18,10 @@ export const getItemSizeClasses = (size: WidgetSize): string => {
       return 'w-[20%]'; // 1/5
     case 'sixth':
       return 'w-[16.666%]'; // 1/6
+    case 'tenth':
+      return 'w-[10%] aspect-[1/1]'; // 1/10
+    case 'twelfth':
+      return 'w-[8.333%] aspect-[1/1]'; // 1/12
     case 'wide':
       return 'w-[50%]'; // 1/2
     case 'large':

@@ -31,8 +31,8 @@ interface WallpaperModalProps {
 type TabId = 'dynamic' | 'preset' | 'static' | 'adjust';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: 'dynamic', label: '动态效果', icon: <Palette size={16} /> },
-  { id: 'preset', label: '系统预设', icon: <Layers size={16} /> },
+  { id: 'dynamic', label: '动效壁纸', icon: <Palette size={16} /> },
+  { id: 'preset', label: '渐变壁纸', icon: <Layers size={16} /> },
   { id: 'static', label: '静态壁纸', icon: <ImageIcon size={16} /> },
   { id: 'adjust', label: '桌面主题', icon: <SunMedium size={16} /> },
 ];

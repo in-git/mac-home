@@ -31,24 +31,17 @@ export const GradientWallpaperGrid: React.FC<GradientWallpaperGridProps> = ({
     onUpdateWallpaper({
       type: 'gradient',
       gradient: item.gradient,
-      // 选择具体壁纸后取消"随机"标记
-      random: false,
-      // 清空图片相关字段，避免与渐变冲突
-      imageUrl: undefined,
-      thumbnailUrl: undefined,
     });
   };
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-      {gradientWallpapers.map((w) => (
+      {gradientWallpapers.map((w, index) => (
         <GradientWallpaperCard
           key={w.gradient}
-          item={w}
+          item={{ ...w, id: `preset-gradient-${index}` }}
           isSelected={
-            wallpaper.type === 'gradient' &&
-            !wallpaper.random &&
-            wallpaper.gradient === w.gradient
+            wallpaper.type === 'gradient' && wallpaper.gradient === w.gradient
           }
           onSelect={handleSelect}
         />
