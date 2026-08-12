@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Tooltip } from '@heroui/react';
 import { GripHorizontal, X } from 'lucide-react';
 import { getWidgetConfig } from '../../data/widgetConfig';
@@ -6,6 +6,9 @@ import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WeatherSummary } from '../../widgets/WeatherWidget';
 import { renderWidgetContent } from './widgetContent';
 import { getItemSizeClasses } from './itemSize';
+
+/** 长按卡片进入编辑布局的按压时长（ms），与右键菜单「布局」功能等价 */
+const LONG_PRESS_MS = 500;
 
 interface WidgetCardProps {
   widget: WidgetItem;
@@ -25,6 +28,8 @@ interface WidgetCardProps {
   onClick: (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => void;
   /** 卡片整体右键菜单回调（参数与 App.handleContextMenuWidget 一致：事件 + widgetId）。 */
   onContextMenuWidget?: (e: React.MouseEvent, widgetId: string) => void;
+  /** 长按卡片进入编辑布局（与右键「布局」一致）；编辑模式下不触发 */
+  onLongPressEdit?: () => void;
   /** 更新任意 widget 实例字段（如快捷导航的 shortcuts 数据空间）。 */
   onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
@@ -46,11 +51,50 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onExpand,
   onClick,
   onContextMenuWidget,
+  onLongPressEdit,
   onUpdateWidget,
 }) => {
   const sizeClasses = getItemSizeClasses(widget.size);
   const showHeader = widget.showHeader !== false;
   const isExpanded = widget.id === expandedWidgetId;
+  // 卡片内容区内边距由类型配置驱动（p-2 常规 / p-0 满铺），纯图标尺寸保持贴边
+  const widgetPadding =
+    widget.size === 'icon-1-16'
+      ? 'p-0'
+      : (getWidgetConfig(widget.type).padding ?? 'p-2');
+
+  // 长按进入编辑模式：按压计时，松开/移出/取消时清除；
+  // 触发后标记本次按压，避免随后的 click 再执行打开链接等操作。
+  const longPressTimerRef = useRef<number | null>(null);
+  const longPressTriggeredRef = useRef(false);
+
+  const cancelLongPress = () => {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isEditMode || !onLongPressEdit) return;
+    // 控制栏按钮/拖拽手柄等交互元素上不触发长按
+    if ((e.target as HTMLElement).closest('[data-no-drag], .drag-handle')) return;
+    cancelLongPress();
+    longPressTriggeredRef.current = false;
+    longPressTimerRef.current = window.setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      onLongPressEdit();
+    }, LONG_PRESS_MS);
+  };
+
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // 长按已触发编辑布局，忽略随后的点击，避免误触组件行为
+    if (longPressTriggeredRef.current) {
+      longPressTriggeredRef.current = false;
+      return;
+    }
+    onClick(e, widget);
+  };
 
   return (
     <div
@@ -63,12 +107,14 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
       <div className="muuri-item-content h-full w-full">
         <div
           style={widget.background ? { background: widget.background } : undefined}
-          className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${
-            widget.size === 'icon-1-16' ? 'p-0' : 'p-4'
-          } shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${
+          className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widgetPadding} shadow-[0_12px_40px_rgba(0,0,0,0.10)] border border-white/60 dark:border-white/15 backdrop-blur-2xl flex flex-col justify-between group${
             widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
-          onClick={(e) => onClick(e, widget)}
+          onClick={handleCardClick}
+          onPointerDown={handlePointerDown}
+          onPointerUp={cancelLongPress}
+          onPointerLeave={cancelLongPress}
+          onPointerCancel={cancelLongPress}
           onContextMenu={(e) => onContextMenuWidget?.(e, widget.id)}
         >
           {/* Widget Card Title & Control Bar */}

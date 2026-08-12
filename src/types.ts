@@ -57,7 +57,8 @@ export type WidgetType =
   | 'control-center'
   | 'settings'
   | 'icon-grid'
-  | 'application';
+  | 'application'
+  | 'banner';
 
 export type WidgetSize =
   | 'sm' // 1/4

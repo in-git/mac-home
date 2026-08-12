@@ -249,6 +249,7 @@ export default function App() {
             onResizeWidget={resizeWidget}
             onContextMenuWidget={handleContextMenuWidget}
             isEditMode={isEditMode}
+            onToggleEditMode={() => setIsEditMode(!isEditMode)}
             notes={notes}
             onUpdateNotes={updateNotes}
             isDarkMode={isDarkMode}

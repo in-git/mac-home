@@ -9,6 +9,7 @@ import {
   SIZE_OPTIONS_WIDE_LARGE,
   SIZE_OPTIONS_WIDE_SM,
   SIZE_OPTIONS_WIDE_SM_LARGE,
+  SIZE_OPTIONS_FIFTH_UP,
 } from './options';
 
 /**
@@ -48,6 +49,8 @@ export interface WidgetTypeConfig {
   shortcuts?: SiteItem[];
   /** 图标型组件（icon-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
   site?: SiteItem;
+  /** 卡片内容区内边距：'p-2' 常规留白，'p-0' 内容满铺（如横幅动效等全卡展示组件）。 */
+  padding?: 'p-2' | 'p-0';
 }
 
 export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
@@ -60,7 +63,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🔍',
     label: '网络搜索',
     category: 'system',
-    
+    padding: 'p-2',
   },
   weather: {
     title: '天气预报',
@@ -71,6 +74,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⛅',
     label: '天气预报',
     category: 'system',
+    padding: 'p-2',
   },
   'sticky-notes': {
     title: '便签笔记',
@@ -81,6 +85,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '📝',
     label: '便签',
     category: 'system',
+    padding: 'p-2',
   },
   clock: {
     title: '时钟日历',
@@ -101,6 +106,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⏰',
     label: '时钟',
     category: 'system',
+    padding: 'p-2',
   },
   'control-center': {
     title: '控制中心',
@@ -122,6 +128,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '系统设置',
     category: 'system',
     showHeader: false,
+    padding: 'p-2',
   },
   'icon-grid': {
     title: '图标',
@@ -144,6 +151,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '快捷导航',
     category: 'system',
     shortcuts: [],
+    padding: 'p-2',
   },
   application: {
     title: '网页列表',
@@ -154,6 +162,19 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🌐',
     label: '网页',
     category: 'web',
+  },
+
+  banner: {
+    title: 'Prismatic Burst',
+    maxInstances: Infinity,
+    defaultSize: 'wide',
+    sizeOptions: SIZE_OPTIONS_FIFTH_UP,
+    isAddable: true,
+    glyph: '🌈',
+    label: '横幅动效',
+    category: 'system',
+    showHeader: false,
+    padding: 'p-0',
   },
 
 };

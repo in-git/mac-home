@@ -18,6 +18,8 @@ interface MuuriDashboardProps {
   onResizeWidget: (id: string, newSize: WidgetSize) => void;
   onContextMenuWidget: (e: React.MouseEvent, widgetId: string) => void;
   isEditMode: boolean;
+  /** 长按组件卡片切换编辑布局（与右键菜单「布局」一致） */
+  onToggleEditMode?: () => void;
   notes: StickyNoteType[];
   onUpdateNotes: (notes: StickyNoteType[]) => void;
   isDarkMode: boolean;
@@ -37,6 +39,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   onResizeWidget,
   onContextMenuWidget,
   isEditMode,
+  onToggleEditMode,
   notes,
   onUpdateNotes,
   isDarkMode,
@@ -323,6 +326,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             onExpand={setExpandedWidgetId}
             onClick={handleCardClick}
             onContextMenuWidget={onContextMenuWidget}
+            onLongPressEdit={onToggleEditMode}
             onUpdateWidget={onUpdateWidget}
           />
         ))}

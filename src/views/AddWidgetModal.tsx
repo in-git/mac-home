@@ -7,6 +7,7 @@ import {
   Search,
   Settings,
   SlidersHorizontal,
+  Sparkles,
   StickyNote,
   X,
   type LucideIcon,
@@ -42,6 +43,7 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   settings: Settings,
   'icon-grid': Search,
   application: Globe,
+  banner: Sparkles,
 };
 
 /** 图标气泡哑光底色（主色以主题色点缀） */
@@ -56,6 +58,7 @@ const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
   settings: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   'icon-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   application: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+  banner: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
 };
 
 /** 界面文案集中配置（遵循 UI 规范：文本抽成变量，便于统一管理与复用） */

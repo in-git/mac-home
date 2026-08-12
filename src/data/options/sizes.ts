@@ -34,3 +34,6 @@ export const SIZE_OPTIONS_ICON: WidgetSize[] = ['icon-1-8', 'icon-1-16'];
 
 /** 网络搜索专用：宽 / 大 / 极小。 */
 export const SIZE_OPTIONS_SEARCH: WidgetSize[] = ['wide', 'large', 'sm'];
+
+/** Banner 专用：1/5 及以上尺寸（1/5 / 1/2 / 1:1）。 */
+export const SIZE_OPTIONS_FIFTH_UP: WidgetSize[] = ['fifth', 'wide', 'large'];

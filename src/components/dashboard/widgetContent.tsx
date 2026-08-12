@@ -5,6 +5,7 @@ import { ClockCalendarWidget } from '../../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../../widgets/ClockWidget';
 import { ControlCenterWidget } from '../../widgets/ControlCenterWidget';
 import { IconWidget } from '../../widgets/IconWidget';
+import { BannerWidget } from '../../widgets/BannerWidget';
 import { SearchWidget } from '../../widgets/SearchWidget';
 import { SettingsWidget } from '../../widgets/SettingsWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotesWidget';
@@ -110,6 +111,9 @@ export const renderWidgetContent = ({
     }
     case 'application': {
       return <WebListWidget websites={widget.websites} html={widget.html} />;
+    }
+    case 'banner': {
+      return <BannerWidget size={widget.size} />;
     }
     default:
       return null;
