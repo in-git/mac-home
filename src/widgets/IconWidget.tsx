@@ -30,6 +30,8 @@ const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
   third: { glyph: 'text-lg', label: 'text-font-sm' },
   wide: { glyph: 'text-lg', label: 'text-font-sm' },
   large: { glyph: 'text-lg', label: 'text-font-sm' },
+  fifth: { glyph: 'text-lg', label: 'text-font-sm' },
+  sixth: { glyph: 'text-lg', label: 'text-font-sm' },
 };
 
 // When true the tile renders only the glyph (no text label). Used for the
@@ -94,13 +96,13 @@ export function IconWidget({
       disabled={editing && kind !== 'action'}
       title={title}
       style={hasBtnStyle ? btnStyle : undefined}
-      className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-[var(--card-radius)] bg-white/10 text-slate-700 dark:text-slate-200 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
+      className=" group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-[var(--card-radius)] text-slate-700 dark:text-slate-200 transition active:scale-95 disabled:cursor-default"
     >
       {iconImage ? (
         <img
           src={iconImage}
           alt={label}
-          className="h-9 w-9 rounded-[25%] object-cover shadow-sm"
+          className="h-[60%] w-[60%] rounded-[25%] object-cover shadow-sm"
         />
       ) : (
         <GlyphIcon

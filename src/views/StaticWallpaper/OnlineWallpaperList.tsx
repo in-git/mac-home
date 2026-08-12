@@ -4,11 +4,14 @@ import { wallpaperApi, WallpaperCategory, WallpaperItem } from '../../api/wallpa
 import { ImageWallpaperCard, type ImageWallpaperItem } from './ImageWallpaperCard';
 
 interface OnlineWallpaperListProps {
+  /** 当前已选图片壁纸的标识（thumbnailUrl/imageUrl），用于高亮选中项 */
+  selectedKey?: string;
   onSelect: (item: ImageWallpaperItem) => void;
 }
 
 /** 在线壁纸：接口数据，支持分类筛选与分页 */
 export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
+  selectedKey,
   onSelect,
 }) => {
   const [categories, setCategories] = useState<WallpaperCategory[]>([]);
@@ -101,7 +104,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
                   imageUrl: item.imageUrl,
                   thumbnailUrl: item.thumbnailUrl,
                 }}
-                isSelected={false}
+                isSelected={(item.thumbnailUrl ?? item.imageUrl) === selectedKey}
                 onSelect={onSelect}
               />
             ))}

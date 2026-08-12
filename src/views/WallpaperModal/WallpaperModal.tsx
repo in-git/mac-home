@@ -139,7 +139,10 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               />
             </div>
           ) : activeTab === 'static' ? (
-            <StaticWallpaperSection onUpdateWallpaper={onUpdateWallpaper} />
+            <StaticWallpaperSection
+              wallpaper={wallpaper}
+              onUpdateWallpaper={onUpdateWallpaper}
+            />
           ) : (
             <div className="space-y-8">
               {/* 桌面主题：3D 卡片轮播选择 */}
