@@ -42,7 +42,7 @@ export const ShortcutTile: React.FC<ShortcutTileProps> = ({ item, onDelete }) =>
 
         <button
           onClick={(e) => onDelete(itemId, e)}
-          className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
+          className="absolute top-1 right-1 p-1 rounded-full  hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
         >
           <Trash2 size={11} />
         </button>

@@ -3,6 +3,7 @@ import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WebListWidget } from '../../widgets/WebListWidget';
 import { ClockCalendarWidget } from '../../widgets/ClockCalendarWidget';
 import { ClockWidget } from '../../widgets/ClockWidget';
+import { ClockLunarWidget } from '../../widgets/ClockLunarWidget';
 import { ControlCenterWidget } from '../../widgets/ControlCenterWidget';
 import { IconWidget } from '../../widgets/IconWidget';
 import { BannerWidget } from '../../widgets/BannerWidget';
@@ -51,6 +52,8 @@ export const renderWidgetContent = ({
       return <ClockCalendarWidget />;
     case 'clock-mini':
       return <ClockWidget />;
+    case 'clock-lunar':
+      return <ClockLunarWidget />;
     case 'control-center':
       return (
         <ControlCenterWidget

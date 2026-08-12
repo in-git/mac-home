@@ -262,7 +262,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           <div className="flex-1 relative">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 "
             />
             <input
               type="text"
@@ -365,7 +365,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
             ))}
           </div>
         ) : (
-          <div className="flex h-40 flex-col items-center justify-center text-slate-400 gap-2 min-h-[320px]">
+          <div className="flex h-40 flex-col items-center justify-center  gap-2 min-h-[320px]">
             <Globe size={36} strokeWidth={1} />
             <p className="text-base">暂无站点</p>
           </div>

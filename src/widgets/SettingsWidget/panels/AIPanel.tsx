@@ -165,7 +165,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
             <div className="relative flex-1">
               <Key
                 size={15}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 "
               />
               <input
                 type="password"
@@ -204,7 +204,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
             placeholder="https://your-endpoint/v1/chat/completions"
             className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm font-mono outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
           />
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs ">
             例如本地 Ollama：http://localhost:11434/v1/chat/completions
           </p>
         </section>
@@ -222,7 +222,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
           placeholder="例如 gpt-4o-mini / deepseek-chat / qwen-plus"
           className="w-full px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm font-mono outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
         />
-        <p className="mt-2 text-xs text-slate-400">
+        <p className="mt-2 text-xs ">
           支持该厂商下的任意模型，可手写填入。
         </p>
       </section>
@@ -258,7 +258,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
 
         {/* 对话式连接测试：输入框 + 发送按钮，验证模型真实对话能力 */}
         <div className="mt-5 space-y-2.5">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs ">
             对话测试（内置桌宠系统提示词，发送一条真实对话验证模型回复）
           </p>
           <div className="flex items-center space-x-2">

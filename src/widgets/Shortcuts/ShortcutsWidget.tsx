@@ -44,7 +44,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
         className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
       >
         {shortcuts.length === 0 ? (
-          <div className="h-full min-h-[120px] flex flex-col items-center justify-center gap-3 text-center text-slate-400 dark:text-slate-500">
+          <div className="h-full min-h-[120px] flex flex-col items-center justify-center gap-3 text-center  dark:text-slate-500">
             <Compass size={28} className="opacity-60" />
             <p className="dark:text-slate-400 text-xs leading-relaxed">
               快捷导航还是空的

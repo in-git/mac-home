@@ -100,7 +100,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ message, onClose }) => {
           e.stopPropagation();
           dismiss();
         }}
-        className="ml-1 rounded-full p-0.5 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-600 dark:dark:hover:bg-white/10 dark:hover:text-slate-200"
+        className="ml-1 rounded-full p-0.5  transition-colors hover:bg-black/5 hover:text-slate-600 dark:dark:hover:bg-white/10 dark:hover:text-slate-200"
         aria-label="关闭"
       >
         <X size={12} />

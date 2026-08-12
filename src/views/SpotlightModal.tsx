@@ -79,7 +79,7 @@ export const SpotlightModal: React.FC<Props> = ({
               placeholder="聚焦搜索：输入小组件、便签内容、待办事项..."
               className="w-full bg-transparent border-none text-base outline-none placeholder-slate-400 font-normal"
             />
-            <span className="text-xs text-slate-400 px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+            <span className="text-xs  px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
               ESC 退出
             </span>
           </div>
@@ -89,7 +89,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Widget Commands */}
             {widgetCommands.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm font-semibold  dark:uppercase tracking-wider">
                   功能 & 小组件
                 </div>
                 {widgetCommands.map((w, i) => {
@@ -115,7 +115,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Notes Results */}
             {filteredNotes.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm font-semibold  dark:uppercase tracking-wider">
                   便签卡片 ({filteredNotes.length})
                 </div>
                 {filteredNotes.map((n) => (

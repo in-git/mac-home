@@ -49,7 +49,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
                 soundEnabled
                   ? 'bg-[color:var(--accent)] text-white'
-                  : 'bg-black/5 dark:bg-white/10 text-slate-400'
+                  : 'bg-black/5 dark:bg-white/10 '
               }`}
             >
               {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
@@ -76,7 +76,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <div className="font-medium text-slate-800 dark:text-[#F1F5F9]">
                 导出配置文件
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs ">
                 将组件布局与便签导出为 JSON
               </div>
             </div>
@@ -99,7 +99,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <div className="font-medium text-slate-800 dark:text-[#F1F5F9]">
                 重置组件布局
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs ">
                 恢复为系统预设卡片摆放模式
               </div>
             </div>
@@ -126,7 +126,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <div className="font-medium text-slate-800 dark:text-[#F1F5F9]">
                 导入配置文件
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs ">
                 {importMsg ? (
                   <span
                     className={
@@ -191,7 +191,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             </span>
             <div>
               <div className="font-medium text-red-500">重置整个系统</div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs ">
                 清除本地所有缓存、壁纸、便签及自定义偏好
               </div>
             </div>

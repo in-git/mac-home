@@ -205,7 +205,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                 </div>
               </div>
 
-              <p className="text-xs leading-relaxed text-slate-400">
+              <p className="text-xs leading-relaxed ">
                 拖动或点击最前方卡片切换主题，也可用上方滑块手动微调，效果实时作用于桌面背景与顶部菜单栏。
               </p>
             </div>

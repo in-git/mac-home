@@ -203,7 +203,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
                 {/* Drag Handle (only shown while editing) */}
                 {isEditMode && (
                   <div
-                    className="drag-handle p-1 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
+                    className="drag-handle p-1 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10  hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
                     title="按住拖拽排列位置 (Muuri Grid)"
                   >
                     <GripHorizontal size={14} />

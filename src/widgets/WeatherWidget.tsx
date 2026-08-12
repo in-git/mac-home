@@ -334,7 +334,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
             }}
             title="自动定位到当前位置"
             disabled={locating}
-            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
+            className="p-1 rounded-[var(--card-radius)]  hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
           >
             {locating ? (
               <Loader2 size={13} className="animate-spin" />
@@ -348,7 +348,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
               setRefreshKey((k) => k + 1);
             }}
             title="刷新天气"
-            className="p-1 rounded-[var(--card-radius)] text-slate-400 hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            className="p-1 rounded-[var(--card-radius)]  hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -412,7 +412,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
             {searching && (
               <Loader2
                 size={12}
-                className="animate-spin text-slate-400 shrink-0"
+                className="animate-spin  shrink-0"
               />
             )}
             <button
@@ -437,7 +437,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                 >
                   <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
                     {r.name}
-                    <span className="text-font-sm text-slate-400 ml-1">
+                    <span className="text-font-sm  ml-1">
                       {r.admin1 ? `${r.admin1} · ` : ''}
                       {r.country}
                     </span>
@@ -448,7 +448,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
             </div>
           )}
           {searchQuery.trim() && !searching && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-[var(--card-radius)] p-2.5 text-center text-font-sm text-slate-400">
+            <div className="absolute top-full left-0 right-0 mt-1 z-10 glass-panel rounded-[var(--card-radius)] p-2.5 text-center text-font-sm ">
               未找到相关城市
             </div>
           )}
@@ -500,7 +500,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                     key={idx}
                     className="flex flex-col items-center shrink-0 min-w-[42px] space-y-1"
                   >
-                    <span className="text-font-sm text-slate-400">
+                    <span className="text-font-sm ">
                       {item.time}
                     </span>
                     {getWeatherIcon(item.condition, 16)}
@@ -545,14 +545,14 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                     {getWeatherIcon(day.condition, 14)}
                   </div>
                   <span className="text-font-sm font-bold">{day.high}°</span>
-                  <span className="text-font-sm text-slate-400">{day.low}°</span>
+                  <span className="text-font-sm ">{day.low}°</span>
                 </div>
               ))}
             </div>
           </div>
         </>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-xs text-slate-400">
+        <div className="flex-1 flex items-center justify-center text-xs ">
           暂无天气数据
         </div>
       )}

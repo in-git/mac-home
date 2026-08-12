@@ -89,7 +89,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
       </div>
 
       {loading && items.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-slate-400">
+        <div className="flex h-32 items-center justify-center ">
           <Loader2 className="animate-spin" size={20} />
         </div>
       ) : items.length > 0 ? (
@@ -133,7 +133,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
           )}
         </>
       ) : (
-        <p className="py-4 text-center text-xs text-slate-400">暂无在线壁纸</p>
+        <p className="py-4 text-center text-xs ">暂无在线壁纸</p>
       )}
     </>
   );

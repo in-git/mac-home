@@ -33,7 +33,7 @@ export function CaptchaField({ value, onChange, base64, onRefresh }: Props) {
             className="h-9 w-[88px] rounded-[calc(var(--card-radius)*0.5)] object-cover"
           />
         ) : (
-          <RefreshCw size={16} className="animate-spin text-slate-400" />
+          <RefreshCw size={16} className="animate-spin " />
         )}
       </button>
     </AuthField>

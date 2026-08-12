@@ -22,7 +22,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
               className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
                 enabled
                   ? 'bg-[color:var(--accent)] text-white'
-                  : 'bg-black/5 dark:bg-white/10 text-slate-400'
+                  : 'bg-black/5 dark:bg-white/10 '
               }`}
             >
               <PawPrint size={15} />
@@ -31,7 +31,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
               <div className="font-medium text-slate-800 dark:text-slate-200">
                 自由活动
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
+              <div className="text-xs  mt-0.5">
                 模型定时驱动桌宠移动、跳跃或说一句问候
               </div>
             </div>

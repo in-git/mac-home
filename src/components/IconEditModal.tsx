@@ -98,7 +98,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                     在内部浏览器打开
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs ">
                     开启后，点击图标用内置全屏浏览器（iframe）打开，否则在新标签页打开
                   </span>
                 </span>

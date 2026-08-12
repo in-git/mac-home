@@ -111,6 +111,17 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     category: 'system',
     padding: 'p-4',
   },
+  'clock-lunar': {
+    title: '农历时钟',
+    maxInstances: 1,
+    defaultSize: '1/4',
+    sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
+    isAddable: true,
+    glyph: '🌙',
+    label: '农历时钟',
+    category: 'system',
+    padding: 'p-4',
+  },
   'control-center': {
     title: '控制中心',
     maxInstances: 1,

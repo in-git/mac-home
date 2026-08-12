@@ -4,6 +4,7 @@ import {
   CloudSun,
   Compass,
   Globe,
+  Moon,
   Search,
   Settings,
   SlidersHorizontal,
@@ -38,6 +39,7 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   'sticky-notes': StickyNote,
   clock: Clock,
   'clock-mini': AlarmClock,
+  'clock-lunar': Moon,
   shortcuts: Compass,
   'control-center': SlidersHorizontal,
   settings: Settings,
@@ -53,6 +55,7 @@ const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
   'sticky-notes': 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
   clock: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
   'clock-mini': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  'clock-lunar': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
   shortcuts: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
   'control-center': 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
   settings: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
@@ -249,7 +252,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                           {t.label}
                         </span>
                         {disabled && (
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs ">
                             {ADD_WIDGET_TEXT.added}
                           </span>
                         )}

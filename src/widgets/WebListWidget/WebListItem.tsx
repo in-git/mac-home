@@ -102,7 +102,7 @@ export const WebListItem: React.FC<WebListItemProps> = ({
               onDirectVisit(site);
             }}
             title="直接访问"
-            className="shrink-0 rounded p-0.5 text-slate-400 transition-colors hover:bg-black/5 hover:text-[color:var(--accent)] dark:hover:bg-white/10"
+            className="shrink-0 rounded p-0.5  transition-colors hover:bg-black/5 hover:text-[color:var(--accent)] dark:hover:bg-white/10"
           >
             <ExternalLink size={12} />
           </button>
@@ -115,7 +115,7 @@ export const WebListItem: React.FC<WebListItemProps> = ({
         )}
 
         {(categoryName || keywordText) && (
-          <p className="mt-1 flex flex-wrap items-center gap-x-1 gap-y-0.5 truncate text-font-xs text-slate-400 dark:text-slate-500">
+          <p className="mt-1 flex flex-wrap items-center gap-x-1 gap-y-0.5 truncate text-font-xs  dark:text-slate-500">
             {categoryName && <span>· {categoryName}</span>}
             {keywordText && <span>· {keywordText}</span>}
           </p>

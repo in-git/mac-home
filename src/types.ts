@@ -53,6 +53,7 @@ export type WidgetType =
   | 'search'
   | 'clock'
   | 'clock-mini'
+  | 'clock-lunar'
   | 'shortcuts'
   | 'control-center'
   | 'settings'

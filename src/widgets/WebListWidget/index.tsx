@@ -76,7 +76,7 @@ export const WebListWidget: React.FC<WebListWidgetProps> = ({ websites, html }) 
 
   if (loading && items.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-font-sm text-slate-400 dark:text-slate-500">
+      <div className="flex h-full w-full items-center justify-center text-font-sm  dark:text-slate-500">
         加载站点中…
       </div>
     );

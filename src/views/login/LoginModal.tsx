@@ -192,7 +192,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         </button>
 
         {/* 切换登录 / 注册（非 tabbar，底部文字链接） */}
-        <p className="pt-1 text-center text-font-sm text-slate-400">
+        <p className="pt-1 text-center text-font-sm ">
           {view === 'login' ? (
             <>
               还没有账户？{' '}

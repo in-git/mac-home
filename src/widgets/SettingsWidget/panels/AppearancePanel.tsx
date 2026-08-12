@@ -100,7 +100,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
             <div className="font-medium text-slate-800 dark:text-slate-200">
               字体大小
             </div>
-            <div className="text-xs text-slate-400 mt-0.5">
+            <div className="text-xs  mt-0.5">
               小 {FONT_TIER_PX[fontVariant].sm} / 中{' '}
               {FONT_TIER_PX[fontVariant].md} / 大 {FONT_TIER_PX[fontVariant].lg}{' '}
               px

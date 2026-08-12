@@ -114,7 +114,7 @@ export const SearchWidget: React.FC = () => {
       <form onSubmit={handleSearch} className="my-auto py-2">
         <div className="relative flex items-center">
           {/* 左侧搜索图标 */}
-          <div className="absolute left-3 flex items-center justify-center text-slate-400 pointer-events-none">
+          <div className="absolute left-3 flex items-center justify-center  pointer-events-none">
             <Search size={15} />
           </div>
 

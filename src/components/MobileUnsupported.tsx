@@ -5,7 +5,7 @@ export default function MobileUnsupported() {
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-[color:var(--bg-color)] px-6 text-center">
       <div className="max-w-sm">
-        <div className="mb-4 flex justify-center text-slate-400 dark:text-slate-500">
+        <div className="mb-4 flex justify-center  dark:text-slate-500">
           <Smartphone size={48} />
         </div>
         <h1 className="mb-2 text-xl font-semibold text-slate-800 dark:text-slate-100">

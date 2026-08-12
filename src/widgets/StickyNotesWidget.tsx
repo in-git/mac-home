@@ -133,7 +133,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="h-full flex flex-col justify-between text-xs p-1">
+    <div className="h-full flex flex-col justify-between text-xs px-1">
       {/* Top Header & Note Switcher Tabs */}
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-black/5 dark:border-white/10">
         <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pr-2">
@@ -313,7 +313,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 text-slate-400">
+        <div className="text-center py-8 ">
           暂无便签，点击右上角新建
         </div>
       )}

@@ -161,7 +161,7 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
         <span className="shrink-0 text-sm font-medium text-slate-700 dark:text-slate-200">
           {active.name}
         </span>
-        <span className="truncate text-xs text-slate-400 dark:text-slate-500">
+        <span className="truncate text-xs  dark:text-slate-500">
           {active.desc}
         </span>
       </div>
