@@ -82,7 +82,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   } | null>(null);
 
   // Card-level click handler: drives open-in-new-tab / open-in-app / action /
-  // settings-modal / icon-grid behaviour based on the widget's config.
+  // settings-modal / web-grid behaviour based on the widget's config.
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => {
     if (isEditMode) return;
     const target = e.target as HTMLElement;
@@ -94,7 +94,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     }
     const iconGrid = target.closest('[data-icon-grid]');
     if (!iconGrid) return;
-    // icon-grid 默认值（无站点 / 链接 / 自定义图标）= 系统设置，点击弹出设置模态框
+    // web-grid 默认值（无站点 / 链接 / 自定义图标）= 系统设置，点击弹出设置模态框
     if (!widget.site && !widget.iconHref && !widget.iconGlyph) {
       setSettingsModalOpen(true);
       return;

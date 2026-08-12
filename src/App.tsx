@@ -115,7 +115,7 @@ export default function App() {
     })();
   };
 
-  // 网页列表：点击「删除」移除对应的桌面图标（web-grid，兼容旧 icon-grid）
+  // 网页列表：点击「删除」移除对应的桌面图标（web-grid）
   const handleRemoveSite = (item: SiteItem) => {
     const url = item.link || '#';
     const target = widgets.find(

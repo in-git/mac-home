@@ -25,7 +25,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onAddWidget: (type: WidgetType) => void;
-  /** 网页分类中点击「添加」时回调：把站点做成桌面图标（icon-grid） */
+  /** 网页分类中点击「添加」时回调：把站点做成桌面网页组件（web-grid） */
   onAddSite: (item: SiteItem) => void;
   /** 网页分类中点击「删除」时回调：移除对应的桌面图标 */
   onRemoveSite: (item: SiteItem) => void;
@@ -43,7 +43,6 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   shortcuts: Compass,
   'control-center': SlidersHorizontal,
   settings: Settings,
-  'icon-grid': Search,
   'web-grid': Globe,
   application: Globe,
   banner: Sparkles,
@@ -60,7 +59,6 @@ const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
   shortcuts: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
   'control-center': 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
   settings: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
-  'icon-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   'web-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   application: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   banner: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
@@ -138,7 +136,7 @@ export const AddWidgetModal: React.FC<Props> = ({
 
   const currentWidgets = getAddableWidgetsByCategory(activeCategory);
 
-  // 已添加到桌面的站点（web-grid 类型携带 site 数据，兼容旧 icon-grid），用于网页列表中标记「已新增」
+  // 已添加到桌面的站点（web-grid 类型携带 site 数据），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
     .filter((w) => isWebGrid(w.type) && w.site)
     .map((w) => w.site as SiteItem);

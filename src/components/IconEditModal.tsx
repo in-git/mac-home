@@ -11,7 +11,7 @@ interface IconEditModalProps {
 
 /**
  * 编辑图标组件：可修改链接地址与「在内部浏览器打开」开关。
- * 仅对 type 为 icon / icon-grid 的组件有意义。
+ * 仅对 type 为 web-grid / settings 的组件有意义。
  */
 export const IconEditModal: React.FC<IconEditModalProps> = ({
   widget,

@@ -57,7 +57,6 @@ export type WidgetType =
   | 'shortcuts'
   | 'control-center'
   | 'settings'
-  | 'icon-grid'
   | 'web-grid'
   | 'application'
   | 'banner';
@@ -75,7 +74,7 @@ export type WidgetSize =
   | '1/8'
   | '1/16'; // 1/16 纯图标, 不显示文本
 
-// Behaviour of an `icon-grid` widget. `link` → open iconHref in a new tab;
+// Behaviour of an icon widget (web-grid / settings). `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.
 export type IconBehavior = 'link' | 'action';
 
@@ -95,13 +94,13 @@ export interface WidgetItem {
   // Whether to render the widget card header (title bar + window dots/controls).
   // Defaults to true; false for widgets like the single icon block.
   showHeader?: boolean;
-  // Fields for `icon-grid` widgets. `iconType` decides the behaviour:
+  // Fields for icon widgets (web-grid / settings). `iconType` decides the behaviour:
   // `link` opens `iconHref` in a new tab, `action` triggers the onAction() callback.
   iconType?: IconBehavior;
   // Name of a lucide-react icon (e.g. 'Globe', 'Plus') rendered by IconWidget.
   iconGlyph?: string;
   iconLabel?: string;
-  // Custom colors for `icon-grid` tiles. `iconTextColor` tints the glyph + label,
+  // Custom colors for icon tiles. `iconTextColor` tints the glyph + label,
   // `iconBgColor` overrides the tile background. Both are any valid CSS color.
   iconTextColor?: string;
   iconBgColor?: string;
@@ -117,7 +116,7 @@ export interface WidgetItem {
   // only meaningful for widgets sourced from code (INITIAL_WIDGETS).
   onAction?: () => void;
   iconHref?: string;
-  // 仅 icon / icon-grid 组件：为 true 时点击在内部浏览器（iframe）打开 iconHref，
+  // 仅 icon / web-grid 组件：为 true 时点击在内部浏览器（iframe）打开 iconHref，
   // 而非新标签页。若目标站点禁止被 iframe 嵌入，则内部浏览器提供「在外部打开」降级。
   openInApp?: boolean;
   // 仅 application 组件：直接渲染到 iframe 的 HTML 源码（经 srcDoc 注入）。
@@ -126,7 +125,7 @@ export interface WidgetItem {
   websites?: WebSite[];
   // 仅 快捷导航 组件：本组件实例独立的站点数据空间。
   shortcuts?: SiteItem[];
-  // 仅 icon-grid 组件：从「网页列表」添加的站点数据，桌面点击图标时据此打开站点。
+  // 仅 web-grid 组件：从「网页列表」添加的站点数据，桌面点击图标时据此打开站点。
   site?: SiteItem;
 }
 

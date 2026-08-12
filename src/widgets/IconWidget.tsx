@@ -10,7 +10,7 @@ const ICON_REGISTRY: Record<string, LucideIcon> = {
   Settings,
 };
 
-// Fallback used only when an icon-grid widget provides no icon fields.
+// Fallback used only when an icon widget provides no icon fields.
 const DEFAULT_ICON = {
   glyph: 'Rocket',
   label: 'App',

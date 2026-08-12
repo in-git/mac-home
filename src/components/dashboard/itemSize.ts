@@ -39,6 +39,6 @@ export const getItemSizeClasses = (
         return 'w-[50%]';
     }
   })();
-  // 纯图标类型（icon-grid / web-grid）保持正方形比例，其余类型由内容自适应高度
+  // 纯图标类型（web-grid）保持正方形比例，其余类型由内容自适应高度
   return isWebGrid(type) ? `${widthClass} aspect-[1/1]` : widthClass;
 };

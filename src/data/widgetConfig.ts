@@ -57,7 +57,7 @@ export interface WidgetTypeConfig {
   deletable?: boolean;
   /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（。 */
   shortcuts?: SiteItem[];
-  /** 图标型组件（icon-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
+  /** 图标型组件（web-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
   site?: SiteItem;
   /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
   cardStyle?: CardStyle;
@@ -148,19 +148,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🎛️',
     showHeader: false,
   },
-  'icon-grid': {
-    title: '图标',
-    maxInstances: Infinity,
-    defaultSize: '1/8',
-    sizeOptions: SIZE_OPTIONS_ICON_GRID,
-    isAddable: false,
-    glyph: '⚙️',
-    showHeader: false,
-    cardStyle: {
-      padding: 'p-0',
-      glass: false
-    },
-  },
   'web-grid': {
     title: '网页',
     maxInstances: Infinity,
@@ -178,11 +165,13 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   shortcuts: {
     title: '快捷导航',
     maxInstances: Infinity,
-    defaultSize: '1/2',
+    defaultSize: '1/3',
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '🔗',
     shortcuts: [],
+    showHeader: false,
+  
   },
   banner: {
     title: 'Prismatic Burst',
@@ -258,9 +247,9 @@ export function getAddableWidgetsByCategory(category: WidgetCategory) {
   return ADDABLE_WIDGETS.filter((w) => w.category === category);
 }
 
-/** 网页类图标组件（新增网页创建的类型），兼容迁移前的旧 icon-grid。 */
+/** 网页类图标组件（新增网页创建的类型）。 */
 export function isWebGrid(type: WidgetType): boolean {
-  return type === 'web-grid' || type === 'icon-grid';
+  return type === 'web-grid';
 }
 
 // ---------------------------------------------------------------------------

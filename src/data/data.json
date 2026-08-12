@@ -1,71 +1,36 @@
 {
   "app": "macOS 主页",
   "version": 1,
-  "exportedAt": "2026-08-07T16:32:19.706Z",
+  "exportedAt": "2026-08-12T23:09:34.312Z",
   "widgets": [
     {
-      "id": "widget-search",
-      "type": "search",
-      "title": "网络搜索",
-      "size": "1/2"
+      "id": "widget-1786535430656",
+      "type": "clock-lunar",
+      "title": "农历时钟",
+      "size": "1/1",
+      "showHeader": false
     },
     {
-      "id": "widget-weather",
+      "id": "widget-1786535392755",
       "type": "weather",
       "title": "天气预报",
-      "size": "1/2"
-    },
-    {
-      "id": "widget-sticky",
-      "type": "sticky-notes",
-      "title": "便签",
-      "size": "1/2"
+      "size": "1/2",
+      "showHeader": false
     },
     {
       "id": "widget-clock",
       "type": "clock",
       "title": "时间 & 日历",
-      "size": "sm"
+      "size": "1/4",
+      "background": "#1a1a1a",
+      "backgroundTheme": "dark"
     },
     {
-      "id": "widget-clock-mini",
-      "type": "clock-mini",
-      "title": "时钟",
-      "size": "sm"
-    },
-    {
-      "id": "widget-shortcuts",
-      "type": "shortcuts",
-      "title": "快捷导航",
-      "size": "sm",
-      "shortcuts": []
-    },
-    {
-      "id": "widget-control",
+      "id": "widget-1786535762886",
       "type": "control-center",
       "title": "控制中心",
-      "size": "sm"
-    },
-    {
-      "id": "widget-settings",
-      "type": "settings",
-      "title": "设置",
-      "size": "1/8",
-      "showHeader": false,
-      "iconType": "action",
-      "iconGlyph": "Settings",
-      "iconLabel": "设置"
-    },
-  
-    {
-      "id": "widget-add",
-      "type": "icon-grid",
-      "title": "添加组件",
-      "size": "1/8",
-      "showHeader": false,
-      "iconType": "action",
-      "iconGlyph": "Plus",
-      "iconLabel": "添加"
+      "size": "1/4",
+      "showHeader": false
     }
   ],
   "notes": []

@@ -67,7 +67,7 @@ export const WIDGET_CONTEXT_MENU: ContextMenuItemConfig[] = [
     label: '编辑图标',
     icon: Pencil,
     action: 'editIcon',
-    // 仅对 icon / icon-grid 组件显示（组件内由 resolveAction 根据类型控制）
+    // 仅对 icon / web-grid / settings 组件显示（组件内由 resolveAction 根据类型控制）
     dividerAfter: true,
   },
   {

@@ -34,21 +34,10 @@ export const PRESET_DATA = {
     },
     {
       id: 'widget-settings',
-      type: 'icon-grid',
+      type: 'settings',
       title: '系统设置',
       size: '1/8',
       showHeader: false,
-    },
-  
-    {
-      id: 'widget-add',
-      type: 'icon-grid',
-      title: '添加组件',
-      size: '1/8',
-      showHeader: false,
-      iconType: 'action',
-      iconGlyph: 'Plus',
-      iconLabel: '添加',
     },
   ] as WidgetItem[],
 
