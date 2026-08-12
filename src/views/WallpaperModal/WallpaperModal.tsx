@@ -93,7 +93,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title="桌面与屏幕保护"
-      className={className}
+      className={`wallpaper-modal-solid ${className}`}
     >
       <div
         className={`flex min-h-0 flex-1 min-h-[80vh] md:min-h-[60vh] ${contentClassName}`}

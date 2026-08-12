@@ -478,6 +478,8 @@ interface AppConfig {
   scrollEase?: number;
   initialIndex?: number;
   onActiveChange?: (index: number) => void;
+  /** 动画真正停止后触发，传入最终停留的卡片索引。用于"等轮播停下再应用"的场景。 */
+  onSettle?: (index: number) => void;
 }
 
 class App {
@@ -504,6 +506,11 @@ class App {
   raf: number = 0;
   itemCount: number = 0;
   activeIndex: number = -1;
+  onSettle?: (index: number) => void;
+  /** activeIndex 变化后置 true，等动画停止后消费一次 onSettle。 */
+  pendingSettle: boolean = false;
+  /** 连续稳定帧数计数，用于确认动画已停止。 */
+  settleFrames: number = 0;
 
   boundOnResize!: () => void;
   boundOnWheel!: (e: Event) => void;
@@ -526,7 +533,8 @@ class App {
       scrollSpeed = 2,
       scrollEase = 0.05,
       initialIndex,
-      onActiveChange
+      onActiveChange,
+      onSettle
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
@@ -534,6 +542,7 @@ class App {
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onActiveChange = onActiveChange;
+    this.onSettle = onSettle;
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -754,8 +763,25 @@ class App {
       const idx = ((raw % this.itemCount) + this.itemCount) % this.itemCount;
       if (idx !== this.activeIndex) {
         this.activeIndex = idx;
+        // 标记有待结算：等动画停止后通知调用方最终停留位置。
+        this.pendingSettle = true;
         this.onActiveChange?.(idx);
       }
+    }
+
+    // 检测动画是否已停止（current 与 target 足够接近且未在拖拽），
+    // 若有待结算的 activeIndex 变化，则触发一次 onSettle——
+    // 这保证调用方"等轮播停下来才应用"的语义。
+    const settleDiff = Math.abs(this.scroll.target - this.scroll.current);
+    if (!this.isDown && settleDiff < 0.5 && this.pendingSettle) {
+      this.settleFrames++;
+      if (this.settleFrames >= 3) {
+        this.pendingSettle = false;
+        this.settleFrames = 0;
+        this.onSettle?.(this.activeIndex);
+      }
+    } else if (settleDiff >= 0.5 || this.isDown) {
+      this.settleFrames = 0;
     }
 
     this.raf = window.requestAnimationFrame(this.update.bind(this));
@@ -815,6 +841,8 @@ interface CircularGalleryProps {
   showControls?: boolean;
   showIndicators?: boolean;
   onActiveChange?: (index: number) => void;
+  /** 动画真正停止后触发，传入最终停留的卡片索引。 */
+  onSettle?: (index: number) => void;
 }
 
 export default function CircularGallery({
@@ -829,12 +857,15 @@ export default function CircularGallery({
   initialIndex,
   showControls = false,
   showIndicators = false,
-  onActiveChange
+  onActiveChange,
+  onSettle
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<App | null>(null);
   const onActiveChangeRef = useRef(onActiveChange);
   onActiveChangeRef.current = onActiveChange;
+  const onSettleRef = useRef(onSettle);
+  onSettleRef.current = onSettle;
   const [active, setActive] = useState(initialIndex ?? 0);
   const count = items?.length ?? 0;
 
@@ -856,6 +887,9 @@ export default function CircularGallery({
         onActiveChange: (idx) => {
           setActive(idx);
           onActiveChangeRef.current?.(idx);
+        },
+        onSettle: (idx) => {
+          onSettleRef.current?.(idx);
         }
       });
       appRef.current = app;

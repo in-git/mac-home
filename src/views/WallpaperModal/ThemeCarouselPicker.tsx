@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import THEME_OPTIONS from '../../data/options/theme.options';
 import type { WallpaperConfig } from '../../types';
 import {
@@ -67,26 +67,34 @@ const isThemeSelected = (opt: ThemeOption, w: WallpaperConfig): boolean =>
 const THEME_CAROUSEL_IMAGE =
   'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
 
-/** 桌面主题 3D 卡片选择器：最前方的卡片 = 当前选中效果 */
+/**
+ * 桌面主题 3D 卡片选择器：最前方的卡片 = 当前选中效果。
+ *
+ * 采用单向数据流：
+ *  - 卡片 → 数据：用户滑动卡片，等轮播动画真正停止后（onSettle）才把对应主题写入
+ *    wallpaper（onUpdateWallpaper）。滑动过程中仅即时更新展示，不写入。
+ *  - 数据 ↛ 卡片：下方手动微调（滤镜滑块）改变 wallpaper 时，不会回流影响卡片位置/状态，
+ *    卡片仅在挂载时从 wallpaper 读取一次初始主题。
+ *  - 限定触发次数：onSettle 由底层 CircularGallery 在动画停止时触发一次，
+ *    一次滑动操作只触发一次 onUpdateWallpaper，避免高频重绘与状态闪烁。
+ */
 export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
   wallpaper,
   onUpdateWallpaper,
 }) => {
-  const [activeIndex, setActiveIndex] = useState(() =>
-    Math.max(
-      0,
-      THEME_OPTIONS.findIndex((o) => isThemeSelected(o, wallpaper)),
-    ),
-  );
-
-  // 打开面板时定位到当前已应用的主题（若匹配）。
-  // 必须仅在挂载时取值一次：若每次随 wallpaper 变化，会作为新 prop 传入
+  // 仅在挂载时从 wallpaper 读取初始主题，锁定 initialIndex。
+  // 必须只取一次：若每次随 wallpaper 变化，会作为新 prop 传入
   // DepthCarousel → CircularGallery，而 initialIndex 恰在 CircularGallery 的
   // useEffect 依赖中，会触发 WebGL 场景销毁并异步重建（等待字体加载），
   // 重建间隙 canvas 被移除 → 卡片白屏。用 useState 惰性初始化锁定初值。
   const [initialIndex] = useState(() =>
     Math.max(0, THEME_OPTIONS.findIndex((o) => isThemeSelected(o, wallpaper))),
   );
+  // 当前正前方卡片索引：滑动过程中即时更新，仅用于展示名称/描述/徽标。
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  // 最近一次已应用到桌面的主题索引；仅在 debounce 结束后更新，驱动「当前/预览」徽标。
+  // 单向数据流：不再从 wallpaper 反推，避免下方手动微调导致徽标反复跳变。
+  const [appliedIndex, setAppliedIndex] = useState(initialIndex);
 
   const items = useMemo(
     () =>
@@ -99,27 +107,15 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
   );
 
   const active = THEME_OPTIONS[activeIndex];
-  const isApplied = isThemeSelected(active, wallpaper);
+  const isApplied = activeIndex === appliedIndex;
 
-  // 滑动过程中 onActiveChange 会跨过多张卡片连续触发。
-  // 用 requestAnimationFrame 合并：同一帧内的多次触发只应用最后一次，
-  // 既避免背景反复重绘闪烁，又不像 setTimeout 那样产生 250ms 延迟与白屏。
+  // 单向：卡片 → 数据。用 ref 持有最新回调，避免成为定时器依赖。
   const onUpdateRef = useRef(onUpdateWallpaper);
   onUpdateRef.current = onUpdateWallpaper;
-  const pendingIndex = useRef<number | undefined>(undefined);
-  const applyRaf = useRef<number | undefined>(undefined);
-
-  useEffect(() => {
-    return () => {
-      if (applyRaf.current !== undefined) {
-        cancelAnimationFrame(applyRaf.current);
-      }
-    };
-  }, []);
 
   return (
     <div>
-      <div className="relative h-[240px]">
+      <div className="relative h-[240px] bg-black">
         <DepthCarousel
           items={items}
           initialIndex={initialIndex}
@@ -142,17 +138,13 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
           showControls
           showIndicators
           onChange={(index) => {
+            // 即时更新展示（名称/描述/预览徽标），不写入 wallpaper。
             setActiveIndex(index);
-            pendingIndex.current = index;
-            if (applyRaf.current === undefined) {
-              applyRaf.current = requestAnimationFrame(() => {
-                applyRaf.current = undefined;
-                const idx = pendingIndex.current;
-                if (idx !== undefined) {
-                  onUpdateRef.current(themeOptionToPatch(THEME_OPTIONS[idx]));
-                }
-              });
-            }
+          }}
+          onSettle={(index) => {
+            // 轮播动画真正停止后才把主题写入 wallpaper，避免滑动过程中频繁应用。
+            setAppliedIndex(index);
+            onUpdateRef.current(themeOptionToPatch(THEME_OPTIONS[index]));
           }}
         />
       </div>

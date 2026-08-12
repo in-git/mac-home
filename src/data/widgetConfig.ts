@@ -1,4 +1,5 @@
 import { WidgetSize, WidgetType } from '../types';
+import type { SiteItem } from '../api/site';
 import {
   SIZE_OPTIONS_ICON,
   SIZE_OPTIONS_LARGE_WIDE,
@@ -17,6 +18,8 @@ import {
  *
  * Edit an entry here to change how that widget type behaves across the app.
  */
+export type WidgetCategory = 'system' | 'web';
+
 export interface WidgetTypeConfig {
   /** Default title used when a widget of this type is created. */
   title: string;
@@ -32,6 +35,8 @@ export interface WidgetTypeConfig {
   glyph: string;
   /** Human-readable label shown in the add-widget picker. */
   label: string;
+  /** Category used for the left sidebar grouping in the add-widget modal. */
+  category: WidgetCategory;
   /** Whether cards of this type render the title bar (header). Optional — when
    *  omitted the header is shown by default. Icon-style types (e.g. icon-grid,
    *  settings) set this to `false` to render as a bare desktop icon. */
@@ -39,6 +44,8 @@ export interface WidgetTypeConfig {
   /** Optional click handler invoked when the widget card is clicked (non-editing
    *  mode). Defined at the type level. Optional — omit to use no default action. */
   onAction?: () => void;
+  /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（如站点库新增的站点）。 */
+  shortcuts?: SiteItem[];
 }
 
 export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
@@ -50,6 +57,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🔍',
     label: '网络搜索',
+    category: 'system',
   },
   weather: {
     title: '天气预报',
@@ -59,6 +67,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '⛅',
     label: '天气预报',
+    category: 'system',
   },
   'sticky-notes': {
     title: '便签笔记',
@@ -68,6 +77,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '📝',
     label: '便签',
+    category: 'system',
   },
   clock: {
     title: '时钟日历',
@@ -77,6 +87,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🕒',
     label: '时间 & 日历',
+    category: 'system',
   },
   'clock-mini': {
     title: '时钟',
@@ -86,6 +97,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '⏰',
     label: '时钟',
+    category: 'system',
   },
   'control-center': {
     title: '控制中心',
@@ -95,6 +107,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🎛️',
     label: '控制中心',
+    category: 'system',
   },
   settings: {
     title: '系统设置',
@@ -104,6 +117,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '⚙️',
     label: '系统设置',
+    category: 'system',
     showHeader: false,
   },
   'icon-grid': {
@@ -114,7 +128,29 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: false,
     glyph: '🧩',
     label: '图标',
+    category: 'system',
     showHeader: false,
+  },
+  shortcuts: {
+    title: '快捷导航',
+    maxInstances: Infinity,
+    defaultSize: 'wide',
+    sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
+    isAddable: true,
+    glyph: '🔗',
+    label: '快捷导航',
+    category: 'system',
+    shortcuts: [],
+  },
+  application: {
+    title: '网页列表',
+    maxInstances: Infinity,
+    defaultSize: 'wide',
+    sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
+    isAddable: true,
+    glyph: '🌐',
+    label: '网页',
+    category: 'web',
   },
 
 };
@@ -132,6 +168,7 @@ const FALLBACK_CONFIG: WidgetTypeConfig = {
   isAddable: false,
   glyph: '🔗',
   label: '组件',
+  category: 'system',
 };
 
 /** Resolve the config for a widget type (falls back to a safe default). */
@@ -166,7 +203,13 @@ export const ADDABLE_WIDGETS = Object.entries(WIDGET_CONFIG)
     type: type as WidgetType,
     glyph: cfg.glyph,
     label: cfg.label,
+    category: cfg.category,
   }));
+
+/** Get addable widgets filtered by category. */
+export function getAddableWidgetsByCategory(category: WidgetCategory) {
+  return ADDABLE_WIDGETS.filter((w) => w.category === category);
+}
 
 // ---------------------------------------------------------------------------
 // Instance-level click actions

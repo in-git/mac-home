@@ -59,7 +59,7 @@ const MiniCanvas2D: React.FC<{ presetId: string; isDark: boolean }> = ({
     if (!ctx) return;
 
     const W = (canvas.width = 360);
-    const H = (canvas.height = 240);
+    const H = (canvas.height = 202);
     particlesRef.current = createParticles(W, H);
 
     let raf = 0;
@@ -117,7 +117,7 @@ export const DynamicWallpaperSection: React.FC<
             onToggleDarkMode();
           }
         }}
-        className={`group relative aspect-[4/3] overflow-hidden rounded-[var(--card-radius)] border bg-black text-left transition-colors ${
+        className={`group relative aspect-video overflow-hidden rounded-[var(--card-radius)] border bg-black text-left transition-colors ${
           isSelected
             ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
             : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
@@ -146,7 +146,7 @@ export const DynamicWallpaperSection: React.FC<
 
   return (
     <section>
-      <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+      <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200 ">
         动态效果
       </h3>
       <GlassTabs

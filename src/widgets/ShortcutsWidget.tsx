@@ -1,26 +1,15 @@
-import {
-  Apple,
-  Compass,
-  Github,
-  Globe,
-  MoreHorizontal,
-  Palette,
-  Plus,
-  Search,
-  Sparkles,
-  StickyNote,
-  Trash2,
-} from 'lucide-react';
+import { Compass, MoreHorizontal, Plus } from 'lucide-react';
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { QuickShortcut } from '../types';
+import { SiteItem } from '../api/site';
+import { ShortcutTile } from './ShortcutTile';
 
 export interface ShortcutsWidgetCardProps {
   expanded?: boolean;
   onExpand?: () => void;
-  shortcuts: QuickShortcut[];
+  shortcuts: SiteItem[];
   onAddClick: () => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
-  onOpen: (s: QuickShortcut) => void;
+  onOpen: (s: SiteItem) => void;
 }
 
 export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
@@ -84,29 +73,6 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
     return () => ro.disconnect();
   }, [actions.length, expanded]);
 
-  const getIcon = (iconName: string, className?: string) => {
-    switch (iconName) {
-      case 'Apple':
-        return <Apple size={18} className={className} />;
-      case 'Github':
-        return <Github size={18} className={className} />;
-      case 'Palette':
-        return <Palette size={18} className={className} />;
-      case 'Sparkles':
-        return <Sparkles size={18} className={className} />;
-      case 'Search':
-        return <Search size={18} className={className} />;
-      case 'Globe':
-        return <Globe size={18} className={className} />;
-      case 'Compass':
-        return <Compass size={18} className={className} />;
-      default:
-        return <StickyNote size={18} className={className} />;
-    }
-  };
-
-  const isImageShortcut = (s: QuickShortcut) => !!s.thumbnailUrl || !!s.imageUrl;
-
   return (
     <div className="h-full flex flex-col text-xs p-1 text-slate-800 dark:text-slate-100">
       <div
@@ -156,47 +122,14 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
         <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
           {shortcuts.map((item) => (
             <a
-              key={item.id}
-              href={item.url}
+              key={item.id || item.link}
+              href={item.link}
               target="_blank"
               rel="noreferrer"
               onClick={() => onOpen(item)}
               className="group relative flex flex-col rounded-[var(--card-radius)] transition-colors shadow-xs text-center aspect-square"
             >
-              <div className="relative group/icon w-full flex-1">
-                {isImageShortcut(item) ? (
-                  <div
-                    className={`relative w-full aspect-square rounded-[var(--card-radius)] overflow-hidden shadow-sm ${
-                      item.bgColor || 'bg-slate-800 text-white'
-                    }`}
-                  >
-                    <img
-                      src={item.thumbnailUrl || item.imageUrl}
-                      alt={item.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className={`relative w-full aspect-square rounded-[var(--card-radius)] flex items-center justify-center shadow-sm ${
-                      item.bgColor || 'bg-slate-800 text-white'
-                    } transition-transform `}
-                  >
-                    {getIcon(item.iconName, 'w-[30%] h-[30%]')}
-                  </div>
-                )}
-
-                <button
-                  onClick={(e) => onDelete(item.id, e)}
-                  className="absolute top-1 right-1 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-black/10 dark:hover:bg-white/10 opacity-0 group-hover/icon:opacity-100 transition-opacity"
-                >
-                  <Trash2 size={11} />
-                </button>
-              </div>
-              <span className="font-semibold text-font-sm truncate w-full mt-1 text-slate-800 dark:text-slate-100">
-                {item.title}
-              </span>
+              <ShortcutTile item={item} onDelete={onDelete} />
             </a>
           ))}
         </div>

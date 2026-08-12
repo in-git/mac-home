@@ -31,7 +31,7 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
       className="group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] dark:ring-white/[0.08]"
     >
       {/* 图片预览 */}
-      <div className="aspect-[4/3] w-full bg-black/5 dark:bg-white/5">
+      <div className="aspect-[16/9] w-full bg-black/5 dark:bg-white/5">
         {src ? (
           <img
             src={src}
@@ -49,7 +49,7 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
       {/* 选中态遮罩 + 勾选 */}
       <div
         className={clsx(
-          'absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-200',
+          'absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-200 aspect-[16/9]',
           isSelected
             ? 'bg-black/25 opacity-100'
             : 'bg-black/0 opacity-0 group-hover:bg-black/15 group-hover:opacity-100',

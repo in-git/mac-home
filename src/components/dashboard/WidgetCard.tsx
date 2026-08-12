@@ -25,6 +25,8 @@ interface WidgetCardProps {
   onClick: (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => void;
   /** 卡片整体右键菜单回调（参数与 App.handleContextMenuWidget 一致：事件 + widgetId）。 */
   onContextMenuWidget?: (e: React.MouseEvent, widgetId: string) => void;
+  /** 更新任意 widget 实例字段（如快捷导航的 shortcuts 数据空间）。 */
+  onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
 
 // 单个 widget 的卡片：外层包裹（供 Muuri 测量） + 玻璃面板（header 控制栏 + 内容区）。
@@ -44,6 +46,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onExpand,
   onClick,
   onContextMenuWidget,
+  onUpdateWidget,
 }) => {
   const sizeClasses = getItemSizeClasses(widget.size);
   const showHeader = widget.showHeader !== false;
@@ -171,7 +174,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
               widget.size === 'icon-1-16' ? '' : ' pt-0'
             }${isEditMode ? ' pointer-events-none' : ''}`}
           >
-            {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand })}
+            {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand, onUpdateWidget })}
           </div>
         </div>
       </div>

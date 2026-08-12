@@ -128,6 +128,8 @@ export interface WidgetItem {
   html?: string;
   // 仅 application（网页列表）组件：要展示的网页条目列表。
   websites?: WebSite[];
+  // 仅 快捷导航 组件：本组件实例独立的站点数据空间。
+  shortcuts?: SiteItem[];
 }
 
 /** 网页列表（application）组件中的单个网页条目 */
@@ -218,19 +220,6 @@ export interface WeatherCondition {
     low: number;
     condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'thunder';
   }[];
-}
-
-export interface QuickShortcut {
-  id: string;
-  title: string;
-  url: string;
-  iconName: string;
-  category: string;
-  bgColor?: string;
-  imageUrl?: string;
-  thumbnailUrl?: string;
-  /** 访问次数，显示在卡片右上角（icon + 数字） */
-  count?: number;
 }
 
 export interface SystemStatus {

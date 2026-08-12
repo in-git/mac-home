@@ -1,5 +1,4 @@
 import {
-  QuickShortcut,
   StickyNote,
   WeatherCondition,
   WidgetItem,
@@ -61,55 +60,4 @@ export const PRESET_DATA = {
   INITIAL_NOTES: [] as StickyNote[],
 
   PRESET_WEATHER: {} as Record<string, WeatherCondition>,
-
-  INITIAL_SHORTCUTS: [
-    {
-      id: 'sc-1',
-      title: 'Apple 官网',
-      url: 'https://www.apple.com.cn',
-      iconName: 'Apple',
-      category: '工具',
-      bgColor: 'bg-black text-white',
-    },
-    {
-      id: 'sc-2',
-      title: 'GitHub',
-      url: 'https://github.com',
-      iconName: 'Github',
-      category: '开发',
-      bgColor: 'bg-slate-900 text-white',
-    },
-    {
-      id: 'sc-3',
-      title: 'Figma',
-      url: 'https://www.figma.com',
-      iconName: 'Palette',
-      category: '设计',
-      bgColor: 'bg-rose-500 text-white',
-    },
-    {
-      id: 'sc-4',
-      title: 'ChatGPT',
-      url: 'https://chatgpt.com',
-      iconName: 'Sparkles',
-      category: 'AI',
-      bgColor: 'bg-emerald-600 text-white',
-    },
-    {
-      id: 'sc-5',
-      title: 'Google AI Studio',
-      url: 'https://ai.google.dev',
-      iconName: 'Compass',
-      category: 'AI',
-      bgColor: 'bg-blue-600 text-white',
-    },
-    {
-      id: 'sc-6',
-      title: 'Notion 笔记',
-      url: 'https://notion.so',
-      iconName: 'StickyNote',
-      category: '效率',
-      bgColor: 'bg-stone-800 text-white',
-    },
-  ] 
 };

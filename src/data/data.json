@@ -37,7 +37,8 @@
       "id": "widget-shortcuts",
       "type": "shortcuts",
       "title": "快捷导航",
-      "size": "sm"
+      "size": "sm",
+      "shortcuts": []
     },
     {
       "id": "widget-control",

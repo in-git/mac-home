@@ -10,15 +10,22 @@ import { Skeleton, Tooltip } from '@heroui/react';
 import { toast } from '../components/Toast';
 import { Modal } from '../components/Modal';
 import { siteApi, SiteCategory, SiteIdentity, SiteItem } from '../api/site';
-import { PRESET_DATA } from '../data/presetData';
-import { QuickShortcut } from '../types';
 import { playSound } from '../utils/sound';
 import { ShortcutsWidgetCard } from '../widgets/ShortcutsWidget';
 
 interface ShortcutsWidgetProps {
   expanded?: boolean;
   onExpand?: () => void;
+  /** 来自 widget 实例的持久化数据空间；未提供时回退到预设站点 */
+  shortcuts?: SiteItem[];
+  /** 写回数据空间的回调（通常经 store 持久化到 localStorage） */
+  onUpdateShortcuts?: (list: SiteItem[]) => void;
 }
+
+/** 预设快捷站点（使用 SiteItem 结构，无图时以首字母 + 纯色背景兜底） */
+const INITIAL_SITES: SiteItem[] = [
+
+];
 
 function flattenCategories(categories: SiteCategory[]): SiteCategory[] {
   const result: SiteCategory[] = [];
@@ -115,11 +122,31 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
 export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
   onExpand,
+  shortcuts: shortcutsProp,
+  onUpdateShortcuts,
 }) => {
-  const [shortcuts, setShortcuts] = useState<QuickShortcut[]>(
-    PRESET_DATA.INITIAL_SHORTCUTS,
+  const [shortcuts, setShortcuts] = useState<SiteItem[]>(
+    shortcutsProp ?? INITIAL_SITES,
   );
   const [showAdd, setShowAdd] = useState(false);
+
+  // 数据空间由外部（widget 实例）持有：props 变化时（如新增实例、持久化恢复）同步本地状态
+  useEffect(() => {
+    if (shortcutsProp) setShortcuts(shortcutsProp);
+  }, [shortcutsProp]);
+
+  // 任何写入都同时更新本地状态与 widget 实例的数据空间（store → localStorage）
+  const commitShortcuts = useCallback(
+    (next: SiteItem[] | ((prev: SiteItem[]) => SiteItem[])) => {
+      setShortcuts((prev) => {
+        const resolved =
+          typeof next === 'function' ? (next as (p: SiteItem[]) => SiteItem[])(prev) : next;
+        onUpdateShortcuts?.(resolved);
+        return resolved;
+      });
+    },
+    [onUpdateShortcuts],
+  );
 
   const [categories, setCategories] = useState<SiteCategory[]>([]);
   const [identities, setIdentities] = useState<SiteIdentity[]>([]);
@@ -195,24 +222,18 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const handleAddFromSite = (item: SiteItem) => {
     const url = item.link || '#';
     // 去重：已存在相同 URL 的快捷项则提示并跳过，避免重复添加
-    if (shortcuts.some((s) => s.url === url)) {
+    if (shortcuts.some((s) => s.link === url)) {
       toast.warning(`「${item.name || '未命名'}」已在快捷导航中`);
       return;
     }
-    const shortcut: QuickShortcut = {
-      id: `sc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      title: item.name || item.des?.slice(0, 20) || '未命名',
-      url,
-      iconName: 'Globe',
-      category: item.categoryList?.[0]?.name || item.module || '站点',
-      bgColor: item.background || 'bg-slate-800 text-white',
-      imageUrl: item.cover || item.logo,
-      thumbnailUrl: item.logo,
-      count: item.count ?? 0,
+    // 直接以 SiteItem 结构存储，保留原站点的封面/背景/计数等字段
+    const shortcut: SiteItem = {
+      ...item,
+      id: item.id || `sc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     };
     // 再次以函数式更新兜底，防止极速连点导致的竞态重复
-    setShortcuts((prev) =>
-      prev.some((s) => s.url === url) ? prev : [...prev, shortcut],
+    commitShortcuts((prev) =>
+      prev.some((s) => s.link === url) ? prev : [...prev, shortcut],
     );
     void (async () => {
       try {
@@ -234,13 +255,13 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    setShortcuts((prev) => prev.filter((s) => s.id !== id));
+    commitShortcuts((prev) => prev.filter((s) => s.id !== id));
   };
 
   // 点击卡片在外部打开，并本地递增访问次数（与「添加」逻辑互不冲突）
-  const handleOpen = (s: QuickShortcut) => {
+  const handleOpen = (s: SiteItem) => {
     playSound.playClick();
-    setShortcuts((prev) =>
+    commitShortcuts((prev) =>
       prev.map((item) =>
         item.id === s.id ? { ...item, count: (item.count ?? 0) + 1 } : item,
       ),
@@ -386,7 +407,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                     item={item}
                     onOpen={handleOpenSite}
                     onAdd={handleAddFromSite}
-                    exists={shortcuts.some((s) => s.url === (item.link || '#'))}
+                    exists={shortcuts.some((s) => s.link === (item.link || '#'))}
                   />
                 ))}
               </div>

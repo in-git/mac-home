@@ -109,7 +109,7 @@ export const useHomeStore = create<HomeState>()(
       isDarkMode:
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches,
-      themeColor: '#007AFF',
+      themeColor: '#4F9DE0',
       soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
       fontVariant: 'A',
       cardRadius: 'large',
@@ -204,7 +204,7 @@ export const useHomeStore = create<HomeState>()(
           isDarkMode:
             window.matchMedia &&
             window.matchMedia('(prefers-color-scheme: dark)').matches,
-          themeColor: '#007AFF',
+          themeColor: '#4F9DE0',
           soundEnabled: true,
           fontVariant: 'A',
           cardRadius: 'large',

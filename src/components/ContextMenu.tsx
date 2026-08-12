@@ -35,6 +35,18 @@ interface ContextMenuProps {
   onEditIcon: (id: string) => void;
 }
 
+/** 卡片背景纯色快捷选项 —— 一排并列的「透明 / 纯黑 / 纯白」。 */
+const SOLID_BG_COLORS: {
+  label: string;
+  value: string;
+  theme: 'light' | 'dark';
+  transparent?: boolean;
+}[] = [
+  { label: '透明', value: 'transparent', theme: 'light', transparent: true },
+  { label: '纯黑', value: '#1a1a1a', theme: 'dark' },
+  { label: '纯白', value: '#FFFFFF', theme: 'light' },
+];
+
 export const ContextMenu: React.FC<ContextMenuProps> = ({
   position,
   onClose,
@@ -205,7 +217,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               <div
                 onMouseEnter={openBgSubmenu}
                 onMouseLeave={scheduleCloseBgSubmenu}
-                className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] glass-panel bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/70 dark:border-white/20"
+                className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
               >
                 <div className="px-1 mb-3 text-font-md font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
                   卡片背景
@@ -225,6 +237,43 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     >
                       {tab === 'light' ? '亮色' : '暗色'}
                     </button>
+                  ))}
+                </div>
+
+                {/* 纯色快捷选项：透明 / 纯黑 / 纯白，一排并列 */}
+                <div className="mb-3 grid grid-cols-3 gap-3">
+                  {SOLID_BG_COLORS.map((c) => (
+                    <button
+                      key={c.label}
+                      title={c.label}
+                      onClick={() => {
+                        onChangeWidgetBackground(
+                          targetWidget.id,
+                          c.transparent ? undefined : c.value,
+                          c.theme,
+                        );
+                        setBgSubmenuOpen(false);
+                        onClose();
+                      }}
+                      style={
+                        c.transparent
+                          ? {
+                              backgroundImage:
+                                'linear-gradient(45deg,#ccc 25%,transparent 25%,transparent 75%,#ccc 75%),linear-gradient(45deg,#ccc 25%,transparent 25%,transparent 75%,#ccc 75%)',
+                              backgroundSize: '10px 10px',
+                              backgroundPosition: '0 0,5px 5px',
+                              backgroundColor: '#fff',
+                            }
+                          : { background: c.value }
+                      }
+                      className={`h-12 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform ${
+                        (c.transparent
+                          ? targetWidget.background === undefined
+                          : targetWidget.background === c.value)
+                          ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
+                          : 'border-black/10 dark:border-white/15'
+                      }`}
+                    />
                   ))}
                 </div>
 
@@ -255,16 +304,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     />
                   ))}
                 </div>
-                <button
-                  onClick={() => {
-                    onChangeWidgetBackground(targetWidget.id, undefined);
-                    setBgSubmenuOpen(false);
-                    onClose();
-                  }}
-                  className="mt-5 w-full rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 py-3 text-font-md font-semibold text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
-                >
-                  恢复默认（透明）
-                </button>
               </div>
             )}
           </div>
@@ -307,7 +346,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         left: `${adjustedX}px`,
           width: '272px',
         }}
-        className="fixed z-[70] p-2.5 rounded-[var(--card-radius)] glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
+        className="context-menu fixed z-[70] p-2.5 rounded-[var(--card-radius)] glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
       >
         {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
         {targetWidget ? (

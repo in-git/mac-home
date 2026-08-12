@@ -70,6 +70,7 @@ export default function App() {
     deleteWidget,
     resizeWidget,
     updateWidgetBackground,
+    updateWidget,
   } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
     storeActions;
@@ -210,6 +211,7 @@ export default function App() {
             isDarkMode={isDarkMode}
             onToggleDarkMode={toggleDarkMode}
             onWeatherChange={setWeatherInfo}
+            onUpdateWidget={updateWidget}
           />
 
           {/* 右下角完成按钮（仅在编辑模式展示） */}

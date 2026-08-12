@@ -22,6 +22,7 @@ interface RenderWidgetContentProps {
   onExpand: (id: string) => void;
   /** true 时用于无头模态（弹窗）：settings 渲染完整面板，shortcuts 填满布局 */
   inModal?: boolean;
+  onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
 
 // Helper to render widget content. `inModal` 为 true 时用于无头模态（弹窗）：
@@ -36,6 +37,7 @@ export const renderWidgetContent = ({
   onWeatherChange,
   onExpand,
   inModal = false,
+  onUpdateWidget,
 }: RenderWidgetContentProps): React.ReactNode => {
   switch (widget.type) {
     case 'search':
@@ -62,6 +64,12 @@ export const renderWidgetContent = ({
         <ShortcutsWidget
           expanded={inModal}
           onExpand={inModal ? undefined : () => onExpand(widget.id)}
+          shortcuts={widget.shortcuts}
+          onUpdateShortcuts={
+            onUpdateWidget
+              ? (list) => onUpdateWidget(widget.id, { shortcuts: list })
+              : undefined
+          }
         />
       );
     case 'settings':

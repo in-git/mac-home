@@ -37,7 +37,7 @@ export const GradientWallpaperCard: React.FC<GradientWallpaperCardProps> = ({
       {/* 选中态遮罩 + 勾选 */}
       <div
         className={clsx(
-          'absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-200',
+          'absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-200 ',
           isSelected
             ? 'bg-black/25 opacity-100'
             : 'bg-black/0 opacity-0 group-hover:bg-black/15 group-hover:opacity-100',

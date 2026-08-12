@@ -30,6 +30,8 @@ export interface DepthCarouselProps {
   /** 初始定位到指定索引（仅挂载时生效一次），用于打开面板时对齐当前选中项 */
   initialIndex?: number;
   onChange?: (index: number, item: { image: string; alt?: string }) => void;
+  /** 动画停止后触发，传入最终停留的卡片索引。 */
+  onSettle?: (index: number) => void;
   className?: string;
 }
 
@@ -73,6 +75,7 @@ const DepthCarousel = ({
   showIndicators = true,
   initialIndex,
   onChange,
+  onSettle,
   className = '',
 }: DepthCarouselProps) => {
   const data = useMemo(
@@ -106,6 +109,7 @@ const DepthCarousel = ({
         bend={Math.min(3, Math.max(1, count > 6 ? 3 : 1.5))}
         scrollSpeed={count > 1 ? 2 : 0}
         onActiveChange={(index) => onChange?.(index, { image: data[index]?.image ?? '', alt: data[index]?.alt })}
+        onSettle={onSettle}
       />
     </div>
   );

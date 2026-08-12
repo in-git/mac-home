@@ -93,19 +93,19 @@ button{
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow:
+  /* box-shadow:
     0 8px 32px 0 rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6); */
 }
 
 .dark .glass-panel {
   background-color: rgba(30, 30, 32, 0.68);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
+  /* border: 1px solid rgba(255, 255, 255, 0.12); */
+  /* box-shadow:
     0 10px 40px 0 rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1); */
 }
 
 .glass-pill {
@@ -466,4 +466,50 @@ button{
 .site-library-modal .dark\:hover\:bg-white\/10:hover,
 .site-library-modal .dark\:hover\:bg-white\/15:hover {
   background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 右键菜单入场过渡（替代原 motion 动画） */
+@keyframes context-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.context-menu {
+  transform-origin: top left;
+  animation: context-menu-in 0.15s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .context-menu {
+    animation: none;
+  }
+}
+
+/* 壁纸模态框：纯色实底，去掉玻璃透明效果 */
+.wallpaper-modal-solid.glass-panel {
+  background-color: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+.dark .wallpaper-modal-solid.glass-panel {
+  background-color: #1e1e20 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+/* 纯色底下去掉侧栏与卡片的半透明叠加，提升实色观感 */
+.wallpaper-modal-solid .dark\:bg-white\/\[0\.02\],
+.wallpaper-modal-solid .dark\:bg-white\/\[0\.04\],
+.wallpaper-modal-solid .dark\:bg-white\/\[0\.08\],
+.wallpaper-modal-solid .dark\:bg-white\/\[0\.12\] {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+.wallpaper-modal-solid .bg-white\/80 {
+  background-color: #ffffff !important;
+}
+.dark .wallpaper-modal-solid .bg-white\/80 {
+  background-color: #2a2a2d !important;
 }

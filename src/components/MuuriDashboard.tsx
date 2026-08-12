@@ -26,6 +26,8 @@ interface MuuriDashboardProps {
   enableHeadlessModal?: boolean;
   /** 卡片天气变化回调（顶部状态栏以卡片为准） */
   onWeatherChange?: (s: import('../widgets/WeatherWidget').WeatherSummary) => void;
+  /** 更新任意 widget 实例字段（如快捷导航的 shortcuts 数据空间）。 */
+  onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
 
 export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
@@ -41,6 +43,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   onToggleDarkMode,
   enableHeadlessModal = true,
   onWeatherChange,
+  onUpdateWidget,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const muuriInstanceRef = useRef<Muuri | null>(null);
@@ -320,6 +323,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
             onExpand={setExpandedWidgetId}
             onClick={handleCardClick}
             onContextMenuWidget={onContextMenuWidget}
+            onUpdateWidget={onUpdateWidget}
           />
         ))}
       </div>
@@ -351,6 +355,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
                     onWeatherChange,
                     onExpand: () => {},
                     inModal: true,
+                    onUpdateWidget,
                   })}
                 </div>
               </div>
