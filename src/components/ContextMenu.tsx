@@ -249,7 +249,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                         onChangeWidgetBackground(
                           targetWidget.id,
                           c.transparent ? undefined : c.value,
-                          c.theme,
+                          c.transparent ? undefined : c.theme,
                         );
                         setBgSubmenuOpen(false);
                         onClose();
@@ -267,7 +267,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       }
                       className={`h-12 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform ${
                         (c.transparent
-                          ? targetWidget.background === undefined
+                          ? targetWidget.background === undefined &&
+                            targetWidget.backgroundTheme === undefined
                           : targetWidget.background === c.value)
                           ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
                           : 'border-black/10 dark:border-white/15'

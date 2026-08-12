@@ -41,13 +41,15 @@ export const ClockCalendarWidget: React.FC = () => {
           <div className="text-3xl font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs">
             {formattedTime}
           </div>
-          <div className="text-xs font-medium mt-1">{formattedDate}</div>
+          <div className="text-xs font-medium mt-1 text-slate-500 dark:text-slate-400">
+            {formattedDate}
+          </div>
         </div>
       </div>
 
       {/* Mini Calendar Grid */}
       <div className="pt-2 border-t border-black/5 dark:border-white/10 text-xs">
-        <div className="grid grid-cols-7 gap-1 text-center font-medium  text-font-sm mb-1">
+        <div className="grid grid-cols-7 gap-1 text-center font-medium text-slate-500 dark:text-slate-400 mb-1">
           <span>日</span>
           <span>一</span>
           <span>二</span>
@@ -56,7 +58,7 @@ export const ClockCalendarWidget: React.FC = () => {
           <span>五</span>
           <span>六</span>
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-font-sm">
+        <div className="grid grid-cols-7 gap-1 text-center text-slate-800 dark:text-slate-100">
           {paddingDays.map((_, i) => (
             <div key={`pad-${i}`} className="p-1" />
           ))}

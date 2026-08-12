@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Compass, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { SiteItem } from '../../api/site';
 import { ShortcutTile } from './ShortcutTile';
 
@@ -43,18 +43,8 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
             <div
                 className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
             >
-                {shortcuts.length === 0 ? (
-                    <div className="h-full min-h-[120px] flex flex-col items-center justify-center gap-3 text-center  dark:text-slate-500">
-                        <Compass size={28} className="opacity-60" />
-                        <p className="dark:text-slate-400 text-xs leading-relaxed">
-                            快捷导航还是空的
-                            <br />
-                            点击网格中的「+」从站点库添加常用网址
-                        </p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
-                        {shortcuts.map((item) => (
+                <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
+                    {shortcuts.map((item) => (
                             <a
                                 key={item.id || item.link}
                                 href={item.link}
@@ -80,7 +70,6 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                             <Plus size={28} />
                         </button>
                     </div>
-                )}
             </div>
         </div>
     );

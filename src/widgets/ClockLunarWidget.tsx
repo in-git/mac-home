@@ -40,8 +40,8 @@ export const ClockLunarWidget: React.FC = () => {
       </div>
 
       {/* 下方：日期、星期、农历 */}
-      <div className="text-center space-y-1">
-        <div className="flex items-center justify-center space-x-1.5 text-font-sm font-medium">
+      <div className="text-center space-y-3">
+        <div className="flex items-center justify-center space-x-1.5 text-font-sm font-medium mt-3">
           <CalendarDays size={13} className="text-[color:var(--accent)] shrink-0" />
           <span>{formattedDate}</span>
           <span className="opacity-60">·</span>
