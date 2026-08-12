@@ -1,10 +1,10 @@
 import { Loader2, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { wallpaperApi, WallpaperCategory, WallpaperItem } from '../../api/wallpaper';
-import { WallpaperCard, type WallpaperCardItem } from './WallpaperCard';
+import { ImageWallpaperCard, type ImageWallpaperItem } from './ImageWallpaperCard';
 
 interface OnlineWallpaperListProps {
-  onSelect: (item: WallpaperCardItem) => void;
+  onSelect: (item: ImageWallpaperItem) => void;
 }
 
 /** 在线壁纸：接口数据，支持分类筛选与分页 */
@@ -93,11 +93,16 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
         <>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             {items.map((item) => (
-              <WallpaperCard
+              <ImageWallpaperCard
                 key={item.id}
-                item={item}
+                item={{
+                  id: item.id,
+                  name: item.title,
+                  imageUrl: item.imageUrl,
+                  thumbnailUrl: item.thumbnailUrl,
+                }}
                 isSelected={false}
-                onClick={() => onSelect(item)}
+                onSelect={onSelect}
               />
             ))}
           </div>

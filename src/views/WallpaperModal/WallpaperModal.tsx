@@ -1,5 +1,6 @@
 import {
   Image as ImageIcon,
+  Layers,
   Palette,
   SunMedium,
   RotateCcw,
@@ -9,6 +10,7 @@ import type { WallpaperConfig } from '../../types';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from '../StaticWallpaper';
+import { GradientWallpaperGrid } from '../StaticWallpaper/GradientWallpaperGrid';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
 
 interface WallpaperModalProps {
@@ -26,10 +28,11 @@ interface WallpaperModalProps {
   navClassName?: string;
 }
 
-type TabId = 'dynamic' | 'static' | 'adjust';
+type TabId = 'dynamic' | 'preset' | 'static' | 'adjust';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'dynamic', label: '动态效果', icon: <Palette size={16} /> },
+  { id: 'preset', label: '系统预设', icon: <Layers size={16} /> },
   { id: 'static', label: '静态壁纸', icon: <ImageIcon size={16} /> },
   { id: 'adjust', label: '桌面主题', icon: <SunMedium size={16} /> },
 ];
@@ -124,11 +127,19 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               onUpdateWallpaper={onUpdateWallpaper}
               onToggleDarkMode={onToggleDarkMode}
             />
+          ) : activeTab === 'preset' ? (
+            <div className="space-y-4">
+              <h3 className="text-base font-semibold text-[#1d1d1f] dark:text-[#f5f5f7]">
+                渐变壁纸
+              </h3>
+              <GradientWallpaperGrid
+                wallpaper={wallpaper}
+                isDarkMode={isDarkMode}
+                onUpdateWallpaper={onUpdateWallpaper}
+              />
+            </div>
           ) : activeTab === 'static' ? (
-            <StaticWallpaperSection
-              wallpaper={wallpaper}
-              onUpdateWallpaper={onUpdateWallpaper}
-            />
+            <StaticWallpaperSection onUpdateWallpaper={onUpdateWallpaper} />
           ) : (
             <div className="space-y-8">
               {/* 桌面主题：3D 卡片轮播选择 */}

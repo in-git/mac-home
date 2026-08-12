@@ -116,16 +116,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '图标',
     showHeader: false,
   },
-  application: {
-    title: '网页列表',
-    maxInstances: Infinity,
-    defaultSize: 'large',
-    sizeOptions: ['sm', 'third', 'wide', 'large', 'icon-1-8'],
-    isAddable: true,
-    glyph: '🌐',
-    label: '网页列表',
-    showHeader: true,
-  },
+
 };
 
 /**

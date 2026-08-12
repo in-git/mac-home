@@ -47,6 +47,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   const cleanupRef = useRef<(() => void) | null>(null);
   // 防止 ResizeObserver 与 Muuri layout 互相触发导致的重新布局死循环。
   const relayoutScheduledRef = useRef(false);
+  // 始终保持最新的 widgets 引用，供 dragEnd 闭包读取（避免用初始化时的
+  // 过时快照重建数组，覆盖掉拖拽前已做的 resize 等字段修改）。
+  const widgetsRef = useRef(widgets);
 
   // Cycle a widget through its available sizes on each click of the green dot.
   const cycleWidgetSize = (widget: WidgetItem) => {
@@ -100,17 +103,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     }
   };
 
-  // Initialize Muuri ONCE on mount. We deliberately do NOT depend on `widgets`
-  // or `isEditMode` here: recreating the grid on every drag-end (which triggers
-  // a setWidgets -> new widgets reference) was the root cause of severe lag.
+
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Defer initialization until the DOM (item sizes) has settled, so Muuri
-    // can measure items correctly. Otherwise all `.muuri-item` (position:absolute)
-    // collapse onto (0,0) and the container height collapses to 0 -> blank center.
+
     let rafId = requestAnimationFrame(() => {
       if (!containerRef.current) return;
+
 
       // Instantiate Muuri Layout
       const grid = new Muuri(containerRef.current, {
@@ -203,15 +203,18 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           .map((item) => item.getElement().getAttribute('data-widget-id'))
           .filter(Boolean) as string[];
 
-        // Reorder widget state array to match Muuri's current grid arrangement
+        // Reorder widget state array to match Muuri's current grid arrangement.
+        // 使用 widgetsRef（始终保持最新），避免套用初始化时的过时 widgets 快照
+        // 重建数组——否则会用拖拽前的旧对象覆盖掉用户已做的 resize 等字段修改。
+        const latestWidgets = widgetsRef.current;
         const reorderedWidgets: WidgetItem[] = [];
         newOrderedIds.forEach((id) => {
-          const found = widgets.find((w) => w.id === id);
+          const found = latestWidgets.find((w) => w.id === id);
           if (found) reorderedWidgets.push(found);
         });
 
         // Add any remaining
-        widgets.forEach((w) => {
+        latestWidgets.forEach((w) => {
           if (!reorderedWidgets.some((rw) => rw.id === w.id)) {
             reorderedWidgets.push(w);
           }
@@ -236,6 +239,12 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   useEffect(() => {
     isEditModeRef.current = isEditMode;
   }, [isEditMode]);
+
+  // 同步最新 widgets 引用，供 dragEnd 闭包读取，避免用初始化时的过时快照
+  // 重建数组、把用户拖拽前已做的 resize 等修改覆盖回初始值。
+  useEffect(() => {
+    widgetsRef.current = widgets;
+  }, [widgets]);
 
   // Sync Muuri's items with React's widgets (add/remove/resize) from outside
   // drag. Crucially, removed widgets must be removed from Muuri too — otherwise

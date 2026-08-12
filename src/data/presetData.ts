@@ -7,6 +7,7 @@ import {
 import {
   DEFAULT_WALLPAPER,
   STATIC_WALLPAPERS,
+  STATIC_IMAGE_WALLPAPERS,
   PresetStaticWallpaper,
 } from './options/gradient.options';
 
@@ -15,6 +16,7 @@ export type { PresetStaticWallpaper };
 export const PRESET_DATA = {
   DEFAULT_WALLPAPER,
   STATIC_WALLPAPERS,
+  STATIC_IMAGE_WALLPAPERS,
   INITIAL_WIDGETS: [
     { id: 'widget-search', type: 'search', title: '网络搜索', size: 'wide' },
     { id: 'widget-weather', type: 'weather', title: '天气预报', size: 'wide' },
@@ -43,17 +45,7 @@ export const PRESET_DATA = {
       iconGlyph: 'Settings',
       iconLabel: '设置',
     },
-    {
-      id: 'widget-icon',
-      type: 'icon-grid',
-      title: '图标',
-      size: 'icon-1-8',
-      showHeader: false,
-      iconType: 'link',
-      iconGlyph: 'Globe',
-      iconLabel: '官网',
-      iconHref: 'https://www.apple.com',
-    },
+  
     {
       id: 'widget-add',
       type: 'icon-grid',
