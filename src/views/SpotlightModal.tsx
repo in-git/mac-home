@@ -89,7 +89,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Widget Commands */}
             {widgetCommands.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:uppercase tracking-wider">
                   功能 & 小组件
                 </div>
                 {widgetCommands.map((w, i) => {
@@ -115,7 +115,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Notes Results */}
             {filteredNotes.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm font-semibold text-slate-400 dark:uppercase tracking-wider">
                   便签卡片 ({filteredNotes.length})
                 </div>
                 {filteredNotes.map((n) => (
@@ -132,7 +132,7 @@ export const SpotlightModal: React.FC<Props> = ({
                     <div>
                       <div className="font-medium text-slate-800 dark:text-slate-100">{n.title}</div>
                       {n.content && (
-                        <div className="text-slate-500 dark:text-slate-400 line-clamp-1">{n.content}</div>
+                        <div className="dark:text-slate-400 line-clamp-1">{n.content}</div>
                       )}
                     </div>
                   </div>

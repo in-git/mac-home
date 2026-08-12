@@ -86,7 +86,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
               locCoords || lastLocation
                 ? 'bg-[#34C759] text-white shadow-sm'
-                : 'bg-slate-400/30 text-slate-500 shadow-sm'
+                : 'bg-slate-400/30  shadow-sm'
             }`}
           >
             <MapPin size={18} />
@@ -131,7 +131,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       {/* Brightness slider */}
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div>
-          <div className="flex justify-between items-center text-font-sm text-slate-500 mb-1.5">
+          <div className="flex justify-between items-center text-font-sm  mb-1.5">
             <span className="flex items-center space-x-1.5 font-medium">
               <Sun size={13} />
               <span>屏幕亮度</span>
@@ -152,7 +152,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       {/* Font size: A (12/14/16) / B (13/15/17) / C (14/16/18) */}
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="flex items-center justify-between mb-2.5">
-          <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
+          <span className="flex items-center space-x-1.5 text-font-sm  font-medium">
             <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
@@ -178,7 +178,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 className={`relative z-10 py-2 text-font-md font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
                   active
                     ? 'text-slate-900 dark:text-white'
-                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                    : ' hover:text-slate-700 dark:hover:text-slate-300'
                 }`}
               >
                 <input
@@ -202,13 +202,13 @@ export const ControlCenterWidget: React.FC<Props> = ({
       {/* Card corner radius: visual picker pinned to the bottom of the screen */}
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
         <div className="flex items-center justify-between mb-3">
-          <span className="flex items-center space-x-1.5 text-font-sm text-slate-500 font-medium">
+          <span className="flex items-center space-x-1.5 text-font-sm  font-medium">
             <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>圆角</span>
           </span>
-          <span className="text-font-sm font-mono text-slate-500">
+          <span className="text-font-sm font-mono ">
             {CARD_RADIUS_LABEL[cardRadius]} · {CARD_RADIUS_PX[cardRadius]}px
           </span>
         </div>

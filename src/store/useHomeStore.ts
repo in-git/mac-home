@@ -115,7 +115,7 @@ export const useHomeStore = create<HomeState>()(
       isDarkMode:
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches,
-      themeColor: '#4F9DE0',
+      themeColor: '#007AFF',
       soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
       fontVariant: 'A',
       cardRadius: 'large',
@@ -153,6 +153,9 @@ export const useHomeStore = create<HomeState>()(
           size: cfg.defaultSize,
           // Header visibility is driven by the type-level config (default: shown).
           showHeader: cfg.showHeader ?? true,
+          // 新建卡片默认与右键「切换卡片背景 → 透明」一致：亮色文本主题（深色前景 #1d1d1f），
+          // 颜色由 index.css 的 --card-fg 变量控制，此处不写死任何颜色值。
+          backgroundTheme: 'light',
         };
         set({ widgets: [...widgets, newWidget] });
       },
@@ -208,7 +211,7 @@ export const useHomeStore = create<HomeState>()(
           isDarkMode:
             window.matchMedia &&
             window.matchMedia('(prefers-color-scheme: dark)').matches,
-          themeColor: '#4F9DE0',
+          themeColor: '#007AFF',
           soundEnabled: true,
           fontVariant: 'A',
           cardRadius: 'large',

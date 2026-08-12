@@ -218,7 +218,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 onMouseLeave={scheduleCloseBgSubmenu}
                 className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
               >
-                <div className="px-1 mb-3 text-font-md font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
+                <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
                   卡片背景
                 </div>
 
@@ -231,7 +231,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       className={`flex-1 py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
                         bgTab === tab
                           ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                          : 'dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                     >
                       {tab === 'light' ? '亮色' : '暗色'}
@@ -351,10 +351,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {targetWidget ? (
           <>
             <div className="px-3 py-2 mb-1.5 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
-              <span className="font-bold text-font-md uppercase tracking-wider text-slate-700 dark:text-slate-500 truncate">
+              <span className="font-bold text-font-md uppercase tracking-wider text-slate-700 dark:truncate">
                 {targetWidget.title}
               </span>
-              <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400 uppercase">
+              <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 dark:text-slate-400 uppercase">
                 {targetWidget.size}
               </span>
             </div>

@@ -43,7 +43,7 @@ export const ClockWidget: React.FC = () => {
         ].map(({ n, style }) => (
           <span
             key={n}
-            className="absolute text-font-sm font-bold text-slate-500 dark:text-slate-400"
+            className="absolute text-font-sm font-bold dark:text-slate-400"
             style={style}
           >
             {n}
@@ -71,7 +71,7 @@ export const ClockWidget: React.FC = () => {
       <div className="mt-2 text-lg font-extrabold tracking-tight font-mono text-[color:var(--accent)]">
         {formattedTime}
       </div>
-      <div className="text-font-sm font-medium text-slate-500 dark:text-slate-400">
+      <div className="text-font-sm font-medium dark:text-slate-400">
         {formattedDate}
       </div>
     </div>

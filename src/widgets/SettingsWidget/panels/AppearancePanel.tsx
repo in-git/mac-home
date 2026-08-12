@@ -62,7 +62,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
         {/* 强调色 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="font-medium text-slate-800 dark:text-slate-200">
-            强调色
+            主题色
           </span>
           <div className="flex items-center space-x-2">
             {ACCENT_COLORS.map((c) => {

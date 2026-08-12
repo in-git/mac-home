@@ -83,7 +83,7 @@ export const SearchWidget: React.FC = () => {
     <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1">
       {/* 引擎分段切换器 (Segmented Control 遵循 UI 规范 12px / 10px 圆角与哑光底色) */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
-        <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        <div className="flex items-center space-x-1.5 text-xs font-semibold dark:text-slate-400 uppercase tracking-wider">
           <Globe size={13} className="text-[color:var(--accent)]" />
           <span>搜索</span>
         </div>
@@ -139,7 +139,7 @@ export const SearchWidget: React.FC = () => {
       </form>
 
       {/* 底部常用热搜/快速提示脚部 */}
-      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-sm text-slate-500 dark:text-slate-400">
+      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-sm dark:text-slate-400">
         <span>
           当前引擎:{' '}
           <strong className="text-slate-700 dark:text-slate-200">

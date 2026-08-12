@@ -1,4 +1,4 @@
-import THEME_OPTIONS from '../../data/options/theme.options';
+import THEME_OPTIONS from '../../data/options/filter.options';
 import { buildWallpaperFilter } from '../../utils/wallpaperFilter';
 import DepthCarousel from './DepthCarousel';
 
@@ -6,7 +6,7 @@ import DepthCarousel from './DepthCarousel';
 const THEME_CAROUSEL_IMAGE =
   'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
 
-/** 循环 theme.options.ts 生成卡片：brightness 为 0-1 系数，转成滤镜百分比 */
+/** 循环 filter.options.ts 生成卡片：brightness 为 0-1 系数，转成滤镜百分比 */
 const items = THEME_OPTIONS.map((opt) => ({
   image: THEME_CAROUSEL_IMAGE,
   alt: opt.name,

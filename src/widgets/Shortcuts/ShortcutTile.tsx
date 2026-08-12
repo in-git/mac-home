@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import React from 'react';
-import { SiteItem } from '../api/site';
+import { SiteItem } from '../../api/site';
 
 interface ShortcutTileProps {
   item: SiteItem;

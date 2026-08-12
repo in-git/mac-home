@@ -389,7 +389,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                 setTimeout(() => searchInputRef.current?.focus(), 50);
             }}
             title="添加城市"
-            className="shrink-0 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-[color:var(--accent)] hover:text-white transition-colors"
+            className="shrink-0 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-[color:var(--accent)] hover:text-white transition-colors"
           >
             <Plus size={12} />
           </button>
@@ -470,7 +470,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
             {/* Current Temp */}
             <div className="glass-panel p-3.5 rounded-[var(--card-radius)] flex flex-col justify-between bg-gradient-to-br from-blue-500/10 to-sky-400/10">
               <div className="flex items-center justify-between">
-                <span className="text-font-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span className="text-font-sm font-semibold dark:text-slate-400 uppercase tracking-wider">
                   实时天气
                 </span>
                 {getWeatherIcon(weather.condition, 24)}
@@ -483,7 +483,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                   {CONDITION_TEXT[weather.condition] ?? weather.condition}
                 </div>
               </div>
-              <div className="flex items-center justify-between text-font-sm text-slate-500 font-medium">
+              <div className="flex items-center justify-between text-font-sm font-medium">
                 <span>最高 {weather.high}°</span>
                 <span>最低 {weather.low}°</span>
               </div>
@@ -491,7 +491,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
 
             {/* Hourly Forecast Strip */}
             <div className="md:col-span-2 glass-panel p-3.5 rounded-[var(--card-radius)] flex flex-col justify-between">
-              <div className="text-font-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
+              <div className="text-font-sm font-semibold dark:text-slate-400 mb-2 uppercase tracking-wider">
                 逐小时预报
               </div>
               <div className="flex items-center justify-between overflow-x-auto no-scrollbar space-x-2 py-1">
@@ -538,7 +538,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                   key={idx}
                   className="p-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/5 flex flex-col items-center justify-between"
                 >
-                  <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400">
+                  <span className="text-font-sm font-medium dark:text-slate-400">
                     {day.day}
                   </span>
                   <div className="my-1">

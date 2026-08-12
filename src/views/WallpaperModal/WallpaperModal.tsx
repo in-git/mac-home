@@ -109,7 +109,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               className={`flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm duration-200 ${
                 activeTab === tab.id
                   ? 'bg-white font-medium text-slate-800 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-white/10 dark:text-slate-100'
-                  : 'text-slate-500 hover:bg-black/[0.04] dark:text-slate-400 dark:hover:bg-white/[0.06]'
+                  : 'hover:bg-black/[0.04] dark:text-slate-400 dark:hover:bg-white/[0.06]'
               }`}
             >
               {tab.icon}
@@ -182,7 +182,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                           <span className="font-medium text-slate-800 dark:text-slate-100">
                             {filter.label}
                           </span>
-                          <span className="tabular-nums text-slate-500 dark:text-slate-400">
+                          <span className="tabular-nums dark:text-slate-400">
                             {filter.format(value)}
                           </span>
                         </div>

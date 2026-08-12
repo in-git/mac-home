@@ -111,7 +111,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <button
                 onClick={onClose}
                 aria-label="关闭"
-                className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
+                className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>

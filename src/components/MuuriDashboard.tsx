@@ -151,6 +151,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           fillGaps: true,
           alignRight: false,
           alignBottom: false,
+          // 卡片间距：原来由 .muuri-item 的 p-2 内边距提供（相邻 8+8=16px），
+          // p-2 已移除并转移到容器 padding（边缘留白 8px），此处等价补齐 item 间距。
+          spacing: 16,
         },
       });
 
@@ -315,7 +318,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   return (
     <div className="w-full relative h-full">
       {/* Muuri Container */}
-      <div ref={containerRef} className="muuri-grid relative w-full h-full ">
+      <div ref={containerRef} className="muuri-grid relative w-full h-full p-2">
         {widgets.map((widget) => (
           <WidgetCard
             key={widget.id}

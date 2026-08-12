@@ -1,18 +1,7 @@
 import type { StickyNote, WidgetItem } from '../../types';
 
-// Curated accent colors exposed in the settings panel. Each entry is a CSS
-// color used for the `--accent` CSS variable (drives buttons, rings, focus).
-// 柔和化苹果系统色：降低饱和度与亮度，去掉原色板中过近的“红/粉”重复。
-export const ACCENT_COLORS: { name: string; value: string }[] = [
-  { name: '蓝', value: '#4F9DE0' },
-  { name: '绿', value: '#5BBF8A' },
-  { name: '橙', value: '#F3A463' },
-  { name: '粉', value: '#F07C97' },
-  { name: '紫', value: '#B07CD6' },
-  { name: '石墨', value: '#8A8F98' },
-  { name: '青', value: '#54C1D6' },
-  { name: '黄', value: '#F0CF6B' },
-];
+// 主题色（强调色）唯一数据源，见 src/data/options/themeColors.options.ts
+export { ACCENT_COLORS } from '../../data/options/themeColors.options';
 
 // 解析导入的配置文件（与“导出布局”格式对应：{ app, version, exportedAt, widgets, notes }）。
 // 对 widgets / notes 做宽松校验并过滤出有效项，结构不合法时抛错提示用户。

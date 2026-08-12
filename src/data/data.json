@@ -56,17 +56,7 @@
       "iconGlyph": "Settings",
       "iconLabel": "设置"
     },
-    {
-      "id": "widget-icon",
-      "type": "icon-grid",
-      "title": "图标",
-      "size": "icon-1-8",
-      "showHeader": false,
-      "iconType": "link",
-      "iconGlyph": "Globe",
-      "iconLabel": "官网",
-      "iconHref": "https://www.apple.com"
-    },
+  
     {
       "id": "widget-add",
       "type": "icon-grid",

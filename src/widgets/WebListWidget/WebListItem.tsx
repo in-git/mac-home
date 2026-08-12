@@ -109,7 +109,7 @@ export const WebListItem: React.FC<WebListItemProps> = ({
         </div>
 
         {site.des && (
-          <p className="mt-0.5 line-clamp-2 text-font-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 line-clamp-2 text-font-xs dark:text-slate-400">
             {site.des}
           </p>
         )}

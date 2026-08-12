@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import THEME_OPTIONS from '../../data/options/theme.options';
+import THEME_OPTIONS from '../../data/options/filter.options';
 import type { WallpaperConfig } from '../../types';
 import {
   buildWallpaperFilter,
@@ -12,7 +12,7 @@ interface ThemeCarouselPickerProps {
   onUpdateWallpaper: (patch: Partial<WallpaperConfig>) => void;
 }
 
-/** theme.options.ts 中单个桌面主题预设的结构 */
+/** filter.options.ts 中单个桌面主题预设的结构 */
 interface ThemeOption {
   name: string;
   desc: string;
@@ -154,7 +154,7 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
             当前
           </span>
         ) : (
-          <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-font-sm font-medium text-slate-500 dark:bg-white/10 dark:text-slate-300">
+          <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-font-sm font-medium dark:bg-white/10 dark:text-slate-300">
             预览
           </span>
         )}

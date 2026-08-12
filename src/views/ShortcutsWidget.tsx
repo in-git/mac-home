@@ -5,7 +5,7 @@ import { Modal } from '../components/Modal';
 import { WebListPicker } from '../components/WebListPicker';
 import { siteApi, SiteItem } from '../api/site';
 import { playSound } from '../utils/sound';
-import { ShortcutsWidgetCard } from '../widgets/ShortcutsWidget';
+import { ShortcutsWidgetCard } from '../widgets/Shortcuts';
 
 interface ShortcutsWidgetProps {
   expanded?: boolean;

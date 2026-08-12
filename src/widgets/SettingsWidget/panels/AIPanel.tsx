@@ -131,7 +131,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
 
       {/* 选择模型厂商 */}
       <section>
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+        <h3 className="text-sm font-semibold dark:text-slate-400 mb-3">
           模型厂商
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -158,7 +158,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
       {/* API Key（本地大模型走后端通道，无需 Key） */}
       {!isLocal && (
         <section>
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+          <h3 className="text-sm font-semibold dark:text-slate-400 mb-3">
             API Key
           </h3>
           <div className="flex items-center space-x-2">
@@ -180,7 +180,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
                 href={selected.docs}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center space-x-1 px-3 py-2.5 rounded-[var(--card-radius)] bg-black/[0.04] dark:bg-white/[0.06] text-xs text-slate-500 hover:text-[color:var(--accent)] transition-colors whitespace-nowrap"
+                className="flex items-center space-x-1 px-3 py-2.5 rounded-[var(--card-radius)] bg-black/[0.04] dark:bg-white/[0.06] text-xs hover:text-[color:var(--accent)] transition-colors whitespace-nowrap"
                 title="获取 API Key"
               >
                 <ExternalLink size={13} />
@@ -194,7 +194,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
       {/* 接口地址：仅自定义厂商可编辑；本地大模型不暴露接口地址 */}
       {isCustom && (
         <section>
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+          <h3 className="text-sm font-semibold dark:text-slate-400 mb-3">
             接口地址 (Base URL)
           </h3>
           <input
@@ -212,7 +212,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
 
       {/* 模型名称（可自定义任意模型） */}
       <section>
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+        <h3 className="text-sm font-semibold dark:text-slate-400 mb-3">
           模型名称
         </h3>
         <input
@@ -229,7 +229,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
 
       {/* 测试连接 */}
       <section>
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+        <h3 className="text-sm font-semibold dark:text-slate-400 mb-3">
           连接测试
         </h3>
         <div className="flex items-center space-x-3">

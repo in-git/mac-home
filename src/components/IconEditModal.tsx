@@ -62,7 +62,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
               </h2>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-[var(--card-radius)] text-slate-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               >
                 <X size={18} />
               </button>
@@ -70,7 +70,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
 
             <div className="space-y-4">
               <label className="block">
-                <span className="text-sm text-slate-500 dark:text-slate-400">
+                <span className="text-sm dark:text-slate-400">
                   名称
                 </span>
                 <input
@@ -82,7 +82,7 @@ export const IconEditModal: React.FC<IconEditModalProps> = ({
               </label>
 
               <label className="block">
-                <span className="text-sm text-slate-500 dark:text-slate-400">
+                <span className="text-sm dark:text-slate-400">
                   链接地址（URL）
                 </span>
                 <input

@@ -189,7 +189,7 @@ export interface WallpaperConfig {
   gradient?: string;
   blur: number; // 0 to 20px
   brightness: number; // 50% to 120%
-  /** 以下为桌面主题滤镜参数（theme.options.ts 预设），缺省时视为中性值 */
+  /** 以下为桌面主题滤镜参数（filter.options.ts 预设），缺省时视为中性值 */
   contrast?: number; // 1 = 原始
   saturation?: number; // 1 = 原始
   hue?: number; // 色相旋转角度

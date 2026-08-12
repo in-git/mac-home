@@ -58,7 +58,7 @@ export const ClockCalendarWidget: React.FC = () => {
             
             setIsDigitalMode(!isDigitalMode);
           }}
-          className="flex items-center space-x-1 text-font-sm text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+          className="flex items-center space-x-1 text-font-sm hover:text-slate-800 dark:hover:text-slate-200"
         >
           <span>{isDigitalMode ? '数字时钟' : '模拟表盘'}</span>
         </button>
@@ -71,7 +71,7 @@ export const ClockCalendarWidget: React.FC = () => {
             <div className="text-lg font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs">
               {formattedTime}
             </div>
-            <div className="text-xs font-medium text-slate-500 mt-1">{formattedDate}</div>
+            <div className="text-xs font-medium mt-1">{formattedDate}</div>
           </div>
         ) : (
           /* Analog Clock Canvas */

@@ -150,7 +150,7 @@ const SiteCard: React.FC<SiteCardProps> = ({
           {item.name}
         </p>
         {item.des && (
-          <p className="truncate text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="truncate text-xs dark:text-slate-400 mt-0.5">
             {item.des}
           </p>
         )}
@@ -283,7 +283,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
             onClick={() =>
               fetchSites(page, selectedCat, selectedIdentity, searchKeyword)
             }
-            className="flex items-center gap-1.5 px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-black/10 dark:hover:bg-white/15 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors"
             title="刷新"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
