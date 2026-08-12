@@ -54,7 +54,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onLongPressEdit,
   onUpdateWidget,
 }) => {
-  const sizeClasses = getItemSizeClasses(widget.size);
+  const sizeClasses = getItemSizeClasses(widget.size, widget.type);
   const showHeader = widget.showHeader !== false;
   const isExpanded = widget.id === expandedWidgetId;
   // 卡片内容区内边距由类型配置驱动（p-2 常规 / p-0 满铺），纯图标尺寸保持贴边

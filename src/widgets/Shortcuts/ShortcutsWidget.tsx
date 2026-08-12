@@ -51,7 +51,6 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
               <br />
               点击下方「新增」从站点库添加常用网址
             </p>
-           
           </div>
         ) : (
           <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
