@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { QuickShortcut } from '../types';
-import { playSound } from '../utils/sound';
 
 export interface ShortcutsWidgetCardProps {
   expanded?: boolean;

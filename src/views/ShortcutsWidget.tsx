@@ -44,7 +44,7 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
   return (
     <div
       onClick={() => onOpen(item)}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40  bg-white dark:bg-white/5 min-h-[160px] cursor-pointer"
+      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40  bg-white dark:bg-white/5 min-h-[190px] cursor-pointer"
       title={`打开 ${item.name}`}
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -57,7 +57,7 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
           />
         ) : (
           <div
-            className="h-full w-full flex items-center justify-center text-white text-2xl font-bold"
+            className="h-full w-full flex items-center justify-center text-white text-3xl font-bold"
             style={{
               background:
                 item.background ||
@@ -68,18 +68,18 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
           </div>
         )}
         {item.count !== undefined && item.count > 0 && (
-          <span className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/55 text-white text-[12px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
-            <ExternalLink size={12} className="opacity-90" />
+          <span className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
+            <ExternalLink size={13} className="opacity-90" />
             {item.count > 999 ? '999+' : item.count}
           </span>
         )}
       </div>
-      <div className="p-2 text-left">
-        <p className="truncate text-xs font-semibold text-slate-800 dark:text-slate-100">
+      <div className="p-2.5 text-left">
+        <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
           {item.name}
         </p>
         {item.des && (
-          <p className="truncate text-font-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="truncate text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             {item.des}
           </p>
         )}
@@ -87,7 +87,7 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
 
       {/* 已存在则显示「已新增」，否则显示添加按钮 */}
       {exists ? (
-        <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/90 text-white text-[11px] font-medium shadow opacity-100">
+        <span className="absolute bottom-2.5 right-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 text-white text-xs font-medium shadow opacity-100">
           已新增
         </span>
       ) : (
@@ -98,12 +98,12 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
                 e.stopPropagation();
                 onAdd(item);
               }}
-              className="absolute bottom-2 right-2 p-1.5 rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
+              className="absolute bottom-2.5 right-2.5 p-2 rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
             >
-              <Plus size={13} />
+              <Plus size={15} />
             </button>
           </Tooltip.Trigger>
-          <Tooltip.Content showArrow placement="top" className="text-font-xs">
+          <Tooltip.Content showArrow placement="top" className="text-xs">
             添加到快捷导航
           </Tooltip.Content>
         </Tooltip>
@@ -248,13 +248,13 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   };
 
   const renderSkeletonGrid = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="space-y-2">
+        <div key={i} className="space-y-2.5">
           <Skeleton className="aspect-[4/3] w-full rounded-[var(--card-radius)]" />
-          <div className="space-y-1">
-            <Skeleton className="h-3 w-3/4 rounded" />
-            <Skeleton className="h-2 w-1/2 rounded" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-3.5 w-3/4 rounded" />
+            <Skeleton className="h-2.5 w-1/2 rounded" />
           </div>
         </div>
       ))}
@@ -286,40 +286,40 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
       >
         <div className="flex flex-col h-full max-h-[75vh]">
           {/* Filter Bar */}
-          <div className="px-4 py-3 border-b border-black/5 dark:border-white/10 space-y-3">
+          <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex-1 relative">
                 <Search
-                  size={14}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                 />
                 <input
                   type="text"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   placeholder="搜索站点名称/描述..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 outline-none text-xs focus:ring-2 ring-[color:var(--accent)]/40"
+                  className="w-full pl-9 pr-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
                 />
               </div>
               <button
                 onClick={() =>
                   fetchSites(page, selectedCat, selectedIdentity, searchKeyword)
                 }
-                className="flex items-center gap-1 px-2 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-black/10 dark:hover:bg-white/15 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-slate-500 hover:bg-black/10 dark:hover:bg-white/15 transition-colors"
                 title="刷新"
               >
-                <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-                <span className="hidden sm:inline text-xs">刷新</span>
+                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                <span className="hidden sm:inline text-sm">刷新</span>
               </button>
             </div>
 
             {/* Identity filter */}
             {identities.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="text-slate-400 text-font-xs mr-1">身份</span>
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="text-slate-400 text-xs mr-1">身份</span>
                 <button
                   onClick={() => setSelectedIdentity('')}
-                  className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
+                  className={`rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
                     selectedIdentity === ''
                       ? 'bg-[color:var(--accent)] font-medium text-white'
                       : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -331,7 +331,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                   <button
                     key={id.id}
                     onClick={() => setSelectedIdentity(id.id)}
-                    className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
+                    className={`rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
                       selectedIdentity === id.id
                         ? 'bg-[color:var(--accent)] font-medium text-white'
                         : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -345,11 +345,11 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
 
             {/* Category filter */}
             {categories.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="text-slate-400 text-font-xs mr-1">分类</span>
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="text-slate-400 text-xs mr-1">分类</span>
                 <button
                   onClick={() => setSelectedCat('')}
-                  className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
+                  className={`rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
                     selectedCat === ''
                       ? 'bg-[color:var(--accent)] font-medium text-white'
                       : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -361,7 +361,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                   <button
                     key={c.id}
                     onClick={() => setSelectedCat(c.id)}
-                    className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
+                    className={`rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
                       selectedCat === c.id
                         ? 'bg-[color:var(--accent)] font-medium text-white'
                         : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
@@ -375,11 +375,11 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
           </div>
 
           {/* Site Grid */}
-          <div className="flex-1 overflow-y-auto p-4 min-h-[300px] md:min-h-[400px] lg:min-h-[500px]">
+          <div className="flex-1 overflow-y-auto p-5 min-h-[320px] md:min-h-[420px] lg:min-h-[520px]">
             {loading && items.length === 0 ? (
               renderSkeletonGrid()
             ) : items.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {items.map((item) => (
                   <SiteCard
                     key={item.id}
@@ -391,16 +391,16 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="flex h-40 flex-col items-center justify-center text-slate-400 gap-2 min-h-[300px]">
-                <Globe size={32} strokeWidth={1} />
-                <p className="text-sm">暂无站点</p>
+              <div className="flex h-40 flex-col items-center justify-center text-slate-400 gap-2 min-h-[320px]">
+                <Globe size={36} strokeWidth={1} />
+                <p className="text-base">暂无站点</p>
               </div>
             )}
           </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-4 py-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs text-slate-500">
+            <div className="px-5 py-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-sm text-slate-500">
               <span>
                 共 {totalPages} 页 · {items.length} 条/页
               </span>
@@ -410,7 +410,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                   onClick={() =>
                     fetchSites(page - 1, selectedCat, selectedIdentity, searchKeyword)
                   }
-                  className="rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 px-3 py-1 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 px-3.5 py-1.5 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   上一页
                 </button>
@@ -422,7 +422,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                   onClick={() =>
                     fetchSites(page + 1, selectedCat, selectedIdentity, searchKeyword)
                   }
-                  className="rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 px-3 py-1 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 px-3.5 py-1.5 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   下一页
                 </button>

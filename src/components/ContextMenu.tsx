@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ContextMenuAction,
@@ -301,16 +300,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        ref={menuRef}
-        initial={{ opacity: 0, scale: 0.95, y: -4 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.12, ease: 'easeOut' }}
-        style={{
-          top: `${adjustedY}px`,
-          left: `${adjustedX}px`,
+    <div
+      ref={menuRef}
+      style={{
+        top: `${adjustedY}px`,
+        left: `${adjustedX}px`,
           width: '272px',
         }}
         className="fixed z-[70] p-2.5 rounded-[var(--card-radius)] glass-panel bg-white/85 dark:bg-slate-900/90 backdrop-blur-3xl shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-white/60 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
@@ -358,7 +352,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           /* Desktop (empty area) right-click */
           <>{DESKTOP_CONTEXT_MENU.map(renderItem)}</>
         )}
-      </motion.div>
-    </AnimatePresence>
+    </div>
   );
 };
