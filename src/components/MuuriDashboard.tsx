@@ -1,7 +1,6 @@
 import Muuri from 'muuri';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  executeWidgetAction,
   executeWidgetClick,
   getWidgetAction,
   getWidgetConfig,
@@ -89,7 +88,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     const target = e.target as HTMLElement;
     if (target.closest('[data-no-drag]')) return;
     if (executeWidgetClick(widget.type, e)) return;
-    if (executeWidgetAction(widget.type)) return;
     if (widget.type === 'settings') {
       setSettingsModalOpen(true);
       return;

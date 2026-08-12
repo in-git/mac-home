@@ -35,9 +35,9 @@ export function getWidgetCategory(type: WidgetType): WidgetCategory {
 }
 
 export interface WidgetTypeConfig {
-  /** Default title used when a widget of this type is created. */
+  /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
   title: string;
-  /** Maximum number of instances allowed at once. `Infinity` = unlimited. */
+  /** 最大安装数量，有些只能安装一次，所以用它限制 */
   maxInstances: number;
   /** Size applied to a newly created widget of this type. */
   defaultSize: WidgetSize;
@@ -47,18 +47,15 @@ export interface WidgetTypeConfig {
   isAddable: boolean;
   /** Emoji/glyph shown in the add-widget picker. */
   glyph: string;
-  /** Human-readable label shown in the add-widget picker. */
-  label: string;
-  /** Whether cards of this type render the title bar (header). Optional — when
-   *  omitted the header is shown by default. Icon-style types (e.g. icon-grid,
-   *  settings) set this to `false` to render as a bare desktop icon. */
+
   showHeader?: boolean;
-  /** Optional click handler invoked when the widget card is clicked (non-editing
-   *  mode). Defined at the type level. Optional — omit to use no default action. */
-  onAction?: () => void;
-  /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。可选。 */
+  /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-  /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（如站点库新增的站点）。 */
+  /** 封面：组件封面图地址，可选。 */
+  cover?: string;
+  /** 是否可删除：为 false 时该类型组件不可被用户删除（默认 true）。 */
+  deletable?: boolean;
+  /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（。 */
   shortcuts?: SiteItem[];
   /** 图标型组件（icon-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
   site?: SiteItem;
@@ -91,7 +88,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_SEARCH,
     isAddable: true,
     glyph: '🔍',
-    label: '网络搜索',
     showHeader: false,
   },
   weather: {
@@ -101,7 +97,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_WIDE_LARGE,
     isAddable: true,
     glyph: '⛅',
-    label: '天气预报',
     showHeader: false,
   },
   'sticky-notes': {
@@ -111,7 +106,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '📝',
-    label: '便签',
     showHeader: false,
   },
   clock: {
@@ -121,7 +115,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '🕒',
-    label: '时间 & 日历',
     showHeader: false,
   },
   'clock-mini': {
@@ -131,7 +124,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_WIDE_SM,
     isAddable: true,
     glyph: '⏰',
-    label: '时钟',
     showHeader: false,
   },
   'clock-lunar': {
@@ -141,7 +133,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '🌙',
-    label: '农历时钟',
     showHeader: false,
     cardStyle: {
       padding: 'p-4',
@@ -155,7 +146,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_SM_ONLY,
     isAddable: true,
     glyph: '🎛️',
-    label: '控制中心',
     showHeader: false,
   },
   'icon-grid': {
@@ -164,10 +154,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     defaultSize: '1/8',
     sizeOptions: SIZE_OPTIONS_ICON_GRID,
     isAddable: false,
-    // 默认值 = 系统设置：icon-grid 无站点 / 无自定义图标数据时渲染为设置图标，
-    // 点击弹出设置模态框（见 MuuriDashboard.handleCardClick）。
     glyph: '⚙️',
-    label: 'ICON',
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
@@ -180,15 +167,13 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     defaultSize: '1/8',
     sizeOptions: SIZE_OPTIONS_ICON_GRID,
     isAddable: false,
-    // 网页组件：从「网页列表」添加的站点数据，桌面点击图标时据此打开站点。
-    // 分类为 'web'（见 WIDGET_CATEGORIES）。
     glyph: '🌐',
-    label: 'WEB',
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
       glass: false
     },
+    onClick(_event: MouseEvent<HTMLDivElement>){}
   },
   shortcuts: {
     title: '快捷导航',
@@ -197,7 +182,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '🔗',
-    label: '快捷导航',
     shortcuts: [],
   },
   banner: {
@@ -207,7 +191,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     sizeOptions: SIZE_OPTIONS_FIFTH_UP,
     isAddable: true,
     glyph: '🌈',
-    label: '横幅动效',
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
@@ -229,27 +212,12 @@ const FALLBACK_CONFIG: WidgetTypeConfig = {
   sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
   isAddable: false,
   glyph: '🔗',
-  label: '组件',
   showHeader: false,
 };
 
 /** Resolve the config for a widget type (falls back to a safe default). */
 export function getWidgetConfig(type: WidgetType): WidgetTypeConfig {
   return WIDGET_CONFIG[type] ?? FALLBACK_CONFIG;
-}
-
-/**
- * Find a widget type's optional `onAction` by type and execute it if present.
- * Centralizes the type-level click trigger so callers don't reach into the
- * config object directly. Returns `true` when an action was executed.
- */
-export function executeWidgetAction(type: WidgetType): boolean {
-  const entry = Object.entries(WIDGET_CONFIG).find(([t]) => t === type);
-  if (entry?.[1].onAction) {
-    entry[1].onAction();
-    return true;
-  }
-  return false;
 }
 
 /**
@@ -280,7 +248,7 @@ export const ADDABLE_WIDGETS = Object.entries(WIDGET_CONFIG)
   .map(([type, cfg]) => ({
     type: type as WidgetType,
     glyph: cfg.glyph,
-    label: cfg.label,
+    label: cfg.title,
     // 分类由集中映射决定（缺省为 'system'）。
     category: getWidgetCategory(type as WidgetType),
   }));

@@ -41,10 +41,7 @@ const ICON_ONLY_SIZES: ReadonlySet<WidgetSize> = new Set<WidgetSize>(['1/16']);
 interface IconWidgetProps {
   editing?: boolean;
   size?: WidgetSize;
-  // `type` decides behaviour: `link` opens href, `action` triggers the handler
-  // resolved by `id` via getWidgetAction (see widgetConfig). The actual click is
-  // handled by the parent widget-card (the custom onAction lives there), so this
-  // component only renders the visual tile and exposes its behaviour via props.
+
   iconType?: IconBehavior;
   iconGlyph?: string;
   iconLabel?: string;
