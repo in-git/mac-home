@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  CARD_BACKGROUND_OPTIONS,
   ContextMenuAction,
   ContextMenuItemConfig,
   DESKTOP_CONTEXT_MENU,
   WIDGET_CONTEXT_MENU,
 } from '../data/contextMenuConfig';
-import { PRESET_DATA } from '../data/presetData';
 import { getWidgetConfig } from '../data/widgetConfig';
 import { useHomeStore } from '../store/useHomeStore';
 import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
@@ -76,8 +76,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   // 卡片背景选项卡：手动切换亮色 / 暗色，而非按系统模式自动匹配。
   const [bgTab, setBgTab] = useState<'light' | 'dark'>('light');
 
-  const backgroundOptions = PRESET_DATA.STATIC_WALLPAPERS.filter((w) => {
-    if (!w.gradient) return false;
+  const backgroundOptions = CARD_BACKGROUND_OPTIONS.filter((w) => {
     if (!w.theme || w.theme === 'both') return true;
     return w.theme === bgTab;
   });

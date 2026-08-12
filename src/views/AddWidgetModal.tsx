@@ -15,12 +15,16 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getAddableWidgetsByCategory, getWidgetConfig } from '../data/widgetConfig';
 import type { WidgetCategory } from '../data/widgetConfig';
+import type { SiteItem } from '../api/site';
+import { WebListPicker } from '../components/WebListPicker';
 import { WidgetItem, WidgetType } from '../types';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onAddWidget: (type: WidgetType) => void;
+  /** 网页分类中点击「添加」时回调：把站点做成桌面图标（icon-grid） */
+  onAddSite: (item: SiteItem) => void;
   widgets: WidgetItem[];
 }
 
@@ -80,6 +84,7 @@ export const AddWidgetModal: React.FC<Props> = ({
   isOpen,
   onClose,
   onAddWidget,
+  onAddSite,
   widgets,
 }) => {
   const [mounted, setMounted] = useState(isOpen);
@@ -110,6 +115,11 @@ export const AddWidgetModal: React.FC<Props> = ({
   }, [isOpen, onClose]);
 
   const currentWidgets = getAddableWidgetsByCategory(activeCategory);
+
+  // 已添加到桌面的站点（icon-grid 类型携带 site 数据），用于网页列表中标记「已新增」
+  const webSelectedSites = widgets
+    .filter((w) => w.type === 'icon-grid' && w.site)
+    .map((w) => w.site as SiteItem);
 
   return createPortal(
     mounted && (
@@ -179,45 +189,55 @@ export const AddWidgetModal: React.FC<Props> = ({
               </button>
             </div>
 
-            {/* 组件网格 */}
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="grid grid-cols-3 gap-2">
-                {currentWidgets.map((t) => {
-                  const count = widgets.filter((w) => w.type === t.type).length;
-                  const max = getWidgetConfig(t.type).maxInstances;
-                  const disabled = max !== Infinity && count >= max;
-                  const Icon = WIDGET_ICONS[t.type];
-                  return (
-                    <button
-                      key={t.type}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() => {
-                        onAddWidget(t.type);
-                        onClose();
-                      }}
-                      className={`flex flex-col items-center gap-2 rounded-[var(--card-radius)] bg-black/5 px-3 py-3.5 transition-colors dark:bg-white/10 ${
-                        disabled
-                          ? 'cursor-not-allowed opacity-50'
-                          : 'hover:bg-black/10 active:scale-95 dark:hover:bg-white/15'
-                      }`}
-                    >
-                      <span
-                        className={`flex h-9 w-9 items-center justify-center rounded-[var(--card-radius)] ${WIDGET_ICON_BUBBLE[t.type]}`}
-                      >
-                        <Icon size={18} strokeWidth={1.75} />
-                      </span>
-                      <span className="text-center text-xs font-medium text-slate-700 dark:text-slate-200">
-                        {t.label}
-                      </span>
-                      {disabled && (
-                        <span className="text-xs text-slate-400">已添加</span>
-                      )}
-                    </button>
-                  );
-                })}
+            {/* 网页分类：使用公共「网页列表」选择器，添加后生成桌面图标；系统分类沿用组件网格 */}
+            {activeCategory === 'web' ? (
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <WebListPicker
+                  selected={webSelectedSites}
+                  onAdd={onAddSite}
+                  addTip="添加到桌面"
+                />
               </div>
-            </div>
+            ) : (
+              <div className="flex-1 overflow-y-auto p-4">
+                <div className="grid grid-cols-3 gap-2">
+                  {currentWidgets.map((t) => {
+                    const count = widgets.filter((w) => w.type === t.type).length;
+                    const max = getWidgetConfig(t.type).maxInstances;
+                    const disabled = max !== Infinity && count >= max;
+                    const Icon = WIDGET_ICONS[t.type];
+                    return (
+                      <button
+                        key={t.type}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => {
+                          onAddWidget(t.type);
+                          onClose();
+                        }}
+                        className={`flex flex-col items-center gap-2 rounded-[var(--card-radius)] bg-black/5 px-3 py-3.5 transition-colors dark:bg-white/10 ${
+                          disabled
+                            ? 'cursor-not-allowed opacity-50'
+                            : 'hover:bg-black/10 active:scale-95 dark:hover:bg-white/15'
+                        }`}
+                      >
+                        <span
+                          className={`flex h-9 w-9 items-center justify-center rounded-[var(--card-radius)] ${WIDGET_ICON_BUBBLE[t.type]}`}
+                        >
+                          <Icon size={18} strokeWidth={1.75} />
+                        </span>
+                        <span className="text-center text-xs font-medium text-slate-700 dark:text-slate-200">
+                          {t.label}
+                        </span>
+                        {disabled && (
+                          <span className="text-xs text-slate-400">已添加</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

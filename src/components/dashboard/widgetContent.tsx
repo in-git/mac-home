@@ -90,15 +90,17 @@ export const renderWidgetContent = ({
         </div>
       );
     case 'icon-grid': {
+      // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息
+      const site = widget.site;
       return (
         <div data-icon-grid className="h-full w-full">
           <IconWidget
             editing={isEditMode}
             size={widget.size}
-            iconType={widget.iconType}
-            iconGlyph={widget.iconGlyph}
-            iconLabel={widget.iconLabel}
-            iconHref={widget.iconHref}
+            iconType={widget.iconType ?? 'link'}
+            iconGlyph={widget.iconGlyph ?? 'Globe'}
+            iconLabel={site?.name ?? widget.iconLabel}
+            iconHref={site?.link ?? widget.iconHref}
             iconTextColor={widget.iconTextColor}
             iconBgColor={widget.iconBgColor}
           />

@@ -46,6 +46,8 @@ export interface WidgetTypeConfig {
   onAction?: () => void;
   /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（如站点库新增的站点）。 */
   shortcuts?: SiteItem[];
+  /** 图标型组件（icon-grid）的站点数据空间：存储从「网页列表」添加的 SiteItem[]。 */
+  site?: SiteItem[];
 }
 
 export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
@@ -58,6 +60,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🔍',
     label: '网络搜索',
     category: 'system',
+    
   },
   weather: {
     title: '天气预报',
@@ -130,6 +133,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '图标',
     category: 'system',
     showHeader: false,
+    site: [],
   },
   shortcuts: {
     title: '快捷导航',

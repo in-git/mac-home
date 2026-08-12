@@ -8,6 +8,7 @@ import {
   Trash2,
   LucideIcon,
 } from 'lucide-react';
+import { STATIC_WALLPAPERS } from './options/gradient.options';
 
 /**
  * 右键菜单配置 —— 将「桌面空白处」与「组件」的右键菜单拆分成两个独立、可配置的列表。
@@ -108,3 +109,10 @@ export const DESKTOP_CONTEXT_MENU: ContextMenuItemConfig[] = [
     showOnlyWhenEditLocked: true,
   },
 ];
+
+/**
+ * 右键「切换卡片背景」可选择的渐变背景列表。
+ * 复用 gradient.options.ts 的 STATIC_WALLPAPERS 单一数据源，避免重复维护。
+ * 组件按当前亮/暗标签（bgTab）从 theme 过滤展示。
+ */
+export const CARD_BACKGROUND_OPTIONS = STATIC_WALLPAPERS;

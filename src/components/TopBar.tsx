@@ -102,26 +102,6 @@ export const TopBar: React.FC<Props> = ({
 
       {/* Right Controls */}
       <div className="flex items-center space-x-2 sm:space-x-3 text-slate-700 dark:text-slate-200">
-        {/* Login / User */}
-        {currentUser ? (
-          <button
-            onClick={() => setIsLogoutOpen(true)}
-            className="flex items-center space-x-1.5 px-1.5 py-0.5 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors max-w-[120px]"
-            title="点击退出登录"
-          >
-            <UserIcon size={14} />
-            <span className="hidden sm:inline truncate">{displayName}</span>
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsLoginOpen(true)}
-            className="flex items-center space-x-1 px-2 py-0.5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] hover:bg-[color:var(--accent)]/20 transition-colors"
-          >
-            <UserIcon size={14} />
-            <span>登录</span>
-          </button>
-        )}
-
         {/* Weather Quick Stat（位置与温度以天气卡片为准同步） */}
         {weatherTemp && (
           <div className="hidden md:flex items-center space-x-1 text-font-sm font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-[var(--card-radius)]">
@@ -167,6 +147,26 @@ export const TopBar: React.FC<Props> = ({
           <span className="hidden sm:inline opacity-70">{dateStr}</span>
           <span>{timeStr}</span>
         </div>
+
+        {/* Login / User（置于最右侧） */}
+        {currentUser ? (
+          <button
+            onClick={() => setIsLogoutOpen(true)}
+            className="flex items-center space-x-1.5 px-1.5 py-0.5 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors max-w-[120px]"
+            title="点击退出登录"
+          >
+            <UserIcon size={14} />
+            <span className="hidden sm:inline truncate">{displayName}</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsLoginOpen(true)}
+            className="flex items-center space-x-1 px-2 py-0.5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] hover:bg-[color:var(--accent)]/20 transition-colors"
+          >
+            <UserIcon size={14} />
+            <span>登录</span>
+          </button>
+        )}
       </div>
 
       <LoginModal

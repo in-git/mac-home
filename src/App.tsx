@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import React, { useRef, useState } from 'react';
-import { ToastProvider } from './components/Toast';
+import { toast, ToastProvider } from './components/Toast';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -8,6 +8,8 @@ import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
+import { siteApi, SiteItem } from './api/site';
+import type { WidgetItem } from './types';
 import { useAppInit } from './hooks/useAppInit';
 import { useBwsConnection } from './hooks/useBwsConnection';
 import { useGreeting } from './hooks/useGreeting';
@@ -84,6 +86,36 @@ export default function App() {
 
   const handleLoginSuccess = (user: LoginUser) => setCurrentUser(user);
   const handleLogout = () => setCurrentUser(null);
+
+  // 网页列表：点击「添加」把站点做成桌面图标（icon-grid 类型，携带 site 数据）
+  const handleAddSite = (item: SiteItem) => {
+    const url = item.link || '#';
+    if (widgets.some((w) => w.type === 'icon-grid' && w.site?.link === url)) {
+      toast.warning(`「${item.name || '未命名'}」已在桌面`);
+      return;
+    }
+    const newWidget: WidgetItem = {
+      id: `widget-${Date.now()}`,
+      type: 'icon-grid',
+      title: item.name || '未命名',
+      size: 'icon-1-8',
+      showHeader: false,
+      iconType: 'link',
+      iconGlyph: 'Globe',
+      iconLabel: item.name || '未命名',
+      iconHref: item.link,
+      site: item,
+    };
+    setWidgets([...widgets, newWidget]);
+    void (async () => {
+      try {
+        await siteApi.recordClick(item.id);
+      } catch {
+        /* noop */
+      }
+    })();
+    toast.success(`已添加「${item.name || '未命名'}」到桌面`);
+  };
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -267,6 +299,7 @@ export default function App() {
         isOpen={isAddWidgetModalOpen}
         onClose={() => setIsAddWidgetModalOpen(false)}
         onAddWidget={addWidget}
+        onAddSite={handleAddSite}
         widgets={widgets}
       />
 

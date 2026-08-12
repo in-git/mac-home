@@ -1,6 +1,9 @@
 // 字体方案（三种），每方案给出三档字号（直接写入 CSS 变量，不做派生）：
 //   A → --font-sm 12 / --font-md 14 / --font-lg 16
 //   B → --font-sm 13 / --font-md 15 / --font-lg 17
+
+import { SiteItem } from './api/site';
+
 //   C → --font-sm 14 / --font-md 16 / --font-lg 18
 export type FontVariant = 'A' | 'B' | 'C';
 
@@ -130,6 +133,8 @@ export interface WidgetItem {
   websites?: WebSite[];
   // 仅 快捷导航 组件：本组件实例独立的站点数据空间。
   shortcuts?: SiteItem[];
+  // 仅 icon-grid 组件：从「网页列表」添加的站点数据，桌面点击图标时据此打开站点。
+  site?: SiteItem;
 }
 
 /** 网页列表（application）组件中的单个网页条目 */
