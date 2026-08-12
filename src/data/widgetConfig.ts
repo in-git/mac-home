@@ -51,9 +51,39 @@ export interface WidgetTypeConfig {
   shortcuts?: SiteItem[];
   /** 图标型组件（icon-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
   site?: SiteItem;
-  /** 卡片内容区内边距：'p-2' 常规留白，'p-0' 内容满铺（如横幅动效等全卡展示组件）。 */
-  padding?: 'p-2' | 'p-0'|'p-4';
+  /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
+  cardStyle?: CardStyle;
 }
+
+/**
+ * 卡片外观样式：集中定义卡片（含放大模态框）的视觉属性。
+ * - padding：卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。
+ * - backdropBlur：毛玻璃模糊等级，映射到 Tailwind 的 `backdrop-blur-{value}`（如 '2xl' → backdrop-blur-2xl）。
+ * - border：边框类名（深色/浅色各一）。
+ * - shadow：阴影类名。
+ * - radius：圆角类名。
+ */
+export interface CardStyle {
+  /** 卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。 */
+  padding: 'p-2' | 'p-0' | 'p-4';
+  /** Tailwind 毛玻璃模糊等级，对应 `backdrop-blur-{value}` 的 value 段。 */
+  backdropBlur: string;
+  /** 边框类名，例如 'border border-white/60 dark:border-white/15'。 */
+  border: string;
+  /** 阴影类名，例如 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]'。 */
+  shadow: string;
+  /** 圆角类名，例如 'rounded-[var(--card-radius)]'。 */
+  radius: string;
+}
+
+/** 全局默认卡片样式（放大模态框等未单独配置时回退到此）。 */
+export const DEFAULT_CARD_STYLE: CardStyle = {
+  padding: 'p-4',
+  backdropBlur: '2xl',
+  border: 'border border-white/60 dark:border-white/15',
+  shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
+  radius: 'rounded-[var(--card-radius)]',
+};
 
 export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   search: {
@@ -65,7 +95,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🔍',
     label: '网络搜索',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
   },
   weather: {
     title: '天气预报',
@@ -76,7 +106,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⛅',
     label: '天气预报',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
   },
   'sticky-notes': {
     title: '便签笔记',
@@ -87,7 +117,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '📝',
     label: '便签',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
   },
   clock: {
     title: '时钟日历',
@@ -98,7 +128,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🕒',
     label: '时间 & 日历',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
   },
   'clock-mini': {
     title: '时钟',
@@ -109,7 +139,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⏰',
     label: '时钟',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
   },
   'clock-lunar': {
     title: '农历时钟',
@@ -120,7 +150,14 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🌙',
     label: '农历时钟',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
+    cardStyle: {
+      backdropBlur: 'none',
+      border: 'border border-white/60 dark:border-white/15',
+      shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
+      radius: 'rounded-[var(--card-radius)]',
+      padding: 'p-4',
+    },
   },
   'control-center': {
     title: '控制中心',
@@ -131,7 +168,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🎛️',
     label: '控制中心',
     category: 'system',
-    padding: 'p-4',
+    showHeader: false,
   },
   'icon-grid': {
     title: '图标',
@@ -145,7 +182,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: 'ICON',
     category: 'system',
     showHeader: false,
-    padding: 'p-4',
   },
   shortcuts: {
     title: '快捷导航',
@@ -157,7 +193,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '快捷导航',
     category: 'system',
     shortcuts: [],
-    padding: 'p-4',
   },
   application: {
     title: '网页列表',
@@ -168,7 +203,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🌐',
     label: '网页',
     category: 'web',
-    padding: 'p-4',
+    showHeader: false,
   },
 
   banner: {
@@ -181,7 +216,13 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     label: '横幅动效',
     category: 'system',
     showHeader: false,
-    padding: 'p-0',
+    cardStyle: {
+      padding: 'p-0',
+      backdropBlur: 'none',
+      border: 'border border-white/60 dark:border-white/15',
+      shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
+      radius: 'rounded-[var(--card-radius)]',
+    },
   },
 
 };
@@ -200,6 +241,7 @@ const FALLBACK_CONFIG: WidgetTypeConfig = {
   glyph: '🔗',
   label: '组件',
   category: 'system',
+  showHeader: false,
 };
 
 /** Resolve the config for a widget type (falls back to a safe default). */

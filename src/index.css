@@ -29,16 +29,11 @@ button{
     --apple-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     --apple-radius: 18px;
     --apple-input-bg: rgba(0, 0, 0, 0.04);
-
-    /* 三档字号，由设置面板直接写入（方案 A: 12/14/16, 方案 B: 13/15/17）。
-       全站所有字号只引用这三个变量，不做任何派生。 */
     --font-sm: 12px;
     --font-md: 14px;
     --font-lg: 16px;
-    /* 最小档：派生自 sm，随字号档位一起缩放，避免小号文字写死像素。 */
     --font-xs: calc(var(--font-sm) - 2px);
 
-    /* 卡片圆角，由设置面板按档位写入（tiny/small/medium/large）。 */
     --card-radius: 24px;
   }
 
@@ -80,7 +75,6 @@ button{
 ::-webkit-scrollbar-thumb {
   background: rgba(140, 140, 145, 0.25);
   border-radius: 9999px;
-  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -108,19 +102,6 @@ button{
     inset 0 1px 0 0 rgba(255, 255, 255, 0.1); */
 }
 
-.glass-pill {
-  background-color: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.dark .glass-pill {
-  background-color: rgba(45, 45, 48, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 /* Form focus ring */
 .apple-focus-ring:focus-within,

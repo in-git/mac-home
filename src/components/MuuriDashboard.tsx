@@ -5,6 +5,7 @@ import {
   executeWidgetClick,
   getWidgetAction,
   getWidgetConfig,
+  DEFAULT_CARD_STYLE,
 } from '../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { SettingsModal } from '../views/SettingsModal';
@@ -348,13 +349,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         (() => {
           const expandedWidget = widgets.find((w) => w.id === expandedWidgetId);
           if (!expandedWidget) return null;
+          const cardStyle = getWidgetConfig(expandedWidget.type).cardStyle ?? DEFAULT_CARD_STYLE;
           return (
             <div
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
               onClick={() => setExpandedWidgetId(null)}
             >
               <div
-                className="glass-panel rounded-[var(--card-radius)] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/60 dark:border-white/15 backdrop-blur-2xl w-[80vw] h-[80vh] flex flex-col overflow-hidden"
+                className={`glass-panel ${cardStyle.radius} ${cardStyle.padding} ${cardStyle.shadow} ${cardStyle.border} backdrop-blur-${cardStyle.backdropBlur} w-[80vw] h-[80vh] flex flex-col overflow-hidden`}
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* 无头：不渲染标题栏与控制栏 */}

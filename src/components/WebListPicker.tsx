@@ -139,9 +139,30 @@ const SiteCard: React.FC<SiteCardProps> = ({
         </div>
       </div>
       <div className="p-2.5 text-left">
-        <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
-          {item.name}
-        </p>
+        <div className="flex items-center gap-2">
+          {imgSrc ? (
+            <img
+              src={imgSrc}
+              alt={item.name}
+              loading="lazy"
+              className="h-5 w-5 shrink-0 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
+            />
+          ) : (
+            <div
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+              style={{
+                background:
+                  item.background ||
+                  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              }}
+            >
+              {(item.name || '?').charAt(0).toUpperCase()}
+            </div>
+          )}
+          <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+            {item.name}
+          </p>
+        </div>
         {item.des && (
           <p className="truncate text-xs dark:text-slate-400 mt-0.5">
             {item.des}

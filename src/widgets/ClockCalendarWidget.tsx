@@ -36,9 +36,9 @@ export const ClockCalendarWidget: React.FC = () => {
   return (
     <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1">
       {/* Clock Display */}
-      <div className="my-2 flex items-center justify-center">
+      <div className="flex items-center justify-center mb-3">
         <div className="text-center">
-          <div className="text-lg font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs">
+          <div className="text-3xl font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs">
             {formattedTime}
           </div>
           <div className="text-xs font-medium mt-1">{formattedDate}</div>
