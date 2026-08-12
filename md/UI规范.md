@@ -12,7 +12,8 @@
 | 边框 | 无生硬黑框；focus 用 `ring-2 ring-[#007AFF]/50` 柔光，禁用生硬描边                          |
 | 主色 | Apple 蓝 `#007AFF`，hover 加深 `bg-blue-600`                                                |
 | 文字 | `text-slate-800 dark:text-slate-100`，辅助说明 `text-slate-400/500`                         |
-| 字号 | 正文 `text-xs`（12px），说明 `text-[12px]`，标签 `font-medium`                              |
+| 文本动态化 | 禁止在壁纸中心等面板里写死十六进制文字色（如 `text-[#1d1d1f]`）。一律使用随明暗主题自动切换的语义类；强调色文本用 `text-[color:var(--accent)]` |
+| 字号 | 正文 `text-xs`（12px），说明 `text-[12px]`，标签 `font-medium`。**禁止写死像素字号（如 `text-[13px]`/`text-[11px]`），一律改用 Tailwind 语义字号阶梯（`text-xs`/`text-sm` 等）** |
 | 动效 | 禁用`transition-all`，按钮 `active:scale-95`，弹窗 `animate-in fade-in slide-in-from-top-1` |
 
 ## 状态模拟（simulatedState）
@@ -102,6 +103,26 @@ const defaultFormState = {
 
 - 主按钮：`px-6 py-3 rounded-[12px] bg-[#007AFF] text-white`，含 `Sparkles` 图标，文字「主提交按钮」，比例严格 2:1
 - 次要按钮：`glass-pill`，文字「次要取消按钮」
+
+## 壁纸中心（Wallpaper Modal）文本配色规范
+
+壁纸中心的文本必须随明暗主题**动态切换**，禁止写死十六进制文字色。统一使用以下语义类映射（已沉淀进 `WallpaperModal`、`StaticWallpaper` 等组件）：
+
+| 文本角色 | 旧硬编码（禁用） | 动态语义类（规范） |
+| -------- | ---------------- | ------------------ |
+| 主文本（标题、Tab 选中态、滤镜标签） | `text-[#1d1d1f] dark:text-[#f5f5f7]` | `text-slate-800 dark:text-slate-100` |
+| 次要文本（Tab 未选中、数值） | `text-[#6e6e73] dark:text-[#aeaeb2]` | `text-slate-500 dark:text-slate-400` |
+| 说明文本（底部提示、暂无预览） | `text-[#86868b] dark:text-[#86868b]` | `text-slate-400` |
+| 强调色文本（重置按钮、链接） | — | `text-[color:var(--accent)]`（跟随主题强调色动态变化） |
+
+字号同样禁止写死像素值，改用 Tailwind 语义字号阶梯：
+
+| 场景 | 旧硬编码（禁用） | 动态语义类 |
+| ---- | ---------------- | ---------- |
+| Tab 标签、滤镜行标签 | `text-[13px]` | `text-sm` |
+| 卡片内提示（暂无预览等） | `text-[11px]` | `text-xs` |
+
+> 规则：所有面板文字优先用 `slate` 配色阶梯 + `dark:` 变体；涉及品牌/强调语义（如「重置滤镜」按钮）统一用 CSS 变量 `var(--accent)`，禁止写死 `#007AFF` 等。字号一律用 `text-xs`/`text-sm` 等语义阶梯，禁止 `text-[Npx]`。
 
 ## 复刻提示
 

@@ -28,7 +28,7 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
       type="button"
       onClick={() => onSelect(item)}
       title={label}
-      className="group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] transition-all duration-200 dark:ring-white/[0.08]"
+      className="group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] dark:ring-white/[0.08]"
     >
       {/* 图片预览 */}
       <div className="aspect-[4/3] w-full bg-black/5 dark:bg-white/5">
@@ -40,7 +40,7 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[11px] text-[#86868b]">
+          <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
             暂无预览
           </div>
         )}

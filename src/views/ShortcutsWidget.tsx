@@ -36,9 +36,10 @@ interface SiteCardProps {
   item: SiteItem;
   onOpen: (item: SiteItem) => void;
   onAdd: (item: SiteItem) => void;
+  exists: boolean;
 }
 
-const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd }) => {
+const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd, exists }) => {
   const imgSrc = item.cover || item.logo;
   return (
     <div
@@ -84,23 +85,29 @@ const SiteCard: React.FC<SiteCardProps> = ({ item, onOpen, onAdd }) => {
         )}
       </div>
 
-      {/* 添加按钮：不关闭弹窗、不触发外部打开 */}
-      <Tooltip>
-        <Tooltip.Trigger>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAdd(item);
-            }}
-            className="absolute bottom-2 right-2 p-1.5 rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
-          >
-            <Plus size={13} />
-          </button>
-        </Tooltip.Trigger>
-        <Tooltip.Content showArrow placement="top" className="text-font-xs">
-          添加到快捷导航
-        </Tooltip.Content>
-      </Tooltip>
+      {/* 已存在则显示「已新增」，否则显示添加按钮 */}
+      {exists ? (
+        <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/90 text-white text-[11px] font-medium shadow opacity-100">
+          已新增
+        </span>
+      ) : (
+        <Tooltip>
+          <Tooltip.Trigger>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onAdd(item);
+              }}
+              className="absolute bottom-2 right-2 p-1.5 rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
+            >
+              <Plus size={13} />
+            </button>
+          </Tooltip.Trigger>
+          <Tooltip.Content showArrow placement="top" className="text-font-xs">
+            添加到快捷导航
+          </Tooltip.Content>
+        </Tooltip>
+      )}
     </div>
   );
 };
@@ -275,7 +282,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         }}
         title="站点库"
         icon={<Globe size={16} className="text-[color:var(--accent)]" />}
-        className="w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[60vw] min-h-[80vh] md:min-h-[70vh]"
+        className="site-library-modal w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[60vw] min-h-[80vh] md:min-h-[70vh]"
       >
         <div className="flex flex-col h-full max-h-[75vh]">
           {/* Filter Bar */}
@@ -379,6 +386,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
                     item={item}
                     onOpen={handleOpenSite}
                     onAdd={handleAddFromSite}
+                    exists={shortcuts.some((s) => s.url === (item.link || '#'))}
                   />
                 ))}
               </div>

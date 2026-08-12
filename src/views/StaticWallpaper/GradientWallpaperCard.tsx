@@ -26,7 +26,7 @@ export const GradientWallpaperCard: React.FC<GradientWallpaperCardProps> = ({
       type="button"
       onClick={() => onSelect(item)}
       title={label}
-      className="group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] transition-all duration-200 dark:ring-white/[0.08]"
+      className="group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] dark:ring-white/[0.08] aspect-[16/9]"
     >
       {/* 渐变预览 */}
       <div
