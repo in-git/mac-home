@@ -109,7 +109,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 : 'bg-slate-200 text-slate-700'
             }`}
           >
-            <Moon size={18} />
+            {isDarkMode ? <Moon size={18} /> : <Sun size={18} />}
           </div>
           <div className="min-w-0">
             <div className="font-semibold text-font-sm leading-tight">

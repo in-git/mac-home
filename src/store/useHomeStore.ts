@@ -145,10 +145,6 @@ export const useHomeStore = create<HomeState>()(
           size: cfg.defaultSize,
           // Header visibility is driven by the type-level config (default: shown).
           showHeader: cfg.showHeader ?? true,
-          // icon 型组件补充图标字段：settings 以齿轮图标呈现，点击后弹窗显示设置
-          ...(type === 'settings'
-            ? { iconType: 'action', iconGlyph: 'Settings', iconLabel: '设置' }
-            : {}),
         };
         set({ widgets: [...widgets, newWidget] });
       },

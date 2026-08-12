@@ -2,7 +2,6 @@ import { WidgetSize, WidgetType } from '../types';
 import type { SiteItem } from '../api/site';
 import type { MouseEvent } from 'react';
 import {
-  SIZE_OPTIONS_ICON,
   SIZE_OPTIONS_ICON_GRID,
   SIZE_OPTIONS_SEARCH,
   SIZE_OPTIONS_SM_ONLY,
@@ -123,26 +122,16 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     category: 'system',
     padding: 'p-4',
   },
-  settings: {
-    title: '系统设置',
-    maxInstances: 1,
-    defaultSize: 'icon-1-8',
-    sizeOptions: SIZE_OPTIONS_ICON,
-    isAddable: true,
-    glyph: '⚙️',
-    label: '系统设置',
-    category: 'system',
-    showHeader: false,
-    padding: 'p-4',
-  },
   'icon-grid': {
     title: '图标',
     maxInstances: Infinity,
     defaultSize: 'icon-1-8',
     sizeOptions: SIZE_OPTIONS_ICON_GRID,
     isAddable: false,
-    glyph: '🧩',
-    label: '图标',
+    // 默认值 = 系统设置：icon-grid 无站点 / 无自定义图标数据时渲染为设置图标，
+    // 点击弹出设置模态框（见 MuuriDashboard.handleCardClick）。
+    glyph: '⚙️',
+    label: '系统设置',
     category: 'system',
     showHeader: false,
     padding: 'p-4',

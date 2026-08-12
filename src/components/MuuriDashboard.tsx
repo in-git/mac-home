@@ -95,6 +95,11 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     }
     const iconGrid = target.closest('[data-icon-grid]');
     if (!iconGrid) return;
+    // icon-grid 默认值（无站点 / 链接 / 自定义图标）= 系统设置，点击弹出设置模态框
+    if (!widget.site && !widget.iconHref && !widget.iconGlyph) {
+      setSettingsModalOpen(true);
+      return;
+    }
     const kind = widget.iconType;
     if (kind === 'action') {
       const action = getWidgetAction(widget.id);
