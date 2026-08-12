@@ -24,7 +24,6 @@ const DEFAULT_ICON = {
 const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
   '1/8': { glyph: 'text-lg', label: 'text-font-sm' },
   '1/16': { glyph: 'text-lg', label: 'text-font-sm' },
-
   '1/4': { glyph: 'text-lg', label: 'text-font-sm' },
   '1/3': { glyph: 'text-lg', label: 'text-font-sm' },
   '1/2': { glyph: 'text-lg', label: 'text-font-sm' },
@@ -71,12 +70,10 @@ export function IconWidget({
   const kind = iconType ?? DEFAULT_ICON.type;
   const glyphName = iconGlyph ?? DEFAULT_ICON.glyph;
   const label = iconLabel ?? DEFAULT_ICON.label;
-  const typo = ICON_TYPOGRAPHY[size] ?? ICON_TYPOGRAPHY['1/8'];
   const GlyphIcon = ICON_REGISTRY[glyphName] ?? Rocket;
   const iconOnly = ICON_ONLY_SIZES.has(size);
 
-  const title =
-    kind === 'action' ? `${label}` : `${label}`;
+
 
   // Inline style overrides for custom colors. The custom text color is applied
   // to the button itself so both the SVG glyph (via currentColor) and the label
@@ -94,7 +91,7 @@ export function IconWidget({
       // No onClick here — the click bubbles to the widget-card container, which
       // owns the custom onAction event (resolved by id via getWidgetAction).
       disabled={editing && kind !== 'action'}
-      title={title}
+      title={label}
       style={hasBtnStyle ? btnStyle : undefined}
       className=" group !pointer-events-auto  flex h-full w-full flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-200 transition active:scale-95 disabled:cursor-default"
     >
@@ -102,17 +99,18 @@ export function IconWidget({
         <img
           src={iconImage}
           alt={label}
+          title={iconImage}
           className="h-full w-full object-contain rounded-[var(--card-radius)] drop-shadow-sm"
         />
       ) : (
         <GlyphIcon
-          className={`${typo.glyph} leading-none`}
+          className={`leading-none`}
           strokeWidth={1.75}
         />
       )}
       {!iconOnly && (
         <span
-          className={`max-w-full truncate font-medium ${typo.label}`}
+          className={`max-w-full truncate  text-white`}
         >
           {label}
         </span>

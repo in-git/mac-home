@@ -62,8 +62,7 @@ export const renderWidgetContent = ({
         />
       );
     case 'shortcuts':
-      // inModal 为 true 时表示处于无头模态（放大）状态，传 expanded 让布局填满模态并从头开始流式排列
-      // grid 模式（非放大）下提供 onExpand，使 header 的「更多」能复用放大模态（全屏）功能
+
       return (
         <ShortcutsWidget
           expanded={inModal}
@@ -77,7 +76,6 @@ export const renderWidgetContent = ({
         />
       );
     case 'settings':
-      // 网格中：渲染为图标，点击后打开无头模态显示完整设置面板
       if (inModal) return <SettingsWidget activeTab={'appearance'} />;
       return (
         <div data-icon-grid className="h-full w-full">
@@ -98,25 +96,15 @@ export const renderWidgetContent = ({
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
       // 无站点且无自定义图标时，默认值为系统设置图标（点击弹出设置模态框）
       const site = widget.site;
-      const isDefaultSettings = !site && !widget.iconGlyph;
       return (
         <div data-icon-grid className="h-full w-full">
           <IconWidget
-            editing={isEditMode}
             size={widget.size}
-            iconType={
-              widget.iconType ?? (isDefaultSettings ? 'action' : 'link')
-            }
-            iconGlyph={
-              site
-                ? (widget.iconGlyph ?? 'Globe')
-                : (widget.iconGlyph ?? 'Settings')
-            }
-            iconLabel={site?.name ?? widget.iconLabel ?? '系统设置'}
-            iconHref={site?.link ?? widget.iconHref}
-            iconImage={site?.logo}
-            iconTextColor={widget.iconTextColor}
-            iconBgColor={widget.iconBgColor}
+            iconLabel={site?.name}
+            iconHref={site?.link }
+            // 优先显示站点 logo（SiteItem.logo），其次回退到组件自身 iconImage
+            iconImage={site?.logo }
+         
           />
         </div>
       );

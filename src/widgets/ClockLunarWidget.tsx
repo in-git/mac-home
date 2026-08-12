@@ -31,10 +31,10 @@ export const ClockLunarWidget: React.FC = () => {
   const lunarText = getLunarDateText(time);
 
   return (
-    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none">
+    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none text-white ">
       {/* 顶部：当前时间 */}
       <div className="text-center">
-        <div className="text-6xl font-extrabold tracking-tight font-mono text-white leading-none tabular-nums">
+        <div className="text-6xl font-extrabold tracking-tight font-mono leading-none tabular-nums">
           {formattedTime}
         </div>
       </div>
@@ -48,7 +48,7 @@ export const ClockLunarWidget: React.FC = () => {
           <span >{weekday}</span>
         </div>
         <div className="flex items-center justify-center space-x-1.5 text-font-sm ">
-          <Moon size={13} className="text-white shrink-0" />
+          <Moon size={13} className="shrink-0" />
           <span>{lunarText}</span>
         </div>
       </div>
