@@ -5,6 +5,7 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Trash2,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Skeleton, Tooltip } from '@heroui/react';
@@ -13,18 +14,22 @@ import { siteApi, SiteCategory, SiteIdentity, SiteItem } from '../api/site';
 /**
  * 网页列表（WebListPicker）：
  * 通用站点选择器，供多个组件复用（如快捷导航的「站点库」）。
- * 内置搜索/身份/分类过滤、分页加载与站点卡片网格，
- * 通过 onAdd / onOpen 把选择结果交给调用方处理。
+ * 内置搜索/身份/分类过滤、分页加载与站点卡片网格。
+ * 选中状态由父组件传入（selected），新增 / 删除等变更事件均交由父组件处理。
  */
 export interface WebListPickerProps {
-  /** 已选中的站点列表，用于标记「已新增」 */
+  /** 已选中的站点列表（由父组件持有），用于标记「已新增」并渲染删除入口 */
   selected: SiteItem[];
   /** 点击「添加」按钮时的回调 */
   onAdd: (item: SiteItem) => void;
+  /** 点击「删除」已选站点时的回调；缺省时已选卡片只显示勾标记 */
+  onRemove?: (item: SiteItem) => void;
   /** 点击卡片打开站点时的回调；缺省时在新窗口打开 */
   onOpen?: (item: SiteItem) => void;
   /** 添加按钮的 Tooltip 文案 */
   addTip?: string;
+  /** 删除按钮的 Tooltip 文案 */
+  removeTip?: string;
 }
 
 function flattenCategories(categories: SiteCategory[]): SiteCategory[] {
@@ -43,16 +48,20 @@ interface SiteCardProps {
   item: SiteItem;
   onOpen: (item: SiteItem) => void;
   onAdd: (item: SiteItem) => void;
+  onRemove?: (item: SiteItem) => void;
   exists: boolean;
   addTip: string;
+  removeTip?: string;
 }
 
 const SiteCard: React.FC<SiteCardProps> = ({
   item,
   onOpen,
   onAdd,
+  onRemove,
   exists,
   addTip,
+  removeTip = '删除',
 }) => {
   const imgSrc = item.cover || item.logo;
   return (
@@ -88,14 +97,35 @@ const SiteCard: React.FC<SiteCardProps> = ({
           </span>
         )}
 
-        {/* 已存在则在图片左上角显示勾图标，否则居中显示添加按钮（悬停时出现） */}
+        {/* 已存在：左上角显示勾图标 + 删除按钮；否则居中显示添加按钮（悬停时出现） */}
         {exists ? (
-          <span
-            className="absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md ring-1 ring-white/15"
-            title="已新增"
-          >
-            <Check size={14} strokeWidth={3} />
-          </span>
+          <div className="absolute top-2 left-2 flex items-center gap-1.5">
+            <span
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md ring-1 ring-white/15"
+              title="已新增"
+            >
+              <Check size={14} strokeWidth={3} />
+            </span>
+            {onRemove && (
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemove(item);
+                    }}
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-black/55 text-white shadow-md ring-1 ring-white/15 hover:bg-red-500 transition-colors"
+                    title={removeTip}
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow placement="top" className="text-xs">
+                  {removeTip}
+                </Tooltip.Content>
+              </Tooltip>
+            )}
+          </div>
         ) : (
           <Tooltip>
             <Tooltip.Trigger>
@@ -132,8 +162,10 @@ const SiteCard: React.FC<SiteCardProps> = ({
 export const WebListPicker: React.FC<WebListPickerProps> = ({
   selected,
   onAdd,
+  onRemove,
   onOpen,
   addTip = '添加',
+  removeTip = '删除',
 }) => {
   const [categories, setCategories] = useState<SiteCategory[]>([]);
   const [identities, setIdentities] = useState<SiteIdentity[]>([]);
@@ -332,8 +364,10 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
                 item={item}
                 onOpen={handleOpen}
                 onAdd={onAdd}
+                onRemove={onRemove}
                 exists={selected.some((s) => s.link === (item.link || '#'))}
                 addTip={addTip}
+                removeTip={removeTip}
               />
             ))}
           </div>

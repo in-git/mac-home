@@ -117,6 +117,17 @@ export default function App() {
     toast.success(`已添加「${item.name || '未命名'}」到桌面`);
   };
 
+  // 网页列表：点击「删除」移除对应的桌面图标（icon-grid）
+  const handleRemoveSite = (item: SiteItem) => {
+    const url = item.link || '#';
+    const target = widgets.find(
+      (w) => w.type === 'icon-grid' && w.site?.link === url,
+    );
+    if (!target) return;
+    deleteWidget(target.id);
+    toast.success(`已移除「${item.name || '未命名'}」`);
+  };
+
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const mainRef = useRef<HTMLElement>(null);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] =
@@ -300,6 +311,7 @@ export default function App() {
         onClose={() => setIsAddWidgetModalOpen(false)}
         onAddWidget={addWidget}
         onAddSite={handleAddSite}
+        onRemoveSite={handleRemoveSite}
         widgets={widgets}
       />
 

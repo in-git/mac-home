@@ -101,6 +101,7 @@ export const renderWidgetContent = ({
             iconGlyph={widget.iconGlyph ?? 'Globe'}
             iconLabel={site?.name ?? widget.iconLabel}
             iconHref={site?.link ?? widget.iconHref}
+            iconImage={site?.logo}
             iconTextColor={widget.iconTextColor}
             iconBgColor={widget.iconBgColor}
           />

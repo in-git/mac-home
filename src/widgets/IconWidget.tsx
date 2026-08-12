@@ -47,6 +47,8 @@ interface IconWidgetProps {
   iconGlyph?: string;
   iconLabel?: string;
   iconHref?: string;
+  // 站点图标图片（如 SiteItem.logo）；提供时优先显示图片而非 lucide 图标
+  iconImage?: string;
   // Custom tile colors. `iconTextColor` tints the glyph + label; `iconBgColor`
   // overrides the default translucent background. Any valid CSS color accepted.
   iconTextColor?: string;
@@ -60,6 +62,7 @@ export function IconWidget({
   iconGlyph,
   iconLabel,
   iconHref,
+  iconImage,
   iconTextColor,
   iconBgColor,
 }: IconWidgetProps) {
@@ -93,10 +96,18 @@ export function IconWidget({
       style={hasBtnStyle ? btnStyle : undefined}
       className="glass-icon group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-[var(--card-radius)] bg-white/10 text-slate-700 dark:text-slate-200 backdrop-blur-sm transition hover:bg-white/25 active:scale-95 disabled:cursor-default"
     >
-      <GlyphIcon
-        className={`${typo.glyph} leading-none`}
-        strokeWidth={1.75}
-      />
+      {iconImage ? (
+        <img
+          src={iconImage}
+          alt={label}
+          className="h-9 w-9 rounded-[25%] object-cover shadow-sm"
+        />
+      ) : (
+        <GlyphIcon
+          className={`${typo.glyph} leading-none`}
+          strokeWidth={1.75}
+        />
+      )}
       {!iconOnly && (
         <span
           className={`max-w-full truncate font-medium ${typo.label}`}

@@ -90,6 +90,13 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     commitShortcuts((prev) => prev.filter((s) => s.id !== id));
   };
 
+  // 网页列表中选择器的「删除」：从快捷导航中移除对应站点
+  const handleRemoveFromPicker = (item: SiteItem) => {
+    const key = item.id || item.link;
+    commitShortcuts((prev) => prev.filter((s) => (s.id || s.link) !== key));
+    toast.success(`已移除「${item.name || '未命名'}」`);
+  };
+
   // 点击卡片在外部打开，并本地递增访问次数（与「添加」逻辑互不冲突）
   const handleOpen = (s: SiteItem) => {
     playSound.playClick();
@@ -121,8 +128,10 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         <WebListPicker
           selected={shortcuts}
           onAdd={handleAddFromSite}
+          onRemove={handleRemoveFromPicker}
           onOpen={handleOpenSite}
           addTip="添加到快捷导航"
+          removeTip="从快捷导航移除"
         />
       </Modal>
     </>

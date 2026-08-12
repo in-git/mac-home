@@ -25,6 +25,8 @@ interface Props {
   onAddWidget: (type: WidgetType) => void;
   /** 网页分类中点击「添加」时回调：把站点做成桌面图标（icon-grid） */
   onAddSite: (item: SiteItem) => void;
+  /** 网页分类中点击「删除」时回调：移除对应的桌面图标 */
+  onRemoveSite: (item: SiteItem) => void;
   widgets: WidgetItem[];
 }
 
@@ -85,6 +87,7 @@ export const AddWidgetModal: React.FC<Props> = ({
   onClose,
   onAddWidget,
   onAddSite,
+  onRemoveSite,
   widgets,
 }) => {
   const [mounted, setMounted] = useState(isOpen);
@@ -195,7 +198,9 @@ export const AddWidgetModal: React.FC<Props> = ({
                 <WebListPicker
                   selected={webSelectedSites}
                   onAdd={onAddSite}
+                  onRemove={onRemoveSite}
                   addTip="添加到桌面"
+                  removeTip="从桌面移除"
                 />
               </div>
             ) : (
