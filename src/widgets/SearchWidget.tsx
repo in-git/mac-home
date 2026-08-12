@@ -123,7 +123,7 @@ export const SearchWidget: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={currentEngine.placeholder}
-            className="w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
+            className="search-input w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
           />
 
           {/* 右侧直接提交按钮（遵循 UI 规范 严格 2:1 或正方形操作，使用 Apple 蓝） */}

@@ -20,10 +20,13 @@ export const ControlCenterWidget: React.FC<Props> = ({
   const setCardRadius = useHomeStore((s) => s.setCardRadius);
   const screenBrightness = useHomeStore((s) => s.screenBrightness);
   const setScreenBrightness = useHomeStore((s) => s.setScreenBrightness);
+  // 上一次成功定位的位置（持久化，用于本次进入时回显）
+  const lastLocation = useHomeStore((s) => s.lastLocation);
+  const setLastLocation = useHomeStore((s) => s.setLastLocation);
 
   // 定位状态：idle 未定位 / locating 请求中 / done 成功 / error 失败
   const [locating, setLocating] = useState(false);
-  const [_, setLocCity] = useState<string | null>(null);
+  const [locCity, setLocCity] = useState<string | null>(null);
   const [locCoords, setLocCoords] = useState<{
     lat: number;
     lon: number;
@@ -50,7 +53,10 @@ export const ControlCenterWidget: React.FC<Props> = ({
         const { latitude, longitude } = pos.coords;
         setLocCoords({ lat: latitude, lon: longitude });
         const city = await reverseGeocodeCityName(latitude, longitude);
-        setLocCity(city ?? '当前位置');
+        const cityName = city ?? '当前位置';
+        setLocCity(cityName);
+        // 持久化最近一次成功定位，下次进入时回显
+        setLastLocation({ city: cityName, lat: latitude, lon: longitude });
         setLocating(false);
       },
       (err) => {
@@ -78,7 +84,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
         >
           <div
             className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-              locCoords
+              locCoords || lastLocation
                 ? 'bg-[#34C759] text-white shadow-sm'
                 : 'bg-slate-400/30 text-slate-500 shadow-sm'
             }`}
@@ -86,8 +92,11 @@ export const ControlCenterWidget: React.FC<Props> = ({
             <MapPin size={18} />
           </div>
           <div className="min-w-0">
-            <div className="font-semibold text-font-sm leading-tight">位置</div>
-       
+            <div className="font-semibold text-font-sm leading-tight">
+              {locating
+                ? '定位中…'
+                : (locCity ?? lastLocation?.city ?? '位置')}
+            </div>
           </div>
         </button>
 

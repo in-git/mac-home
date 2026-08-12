@@ -55,6 +55,8 @@ interface HomeState {
   weatherCities: WeatherCity[];
   // 当前选中的天气城市 id（持久化，保证下次进入恢复上次的查看/定位城市）
   selectedCityId: string;
+  // 最近一次成功定位的位置（持久化，控制中心位置模块下次进入时回显）
+  lastLocation: { city: string; lat: number; lon: number } | null;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -92,6 +94,10 @@ interface HomeState {
   setWeatherCities: (cities: WeatherCity[]) => void;
   // 切换当前选中的天气城市
   setSelectedCityId: (id: string) => void;
+  /** 写入最近一次成功定位的位置（null 表示清除）。 */
+  setLastLocation: (
+    loc: { city: string; lat: number; lon: number } | null,
+  ) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -122,6 +128,8 @@ export const useHomeStore = create<HomeState>()(
       weatherCities: DEFAULT_WEATHER_CITIES,
       // 默认选中第一个城市
       selectedCityId: DEFAULT_WEATHER_CITIES[0]?.id ?? '',
+      // 尚未定位过，无回显位置
+      lastLocation: null,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -235,6 +243,7 @@ export const useHomeStore = create<HomeState>()(
             : cities[0]?.id ?? '',
         })),
       setSelectedCityId: (id) => set({ selectedCityId: id }),
+      setLastLocation: (lastLocation) => set({ lastLocation }),
     }),
     {
       name: 'apple-homepage-store',
@@ -253,6 +262,7 @@ export const useHomeStore = create<HomeState>()(
         petAutoActivity: state.petAutoActivity,
         weatherCities: state.weatherCities,
         selectedCityId: state.selectedCityId,
+        lastLocation: state.lastLocation,
       }),
     },
   ),

@@ -34,8 +34,6 @@ export const PRESET_DATA = {
     },
     {
       id: 'widget-settings',
-      // 系统设置已作为 icon-grid 的默认值：无站点 / 自定义图标数据时渲染设置图标，
-      // 点击弹出设置模态框（见 MuuriDashboard.handleCardClick）。
       type: 'icon-grid',
       title: '系统设置',
       size: 'icon-1-8',

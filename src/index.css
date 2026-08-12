@@ -442,6 +442,28 @@ button{
   color: var(--card-fg-muted) !important;
 }
 
+/* 搜索输入框背景跟随卡片明暗主题：card-theme-* 与 .dark 系统主题完全解耦，
+   当系统主题与卡片背景明暗不一致时（如系统浅色 + 卡片暗色背景），
+   dark: 变体不会生效，这里用作用域覆盖补齐输入框底色。 */
+.widget-card.card-theme-dark .search-input {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.widget-card.card-theme-dark .search-input:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+.widget-card.card-theme-dark .search-input:focus {
+  background-color: #0f172a !important; /* slate-900，与 dark:focus:bg-slate-900 一致 */
+}
+.widget-card.card-theme-light .search-input {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.widget-card.card-theme-light .search-input:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+.widget-card.card-theme-light .search-input:focus {
+  background-color: #ffffff !important;
+}
+
 /* 站点库模态框：强制白色主题，不受暗色模式影响 */
 .site-library-modal.glass-panel {
   background-color: #ffffff !important;

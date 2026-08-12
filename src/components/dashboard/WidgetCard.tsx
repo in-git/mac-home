@@ -102,6 +102,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
       className={`muuri-item p-2 z-10 ${sizeClasses}${
         isExpanded ? ' hidden' : ''
       }`}
+      onClick={handleCardClick}
     >
       {/* Muuri Required Item Content Wrapper */}
       <div className="muuri-item-content h-full w-full">
@@ -110,7 +111,6 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
           className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widgetPadding} shadow-[0_12px_40px_rgba(0,0,0,0.10)]  backdrop-blur-2xl flex flex-col justify-between group${
             widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
-          onClick={handleCardClick}
           onPointerDown={handlePointerDown}
           onPointerUp={cancelLongPress}
           onPointerLeave={cancelLongPress}
