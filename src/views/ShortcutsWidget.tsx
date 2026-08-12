@@ -14,10 +14,6 @@ interface ShortcutsWidgetProps {
   shortcuts?: SiteItem[];
   /** 写回数据空间的回调（通常经 store 持久化到 localStorage） */
   onUpdateShortcuts?: (list: SiteItem[]) => void;
-  /** 卡片标题（widget.title）；提供时支持点击内联编辑 */
-  title?: string;
-  /** 标题编辑保存回调（经 store 写回 widget.title） */
-  onUpdateTitle?: (title: string) => void;
 }
 
 
@@ -27,8 +23,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   onExpand,
   shortcuts: shortcutsProp,
   onUpdateShortcuts,
-  title,
-  onUpdateTitle,
 }) => {
   const [shortcuts, setShortcuts] = useState<SiteItem[]>(
     shortcutsProp ?? [],
@@ -119,8 +113,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         onAddClick={() => setShowAdd(true)}
         onDelete={handleDelete}
         onOpen={handleOpen}
-        title={title}
-        onUpdateTitle={onUpdateTitle}
       />
 
       <Modal

@@ -1,5 +1,4 @@
 import {
-  Check,
   ExternalLink,
   Globe,
   Plus,
@@ -91,22 +90,16 @@ const SiteCard: React.FC<SiteCardProps> = ({
           </div>
         )}
         {item.count !== undefined && item.count > 0 && (
-          <span className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
+          <span className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
             <ExternalLink size={13} className="opacity-90" />
             {item.count > 999 ? '999+' : item.count}
           </span>
         )}
 
-        {/* 已存在：左上角显示勾图标 + 删除按钮；否则居中显示添加按钮（悬停时出现） */}
-        {exists ? (
-          <div className="absolute top-2 left-2 flex items-center gap-1.5">
-            <span
-              className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md ring-1 ring-white/15"
-              title="已新增"
-            >
-              <Check size={14} strokeWidth={3} />
-            </span>
-            {onRemove && (
+        {/* 右上角操作区：未添加时显示添加按钮（悬停时出现）；已添加时显示红色删除按钮 */}
+        <div className="absolute top-2 right-2 flex items-center gap-1.5">
+          {exists ? (
+            onRemove && (
               <Tooltip>
                 <Tooltip.Trigger>
                   <button
@@ -114,7 +107,7 @@ const SiteCard: React.FC<SiteCardProps> = ({
                       e.stopPropagation();
                       onRemove(item);
                     }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-black/55 text-white shadow-md ring-1 ring-white/15 hover:bg-red-500 transition-colors"
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md ring-1 ring-white/15 hover:bg-red-600 transition-colors"
                     title={removeTip}
                   >
                     <Trash2 size={13} />
@@ -124,26 +117,26 @@ const SiteCard: React.FC<SiteCardProps> = ({
                   {removeTip}
                 </Tooltip.Content>
               </Tooltip>
-            )}
-          </div>
-        ) : (
-          <Tooltip>
-            <Tooltip.Trigger>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAdd(item);
-                }}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-2 rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
-              >
-                <Plus size={15} />
-              </button>
-            </Tooltip.Trigger>
-            <Tooltip.Content showArrow placement="top" className="text-xs">
-              {addTip}
-            </Tooltip.Content>
-          </Tooltip>
-        )}
+            )
+          ) : (
+            <Tooltip>
+              <Tooltip.Trigger>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAdd(item);
+                  }}
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
+                >
+                  <Plus size={15} />
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Content showArrow placement="top" className="text-xs">
+                {addTip}
+              </Tooltip.Content>
+            </Tooltip>
+          )}
+        </div>
       </div>
       <div className="p-2.5 text-left">
         <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">

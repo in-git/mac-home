@@ -123,7 +123,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
           {showHeader && (
             <div className="flex items-center justify-between mb-3">
               {/* Title (left) */}
-              <span className="text-font-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest pl-1 select-none">
+              <span className="text-font-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest select-none">
                 {widget.title}
               </span>
 

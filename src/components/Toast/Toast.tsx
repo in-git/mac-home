@@ -1,7 +1,6 @@
-import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, AlertTriangle, Info, XCircle, X } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export type ToastType = 'success' | 'warning' | 'error' | 'info';
 
@@ -29,6 +28,7 @@ const ICONS: Record<ToastType, React.ReactNode> = {
 };
 
 const DISMISS_DURATION = 3500;
+const TOAST_TRANSITION_MS = 200;
 
 export const toast: ToastContextValue = {
   success: (message, duration = DISMISS_DURATION) =>
@@ -45,28 +45,81 @@ interface ToastProviderProps {
   children?: React.ReactNode;
 }
 
+interface ToastItemProps {
+  message: ToastMessage;
+  onClose: (id: string) => void;
+}
+
+const ToastItem: React.FC<ToastItemProps> = ({ message, onClose }) => {
+  const [visible, setVisible] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+
+  // 挂载后触发进入动画
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // 时长到期后开始退出
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLeaving(true), message.duration);
+    return () => clearTimeout(timer);
+  }, [message.duration]);
+
+  // 退出动画结束后真正移除
+  useEffect(() => {
+    if (!leaving) return;
+    const timer = window.setTimeout(
+      () => onClose(message.id),
+      TOAST_TRANSITION_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [leaving, message.id, onClose]);
+
+  const dismiss = () => setLeaving(true);
+
+  return (
+    <div
+      role="status"
+      onClick={dismiss}
+      className="pointer-events-auto flex w-[420px] max-w-full items-center gap-2.5 rounded-full border border-white/40 bg-white/75 px-4 py-2.5 text-[13px] text-slate-700 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12)] backdrop-blur-xl cursor-pointer dark:border-white/15 dark:bg-[rgba(30,30,32,0.85)] dark:text-[#f5f5f7]"
+      style={{
+        transition: `opacity ${TOAST_TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1), transform ${TOAST_TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+        opacity: leaving ? 0 : visible ? 1 : 0,
+        transform: leaving
+          ? 'translateY(-10px) scale(0.95)'
+          : visible
+            ? 'translateY(0) scale(1)'
+            : 'translateY(-20px) scale(0.95)',
+      }}
+    >
+      {ICONS[message.type]}
+      <span className="font-medium leading-tight">{message.message}</span>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          dismiss();
+        }}
+        className="ml-1 rounded-full p-0.5 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-600 dark:dark:hover:bg-white/10 dark:hover:text-slate-200"
+        aria-label="关闭"
+      >
+        <X size={12} />
+      </button>
+    </div>
+  );
+};
+
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [messages, setMessages] = useState<ToastMessage[]>([]);
-  const timers = useRef<Map<string, number>>(new Map());
 
   const remove = useCallback((id: string) => {
-    const timer = timers.current.get(id);
-    if (timer !== undefined) {
-      clearTimeout(timer);
-      timers.current.delete(id);
-    }
     setMessages((prev) => prev.filter((m) => m.id !== id));
   }, []);
 
-  const push = useCallback(
-    (type: ToastType, message: string, duration: number) => {
-      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      setMessages((prev) => [...prev, { id, type, message, duration }]);
-      const timer = window.setTimeout(() => remove(id), duration);
-      timers.current.set(id, timer);
-    },
-    [remove],
-  );
+  const push = useCallback((type: ToastType, message: string, duration: number) => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setMessages((prev) => [...prev, { id, type, message, duration }]);
+  }, []);
 
   useEffect(() => {
     globalApi = {
@@ -77,8 +130,6 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     };
     return () => {
       globalApi = null;
-      timers.current.forEach((t) => clearTimeout(t));
-      timers.current.clear();
     };
   }, [push]);
 
@@ -86,33 +137,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     typeof document !== 'undefined'
       ? createPortal(
           <div className="pointer-events-none fixed inset-x-0 top-4 z-[200] flex flex-col items-center gap-2">
-            <AnimatePresence>
-              {messages.map((m) => (
-                <motion.div
-                  key={m.id}
-                  initial={{ y: -20, opacity: 0, scale: 0.95 }}
-                  animate={{ y: 0, opacity: 1, scale: 1 }}
-                  exit={{ y: -10, opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                  className="pointer-events-auto flex max-w-[420px] items-center gap-2.5 rounded-full border border-white/40 bg-white/75 px-4 py-2.5 text-[13px] text-slate-700 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12)] backdrop-blur-xl dark:border-white/15 dark:bg-[rgba(30,30,32,0.85)] dark:text-[#f5f5f7]"
-                  onClick={() => remove(m.id)}
-                  role="status"
-                >
-                  {ICONS[m.type]}
-                  <span className="font-medium leading-tight">{m.message}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      remove(m.id);
-                    }}
-                    className="ml-1 rounded-full p-0.5 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-600 dark:dark:hover:bg-white/10 dark:hover:text-slate-200"
-                    aria-label="关闭"
-                  >
-                    <X size={12} />
-                  </button>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {messages.map((m) => (
+              <ToastItem key={m.id} message={m} onClose={remove} />
+            ))}
           </div>,
           document.body,
         )

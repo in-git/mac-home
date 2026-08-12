@@ -71,12 +71,6 @@ export const renderWidgetContent = ({
               ? (list) => onUpdateWidget(widget.id, { shortcuts: list })
               : undefined
           }
-          title={widget.title}
-          onUpdateTitle={
-            onUpdateWidget
-              ? (t) => onUpdateWidget(widget.id, { title: t })
-              : undefined
-          }
         />
       );
     case 'settings':
