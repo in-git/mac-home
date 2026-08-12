@@ -60,36 +60,22 @@ export type WidgetType =
   | 'application'
   | 'banner';
 
+// 尺寸统一使用分数写法（如 1/2、1/8），值即展示文案，无需额外映射表。
 export type WidgetSize =
-  | 'sm' // 1/4
-  | 'fifth' // 1/5
-  | 'sixth' // 1/6
-  | 'tenth' // 1/10
-  | 'twelfth' // 1/12
-  | 'third' // 1/3
-  | 'wide' // 1/2
-  | 'large' // 1:1
-  | 'icon-1-8' // 1:8
-  | 'icon-1-16'; // 1:16 (纯图标, 不显示文本)
+  | '1/4'
+  | '1/5'
+  | '1/6'
+  | '1/10'
+  | '1/12'
+  | '1/3'
+  | '1/2'
+  | '1/1' // 1/1 占满整行
+  | '1/8'
+  | '1/16'; // 1/16 纯图标, 不显示文本
 
 // Behaviour of an `icon-grid` widget. `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.
 export type IconBehavior = 'link' | 'action';
-
-// Mapping between the internal size tokens and the human-readable fractions
-// shown in the UI (e.g. "1/2", "1:1"). Used for the size picker labels.
-export const WIDGET_SIZE_LABEL: Record<WidgetSize, string> = {
-  sm: '1/4',
-  third: '1/3',
-  wide: '1/2',
-  large: '1:1',
-  'icon-1-8': '1:8',
-  'icon-1-16': '1:16',
-  fifth: '1/5',
-  sixth: '1/6',
-  tenth: '1/10',
-  twelfth: '1/12'
-};
 
 // Props shared by every widget component. `editing` reflects whether the
 // dashboard is in free-layout (unlocked) mode.

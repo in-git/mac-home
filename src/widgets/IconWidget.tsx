@@ -22,22 +22,22 @@ const DEFAULT_ICON = {
 // caption stay proportional — large 1/6 tile reads big, tiny 1/16 tile shrinks
 // both the icon and its text together. The 1:16 tile is icon-only (no label).
 const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
-  'icon-1-8': { glyph: 'text-lg', label: 'text-font-sm' },
-  'icon-1-16': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/8': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/16': { glyph: 'text-lg', label: 'text-font-sm' },
 
-  sm: { glyph: 'text-lg', label: 'text-font-sm' },
-  third: { glyph: 'text-lg', label: 'text-font-sm' },
-  wide: { glyph: 'text-lg', label: 'text-font-sm' },
-  large: { glyph: 'text-lg', label: 'text-font-sm' },
-  fifth: { glyph: 'text-lg', label: 'text-font-sm' },
-  sixth: { glyph: 'text-lg', label: 'text-font-sm' },
-  tenth: { glyph: 'text-lg', label: 'text-font-sm' },
-  twelfth: { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/4': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/3': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/2': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/1': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/5': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/6': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/10': { glyph: 'text-lg', label: 'text-font-sm' },
+  '1/12': { glyph: 'text-lg', label: 'text-font-sm' },
 };
 
 // When true the tile renders only the glyph (no text label). Used for the
-// smallest 1:16 size where the label would overflow the tiny tile.
-const ICON_ONLY_SIZES: ReadonlySet<WidgetSize> = new Set<WidgetSize>(['icon-1-16']);
+// smallest 1/16 size where the label would overflow the tiny tile.
+const ICON_ONLY_SIZES: ReadonlySet<WidgetSize> = new Set<WidgetSize>(['1/16']);
 
 interface IconWidgetProps {
   editing?: boolean;
@@ -60,7 +60,7 @@ interface IconWidgetProps {
 
 export function IconWidget({
   editing,
-  size = 'icon-1-8',
+  size = '1/8',
   iconType,
   iconGlyph,
   iconLabel,
@@ -72,7 +72,7 @@ export function IconWidget({
   const kind = iconType ?? DEFAULT_ICON.type;
   const glyphName = iconGlyph ?? DEFAULT_ICON.glyph;
   const label = iconLabel ?? DEFAULT_ICON.label;
-  const typo = ICON_TYPOGRAPHY[size] ?? ICON_TYPOGRAPHY['icon-1-8'];
+  const typo = ICON_TYPOGRAPHY[size] ?? ICON_TYPOGRAPHY['1/8'];
   const GlyphIcon = ICON_REGISTRY[glyphName] ?? Rocket;
   const iconOnly = ICON_ONLY_SIZES.has(size);
 

@@ -23,7 +23,7 @@ export interface ShortcutsWidgetCardProps {
  * 列表为空时提示用户从站点库添加。
  */
 export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
-  shortcuts,
+  shortcuts = [],
   expanded,
   onAddClick,
   onOpen,

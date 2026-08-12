@@ -20,10 +20,7 @@ interface ShortcutsWidgetProps {
   onUpdateTitle?: (title: string) => void;
 }
 
-/** 预设快捷站点（使用 SiteItem 结构，无图时以首字母 + 纯色背景兜底） */
-const INITIAL_SITES: SiteItem[] = [
 
-];
 
 export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
@@ -34,7 +31,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   onUpdateTitle,
 }) => {
   const [shortcuts, setShortcuts] = useState<SiteItem[]>(
-    shortcutsProp ?? INITIAL_SITES,
+    shortcutsProp ?? [],
   );
   const [showAdd, setShowAdd] = useState(false);
 

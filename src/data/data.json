@@ -7,19 +7,19 @@
       "id": "widget-search",
       "type": "search",
       "title": "网络搜索",
-      "size": "wide"
+      "size": "1/2"
     },
     {
       "id": "widget-weather",
       "type": "weather",
       "title": "天气预报",
-      "size": "wide"
+      "size": "1/2"
     },
     {
       "id": "widget-sticky",
       "type": "sticky-notes",
       "title": "便签",
-      "size": "wide"
+      "size": "1/2"
     },
     {
       "id": "widget-clock",
@@ -50,7 +50,7 @@
       "id": "widget-settings",
       "type": "settings",
       "title": "设置",
-      "size": "icon-1-8",
+      "size": "1/8",
       "showHeader": false,
       "iconType": "action",
       "iconGlyph": "Settings",
@@ -61,7 +61,7 @@
       "id": "widget-add",
       "type": "icon-grid",
       "title": "添加组件",
-      "size": "icon-1-8",
+      "size": "1/8",
       "showHeader": false,
       "iconType": "action",
       "iconGlyph": "Plus",

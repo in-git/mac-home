@@ -59,7 +59,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   search: {
     title: '网络搜索',
     maxInstances: Infinity,
-    defaultSize: 'wide',
+    defaultSize: '1/2',
     sizeOptions: SIZE_OPTIONS_SEARCH,
     isAddable: true,
     glyph: '🔍',
@@ -70,7 +70,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   weather: {
     title: '天气预报',
     maxInstances: 1,
-    defaultSize: 'wide',
+    defaultSize: '1/2',
     sizeOptions: SIZE_OPTIONS_WIDE_LARGE,
     isAddable: true,
     glyph: '⛅',
@@ -81,7 +81,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   'sticky-notes': {
     title: '便签笔记',
     maxInstances: 1,
-    defaultSize: 'wide',
+    defaultSize: '1/2',
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '📝',
@@ -92,7 +92,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   clock: {
     title: '时钟日历',
     maxInstances: 1,
-    defaultSize: 'sm',
+    defaultSize: '1/4',
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '🕒',
@@ -103,7 +103,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   'clock-mini': {
     title: '时钟',
     maxInstances: 1,
-    defaultSize: 'sm',
+    defaultSize: '1/4',
     sizeOptions: SIZE_OPTIONS_WIDE_SM,
     isAddable: true,
     glyph: '⏰',
@@ -114,7 +114,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   'control-center': {
     title: '控制中心',
     maxInstances: 1,
-    defaultSize: 'sm',
+    defaultSize: '1/4',
     sizeOptions: SIZE_OPTIONS_SM_ONLY,
     isAddable: true,
     glyph: '🎛️',
@@ -125,13 +125,13 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   'icon-grid': {
     title: '图标',
     maxInstances: Infinity,
-    defaultSize: 'icon-1-8',
+    defaultSize: '1/8',
     sizeOptions: SIZE_OPTIONS_ICON_GRID,
     isAddable: false,
     // 默认值 = 系统设置：icon-grid 无站点 / 无自定义图标数据时渲染为设置图标，
     // 点击弹出设置模态框（见 MuuriDashboard.handleCardClick）。
     glyph: '⚙️',
-    label: '系统设置',
+    label: 'ICON',
     category: 'system',
     showHeader: false,
     padding: 'p-4',
@@ -139,7 +139,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   shortcuts: {
     title: '快捷导航',
     maxInstances: Infinity,
-    defaultSize: 'wide',
+    defaultSize: '1/2',
     sizeOptions: SIZE_OPTIONS_SM_WIDE_LARGE,
     isAddable: true,
     glyph: '🔗',
@@ -151,7 +151,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   application: {
     title: '网页列表',
     maxInstances: Infinity,
-    defaultSize: 'wide',
+    defaultSize: '1/2',
     sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
     isAddable: true,
     glyph: '🌐',
@@ -163,7 +163,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
   banner: {
     title: 'Prismatic Burst',
     maxInstances: Infinity,
-    defaultSize: 'wide',
+    defaultSize: '1/2',
     sizeOptions: SIZE_OPTIONS_FIFTH_UP,
     isAddable: true,
     glyph: '🌈',
@@ -183,7 +183,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
 const FALLBACK_CONFIG: WidgetTypeConfig = {
   title: '组件',
   maxInstances: Infinity,
-  defaultSize: 'sm',
+  defaultSize: '1/4',
   sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
   isAddable: false,
   glyph: '🔗',

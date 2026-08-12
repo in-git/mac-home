@@ -160,7 +160,7 @@ const SiteCard: React.FC<SiteCardProps> = ({
 };
 
 export const WebListPicker: React.FC<WebListPickerProps> = ({
-  selected,
+  selected = [],
   onAdd,
   onRemove,
   onOpen,

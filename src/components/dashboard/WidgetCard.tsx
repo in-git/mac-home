@@ -59,7 +59,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   const isExpanded = widget.id === expandedWidgetId;
   // 卡片内容区内边距由类型配置驱动（p-2 常规 / p-0 满铺），纯图标尺寸保持贴边
   const widgetPadding =
-    widget.size === 'icon-1-16'
+    widget.size === '1/16'
       ? 'p-0'
       : (getWidgetConfig(widget.type).padding ?? 'p-2');
 
@@ -107,7 +107,9 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
       {/* Muuri Required Item Content Wrapper */}
       <div className="muuri-item-content h-full w-full">
         <div
-          style={widget.background ? { background: widget.background } : undefined}
+          style={{
+            ...(widget.background ? { background: widget.background } : {}),
+          }}
           className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widgetPadding} shadow-[0_12px_40px_rgba(0,0,0,0.10)]  backdrop-blur-2xl flex flex-col justify-between group${
             widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
@@ -217,7 +219,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
               because the event passes through to the .widget-card handle. */}
           <div
             className={`flex-1${
-              widget.size === 'icon-1-16' ? '' : ' pt-0'
+              widget.size === '1/16' ? '' : ' pt-0'
             }${isEditMode ? ' pointer-events-none' : ''}`}
           >
             {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand, onUpdateWidget })}

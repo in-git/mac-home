@@ -8,7 +8,7 @@ import {
 } from '../data/contextMenuConfig';
 import { getWidgetConfig } from '../data/widgetConfig';
 import { useHomeStore } from '../store/useHomeStore';
-import { WIDGET_SIZE_LABEL, WidgetItem, WidgetSize } from '../types';
+import { WidgetItem, WidgetSize } from '../types';
 
 export interface ContextMenuPosition {
   x: number;
@@ -377,7 +377,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  {WIDGET_SIZE_LABEL[sz]}
+                  {sz}
                 </button>
               ))}
             </div>

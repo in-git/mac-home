@@ -98,7 +98,7 @@ export default function App() {
       id: `widget-${Date.now()}`,
       type: 'icon-grid',
       title: item.name || '未命名',
-      size: 'icon-1-8',
+      size: '1/8',
       showHeader: false,
       iconType: 'link',
       iconGlyph: 'Globe',

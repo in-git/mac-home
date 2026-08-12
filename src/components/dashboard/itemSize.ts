@@ -10,26 +10,26 @@ import { WidgetSize } from '../../types';
 // Fixed % keeps Muuri's measured width viewport-independent and correct.
 export const getItemSizeClasses = (size: WidgetSize): string => {
   switch (size) {
-    case 'sm':
+    case '1/4':
       return 'w-[25%]'; // 1/4
-    case 'third':
+    case '1/3':
       return 'w-[33.333%]'; // 1/3
-    case 'fifth':
+    case '1/5':
       return 'w-[20%]'; // 1/5
-    case 'sixth':
+    case '1/6':
       return 'w-[16.666%]'; // 1/6
-    case 'tenth':
+    case '1/10':
       return 'w-[10%] aspect-[1/1]'; // 1/10
-    case 'twelfth':
+    case '1/12':
       return 'w-[8.333%] aspect-[1/1]'; // 1/12
-    case 'wide':
+    case '1/2':
       return 'w-[50%]'; // 1/2
-    case 'large':
-      return 'w-full'; // 1:1 占满整行
-    case 'icon-1-8':
-      return 'w-[12.5%] aspect-[1/1]'; // 1:8
-    case 'icon-1-16':
-      return 'w-[6.25%] aspect-[1/1]'; // 1:16
+    case '1/1':
+      return 'w-full'; // 1/1 占满整行
+    case '1/8':
+      return 'w-[12.5%] aspect-[1/1]'; // 1/8
+    case '1/16':
+      return 'w-[6.25%] aspect-[1/1]'; // 1/16
     default:
       return 'w-[50%]';
   }
