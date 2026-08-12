@@ -1,6 +1,5 @@
 import { Check } from 'lucide-react';
 import React, { useRef, useState } from 'react';
-import { toast, ToastProvider } from './components/Toast';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -10,6 +9,7 @@ import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
 import { siteApi, SiteItem } from './api/site';
 import type { WidgetItem } from './types';
+import { isWebGrid } from './data/widgetConfig';
 import { useAppInit } from './hooks/useAppInit';
 import { useBwsConnection } from './hooks/useBwsConnection';
 import { useGreeting } from './hooks/useGreeting';
@@ -87,16 +87,15 @@ export default function App() {
   const handleLoginSuccess = (user: LoginUser) => setCurrentUser(user);
   const handleLogout = () => setCurrentUser(null);
 
-  // 网页列表：点击「添加」把站点做成桌面图标（icon-grid 类型，携带 site 数据）
+  // 网页列表：点击「添加」把站点做成桌面图标（web-grid 类型，携带 site 数据）
   const handleAddSite = (item: SiteItem) => {
     const url = item.link || '#';
-    if (widgets.some((w) => w.type === 'icon-grid' && w.site?.link === url)) {
-      toast.warning(`「${item.name || '未命名'}」已在桌面`);
+    if (widgets.some((w) => isWebGrid(w.type) && w.site?.link === url)) {
       return;
     }
     const newWidget: WidgetItem = {
       id: `widget-${Date.now()}`,
-      type: 'icon-grid',
+      type: 'web-grid',
       title: item.name || '未命名',
       size: '1/8',
       showHeader: false,
@@ -114,18 +113,16 @@ export default function App() {
         /* noop */
       }
     })();
-    toast.success(`已添加「${item.name || '未命名'}」到桌面`);
   };
 
-  // 网页列表：点击「删除」移除对应的桌面图标（icon-grid）
+  // 网页列表：点击「删除」移除对应的桌面图标（web-grid，兼容旧 icon-grid）
   const handleRemoveSite = (item: SiteItem) => {
     const url = item.link || '#';
     const target = widgets.find(
-      (w) => w.type === 'icon-grid' && w.site?.link === url,
+      (w) => isWebGrid(w.type) && w.site?.link === url,
     );
     if (!target) return;
     deleteWidget(target.id);
-    toast.success(`已移除「${item.name || '未命名'}」`);
   };
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -202,7 +199,6 @@ export default function App() {
   }>({ cityName: '', country: '', temp: null });
 
   return (
-    <ToastProvider>
     <div
       onClick={handleRootClick}
       onContextMenu={handleContextMenu}
@@ -329,6 +325,5 @@ export default function App() {
       />
 
     </div>
-    </ToastProvider>
   );
 }

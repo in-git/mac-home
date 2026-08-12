@@ -93,7 +93,8 @@ export const renderWidgetContent = ({
           />
         </div>
       );
-    case 'icon-grid': {
+    case 'icon-grid':
+    case 'web-grid': {
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
       // 无站点且无自定义图标时，默认值为系统设置图标（点击弹出设置模态框）
       const site = widget.site;

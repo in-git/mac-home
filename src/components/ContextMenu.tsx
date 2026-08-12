@@ -6,7 +6,7 @@ import {
   DESKTOP_CONTEXT_MENU,
   WIDGET_CONTEXT_MENU,
 } from '../data/contextMenuConfig';
-import { getWidgetConfig } from '../data/widgetConfig';
+import { getWidgetConfig, isWebGrid } from '../data/widgetConfig';
 import { useHomeStore } from '../store/useHomeStore';
 import { WidgetItem, WidgetSize } from '../types';
 
@@ -177,7 +177,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       case 'editIcon':
         return {
           onClick: () => targetWidget && onEditIcon(targetWidget.id),
-          visible: !!targetWidget && targetWidget.type === 'icon-grid',
+          visible: !!targetWidget && isWebGrid(targetWidget.type),
         };
       default:
         return null;

@@ -196,8 +196,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* bottom spacer: push the dropdown to the screen bottom */}
-      <div className="flex-1" />
+
 
       {/* Card corner radius: visual picker pinned to the bottom of the screen */}
       <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">

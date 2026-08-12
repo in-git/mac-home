@@ -21,6 +21,19 @@ import {
  */
 export type WidgetCategory = 'system' | 'web';
 
+/**
+ * 组件分类映射（集中维护）。未在此声明的组件默认归入 'system' 分类，
+ * 用于「添加组件」模态框的左侧分组。
+ */
+export const WIDGET_CATEGORIES: Partial<Record<WidgetType, WidgetCategory>> = {
+  'web-grid': 'web',
+};
+
+/** 获取组件分类，缺省返回 'system'。 */
+export function getWidgetCategory(type: WidgetType): WidgetCategory {
+  return WIDGET_CATEGORIES[type] ?? 'system';
+}
+
 export interface WidgetTypeConfig {
   /** Default title used when a widget of this type is created. */
   title: string;
@@ -36,8 +49,6 @@ export interface WidgetTypeConfig {
   glyph: string;
   /** Human-readable label shown in the add-widget picker. */
   label: string;
-  /** Category used for the left sidebar grouping in the add-widget modal. */
-  category: WidgetCategory;
   /** Whether cards of this type render the title bar (header). Optional — when
    *  omitted the header is shown by default. Icon-style types (e.g. icon-grid,
    *  settings) set this to `false` to render as a bare desktop icon. */
@@ -58,31 +69,18 @@ export interface WidgetTypeConfig {
 /**
  * 卡片外观样式：集中定义卡片（含放大模态框）的视觉属性。
  * - padding：卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。
- * - backdropBlur：毛玻璃模糊等级，映射到 Tailwind 的 `backdrop-blur-{value}`（如 '2xl' → backdrop-blur-2xl）。
- * - border：边框类名（深色/浅色各一）。
- * - shadow：阴影类名。
- * - radius：圆角类名。
  */
 export interface CardStyle {
   /** 卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。 */
   padding: 'p-2' | 'p-0' | 'p-4';
-  /** Tailwind 毛玻璃模糊等级，对应 `backdrop-blur-{value}` 的 value 段。 */
-  backdropBlur: string;
-  /** 边框类名，例如 'border border-white/60 dark:border-white/15'。 */
-  border: string;
-  /** 阴影类名，例如 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]'。 */
-  shadow: string;
-  /** 圆角类名，例如 'rounded-[var(--card-radius)]'。 */
-  radius: string;
+  /** 是否启用毛玻璃质感（对应 `.glass-panel`：半透明底 + backdrop-filter 模糊）。关闭后卡片不再有毛玻璃效果。 */
+  glass: boolean;
 }
 
 /** 全局默认卡片样式（放大模态框等未单独配置时回退到此）。 */
 export const DEFAULT_CARD_STYLE: CardStyle = {
   padding: 'p-4',
-  backdropBlur: '2xl',
-  border: 'border border-white/60 dark:border-white/15',
-  shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
-  radius: 'rounded-[var(--card-radius)]',
+  glass: true,
 };
 
 export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
@@ -94,7 +92,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🔍',
     label: '网络搜索',
-    category: 'system',
     showHeader: false,
   },
   weather: {
@@ -105,7 +102,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '⛅',
     label: '天气预报',
-    category: 'system',
     showHeader: false,
   },
   'sticky-notes': {
@@ -116,7 +112,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '📝',
     label: '便签',
-    category: 'system',
     showHeader: false,
   },
   clock: {
@@ -127,7 +122,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🕒',
     label: '时间 & 日历',
-    category: 'system',
     showHeader: false,
   },
   'clock-mini': {
@@ -138,7 +132,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '⏰',
     label: '时钟',
-    category: 'system',
     showHeader: false,
   },
   'clock-lunar': {
@@ -149,14 +142,10 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🌙',
     label: '农历时钟',
-    category: 'system',
     showHeader: false,
     cardStyle: {
-      backdropBlur: 'none',
-      border: 'border border-white/60 dark:border-white/15',
-      shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
-      radius: 'rounded-[var(--card-radius)]',
       padding: 'p-4',
+      glass: false
     },
   },
   'control-center': {
@@ -167,7 +156,6 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🎛️',
     label: '控制中心',
-    category: 'system',
     showHeader: false,
   },
   'icon-grid': {
@@ -180,8 +168,27 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     // 点击弹出设置模态框（见 MuuriDashboard.handleCardClick）。
     glyph: '⚙️',
     label: 'ICON',
-    category: 'system',
     showHeader: false,
+    cardStyle: {
+      padding: 'p-0',
+      glass: false
+    },
+  },
+  'web-grid': {
+    title: '网页',
+    maxInstances: Infinity,
+    defaultSize: '1/8',
+    sizeOptions: SIZE_OPTIONS_ICON_GRID,
+    isAddable: false,
+    // 网页组件：从「网页列表」添加的站点数据，桌面点击图标时据此打开站点。
+    // 分类为 'web'（见 WIDGET_CATEGORIES）。
+    glyph: '🌐',
+    label: 'WEB',
+    showHeader: false,
+    cardStyle: {
+      padding: 'p-0',
+      glass: false
+    },
   },
   shortcuts: {
     title: '快捷导航',
@@ -191,21 +198,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🔗',
     label: '快捷导航',
-    category: 'system',
     shortcuts: [],
   },
-  application: {
-    title: '网页列表',
-    maxInstances: Infinity,
-    defaultSize: '1/2',
-    sizeOptions: SIZE_OPTIONS_WIDE_SM_LARGE,
-    isAddable: true,
-    glyph: '🌐',
-    label: '网页',
-    category: 'web',
-    showHeader: false,
-  },
-
   banner: {
     title: 'Prismatic Burst',
     maxInstances: Infinity,
@@ -214,14 +208,10 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     isAddable: true,
     glyph: '🌈',
     label: '横幅动效',
-    category: 'system',
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
-      backdropBlur: 'none',
-      border: 'border border-white/60 dark:border-white/15',
-      shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
-      radius: 'rounded-[var(--card-radius)]',
+      glass: false
     },
   },
 
@@ -240,7 +230,6 @@ const FALLBACK_CONFIG: WidgetTypeConfig = {
   isAddable: false,
   glyph: '🔗',
   label: '组件',
-  category: 'system',
   showHeader: false,
 };
 
@@ -292,12 +281,18 @@ export const ADDABLE_WIDGETS = Object.entries(WIDGET_CONFIG)
     type: type as WidgetType,
     glyph: cfg.glyph,
     label: cfg.label,
-    category: cfg.category,
+    // 分类由集中映射决定（缺省为 'system'）。
+    category: getWidgetCategory(type as WidgetType),
   }));
 
 /** Get addable widgets filtered by category. */
 export function getAddableWidgetsByCategory(category: WidgetCategory) {
   return ADDABLE_WIDGETS.filter((w) => w.category === category);
+}
+
+/** 网页类图标组件（新增网页创建的类型），兼容迁移前的旧 icon-grid。 */
+export function isWebGrid(type: WidgetType): boolean {
+  return type === 'web-grid' || type === 'icon-grid';
 }
 
 // ---------------------------------------------------------------------------

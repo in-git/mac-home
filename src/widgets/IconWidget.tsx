@@ -64,7 +64,6 @@ export function IconWidget({
   iconType,
   iconGlyph,
   iconLabel,
-  iconHref,
   iconImage,
   iconTextColor,
   iconBgColor,
@@ -77,7 +76,7 @@ export function IconWidget({
   const iconOnly = ICON_ONLY_SIZES.has(size);
 
   const title =
-    kind === 'action' ? `${label}（功能）` : `${label}（打开链接）`;
+    kind === 'action' ? `${label}` : `${label}`;
 
   // Inline style overrides for custom colors. The custom text color is applied
   // to the button itself so both the SVG glyph (via currentColor) and the label
@@ -97,13 +96,13 @@ export function IconWidget({
       disabled={editing && kind !== 'action'}
       title={title}
       style={hasBtnStyle ? btnStyle : undefined}
-      className=" group !pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-1 rounded-[var(--card-radius)] text-slate-700 dark:text-slate-200 transition active:scale-95 disabled:cursor-default"
+      className=" group !pointer-events-auto  flex h-full w-full flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-200 transition active:scale-95 disabled:cursor-default"
     >
       {iconImage ? (
         <img
           src={iconImage}
           alt={label}
-          className="h-[60%] w-[60%] rounded-[25%] object-cover shadow-sm"
+          className="h-full w-full object-contain rounded-[var(--card-radius)] drop-shadow-sm"
         />
       ) : (
         <GlyphIcon

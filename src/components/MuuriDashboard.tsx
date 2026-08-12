@@ -343,42 +343,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         ))}
       </div>
 
-      {/* 无头模态层：点击黄色按钮后，对应 widget 以 fixed 居中、无头、放大的模态框显示；
-          点击外部遮罩则还原为普通网格 widget（position 由 fixed 改回网格流） */}
-      {expandedWidgetId &&
-        (() => {
-          const expandedWidget = widgets.find((w) => w.id === expandedWidgetId);
-          if (!expandedWidget) return null;
-          const cardStyle = getWidgetConfig(expandedWidget.type).cardStyle ?? DEFAULT_CARD_STYLE;
-          return (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-              onClick={() => setExpandedWidgetId(null)}
-            >
-              <div
-                className={`glass-panel ${cardStyle.radius} ${cardStyle.padding} ${cardStyle.shadow} ${cardStyle.border} backdrop-blur-${cardStyle.backdropBlur} w-[80vw] h-[80vh] flex flex-col overflow-hidden`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* 无头：不渲染标题栏与控制栏 */}
-                <div className="flex-1 min-h-0">
-                  {renderWidgetContent({
-                    widget: expandedWidget,
-                    notes,
-                    onUpdateNotes,
-                    isDarkMode,
-                    onToggleDarkMode,
-                    isEditMode,
-                    onWeatherChange,
-                    onExpand: () => {},
-                    inModal: true,
-                    onUpdateWidget,
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })()}
-
+ 
       {/* 设置弹窗：复用全局 SettingsModal（左右布局 + 三选项卡） */}
       {settingsModalOpen && (
         <SettingsModal
@@ -387,13 +352,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         />
       )}
 
-      {/* 内部浏览器：icon 组件配置 openInApp 后以全屏 iframe 打开其链接 */}
-      <InternalBrowser
-        isOpen={!!internalBrowser}
-        url={internalBrowser?.url ?? ''}
-        title={internalBrowser?.title}
-        onClose={() => setInternalBrowser(null)}
-      />
+   
     </div>
   );
 };

@@ -544,8 +544,7 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
                   <div className="my-1">
                     {getWeatherIcon(day.condition, 14)}
                   </div>
-                  <span className="text-font-sm font-bold">{day.high}°</span>
-                  <span className="text-font-sm ">{day.low}°</span>
+                  <span className="text-font-sm font-bold">{day.high}~{day.low}°</span>
                 </div>
               ))}
             </div>

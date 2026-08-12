@@ -1,6 +1,5 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { toast } from '../components/Toast';
 import { Modal } from '../components/Modal';
 import { WebListPicker } from '../components/WebListPicker';
 import { siteApi, SiteItem } from '../api/site';
@@ -52,7 +51,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     const url = item.link || '#';
     // 去重：已存在相同 URL 的快捷项则提示并跳过，避免重复添加
     if (shortcuts.some((s) => s.link === url)) {
-      toast.warning(`「${item.name || '未命名'}」已在快捷导航中`);
       return;
     }
     // 直接以 SiteItem 结构存储，保留原站点的封面/背景/计数等字段
@@ -71,8 +69,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         /* noop */
       }
     })();
-    // 不关闭弹窗，用全局 Toast 显示添加成功提示
-    toast.success(`已添加「${item.name || '未命名'}」到快捷导航`);
   };
 
   // 在外部打开站点链接
@@ -91,7 +87,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   const handleRemoveFromPicker = (item: SiteItem) => {
     const key = item.id || item.link;
     commitShortcuts((prev) => prev.filter((s) => (s.id || s.link) !== key));
-    toast.success(`已移除「${item.name || '未命名'}」`);
   };
 
   // 点击卡片在外部打开，并本地递增访问次数（与「添加」逻辑互不冲突）

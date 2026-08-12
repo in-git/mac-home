@@ -63,11 +63,9 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
       ? 'p-0'
       : (getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding);
 
-  // 卡片毛玻璃模糊等级由类型配置驱动（cardStyle.backdropBlur，回退到默认），为空则不加模糊
-  const cardBackdropBlur =
-    (getWidgetConfig(widget.type).cardStyle?.backdropBlur ?? DEFAULT_CARD_STYLE.backdropBlur)
-      ? `backdrop-blur-${getWidgetConfig(widget.type).cardStyle?.backdropBlur ?? DEFAULT_CARD_STYLE.backdropBlur}`
-      : '';
+  // 卡片外观配置（毛玻璃），回退到默认
+  const cardStyleCfg = getWidgetConfig(widget.type).cardStyle ?? DEFAULT_CARD_STYLE;
+  const isGlass = cardStyleCfg.glass;
 
   // 长按进入编辑模式：按压计时，松开/移出/取消时清除；
   // 触发后标记本次按压，避免随后的 click 再执行打开链接等操作。
@@ -105,7 +103,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`muuri-item p-2 z-10 ${sizeClasses}${
+      className={`muuri-item p-2 lg:p-4 z-10 ${sizeClasses}${
         isExpanded ? ' hidden' : ''
       }`}
       onClick={handleCardClick}
@@ -116,7 +114,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
           style={{
             ...(widget.background ? { background: widget.background } : {}),
           }}
-          className={`widget-card h-full w-full glass-panel rounded-[var(--card-radius)] ${widgetPadding} shadow-[0_12px_40px_rgba(0,0,0,0.10)] ${cardBackdropBlur} flex flex-col justify-between group${
+          className={`widget-card h-full w-full ${isGlass ? 'glass-panel  shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.backgroundTheme ? ` card-theme-${widget.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
           onPointerDown={handlePointerDown}

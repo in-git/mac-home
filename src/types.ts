@@ -58,6 +58,7 @@ export type WidgetType =
   | 'control-center'
   | 'settings'
   | 'icon-grid'
+  | 'web-grid'
   | 'application'
   | 'banner';
 

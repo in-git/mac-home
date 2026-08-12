@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getAddableWidgetsByCategory, getWidgetConfig } from '../data/widgetConfig';
+import { getAddableWidgetsByCategory, getWidgetConfig, isWebGrid } from '../data/widgetConfig';
 import type { WidgetCategory } from '../data/widgetConfig';
 import type { SiteItem } from '../api/site';
 import { WebListPicker } from '../components/WebListPicker';
@@ -44,6 +44,7 @@ const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   'control-center': SlidersHorizontal,
   settings: Settings,
   'icon-grid': Search,
+  'web-grid': Globe,
   application: Globe,
   banner: Sparkles,
 };
@@ -60,6 +61,7 @@ const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
   'control-center': 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
   settings: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   'icon-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+  'web-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   application: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
   banner: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
 };
@@ -136,9 +138,9 @@ export const AddWidgetModal: React.FC<Props> = ({
 
   const currentWidgets = getAddableWidgetsByCategory(activeCategory);
 
-  // 已添加到桌面的站点（icon-grid 类型携带 site 数据），用于网页列表中标记「已新增」
+  // 已添加到桌面的站点（web-grid 类型携带 site 数据，兼容旧 icon-grid），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
-    .filter((w) => w.type === 'icon-grid' && w.site)
+    .filter((w) => isWebGrid(w.type) && w.site)
     .map((w) => w.site as SiteItem);
 
   return createPortal(
