@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '@heroui/react';
 import { siteApi } from '../../api/site';
 import { useToast } from '../../components/Toast';
+import { Button } from '../../components/Button';
 import { SiteCard } from './SiteCard';
 import { FilterBar } from './FilterBar';
 import { flattenCategories, WebListPickerProps } from './types';
@@ -161,27 +162,25 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
             共 {totalPages} 页 · {items.length} 条/页
           </span>
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              size="sm"
+              variant="secondary"
               disabled={page <= 1 || loading}
-              onClick={() =>
-                fetchSites(page - 1, selectedCat, searchKeyword)
-              }
-              className="rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 px-3.5 py-1.5 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              onClick={() => fetchSites(page - 1, selectedCat, searchKeyword)}
             >
               上一页
-            </button>
+            </Button>
             <span className="px-2">
               {page} / {totalPages}
             </span>
-            <button
+            <Button
+              size="sm"
+              variant="secondary"
               disabled={page >= totalPages || loading}
-              onClick={() =>
-                fetchSites(page + 1, selectedCat, searchKeyword)
-              }
-              className="rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 px-3.5 py-1.5 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              onClick={() => fetchSites(page + 1, selectedCat, searchKeyword)}
             >
               下一页
-            </button>
+            </Button>
           </div>
         </div>
       )}

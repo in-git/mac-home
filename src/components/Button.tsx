@@ -1,4 +1,5 @@
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -41,33 +42,9 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
     'bg-transparent text-slate-600 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10',
 };
 
-/** 内置轻量旋转 spinner，避免外部图标库依赖。 */
+/** 基于组件库图标的旋转 spinner。 */
 function Spinner({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      className={`animate-spin ${className}`}
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
-        stroke="currentColor"
-        strokeWidth="3"
-        opacity="0.25"
-      />
-      <path
-        d="M21 12a9 9 0 0 0-9-9"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
+  return <Loader2 className={`animate-spin ${className}`} aria-hidden="true" />;
 }
 
 /**

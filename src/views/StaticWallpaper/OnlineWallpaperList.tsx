@@ -1,5 +1,6 @@
 import { Check, ChevronLeft, ChevronRight, Loader2, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Button } from '../../components/Button';
 import { wallpaperApi, WallpaperCategory, WallpaperItem } from '../../api/wallpaper';
 import { ImageWallpaperCard, type ImageWallpaperItem } from './ImageWallpaperCard';
 
@@ -95,28 +96,24 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-black/5 pb-3 dark:border-white/10">
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
-          <button
+          <Button
+            size="sm"
+            variant={selectedCat === '' ? 'primary' : 'secondary'}
             onClick={() => setSelectedCat('')}
-            className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
-              selectedCat === ''
-                ? 'bg-[color:var(--accent)] font-medium text-white'
-                : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
-            }`}
+            className="!h-7 !px-2.5"
           >
             全部
-          </button>
+          </Button>
           {categories.map((c) => (
-            <button
+            <Button
               key={c.value}
+              size="sm"
+              variant={selectedCat === c.value ? 'primary' : 'secondary'}
               onClick={() => setSelectedCat(c.value)}
-              className={`rounded-[var(--card-radius)] px-2.5 py-1 transition-colors ${
-                selectedCat === c.value
-                  ? 'bg-[color:var(--accent)] font-medium text-white'
-                  : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
-              }`}
+              className="!h-7 !px-2.5"
             >
               {c.label}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500">
@@ -125,33 +122,40 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
               <span className="tabular-nums">
                 {page} / {totalPages}
               </span>
-              <button
+              <Button
+                size="sm"
+                variant="secondary"
+                iconOnly
                 disabled={page <= 1 || loading}
+                icon={<ChevronLeft size={14} />}
                 onClick={() => fetchWallpapers(page - 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-[var(--card-radius)] border border-black/10 transition-colors hover:text-[color:var(--accent)] disabled:opacity-40 dark:border-white/15"
                 title="上一页"
-              >
-                <ChevronLeft size={14} />
-              </button>
+                className="!h-7 !w-7"
+              />
             </>
           )}
-          <button
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={<RefreshCw size={12} />}
+            loading={loading}
             onClick={() => fetchWallpapers(page, selectedCat)}
-            className="flex items-center gap-1 text-slate-500 transition-colors hover:text-[color:var(--accent)]"
             title="刷新"
+            className="!h-7"
           >
-            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
             刷新
-          </button>
+          </Button>
           {totalPages > 1 && (
-            <button
+            <Button
+              size="sm"
+              variant="secondary"
+              iconOnly
               disabled={page >= totalPages || loading}
+              icon={<ChevronRight size={14} />}
               onClick={() => fetchWallpapers(page + 1)}
-              className="flex h-7 w-7 items-center justify-center rounded-[var(--card-radius)] border border-black/10 transition-colors hover:text-[color:var(--accent)] disabled:opacity-40 dark:border-white/15"
               title="下一页"
-            >
-              <ChevronRight size={14} />
-            </button>
+              className="!h-7 !w-7"
+            />
           )}
         </div>
       </div>

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import type { WallpaperConfig } from '../../types';
+import { Button } from '../../components/Button';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from '../StaticWallpaper';
@@ -171,13 +172,15 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                   <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
                     手动微调
                   </h3>
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    icon={<RotateCcw size={12} />}
                     onClick={() => onUpdateWallpaper(RESET_VALUES)}
-                    className="flex items-center gap-1 rounded-full bg-black/[0.05] px-3 py-1 text-xs font-medium text-[color:var(--accent)] transition-colors hover:bg-black/[0.08] dark:bg-white/[0.08] dark:hover:bg-white/[0.12]"
+                    className="rounded-full px-3 text-[color:var(--accent)] bg-black/[0.05] hover:bg-black/[0.08] dark:bg-white/[0.08] dark:hover:bg-white/[0.12]"
                   >
-                    <RotateCcw size={12} />
                     重置滤镜
-                  </button>
+                  </Button>
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {FILTERS.map((filter) => {

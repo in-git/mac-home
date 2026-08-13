@@ -26,13 +26,11 @@ export const CLOCK_FONT_SIZES: ClockFontSizeOption[] = [
 export interface ClockFontColorOption {
   label: string;
   value: string;
-  /** 纯黑/纯白按钮在浅/深背景下不可见，用文字标识保证可辨识。 */
-  text?: string;
 }
 
 export const CLOCK_FONT_COLORS: ClockFontColorOption[] = [
   { label: '跟随主题', value: '' },
-  { label: '黑', value: '#000000', text: '黑' },
-  { label: '白', value: '#FFFFFF', text: '白' },
+  { label: '黑', value: '#000000' },
+  { label: '白', value: '#FFFFFF' },
   ...ACCENT_COLORS.map((c) => ({ label: c.name, value: c.value })),
 ];

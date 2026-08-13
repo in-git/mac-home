@@ -86,15 +86,6 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
                       : 'border-black/10 dark:border-white/15'
                   }`}
                 >
-                  {c.text && (
-                    <span
-                      style={{
-                        color: c.value === '#FFFFFF' ? '#000000' : '#FFFFFF',
-                      }}
-                    >
-                      {c.text}
-                    </span>
-                  )}
                 </button>
               );
             })}
