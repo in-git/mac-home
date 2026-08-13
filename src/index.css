@@ -3,7 +3,6 @@
 @import '@heroui/styles';
 @import '@fontsource-variable/geist';
 /* 引入 Tailwind 全局配置文件（含自定义断点 wide 等） */
-@config '../tailwind.config.js';
 
 /* Tailwind v4 defaults `dark:` to a media-query strategy (prefers-color-scheme).
    This app toggles dark mode via a `.dark` class on <html>, so rebind the

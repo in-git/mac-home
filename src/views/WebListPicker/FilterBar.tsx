@@ -1,6 +1,7 @@
 import { RefreshCw, Search } from 'lucide-react';
 import React from 'react';
 import { Skeleton } from '@heroui/react';
+import { Button } from '../../components/Button';
 import { SiteCategory } from '../../api/site';
 
 interface FilterBarProps {
@@ -72,14 +73,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             className="w-full pl-9 pr-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
           />
         </div>
-        <button
+        <Button
+          variant="secondary"
+          size="md"
+          icon={<RefreshCw size={14} />}
+          loading={loading}
           onClick={onRefresh}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors"
           title="刷新"
         >
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          <span className="hidden sm:inline text-sm">刷新</span>
-        </button>
+          <span className="hidden sm:inline">刷新</span>
+        </Button>
       </div>
 
       {/* Category filter */}

@@ -86,7 +86,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
   contentClassName = '',
   navClassName = '',
 }) => {
-  const [activeTab, setActiveTab] = useState<TabId>('static');
+  const [activeTab, setActiveTab] = useState<TabId>('dynamic');
 
   return (
     <Modal

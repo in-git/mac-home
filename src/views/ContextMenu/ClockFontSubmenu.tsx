@@ -1,12 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { ACCENT_COLORS, CLOCK_FONT_SIZES, THEME_COLORS } from '../../data/options';
+import { CLOCK_FONT_COLORS, CLOCK_FONT_SIZES } from '../../data/options';
 import type { WidgetConfigSubmenuProps } from './widgetSubmenus';
-
-/** 字体颜色选项：首项「跟随主题」用于清空自定义颜色，其余取自系统主题色板。 */
-const CLOCK_COLOR_OPTIONS = [
-  { label: '跟随主题', value: '', clear: true },
-  ...ACCENT_COLORS.map((c) => ({ label: c.name, value: c.value })),
-];
 
 export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
   item,
@@ -69,25 +63,41 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
             字体颜色
           </div>
           <div className="mb-4 grid grid-cols-4 gap-2.5">
-            {THEME_COLORS.map((c) => (
-              <button
-                key={c}
-                title={c}
-                onClick={() => {
-                  applyFont({ color: c });
-                  setOpen(false);
-                  onClose();
-                }}
-                style={
-                 { background: c }
-                }
-                className={`h-9 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform ${
-                  (c ? !currentColor : currentColor === c)
-                    ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
-                    : 'border-black/10 dark:border-white/15'
-                }`}
-              />
-            ))}
+            {CLOCK_FONT_COLORS.map((c) => {
+              const isSelected =
+                c.value === ''
+                  ? currentColor === ''
+                  : currentColor === c.value;
+              return (
+                <button
+                  key={c.label}
+                  title={c.label}
+                  onClick={() => {
+                    applyFont({ color: c.value });
+                    setOpen(false);
+                    onClose();
+                  }}
+                  style={c.value ? { background: c.value } : undefined}
+                  className={`relative h-9 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform flex items-center justify-center text-font-sm font-semibold ${
+                    c.value === '' ? 'bg-black/5 dark:bg-white/10' : ''
+                  } ${
+                    isSelected
+                      ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
+                      : 'border-black/10 dark:border-white/15'
+                  }`}
+                >
+                  {c.text && (
+                    <span
+                      style={{
+                        color: c.value === '#FFFFFF' ? '#000000' : '#FFFFFF',
+                      }}
+                    >
+                      {c.text}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
        
 
