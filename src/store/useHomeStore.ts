@@ -5,7 +5,6 @@ import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widge
 import {
   AIConfig,
   CardRadiusTier,
-  DEFAULT_AI_CONFIG,
   FontVariant,
   StickyNote as StickyNoteType,
   WallpaperConfig,
@@ -13,7 +12,7 @@ import {
   WidgetSize,
   WidgetType,
 } from '../types';
-import { DEFAULT_WEATHER_CITIES, WeatherCity } from '../utils/weatherApi';
+import { WeatherCity } from '../utils/weatherApi';
 
 // 桌宠对话历史上限：最多保留 10 轮（每轮 = 1 条 user + 1 条 assistant，
 // 即最多 20 条消息），超出时自动删除最早的记录。
@@ -30,6 +29,9 @@ function readLegacy<T>(key: string, fallback: T): T {
     return fallback;
   }
 }
+
+// 默认配置：首次加载与重置系统统一使用 data.json（见 presetData.DEFAULT_STATE）
+const DEFAULT_STATE = PRESET_DATA.DEFAULT_STATE;
 
 interface HomeState {
   // Persisted data
@@ -56,7 +58,7 @@ interface HomeState {
   // 当前选中的天气城市 id（持久化，保证下次进入恢复上次的查看/定位城市）
   selectedCityId: string;
   // 最近一次成功定位的位置（持久化，控制中心位置模块下次进入时回显）
-  lastLocation: { city: string; lat: number; lon: number } | null;
+  lastLocation?: { city: string; lat: number; lon: number } | null;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -103,33 +105,16 @@ interface HomeState {
 export const useHomeStore = create<HomeState>()(
   persist(
     (set, get) => ({
-      widgets: readLegacy(
-        'apple_homepage_widgets',
-        PRESET_DATA.INITIAL_WIDGETS,
-      ),
-      wallpaper: readLegacy(
-        'apple_homepage_wallpaper',
-        PRESET_DATA.DEFAULT_WALLPAPER,
-      ),
-      notes: readLegacy('apple_homepage_notes', PRESET_DATA.INITIAL_NOTES),
-      isDarkMode:
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches,
-      themeColor: '#007AFF',
-      soundEnabled: readLegacy('apple_homepage_sound_enabled', true),
-      fontVariant: 'A',
-      cardRadius: 'large',
-      screenBrightness: 100,
-      aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_AI_CONFIG),
+      // 默认配置（data.json）整体展开，首次启动后由 persist 接管；
+      // 下方仅覆盖需要旧版 localStorage 迁移的字段与对话历史。
+      ...DEFAULT_STATE,
+      widgets: readLegacy('apple_homepage_widgets', DEFAULT_STATE.widgets),
+      wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
+      notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
+      soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
+      aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_STATE.aiConfig),
+      // 桌宠对话历史不随默认配置重置，初始为空
       petChatHistory: [],
-      // 默认关闭自由活动（开启会持续消耗模型 token）
-      petAutoActivity: false,
-      // 天气默认城市（广州/上海/北京/深圳/杭州），首次启动后由 persist 接管
-      weatherCities: DEFAULT_WEATHER_CITIES,
-      // 默认选中第一个城市
-      selectedCityId: DEFAULT_WEATHER_CITIES[0]?.id ?? '',
-      // 尚未定位过，无回显位置
-      lastLocation: null,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -220,19 +205,14 @@ export const useHomeStore = create<HomeState>()(
 
       resetLayout: () => {
         set({
-          widgets: PRESET_DATA.INITIAL_WIDGETS,
-          wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
+          widgets: DEFAULT_STATE.widgets,
+          wallpaper: DEFAULT_STATE.wallpaper,
         });
       },
 
       resetAll: () => {
-        set({
-          widgets: PRESET_DATA.INITIAL_WIDGETS,
-          wallpaper: PRESET_DATA.INITIAL_WALLPAPER,
-          notes: PRESET_DATA.INITIAL_NOTES,
-          // 其余系统配置整体恢复为 data.json 中的默认值
-          ...PRESET_DATA.INITIAL_CONFIG,
-        });
+        // 重置系统：整体恢复为 data.json 默认配置
+        set(DEFAULT_STATE);
       },
 
       updateNotes: (notes) => set({ notes }),
@@ -266,20 +246,7 @@ export const useHomeStore = create<HomeState>()(
       name: 'apple-homepage-store',
       // Only persist the data slices, not the action functions.
       partialize: (state) => ({
-        widgets: state.widgets,
-        wallpaper: state.wallpaper,
-        notes: state.notes,
-        isDarkMode: state.isDarkMode,
-        themeColor: state.themeColor,
-        soundEnabled: state.soundEnabled,
-        fontVariant: state.fontVariant,
-        cardRadius: state.cardRadius,
-        screenBrightness: state.screenBrightness,
-        aiConfig: state.aiConfig,
-        petAutoActivity: state.petAutoActivity,
-        weatherCities: state.weatherCities,
-        selectedCityId: state.selectedCityId,
-        lastLocation: state.lastLocation,
+ ...state
       }),
     },
   ),

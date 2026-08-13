@@ -94,7 +94,7 @@ export const TopBar: React.FC<Props> = ({
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
         <span className="font-semibold text-slate-800 dark:text-slate-100 hidden sm:inline">
-          吴文龙的实验室
+          吴文龙的互联空间
         </span>
       </div>
 

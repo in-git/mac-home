@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import {
   MAX_PET_CHAT_MESSAGES,
   useHomeStore,
-} from '../../../store/useHomeStore';
-import { AI_PROVIDERS } from '../../../types';
-import { chatWithPet, testConnection } from '../../../utils/aiClient';
+} from '@/store/useHomeStore';
+import { AI_PROVIDERS } from '@/types';
+import { chatWithPet, testConnection } from '@/utils/aiClient';
 import type { AIPanelProps } from '../types';
 
 /**
@@ -66,7 +66,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
     try {
       // 携带已持久化的桌宠对话历史，让连接测试也能延续上下文；
       // chatWithPet 内部会安全清洗（只保留 user/assistant 文本），不会触发 400。
-      const historyForModel: import('../../../utils/aiClient').ChatMessage[] =
+      const historyForModel: import('@/utils/aiClient').ChatMessage[] =
         petChatHistory.map((m) => ({
           role: m.role as 'user' | 'assistant',
           content: m.content,

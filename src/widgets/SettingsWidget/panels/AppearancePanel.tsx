@@ -3,7 +3,7 @@ import React from 'react';
 import {
   CARD_RADIUS,
   FONT_VARIANT,
-} from '../../../types';
+} from '@/types';
 import { ACCENT_COLORS } from '../constants';
 import { SegmentedControl } from '../SegmentedControl';
 import type { AppearancePanelProps } from '../types';
