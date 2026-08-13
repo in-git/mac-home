@@ -217,7 +217,32 @@ export const useHomeStore = create<HomeState>()(
 
       updateNotes: (notes) => set({ notes }),
       updateWallpaper: (cfg) =>
-        set({ wallpaper: { ...get().wallpaper, ...cfg } }),
+        set(() => {
+          const prev = get().wallpaper;
+          // 切换壁纸类型时，隔离三种类型各自的专属字段（dynamicPreset / imageUrl / gradient），
+          // 避免浅合并导致跨类型字段残留，从而误判选中态。公共滤镜字段（blur/brightness 等）保留。
+          if (cfg.type && cfg.type !== prev.type) {
+            const base = {
+              type: cfg.type,
+              blur: prev.blur,
+              brightness: prev.brightness,
+              contrast: prev.contrast,
+              saturation: prev.saturation,
+              hue: prev.hue,
+              sepia: prev.sepia,
+              grayscale: prev.grayscale,
+              invert: prev.invert,
+            };
+            const typed: Partial<WallpaperConfig> =
+              cfg.type === 'dynamic'
+                ? { dynamicPreset: undefined, imageUrl: undefined, gradient: undefined }
+                : cfg.type === 'static'
+                  ? { dynamicPreset: undefined, imageUrl: undefined, gradient: undefined }
+                  : { dynamicPreset: undefined, imageUrl: undefined, gradient: undefined };
+            return { wallpaper: { ...base, ...typed, ...cfg } as WallpaperConfig };
+          }
+          return { wallpaper: { ...prev, ...cfg } };
+        }),
       setDarkMode: (value) => set({ isDarkMode: value }),
       setThemeColor: (color) => set({ themeColor: color }),
       setSoundEnabled: (value) => set({ soundEnabled: value }),

@@ -99,7 +99,8 @@ export const DynamicWallpaperSection: React.FC<
   const darkPresets = dynamicPresets.filter((p) => p.isDarkMode);
 
   const renderPreset = (preset: (typeof dynamicPresets)[number]) => {
-    const isSelected = wallpaper.dynamicPreset === preset.id;
+    const isSelected =
+      wallpaper.type === 'dynamic' && wallpaper.dynamicPreset === preset.id;
     return (
       <button
         key={preset.id}
