@@ -7,37 +7,25 @@ import { SiteItem } from './api/site';
 //   C → --font-sm 14 / --font-md 16 / --font-lg 18
 export type FontVariant = 'A' | 'B' | 'C';
 
-/** 字号方案的 UI 展示名：小 / 中 / 大 */
-export const FONT_VARIANT_LABEL: Record<FontVariant, string> = {
-  A: '小',
-  B: '中',
-  C: '大',
-};
-
-export const FONT_TIER_PX: Record<
+/** 字号方案：UI 展示名 + 三档字号（直接写入 CSS 变量，不做派生）。 */
+export const FONT_VARIANT: Record<
   FontVariant,
-  { sm: number; md: number; lg: number }
+  { label: string; px: { sm: number; md: number; lg: number } }
 > = {
-  A: { sm: 12, md: 14, lg: 16 },
-  B: { sm: 13, md: 15, lg: 17 },
-  C: { sm: 14, md: 16, lg: 18 },
+  A: { label: '小', px: { sm: 12, md: 14, lg: 16 } },
+  B: { label: '中', px: { sm: 13, md: 15, lg: 17 } },
+  C: { label: '大', px: { sm: 14, md: 16, lg: 18 } },
 };
 
 // 卡片圆角：极小 / 小 / 中 / 大 四档，写入 CSS 变量 --card-radius 供全站卡片引用。
 export type CardRadiusTier = 'tiny' | 'small' | 'medium' | 'large';
 
-export const CARD_RADIUS_LABEL: Record<CardRadiusTier, string> = {
-  tiny: '极小',
-  small: '小',
-  medium: '中',
-  large: '大',
-};
-
-export const CARD_RADIUS_PX: Record<CardRadiusTier, number> = {
-  tiny: 6,
-  small: 12,
-  medium: 18,
-  large: 24,
+/** 卡片圆角：UI 展示名 + 像素值。 */
+export const CARD_RADIUS: Record<CardRadiusTier, { label: string; px: number }> = {
+  tiny: { label: '极小', px: 6 },
+  small: { label: '小', px: 12 },
+  medium: { label: '中', px: 18 },
+  large: { label: '大', px: 24 },
 };
 
 // ############################################################
@@ -63,15 +51,15 @@ export type WidgetType =
 
 // 尺寸统一使用分数写法（如 1/2、1/8），值即展示文案，无需额外映射表。
 export type WidgetSize =
+  | '1/1' // 1/1 占满整行
+  | '1/2'
+  | '1/3'
   | '1/4'
   | '1/5'
   | '1/6'
+  | '1/8'
   | '1/10'
   | '1/12'
-  | '1/3'
-  | '1/2'
-  | '1/1' // 1/1 占满整行
-  | '1/8'
   | '1/16'; // 1/16 纯图标, 不显示文本
 
 // Behaviour of an icon widget (web-grid / settings). `link` → open iconHref in a new tab;
@@ -83,59 +71,56 @@ export type IconBehavior = 'link' | 'action';
 export interface WidgetProps {
   editing?: boolean;
 }
-
+/**
+ * 卡片外观样式：集中定义卡片（含放大模态框）的视觉属性。
+ * - padding：卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。
+ */
+export interface CardStyle {
+  /** 卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。 */
+  padding: 'p-2' | 'p-0' | 'p-4';
+  /** 是否启用毛玻璃质感（对应 `.glass-panel`：半透明底 + backdrop-filter 模糊）。关闭后卡片不再有毛玻璃效果。 */
+  glass: boolean;
+// 卡片颜色
+  background?: string;
+  /** 卡片背景主题：light / dark / none，影响卡片内文字与图标的对比度处理。 */
+  backgroundTheme?: 'light' | 'dark' | 'none';
+}
 export interface WidgetItem {
   id: string;
+  /** 组件类型：决定渲染哪个组件、能否添加、尺寸选项等核心逻辑（复用全局 WidgetType 联合类型）。 */
   type: WidgetType;
+  /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
   title: string;
+  /** 最大安装数量，有些只能安装一次，所以用它限制 */
+  maxInstances: number;
+  /** Size applied to a newly created widget of this type. */
   size: WidgetSize;
-  pinned?: boolean;
-  position?: { x: number; y: number };
-  // Whether to render the widget card header (title bar + window dots/controls).
-  // Defaults to true; false for widgets like the single icon block.
+  /** Sizes offered in the size picker for this type. */
+  sizeOptions: WidgetSize[];
+  /** Whether this type can be added from the "添加组件" modal. */
+  isAddable: boolean;
+  /** Emoji/glyph shown in the add-widget picker. */
+  logo: string;
+
   showHeader?: boolean;
-  // Fields for icon widgets (web-grid / settings). `iconType` decides the behaviour:
-  // `link` opens `iconHref` in a new tab, `action` triggers the onAction() callback.
-  iconType?: IconBehavior;
-  // Name of a lucide-react icon (e.g. 'Globe', 'Plus') rendered by IconWidget.
-  iconGlyph?: string;
-  iconLabel?: string;
-  // Custom colors for icon tiles. `iconTextColor` tints the glyph + label,
-  // `iconBgColor` overrides the tile background. Both are any valid CSS color.
-  iconTextColor?: string;
-  iconBgColor?: string;
-  // Optional custom background for the whole widget card. Any valid CSS
-  // background value (e.g. a `linear-gradient(...)` string) is accepted; when
-  // set it overrides the default translucent glass-panel background.
-  background?: string;
-  // 卡片背景的明暗分类（'light' | 'dark'），用于让卡片内文本自适应背景明暗，
-  // 独立于系统主题。由预设背景的 theme 字段在切换时写入。
-  backgroundTheme?: 'light' | 'dark';
-  // Action callback resolved at runtime by id (see getWidgetAction in
-  // widgetConfig). Functions are not serialized to localStorage, so this field is
-  // only meaningful for widgets sourced from code (INITIAL_WIDGETS).
-  onAction?: () => void;
-  iconHref?: string;
-  // 仅 icon / web-grid 组件：为 true 时点击在内部浏览器（iframe）打开 iconHref，
-  // 而非新标签页。若目标站点禁止被 iframe 嵌入，则内部浏览器提供「在外部打开」降级。
-  openInApp?: boolean;
-  // 仅 application 组件：直接渲染到 iframe 的 HTML 源码（经 srcDoc 注入）。
-  html?: string;
-  // 仅 application（网页列表）组件：要展示的网页条目列表。
-  websites?: WebSite[];
-  // 仅 快捷导航 组件：本组件实例独立的站点数据空间。
-  shortcuts?: SiteItem[];
-  // 仅 web-grid 组件：从「网页列表」添加的站点数据，桌面点击图标时据此打开站点。
-  site?: SiteItem;
+  /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
+  onClick?: (event: any) => void;
+  /** 封面：组件封面图地址，可选。 */
+  cover?: string;
+  /** 是否可删除：为 false 时该类型组件不可被用户删除（默认 true）。 */
+  deletable?: boolean;
+
+  /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
+  cardStyle?: CardStyle;
+  // 私有数据：组件实例级别的自定义数据（快捷导航、图标站点、卡片背景等）集中存放。
+  data: {
+    /** 快捷导航等组件的私有数据空间：存储 SiteItem[]。 */
+    shortcuts?: SiteItem[];
+    /** 图标型组件（web-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
+    site?: SiteItem;
+  }
 }
 
-/** 网页列表（application）组件中的单个网页条目 */
-export interface WebSite {
-  /** 站点名称，展示在列表里 */
-  title: string;
-  /** 站点地址，点击后在内置预览区以 iframe 打开 */
-  url: string;
-}
 
 /**
  * 壁纸类型，三类完全区分：

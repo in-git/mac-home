@@ -1,9 +1,8 @@
 import { Check, Moon, Sun } from 'lucide-react';
 import React from 'react';
 import {
-  CARD_RADIUS_LABEL,
-  FONT_TIER_PX,
-  FONT_VARIANT_LABEL,
+  CARD_RADIUS,
+  FONT_VARIANT,
 } from '../../../types';
 import { ACCENT_COLORS } from '../constants';
 import { SegmentedControl } from '../SegmentedControl';
@@ -101,8 +100,8 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
               字体大小
             </div>
             <div className="text-xs  mt-0.5">
-              小 {FONT_TIER_PX[fontVariant].sm} / 中{' '}
-              {FONT_TIER_PX[fontVariant].md} / 大 {FONT_TIER_PX[fontVariant].lg}{' '}
+              小 {FONT_VARIANT[fontVariant].px.sm} / 中{' '}
+              {FONT_VARIANT[fontVariant].px.md} / 大 {FONT_VARIANT[fontVariant].px.lg}{' '}
               px
             </div>
           </div>
@@ -112,7 +111,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
             onChange={setFontVariant}
             options={(['A', 'B', 'C'] as const).map((v) => ({
               value: v,
-              label: FONT_VARIANT_LABEL[v],
+              label: FONT_VARIANT[v].label,
             }))}
           />
         </div>
@@ -129,7 +128,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
             options={(['tiny', 'small', 'medium', 'large'] as const).map(
               (v) => ({
                 value: v,
-                label: CARD_RADIUS_LABEL[v],
+                label: CARD_RADIUS[v].label,
               }),
             )}
           />

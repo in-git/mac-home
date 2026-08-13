@@ -32,7 +32,6 @@ interface ContextMenuProps {
   onOpenWallpaper: () => void;
   onOpenAddWidget: () => void;
   onOpenSettings: () => void;
-  onEditIcon: (id: string) => void;
 }
 
 /** 卡片背景纯色快捷选项 —— 一排并列的「透明 / 纯黑 / 纯白」。 */
@@ -59,7 +58,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onOpenWallpaper,
   onOpenAddWidget,
   onOpenSettings,
-  onEditIcon,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   // Hover submenu state for the "切换卡片背景" widget action.
@@ -174,11 +172,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           onClick: () => targetWidget && onDeleteWidget(targetWidget.id),
           visible: !!targetWidget,
         };
-      case 'editIcon':
-        return {
-          onClick: () => targetWidget && onEditIcon(targetWidget.id),
-          visible: !!targetWidget && isWebGrid(targetWidget.type),
-        };
+ 
       default:
         return null;
     }
@@ -267,9 +261,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       }
                       className={`h-12 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform ${
                         (c.transparent
-                          ? targetWidget.background === undefined &&
-                            targetWidget.backgroundTheme === undefined
-                          : targetWidget.background === c.value)
+                          ? targetWidget.cardStyle?.background === undefined &&
+                            targetWidget.cardStyle?.backgroundTheme === undefined
+                          : targetWidget.cardStyle?.background === c.value)
                           ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
                           : 'border-black/10 dark:border-white/15'
                       }`}
@@ -297,7 +291,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                       }}
                       style={{ background: g.gradient }}
                       className={`h-12 rounded-[var(--card-radius)] border-2 hover:scale-110 hover:shadow-lg ${
-                        targetWidget.background === g.gradient
+                        targetWidget.cardStyle?.background === g.gradient
                           ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
                           : 'border-white/50 dark:border-white/15'
                       }`}

@@ -1,37 +1,101 @@
 {
   "app": "macOS 主页",
   "version": 1,
-  "exportedAt": "2026-08-12T23:09:34.312Z",
+  "exportedAt": "2026-08-13T00:53:32.242Z",
   "widgets": [
     {
       "id": "widget-1786535430656",
       "type": "clock-lunar",
       "title": "农历时钟",
       "size": "1/1",
-      "showHeader": false
+      "showHeader": false,
+      "maxInstances": 1,
+      "sizeOptions": [
+        "1/4",
+        "1/2",
+        "1/1"
+      ],
+      "isAddable": true,
+      "logo": "🌙",
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": false,
+        "background": "#FFFFFF",
+        "backgroundTheme": "light"
+      },
+      "data": {}
     },
     {
       "id": "widget-1786535392755",
       "type": "weather",
       "title": "天气预报",
       "size": "1/2",
-      "showHeader": false
+      "showHeader": false,
+      "maxInstances": 1,
+      "sizeOptions": [
+        "1/2",
+        "1/1"
+      ],
+      "isAddable": true,
+      "logo": "⛅",
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "data": {}
     },
     {
       "id": "widget-clock",
       "type": "clock",
       "title": "时间 & 日历",
       "size": "1/4",
-      "background": "#1a1a1a",
-      "backgroundTheme": "dark"
+      "maxInstances": 1,
+      "sizeOptions": [
+        "1/4",
+        "1/2",
+        "1/1"
+      ],
+      "isAddable": true,
+      "logo": "🕒",
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "background": "#1a1a1a",
+        "backgroundTheme": "dark"
+      },
+      "data": {}
     },
     {
       "id": "widget-1786535762886",
       "type": "control-center",
       "title": "控制中心",
       "size": "1/4",
-      "showHeader": false
+      "showHeader": false,
+      "maxInstances": 1,
+      "sizeOptions": [
+        "1/4"
+      ],
+      "isAddable": true,
+      "logo": "🎛️",
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "data": {}
     }
   ],
-  "notes": []
+  "notes": [],
+  "wallpaper": {
+    "type": "static",
+    "dynamicPreset": "mesh-wave",
+    "blur": 0,
+    "brightness": 100,
+    "contrast": 1,
+    "saturation": 1,
+    "hue": 0,
+    "sepia": 0,
+    "grayscale": 0,
+    "invert": 0,
+    "imageUrl": "http://localhost:82/dev/file/download?id=2087360677112750084&sign=YjAyODg0MzM4MmVlOWI1NDg3OTUwZTYxNWQ4NzIyNTE3NTU1NTY2MzhiYWZjZWExMDM4ODY0ODg5MGIyNTcyYg=="
+  }
 }

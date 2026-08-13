@@ -1,60 +1,53 @@
 import { useEffect, useState } from 'react';
-import type { WidgetProps, WebSite } from '../../types';
+import type { WidgetProps } from '../../types';
 import { siteApi, type SiteItem } from '../../api/site';
 import { WebListItem } from './WebListItem';
 
 interface WebListWidgetProps extends WidgetProps {
-  /** 要展示的网页条目列表（手动配置，优先级高于接口拉取） */
-  websites?: WebSite[];
-  /** 兼容旧数据：直接渲染到 iframe 的 HTML 源码（经 srcDoc 注入） */
-  html?: string;
-}
-
-/** 将兼容用的旧 WebSite 结构转换为统一的 SiteItem */
-function toSiteItem(site: WebSite): SiteItem {
-  return { name: site.title, link: site.url };
+  /** 手动配置的单个站点（优先级高于接口拉取） */
+  site?: SiteItem;
 }
 
 /**
  * 网页列表组件：拉取（或接收）站点数据，以卡片网格展示，点击后在组件内预览区打开，
  * 同时提供「直接访问」外链入口并调用后端 click 接口使点击量 +1。
- * 无 websites 时从 /public/site/page 拉取公开站点。
+ * 无 site 时从 /public/site/page 拉取公开站点。
  */
-export const WebListWidget: React.FC<WebListWidgetProps> = ({ websites, html }) => {
+export const WebListWidget: React.FC<WebListWidgetProps> = ({ site }) => {
   const [items, setItems] = useState<SiteItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState<SiteItem | null>(null);
 
-  // 兼容旧数据：有 html 且无 websites 时，直接渲染 HTML 源码
-  if (html && (!websites || websites.length === 0) && items.length === 0) {
-    return (
-      <div className="max-h-[400px] w-full overflow-auto">
-        <iframe
-          title="网页"
-          srcDoc={html}
-          sandbox="allow-scripts allow-forms allow-popups allow-modals"
-          className="min-h-full w-full border-0"
-          style={{ background: 'transparent' }}
-        />
-      </div>
-    );
-  }
-
   useEffect(() => {
-    // 手动配置的 websites 优先
-    if (websites && websites.length > 0) {
-      setItems(websites.map(toSiteItem));
+    // 手动配置的 site 优先
+    if (site) {
+      setItems([site]);
       return;
     }
-    setLoading(true);
-    siteApi
-      .getPage({ current: 1, size: 30, sortField: 'orderNum', sortOrder: 'ASC' })
-      .then((res) => {
-        if (res?.records) setItems(res.records);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [websites]);
+
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await siteApi.getPage({
+          current: 1,
+          size: 30,
+          sortField: 'orderNum',
+          sortOrder: 'ASC',
+        });
+        if (!cancelled && res?.records) setItems(res.records);
+      } catch {
+        // 忽略拉取失败，保持空列表
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 选中后切换预览（不额外计次，计次在「直接访问」时触发）
   const handleSelect = (site: SiteItem) => {

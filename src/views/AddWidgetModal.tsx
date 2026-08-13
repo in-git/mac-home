@@ -138,8 +138,8 @@ export const AddWidgetModal: React.FC<Props> = ({
 
   // 已添加到桌面的站点（web-grid 类型携带 site 数据），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
-    .filter((w) => isWebGrid(w.type) && w.site)
-    .map((w) => w.site as SiteItem);
+    .filter((w) => isWebGrid(w.type) && w.data.site)
+    .map((w) => w.data.site as SiteItem);
 
   return createPortal(
     mounted && (

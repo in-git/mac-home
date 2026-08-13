@@ -3,13 +3,13 @@ import React, { useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
-import { IconEditModal } from './components/IconEditModal';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
 import { siteApi, SiteItem } from './api/site';
 import type { WidgetItem } from './types';
 import { isWebGrid } from './data/widgetConfig';
+import { SIZE_OPTIONS_ICON_GRID } from './data/options';
 import { useAppInit } from './hooks/useAppInit';
 import { useBwsConnection } from './hooks/useBwsConnection';
 import { useGreeting } from './hooks/useGreeting';
@@ -90,20 +90,22 @@ export default function App() {
   // 网页列表：点击「添加」把站点做成桌面图标（web-grid 类型，携带 site 数据）
   const handleAddSite = (item: SiteItem) => {
     const url = item.link || '#';
-    if (widgets.some((w) => isWebGrid(w.type) && w.site?.link === url)) {
+    if (widgets.some((w) => isWebGrid(w.type) && w.data.site?.link === url)) {
       return;
     }
     const newWidget: WidgetItem = {
       id: `widget-${Date.now()}`,
       type: 'web-grid',
       title: item.name || '未命名',
+      maxInstances: Infinity,
       size: '1/8',
+      sizeOptions: SIZE_OPTIONS_ICON_GRID,
+      isAddable: false,
+      logo: '🌐',
       showHeader: false,
-      iconType: 'link',
-      iconGlyph: 'Globe',
-      iconLabel: item.name || '未命名',
-      iconHref: item.link,
-      site: item,
+      data: {
+        site: item,
+      },
     };
     setWidgets([...widgets, newWidget]);
     void (async () => {
@@ -119,7 +121,7 @@ export default function App() {
   const handleRemoveSite = (item: SiteItem) => {
     const url = item.link || '#';
     const target = widgets.find(
-      (w) => isWebGrid(w.type) && w.site?.link === url,
+      (w) => isWebGrid(w.type) && w.data.site?.link === url,
     );
     if (!target) return;
     deleteWidget(target.id);
@@ -134,8 +136,6 @@ export default function App() {
     useState<boolean>(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] =
     useState<boolean>(false);
-  // 图标编辑 Modal 当前编辑的 widget id（null 表示关闭）。
-  const [editIconId, setEditIconId] = useState<string | null>(null);
 
   // Right Click Context Menu State
   const [contextMenuPos, setContextMenuPos] =
@@ -281,7 +281,6 @@ export default function App() {
         onOpenWallpaper={openWallpaperModal}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
-        onEditIcon={(id) => setEditIconId(id)}
       />
 
       {/* Wallpaper Setting Modal */}
@@ -317,13 +316,6 @@ export default function App() {
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
       />
-
-      {/* Icon Edit Modal */}
-      <IconEditModal
-        widget={widgets.find((w) => w.id === editIconId) ?? null}
-        onClose={() => setEditIconId(null)}
-      />
-
     </div>
   );
 }

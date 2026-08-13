@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { PRESET_DATA } from '../data/presetData';
-import { canAddWidget, getWidgetConfig } from '../data/widgetConfig';
+import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widgetConfig';
 import {
   AIConfig,
   CardRadiusTier,
@@ -150,12 +150,25 @@ export const useHomeStore = create<HomeState>()(
           id: `widget-${Date.now()}`,
           type,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
+          maxInstances: cfg.maxInstances,
           size: cfg.defaultSize,
+          sizeOptions: cfg.sizeOptions,
+          isAddable: cfg.isAddable,
+          logo: cfg.glyph,
           // Header visibility is driven by the type-level config (default: shown).
           showHeader: cfg.showHeader ?? true,
-          // 新建卡片默认与右键「切换卡片背景 → 透明」一致：亮色文本主题（深色前景 #1d1d1f），
-          // 颜色由 index.css 的 --card-fg 变量控制，此处不写死任何颜色值。
-          backgroundTheme: 'light',
+          cardStyle: {
+            ...DEFAULT_CARD_STYLE,
+            ...cfg.cardStyle,
+            // 新建卡片默认与右键「切换卡片背景 → 透明」一致：亮色文本主题（深色前景 #1d1d1f），
+            // 颜色由 index.css 的 --card-fg 变量控制，此处不写死任何颜色值。
+            backgroundTheme: 'light',
+          },
+          // 类型级提供的私有数据默认值（如快捷导航的空列表）放在 data 下。
+          data: {
+            ...(cfg.shortcuts ? { shortcuts: cfg.shortcuts } : {}),
+            ...(cfg.site ? { site: cfg.site } : {}),
+          },
         };
         set({ widgets: [...widgets, newWidget] });
       },
@@ -183,7 +196,16 @@ export const useHomeStore = create<HomeState>()(
       updateWidgetBackground: (id, background, backgroundTheme) => {
         set({
           widgets: get().widgets.map((w) =>
-            w.id === id ? { ...w, background, backgroundTheme } : w,
+            w.id === id
+              ? {
+                  ...w,
+                  cardStyle: {
+                    ...w.cardStyle,
+                    background: background ?? undefined,
+                    backgroundTheme: backgroundTheme,
+                  },
+                }
+              : w,
           ),
         });
       },

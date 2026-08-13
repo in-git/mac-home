@@ -1,4 +1,4 @@
-import { WidgetSize, WidgetType } from '../types';
+import { WidgetSize, WidgetType, CardStyle } from '../types';
 import type { SiteItem } from '../api/site';
 import type { MouseEvent } from 'react';
 import {
@@ -61,17 +61,6 @@ export interface WidgetTypeConfig {
   site?: SiteItem;
   /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
   cardStyle?: CardStyle;
-}
-
-/**
- * 卡片外观样式：集中定义卡片（含放大模态框）的视觉属性。
- * - padding：卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。
- */
-export interface CardStyle {
-  /** 卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。 */
-  padding: 'p-2' | 'p-0' | 'p-4';
-  /** 是否启用毛玻璃质感（对应 `.glass-panel`：半透明底 + backdrop-filter 模糊）。关闭后卡片不再有毛玻璃效果。 */
-  glass: boolean;
 }
 
 /** 全局默认卡片样式（放大模态框等未单独配置时回退到此）。 */

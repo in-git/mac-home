@@ -22,7 +22,6 @@ interface RenderWidgetContentProps {
   isEditMode: boolean;
   onWeatherChange?: (s: WeatherSummary) => void;
   onExpand: (id: string) => void;
-  /** true 时用于无头模态（弹窗）：settings 渲染完整面板，shortcuts 填满布局 */
   inModal?: boolean;
   onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
@@ -67,49 +66,26 @@ export const renderWidgetContent = ({
         <ShortcutsWidget
           expanded={inModal}
           onExpand={inModal ? undefined : () => onExpand(widget.id)}
-          shortcuts={widget.shortcuts}
+          shortcuts={widget.data.shortcuts}
           onUpdateShortcuts={
             onUpdateWidget
-              ? (list) => onUpdateWidget(widget.id, { shortcuts: list })
+              ? (list) => onUpdateWidget(widget.id, { data: { ...widget.data, shortcuts: list } })
               : undefined
           }
         />
       );
-    case 'settings':
-      if (inModal) return <SettingsWidget activeTab={'appearance'} />;
-      return (
-        <div data-icon-grid className="h-full w-full">
-          <IconWidget
-            editing={isEditMode}
-            size={widget.size}
-            iconType={widget.iconType}
-            iconGlyph={widget.iconGlyph}
-            iconLabel={widget.iconLabel}
-            iconHref={widget.iconHref}
-            iconTextColor={widget.iconTextColor}
-            iconBgColor={widget.iconBgColor}
-          />
-        </div>
-      );
+ 
     case 'web-grid': {
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
       // 无站点且无自定义图标时，默认值为系统设置图标（点击弹出设置模态框）
-      const site = widget.site;
       return (
         <div data-icon-grid className="h-full w-full">
-          <IconWidget
-            size={widget.size}
-            iconLabel={site?.name}
-            iconHref={site?.link }
-            // 优先显示站点 logo（SiteItem.logo），其次回退到组件自身 iconImage
-            iconImage={site?.logo }
-         
-          />
+          <IconWidget size={widget.size} site={widget.data.site} />
         </div>
       );
     }
     case 'application': {
-      return <WebListWidget websites={widget.websites} html={widget.html} />;
+      return <WebListWidget site={widget.data.site} />;
     }
     case 'banner': {
       return <BannerWidget size={widget.size} />;

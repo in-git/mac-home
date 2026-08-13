@@ -1,37 +1,11 @@
-import { Globe, Plus, Link2, Rocket, Settings, type LucideIcon } from 'lucide-react';
-import { WidgetSize, IconBehavior } from '../types';
+import { Rocket } from 'lucide-react';
+import { WidgetSize } from '../types';
+import type { SiteItem } from '../api/site';
 
-// Maps the `iconGlyph` string (a lucide icon name) to its component. Unknown
-// names fall back to the default icon so the tile never renders empty.
-const ICON_REGISTRY: Record<string, LucideIcon> = {
-  Globe,
-  Plus,
-  Link2,
-  Settings,
-};
-
-// Fallback used only when an icon widget provides no icon fields.
+// Fallback used when a site provides no logo (renders a generic launch tile).
 const DEFAULT_ICON = {
   glyph: 'Rocket',
   label: 'App',
-  type: 'link' as IconBehavior,
-  href: 'https://www.apple.com',
-};
-
-// Glyph + label font sizes scale with the icon tile size so the emoji and
-// caption stay proportional — large 1/6 tile reads big, tiny 1/16 tile shrinks
-// both the icon and its text together. The 1:16 tile is icon-only (no label).
-const ICON_TYPOGRAPHY: Record<WidgetSize, { glyph: string; label: string }> = {
-  '1/8': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/16': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/4': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/3': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/2': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/1': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/5': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/6': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/10': { glyph: 'text-lg', label: 'text-font-sm' },
-  '1/12': { glyph: 'text-lg', label: 'text-font-sm' },
 };
 
 // When true the tile renders only the glyph (no text label). Used for the
@@ -41,76 +15,36 @@ const ICON_ONLY_SIZES: ReadonlySet<WidgetSize> = new Set<WidgetSize>(['1/16']);
 interface IconWidgetProps {
   editing?: boolean;
   size?: WidgetSize;
-
-  iconType?: IconBehavior;
-  iconGlyph?: string;
-  iconLabel?: string;
-  iconHref?: string;
-  // 站点图标图片（如 SiteItem.logo）；提供时优先显示图片而非 lucide 图标
-  iconImage?: string;
-  // Custom tile colors. `iconTextColor` tints the glyph + label; `iconBgColor`
-  // overrides the default translucent background. Any valid CSS color accepted.
-  iconTextColor?: string;
-  iconBgColor?: string;
+  /** 站点数据：图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background。 */
+  site?: SiteItem;
 }
 
-export function IconWidget({
-  editing,
-  size = '1/8',
-  iconType,
-  iconGlyph,
-  iconLabel,
-  iconImage,
-  iconTextColor,
-  iconBgColor,
-}: IconWidgetProps) {
-  const kind = iconType ?? DEFAULT_ICON.type;
-  const glyphName = iconGlyph ?? DEFAULT_ICON.glyph;
-  const label = iconLabel ?? DEFAULT_ICON.label;
-  const GlyphIcon = ICON_REGISTRY[glyphName] ?? Rocket;
+export function IconWidget({ editing, size = '1/8', site }: IconWidgetProps) {
+  const label = site?.name ?? DEFAULT_ICON.label;
   const iconOnly = ICON_ONLY_SIZES.has(size);
 
-
-
-  // Inline style overrides for custom colors. The custom text color is applied
-  // to the button itself so both the SVG glyph (via currentColor) and the label
-  // text inherit the exact same color — they always stay in sync.
-  const bgStyle = iconBgColor ? { backgroundColor: iconBgColor } : undefined;
-  const btnStyle = {
-    ...(bgStyle ?? {}),
-    ...(iconTextColor ? { color: iconTextColor } : {}),
-  };
-  const hasBtnStyle = Object.keys(btnStyle).length > 0;
+  const bgStyle = site?.background ? { backgroundColor: site.background } : undefined;
 
   return (
     <button
       type="button"
-      // No onClick here — the click bubbles to the widget-card container, which
-      // owns the custom onAction event (resolved by id via getWidgetAction).
-      disabled={editing && kind !== 'action'}
+      disabled={editing}
       title={label}
-      style={hasBtnStyle ? btnStyle : undefined}
-      className=" group !pointer-events-auto  flex h-full w-full flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-200 transition active:scale-95 disabled:cursor-default"
+     
+      className=" group !pointer-events-auto   flex h-full w-full flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-200  active:scale-95 disabled:cursor-default"
     >
-      {iconImage ? (
+      {site?.logo ? (
         <img
-          src={iconImage}
+          src={site.logo}
           alt={label}
-          title={iconImage}
-          className="h-full w-full object-contain rounded-[var(--card-radius)] drop-shadow-sm"
+          title={label}
+          className="h-full w-full object-cover rounded-[var(--card-radius)] overflow-hidden"
         />
       ) : (
-        <GlyphIcon
-          className={`leading-none`}
-          strokeWidth={1.75}
-        />
+        <Rocket className="leading-none" strokeWidth={1.75} />
       )}
       {!iconOnly && (
-        <span
-          className={`max-w-full truncate  text-white`}
-        >
-          {label}
-        </span>
+        <span className="max-w-full truncate">{label}</span>
       )}
     </button>
   );

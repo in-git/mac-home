@@ -2,15 +2,11 @@ import Muuri from 'muuri';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   executeWidgetClick,
-  getWidgetAction,
   getWidgetConfig,
-  DEFAULT_CARD_STYLE,
 } from '../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
 import { SettingsModal } from '../views/SettingsModal';
-import { InternalBrowser } from './InternalBrowser';
 import { WidgetCard } from './dashboard/WidgetCard';
-import { renderWidgetContent } from './dashboard/widgetContent';
 
 interface MuuriDashboardProps {
   widgets: WidgetItem[];
@@ -75,14 +71,8 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   // 设置弹窗：settings 以适中尺寸的模态框呈现（非放大）。
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
-  // 内部浏览器：当 icon 组件配置了 openInApp 时，以全屏 iframe 打开其链接。
-  const [internalBrowser, setInternalBrowser] = useState<{
-    url: string;
-    title?: string;
-  } | null>(null);
-
-  // Card-level click handler: drives open-in-new-tab / open-in-app / action /
-  // settings-modal / web-grid behaviour based on the widget's config.
+  // Card-level click handler: drives settings-modal / web-grid behaviour based
+  // on the widget's config.
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => {
     if (isEditMode) return;
     const target = e.target as HTMLElement;
@@ -94,24 +84,14 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     }
     const iconGrid = target.closest('[data-icon-grid]');
     if (!iconGrid) return;
-    // web-grid 默认值（无站点 / 链接 / 自定义图标）= 系统设置，点击弹出设置模态框
-    if (!widget.site && !widget.iconHref && !widget.iconGlyph) {
+    // web-grid 默认值（无站点）= 系统设置，点击弹出设置模态框
+    if (!widget.data.site) {
       setSettingsModalOpen(true);
       return;
     }
-    const kind = widget.iconType;
-    if (kind === 'action') {
-      const action = getWidgetAction(widget.id);
-      action?.();
-    } else if (widget.iconHref) {
-      if (widget.openInApp) {
-        setInternalBrowser({
-          url: widget.iconHref,
-          title: widget.iconLabel ?? widget.title,
-        });
-      } else {
-        window.open(widget.iconHref, '_blank', 'noopener,noreferrer');
-      }
+    const site = widget.data.site;
+    if (site.link) {
+      window.open(site.link, '_blank', 'noopener,noreferrer');
     }
   };
 

@@ -1,7 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { CARD_RADIUS_LABEL, CARD_RADIUS_PX, FONT_VARIANT_LABEL } from '../types';
+import { CARD_RADIUS, FONT_VARIANT } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -189,7 +189,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                   onChange={() => setFontVariant(v)}
                   className="sr-only"
                 />
-                {FONT_VARIANT_LABEL[v]}
+                {FONT_VARIANT[v].label}
               </label>
             );
           })}
@@ -208,7 +208,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             <span>圆角</span>
           </span>
           <span className="text-font-sm font-mono ">
-            {CARD_RADIUS_LABEL[cardRadius]} · {CARD_RADIUS_PX[cardRadius]}px
+            {CARD_RADIUS[cardRadius].label} · {CARD_RADIUS[cardRadius].px}px
           </span>
         </div>
         <div className="grid grid-cols-4 gap-2">
@@ -219,7 +219,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 key={v}
                 type="button"
                 onClick={() => setCardRadius(v)}
-                aria-label={CARD_RADIUS_LABEL[v]}
+                aria-label={CARD_RADIUS[v].label}
                 className={`flex flex-col items-center gap-1 py-1.5 rounded-lg  active:scale-[0.97] ${
                   active
                     ? ''
@@ -232,14 +232,14 @@ export const ControlCenterWidget: React.FC<Props> = ({
                       ? 'bg-[color:var(--accent)]'
                       : 'bg-black/10 dark:bg-white/10'
                   }`}
-                  style={{ borderRadius: CARD_RADIUS_PX[v] }}
+                  style={{ borderRadius: CARD_RADIUS[v].px }}
                 />
                 <span
                   className={`text-font-xs font-bold ${
                     active ? 'text-[color:var(--accent)]' : 'text-slate-400'
                   }`}
                 >
-                  {CARD_RADIUS_PX[v]}
+                  {CARD_RADIUS[v].px}
                 </span>
               </button>
             );

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CARD_RADIUS_PX, CardRadiusTier, FONT_TIER_PX, FontVariant } from '../types';
+import { CARD_RADIUS, CardRadiusTier, FONT_VARIANT, FontVariant } from '../types';
 import { darkenHex } from '../utils/color';
 
 interface UseThemeVariablesParams {
@@ -35,7 +35,7 @@ export function useThemeVariables({
   // Write the three font-size CSS variables directly from the chosen font variant.
   useEffect(() => {
     const root = document.documentElement;
-    const t = FONT_TIER_PX[fontVariant];
+    const t = FONT_VARIANT[fontVariant].px;
     root.style.setProperty('--font-sm', `${t.sm}px`);
     root.style.setProperty('--font-md', `${t.md}px`);
     root.style.setProperty('--font-lg', `${t.lg}px`);
@@ -44,6 +44,6 @@ export function useThemeVariables({
   // Write the card corner-radius CSS variable from the chosen radius tier.
   useEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty('--card-radius', `${CARD_RADIUS_PX[cardRadius]}px`);
+    root.style.setProperty('--card-radius', `${CARD_RADIUS[cardRadius].px}px`);
   }, [cardRadius]);
 }
