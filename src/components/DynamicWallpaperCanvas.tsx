@@ -152,14 +152,24 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : wallpaper.type === 'static' && wallpaper.imageUrl ? (
-        <img
-          src={wallpaper.imageUrl}
-          alt="Desktop Wallpaper"
-          onLoad={() => setStaticImgLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-            staticImgLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
+        <>
+          {/* 图片完全加载前显示兜底渐变，避免切换瞬间空白闪烁 */}
+          {!staticImgLoaded && (
+            <div
+              className="absolute inset-0 w-full h-full"
+              style={{ background: FALLBACK_GRADIENT }}
+            />
+          )}
+          <img
+            src={wallpaper.imageUrl}
+            alt="Desktop Wallpaper"
+            decoding="async"
+            onLoad={() => setStaticImgLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+              staticImgLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        </>
       ) : wallpaper.type === 'gradient' ? (
         <div
           className="absolute inset-0 w-full h-full transition-opacity duration-700"

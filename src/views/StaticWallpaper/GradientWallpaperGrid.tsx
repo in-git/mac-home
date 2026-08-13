@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { PRESET_DATA } from '../../data/presetData';
-import type { WallpaperConfig } from '../../types';
+import { PRESET_DATA } from '@/data/presetData';
+import type { WallpaperConfig } from '@/types';
 import type { GradientWallpaperItem } from './GradientWallpaperCard';
 import { GradientWallpaperCard } from './GradientWallpaperCard';
 
@@ -35,7 +35,7 @@ export const GradientWallpaperGrid: React.FC<GradientWallpaperGridProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {gradientWallpapers.map((w, index) => (
         <GradientWallpaperCard
           key={w.gradient}

@@ -120,7 +120,7 @@ export const AddWidgetModal: React.FC<Props> = ({
             opacity: visible ? 1 : 0,
             transition: `transform ${MODAL_TRANSITION_MS}ms ease-out, opacity ${MODAL_TRANSITION_MS}ms ease-out`,
           }}
-          className="flex flex-col sm:flex-row w-full h-full sm:w-[75%] sm:h-[80vh] rounded-none sm:rounded-[var(--card-radius)] shadow-2xl overflow-hidden text-slate-800 dark:text-slate-100 bg-white dark:bg-[#1C1C1E]"
+          className="flex flex-col sm:flex-row w-full h-full sm:w-[75%] sm:h-[80vh] lg:h-[90vh] wide:h-[70vh]  rounded-none sm:rounded-[var(--card-radius)] shadow-2xl overflow-hidden text-slate-800 dark:text-slate-100 bg-white dark:bg-[#1C1C1E]"
         >
           {/* 左侧栏 */}
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-52 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">

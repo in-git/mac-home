@@ -57,7 +57,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     [selectedCat, searchKeyword],
   );
 
-  // 挂载时加载分类元数据并拉取首批站点
+  // 首次挂载只加载分类元数据；站点拉取交给下方分类 effect（首次也会执行，cat='' 即全部）
   useEffect(() => {
     (async () => {
       setCategoryLoading(true);
@@ -65,7 +65,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         const categoryRes = await siteApi.getCategoryTree();
         if (Array.isArray(categoryRes))
           setCategories(flattenCategories(categoryRes));
-        fetchSites(1, '', '');
       } catch {
         /* noop */
       } finally {
@@ -74,13 +73,18 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     })();
   }, []);
 
-  // 分类变化时回到第一页重新拉取
+  // 分类变化时回到第一页重新拉取（首次挂载也会触发一次，加载全部站点）
   useEffect(() => {
     fetchSites(1, selectedCat, searchKeyword);
   }, [selectedCat]);
 
-  // 关键词搜索：400ms 防抖
+  // 关键词搜索：400ms 防抖（跳过首次挂载，避免与分类 effect 重复拉取）
+  const searchFirst = React.useRef(true);
   useEffect(() => {
+    if (searchFirst.current) {
+      searchFirst.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       fetchSites(1, selectedCat, searchKeyword);
     }, 400);

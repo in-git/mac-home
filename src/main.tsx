@@ -15,7 +15,5 @@ const isMobile = (() => {
 })();
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ToastProvider>{isMobile ? <MobileUnsupported /> : <App />}</ToastProvider>
-  </StrictMode>,
+  <ToastProvider>{isMobile ? <MobileUnsupported /> : <App />}</ToastProvider>,
 );

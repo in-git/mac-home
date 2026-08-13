@@ -220,12 +220,6 @@ export const dynamicPresets: {
         previewColor: 'from-cyan-400 via-blue-500 to-indigo-500',
     },
     {
-        id: 'tessellation',
-        name: '菱角镶嵌 (Tessellation)',
-        desc: 'Delaunay 三角流光与渐变交替',
-        previewColor: 'from-teal-400 via-pink-300 to-slate-400',
-    },
-    {
         id: 'molten-metal',
         name: '熔金流体 (Molten Metal)',
         desc: 'WebGL 熔融金属流光与鼠标交互',

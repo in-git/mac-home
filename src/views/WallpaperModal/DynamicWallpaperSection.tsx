@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { GlassTabs } from '../../components/GlassTabs';
+import { useEffect, useRef } from 'react';
+import { Check } from 'lucide-react';
 import {
   createParticles,
   dynamicPresets,
@@ -97,7 +97,6 @@ export const DynamicWallpaperSection: React.FC<
   // 固定深色的预设（WebGL 类）归入「深色」，其余跟随全局模式归入「亮色」
   const lightPresets = dynamicPresets.filter((p) => !p.isDarkMode);
   const darkPresets = dynamicPresets.filter((p) => p.isDarkMode);
-  const [toneTab, setToneTab] = useState<'light' | 'dark'>('light');
 
   const renderPreset = (preset: (typeof dynamicPresets)[number]) => {
     const isSelected = wallpaper.dynamicPreset === preset.id;
@@ -119,7 +118,7 @@ export const DynamicWallpaperSection: React.FC<
         }}
         className={`group relative aspect-video overflow-hidden rounded-[var(--card-radius)] border bg-black text-left transition-colors ${
           isSelected
-            ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+            ? 'border-[color:var(--accent)]'
             : 'border-black/10 hover:border-[color:var(--accent)]/60 dark:border-white/10'
         }`}
       >
@@ -135,11 +134,20 @@ export const DynamicWallpaperSection: React.FC<
             {preset.desc}
           </div>
         </div>
-        {isSelected && (
-          <div className="absolute right-2 top-2 rounded-full bg-[color:var(--accent)] px-1.5 py-0.5 text-font-sm font-semibold text-white">
-            当前
-          </div>
-        )}
+        {/* 选中态：主题背景色 + 右上角白色勾，与静态壁纸保持一致 */}
+        <div
+          className={`pointer-events-none absolute inset-0 rounded-[var(--card-radius)] transition-opacity duration-200 ${
+            isSelected
+              ? 'bg-[color:var(--accent)]/35 opacity-100'
+              : 'bg-black/0 opacity-0'
+          }`}
+        >
+          {isSelected && (
+            <span className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--accent)] shadow-md">
+              <Check className="h-3.5 w-3.5 text-white" strokeWidth={3.5} />
+            </span>
+          )}
+        </div>
       </button>
     );
   };
@@ -149,24 +157,14 @@ export const DynamicWallpaperSection: React.FC<
       <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200 ">
         动态效果
       </h3>
-      <GlassTabs
-        items={[
-          { id: 'light', label: '亮色' },
-          { id: 'dark', label: '深色' },
-        ]}
-        activeKey={toneTab}
-        onChange={(key) => setToneTab(key as 'light' | 'dark')}
-      />
-      {toneTab === 'light' && (
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {lightPresets.map(renderPreset)}
-        </div>
-      )}
-      {toneTab === 'dark' && (
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {darkPresets.map(renderPreset)}
-        </div>
-      )}
+      {/* 深色在上 */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {darkPresets.map(renderPreset)}
+      </div>
+      {/* 亮色在下 */}
+      <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+        {lightPresets.map(renderPreset)}
+      </div>
     </section>
   );
 };

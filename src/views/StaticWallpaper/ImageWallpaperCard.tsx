@@ -16,17 +16,27 @@ interface ImageWallpaperCardProps {
   item: ImageWallpaperItem;
   isSelected: boolean;
   onSelect: (item: ImageWallpaperItem) => void;
+  /** 紧凑横向模式：用于顶部「当前壁纸」单独一行预览 */
+  compact?: boolean;
 }
 
 export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
   item,
   isSelected,
   onSelect,
+  compact = false,
 }) => {
   const src = item.imageUrl || item.thumbnailUrl;
   const label = item.name || item.id;
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const imgRef = React.useRef<HTMLImageElement | null>(null);
+
+  // 已缓存图片不会触发 onLoad，主动检查 complete 避免永远空白
+  React.useEffect(() => {
+    setImgLoaded(false);
+    if (imgRef.current?.complete) setImgLoaded(true);
+  }, [src]);
 
   return (
     <button
@@ -34,22 +44,30 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
       onClick={() => onSelect(item)}
       title={label}
       className={clsx(
-        'group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] dark:ring-white/[0.08]',
+        'group relative flex flex-col overflow-hidden rounded-xl ring-1 ring-black/[0.06] dark:ring-white/[0.08] transition-all duration-200',
+        compact ? 'w-40' : 'w-full',
         isSelected &&
           'ring-2 ring-[color:var(--accent)] dark:ring-[color:var(--accent)]',
       )}
     >
       {/* 图片预览 */}
-      <div className="relative aspect-[16/9] w-full bg-black/5 dark:bg-white/5">
+      <div
+        className={clsx(
+          'relative w-full bg-black/5 dark:bg-white/5',
+          compact ? 'aspect-[16/10]' : 'aspect-[16/9]',
+        )}
+      >
         {src && !imgError ? (
           <>
             {!imgLoaded && (
               <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
             )}
             <img
+              ref={imgRef}
               src={src}
               alt={label}
               loading="lazy"
+              decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
               className={clsx(
@@ -66,17 +84,19 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
         )}
       </div>
 
-      {/* 选中态遮罩 + 勾选 */}
+      {/* 选中态：主题背景色 + 白色勾（右上角） */}
       <div
         className={clsx(
-          'absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-200',
+          'pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-200',
           isSelected
-            ? 'bg-black/25 opacity-100'
+            ? 'bg-[color:var(--accent)]/35 opacity-100'
             : 'bg-black/0 opacity-0 group-hover:bg-black/15 group-hover:opacity-100',
         )}
       >
         {isSelected && (
-          <Check className="h-7 w-7 text-white drop-shadow" strokeWidth={3} />
+          <span className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--accent)] shadow-md">
+            <Check className="h-3.5 w-3.5 text-white" strokeWidth={3.5} />
+          </span>
         )}
       </div>
     </button>

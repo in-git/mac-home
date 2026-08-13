@@ -10,7 +10,6 @@ import type { WallpaperConfig } from '../../types';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from '../StaticWallpaper';
-import { StaticWallpaperRow } from '../StaticWallpaper/StaticWallpaperRow';
 import { GradientWallpaperGrid } from '../StaticWallpaper/GradientWallpaperGrid';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
 
@@ -32,9 +31,9 @@ interface WallpaperModalProps {
 type TabId = 'dynamic' | 'preset' | 'static' | 'adjust';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
+  { id: 'static', label: '静态壁纸', icon: <ImageIcon size={16} /> },
   { id: 'dynamic', label: '动效壁纸', icon: <Palette size={16} /> },
   { id: 'preset', label: '渐变壁纸', icon: <Layers size={16} /> },
-  { id: 'static', label: '静态壁纸', icon: <ImageIcon size={16} /> },
   { id: 'adjust', label: '桌面主题', icon: <SunMedium size={16} /> },
 ];
 
@@ -83,7 +82,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
   isDarkMode,
   onUpdateWallpaper,
   onToggleDarkMode,
-  className = 'w-full md:max-w-6xl xl:max-w-7xl h-full md:h-[90vh] lg:h-[90vh] min-[1921px]:h-[70vh]',
+  className = 'w-full md:w-[80vw] xl:w-[70vw] h-full md:h-[90vh] lg:h-[80vh] wide:h-[70vh]',
   contentClassName = '',
   navClassName = '',
 }) => {
@@ -97,30 +96,39 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
       className={`wallpaper-modal-solid ${className}`}
     >
       <div
-        className={`flex flex-1  ${contentClassName}`}
+        className={`flex flex-1 min-h-0 ${contentClassName}`}
       >
         {/* 侧边 Tab 导航：Apple Settings 风格 */}
         <nav
           className={`flex w-44 shrink-0 flex-col gap-0.5 border-r border-black/[0.06] bg-black/[0.02] p-2.5 dark:border-white/[0.08] dark:bg-white/[0.02] ${navClassName}`}
         >
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm duration-200 ${
-                activeTab === tab.id
-                  ? 'bg-white font-medium text-slate-800 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-white/10 dark:text-slate-100'
-                  : 'hover:bg-black/[0.04] dark:text-slate-400 dark:hover:bg-white/[0.06]'
-              }`}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-            </button>
-          ))}
+          {TABS.map((tab) => {
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`group flex items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ease-out ${
+                  active
+                    ? 'bg-[color:var(--accent)]/10 font-semibold text-[color:var(--accent)] dark:bg-[color:var(--accent)]/20 dark:text-[color:var(--accent)]'
+                    : 'text-slate-600 hover:bg-black/[0.05] hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/[0.06] dark:hover:text-slate-100'
+                }`}
+              >
+                <span
+                  className={`transition-colors duration-200 ${
+                    active ? 'text-[color:var(--accent)]' : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'
+                  }`}
+                >
+                  {tab.icon}
+                </span>
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         {/* 右侧内容面板 */}
-        <div className="min-w-0 flex-1 overflow-y-auto p-6">
+        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto p-6">
           {activeTab === 'dynamic' ? (
             <DynamicWallpaperSection
               wallpaper={wallpaper}
@@ -129,22 +137,15 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               onToggleDarkMode={onToggleDarkMode}
             />
           ) : activeTab === 'preset' ? (
-            <div className="space-y-6">
-              {/* 静态壁纸：置于渐变壁纸上方，一行 4 个 */}
-              <StaticWallpaperRow
+            <div className="space-y-4">
+              <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                渐变壁纸
+              </h3>
+              <GradientWallpaperGrid
                 wallpaper={wallpaper}
+                isDarkMode={isDarkMode}
                 onUpdateWallpaper={onUpdateWallpaper}
               />
-              <div className="space-y-4">
-                <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
-                  渐变壁纸
-                </h3>
-                <GradientWallpaperGrid
-                  wallpaper={wallpaper}
-                  isDarkMode={isDarkMode}
-                  onUpdateWallpaper={onUpdateWallpaper}
-                />
-              </div>
             </div>
           ) : activeTab === 'static' ? (
             <StaticWallpaperSection
@@ -213,9 +214,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                 </div>
               </div>
 
-              <p className="text-xs leading-relaxed ">
-                拖动或点击最前方卡片切换主题，也可用上方滑块手动微调，效果实时作用于桌面背景与顶部菜单栏。
-              </p>
+           
             </div>
           )}
         </div>

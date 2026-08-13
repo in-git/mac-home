@@ -27,6 +27,16 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   const [imgError, setImgError] = useState(false);
   const { showToast } = useToast();
   const coverSrc = item.cover || item.logo;
+  const coverImgRef = React.useRef<HTMLImageElement | null>(null);
+  const logoImgRef = React.useRef<HTMLImageElement | null>(null);
+
+  // 图片可能来自缓存：已缓存的图片不会触发 onLoad，需主动检查 complete 避免永远空白
+  React.useEffect(() => {
+    if (coverImgRef.current?.complete) setImgLoaded(true);
+  }, [coverSrc]);
+  React.useEffect(() => {
+    if (logoImgRef.current?.complete) setImgLoaded(true);
+  }, [item.logo]);
   return (
     <div
       onClick={() => onOpen(item)}
@@ -40,9 +50,11 @@ export const SiteCard: React.FC<SiteCardProps> = ({
               <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
             )}
             <img
+              ref={coverImgRef}
               src={coverSrc}
               alt={item.name}
               loading="lazy"
+              decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
               className={`h-full w-full object-cover group-hover:scale-105 transition-transform ${
@@ -117,9 +129,11 @@ export const SiteCard: React.FC<SiteCardProps> = ({
         <div className="flex items-center gap-2">
           {item.logo && !imgError ? (
             <img
+              ref={logoImgRef}
               src={item.logo}
               alt={item.name}
               loading="lazy"
+              decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
               className={`h-5 w-5 shrink-0 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10 ${

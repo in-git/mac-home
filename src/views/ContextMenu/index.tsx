@@ -166,9 +166,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     const Icon = item.icon;
 
     // Toggle-style item (e.g. "清屏") renders a checkmark on the right.
+    // 勾选表示「已清屏」（即桌面组件已隐藏）。
     if (item.isToggle) {
       const checked =
-        item.action === 'toggleDesktopIcons' ? showDesktopIcons : false;
+        item.action === 'toggleDesktopIcons' ? !showDesktopIcons : false;
       return (
         <React.Fragment key={item.id}>
           <button

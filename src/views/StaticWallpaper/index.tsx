@@ -20,8 +20,9 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
     });
   };
 
-  // 当前已选图片壁纸的标识（缩略图优先，回退原图），用于列表高亮
-  const selectedKey = wallpaper.imageUrl 
+  // 当前已选图片壁纸的标识（缩略图优先，回退原图），用于列表高亮。
+  // 卡片内部以 (thumbnailUrl ?? imageUrl) 作为比较键，这里保持一致。
+  const selectedKey = wallpaper.imageUrl ?? ''; 
 
   return (
     <div className="space-y-6">
