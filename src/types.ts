@@ -44,7 +44,6 @@ export type WidgetType =
   | 'clock-lunar'
   | 'shortcuts'
   | 'control-center'
-  | 'settings'
   | 'web-grid'
   | 'application'
   | 'banner';

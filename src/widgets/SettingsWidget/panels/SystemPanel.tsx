@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ToggleDot } from '../ToggleDot';
-import { confirm } from '@/utils/confirm';
+import { confirm } from '@/components/confirm';
 import type { SystemPanelProps } from '../types';
 
 /**

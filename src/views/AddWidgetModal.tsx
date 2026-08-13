@@ -1,21 +1,17 @@
 import {
-  AlarmClock,
-  Clock,
-  CloudSun,
-  Compass,
   Globe,
-  Moon,
-  Search,
   Settings,
-  SlidersHorizontal,
-  Sparkles,
-  StickyNote,
   X,
-  type LucideIcon,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getAddableWidgetsByCategory, getWidgetConfig, isWebGrid } from '../data/widgetConfig';
+import {
+  getAddableWidgetsByCategory,
+  getWidgetConfig,
+  isWebGrid,
+  WIDGET_ICONS,
+  WIDGET_ICON_BUBBLE,
+} from '../data/widgetConfig';
 import type { WidgetCategory } from '../data/widgetConfig';
 import type { SiteItem } from '../api/site';
 import { WebListPicker } from '../components/WebListPicker';
@@ -31,38 +27,6 @@ interface Props {
   onRemoveSite: (item: SiteItem) => void;
   widgets: WidgetItem[];
 }
-
-/** 每个小组件类型对应的细线性图标（遵循 Apple HIG 细线性图标风格） */
-const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
-  search: Search,
-  weather: CloudSun,
-  'sticky-notes': StickyNote,
-  clock: Clock,
-  'clock-mini': AlarmClock,
-  'clock-lunar': Moon,
-  shortcuts: Compass,
-  'control-center': SlidersHorizontal,
-  settings: Settings,
-  'web-grid': Globe,
-  application: Globe,
-  banner: Sparkles,
-};
-
-/** 图标气泡哑光底色（主色以主题色点缀） */
-const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
-  search: 'bg-[color:var(--accent)]/10 text-[color:var(--accent)]',
-  weather: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
-  'sticky-notes': 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  clock: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-  'clock-mini': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-  'clock-lunar': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-  shortcuts: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
-  'control-center': 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-  settings: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
-  'web-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
-  application: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
-  banner: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-};
 
 /** 界面文案集中配置（遵循 UI 规范：文本抽成变量，便于统一管理与复用） */
 const ADD_WIDGET_TEXT = {

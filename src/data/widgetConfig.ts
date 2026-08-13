@@ -1,3 +1,16 @@
+import {
+  AlarmClock,
+  Clock,
+  CloudSun,
+  Compass,
+  Globe,
+  Moon,
+  Search,
+  SlidersHorizontal,
+  Sparkles,
+  StickyNote,
+  type LucideIcon,
+} from 'lucide-react';
 import { WidgetSize, WidgetType, CardStyle } from '../types';
 import type { SiteItem } from '../api/site';
 import type { MouseEvent } from 'react';
@@ -34,34 +47,7 @@ export function getWidgetCategory(type: WidgetType): WidgetCategory {
   return WIDGET_CATEGORIES[type] ?? 'system';
 }
 
-export interface WidgetTypeConfig {
-  /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
-  title: string;
-  /** 最大安装数量，有些只能安装一次，所以用它限制 */
-  maxInstances: number;
-  /** Size applied to a newly created widget of this type. */
-  defaultSize: WidgetSize;
-  /** Sizes offered in the size picker for this type. */
-  sizeOptions: WidgetSize[];
-  /** Whether this type can be added from the "添加组件" modal. */
-  isAddable: boolean;
-  /** Emoji/glyph shown in the add-widget picker. */
-  glyph: string;
 
-  showHeader?: boolean;
-  /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-  /** 封面：组件封面图地址，可选。 */
-  cover?: string;
-  /** 是否可删除：为 false 时该类型组件不可被用户删除（默认 true）。 */
-  deletable?: boolean;
-  /** 快捷导航等组件的私有数据空间：存储 SiteItem[]（。 */
-  shortcuts?: SiteItem[];
-  /** 图标型组件（web-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem。 */
-  site?: SiteItem;
-  /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
-  cardStyle?: CardStyle;
-}
 
 /** 全局默认卡片样式（放大模态框等未单独配置时回退到此）。 */
 export const DEFAULT_CARD_STYLE: CardStyle = {
@@ -69,8 +55,45 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
   glass: true,
 };
 
-export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
-  search: {
+/**
+ * 组件类型配置。数组形式（单一数据源），每个元素含 `type` 主键。
+ * 字段统一按 type / title / maxInstances / defaultSize / sizeOptions /
+ * isAddable / glyph / showHeader / cardStyle 顺序声明，便于维护。
+ */
+export interface WidgetTypeConfig {
+  /** 组件类型标识（主键）。 */
+  type: WidgetType;
+  /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案。 */
+  title: string;
+  /** 最大安装数量，有些只能安装一次，所以用它限制。 */
+  maxInstances: number;
+  /** 新建该类型组件时应用的尺寸。 */
+  defaultSize: WidgetSize;
+  /** 尺寸选择器提供的可选尺寸。 */
+  sizeOptions: WidgetSize[];
+  /** 是否可从「添加组件」模态框添加。 */
+  isAddable: boolean;
+  /** 「添加组件」选择器中展示的 emoji / 图标。 */
+  glyph: string;
+  /** 是否显示卡片头部，缺省为 false。 */
+  showHeader?: boolean;
+  /** 卡片被点击（非编辑模式）时触发，接收点击事件对象。可选。 */
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  /** 封面图地址，可选。 */
+  cover?: string;
+  /** 是否可删除：为 false 时该类型组件不可被用户删除（默认 true）。 */
+  deletable?: boolean;
+  /** 快捷导航等组件的私有数据空间：存储 SiteItem[]。 */
+  shortcuts?: SiteItem[];
+  /** 图标型组件（web-grid）携带的站点数据。 */
+  site?: SiteItem;
+  /** 卡片外观样式集合（内边距、毛玻璃等）。 */
+  cardStyle?: CardStyle;
+}
+
+export const WIDGET_CONFIG: WidgetTypeConfig[] = [
+  {
+    type: 'search',
     title: '网络搜索',
     maxInstances: Infinity,
     defaultSize: '1/2',
@@ -79,7 +102,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🔍',
     showHeader: false,
   },
-  weather: {
+  {
+    type: 'weather',
     title: '天气预报',
     maxInstances: 1,
     defaultSize: '1/2',
@@ -88,7 +112,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⛅',
     showHeader: false,
   },
-  'sticky-notes': {
+  {
+    type: 'sticky-notes',
     title: '便签笔记',
     maxInstances: 1,
     defaultSize: '1/2',
@@ -97,7 +122,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '📝',
     showHeader: false,
   },
-  clock: {
+  {
+    type: 'clock',
     title: '时钟日历',
     maxInstances: 1,
     defaultSize: '1/4',
@@ -106,7 +132,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🕒',
     showHeader: false,
   },
-  'clock-mini': {
+  {
+    type: 'clock-mini',
     title: '时钟',
     maxInstances: 1,
     defaultSize: '1/4',
@@ -115,7 +142,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '⏰',
     showHeader: false,
   },
-  'clock-lunar': {
+  {
+    type: 'clock-lunar',
     title: '农历时钟',
     maxInstances: 1,
     defaultSize: '1/4',
@@ -125,10 +153,11 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     showHeader: false,
     cardStyle: {
       padding: 'p-4',
-      glass: false
+      glass: false,
     },
   },
-  'control-center': {
+  {
+    type: 'control-center',
     title: '控制中心',
     maxInstances: 1,
     defaultSize: '1/4',
@@ -137,7 +166,8 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🎛️',
     showHeader: false,
   },
-  'web-grid': {
+  {
+    type: 'web-grid',
     title: '网页',
     maxInstances: Infinity,
     defaultSize: '1/8',
@@ -147,11 +177,11 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
-      glass: false
+      glass: false,
     },
-    onClick(_event: MouseEvent<HTMLDivElement>){}
   },
-  shortcuts: {
+  {
+    type: 'shortcuts',
     title: '快捷导航',
     maxInstances: Infinity,
     defaultSize: '1/3',
@@ -160,9 +190,9 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     glyph: '🔗',
     shortcuts: [],
     showHeader: false,
-  
   },
-  banner: {
+  {
+    type: 'banner',
     title: 'Prismatic Burst',
     maxInstances: Infinity,
     defaultSize: '1/2',
@@ -172,10 +202,44 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
-      glass: false
+      glass: false,
     },
   },
+];
 
+/** type -> config 的快速查找表（由 WIDGET_CONFIG 派生）。 */
+const WIDGET_CONFIG_MAP: Record<string, WidgetTypeConfig> = Object.fromEntries(
+  WIDGET_CONFIG.map((cfg) => [cfg.type, cfg]),
+);
+
+/** 每个小组件类型对应的细线性图标（遵循 Apple HIG 细线性图标风格），UI 层统一从此处取用。 */
+export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
+  search: Search,
+  weather: CloudSun,
+  'sticky-notes': StickyNote,
+  clock: Clock,
+  'clock-mini': AlarmClock,
+  'clock-lunar': Moon,
+  shortcuts: Compass,
+  'control-center': SlidersHorizontal,
+  'web-grid': Globe,
+  application: Globe,
+  banner: Sparkles,
+};
+
+/** 图标气泡哑光底色（主色以主题色点缀），UI 层统一从此处取用。 */
+export const WIDGET_ICON_BUBBLE: Record<WidgetType, string> = {
+  search: 'bg-[color:var(--accent)]/10 text-[color:var(--accent)]',
+  weather: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
+  'sticky-notes': 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  clock: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  'clock-mini': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  'clock-lunar': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  shortcuts: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
+  'control-center': 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+  'web-grid': 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+  application: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+  banner: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
 };
 
 /**
@@ -184,6 +248,7 @@ export const WIDGET_CONFIG: Partial<Record<WidgetType, WidgetTypeConfig>> = {
  * canAddWidget 等调用在缺省类型下也能取得合理的 title、sizeOptions、maxInstances。
  */
 const FALLBACK_CONFIG: WidgetTypeConfig = {
+  type: 'unknown' as WidgetType,
   title: '组件',
   maxInstances: Infinity,
   defaultSize: '1/4',
@@ -195,7 +260,7 @@ const FALLBACK_CONFIG: WidgetTypeConfig = {
 
 /** Resolve the config for a widget type (falls back to a safe default). */
 export function getWidgetConfig(type: WidgetType): WidgetTypeConfig {
-  return WIDGET_CONFIG[type] ?? FALLBACK_CONFIG;
+  return WIDGET_CONFIG_MAP[type] ?? FALLBACK_CONFIG;
 }
 
 /**
@@ -206,9 +271,9 @@ export function executeWidgetClick(
   type: WidgetType,
   event: MouseEvent<HTMLDivElement>,
 ): boolean {
-  const entry = Object.entries(WIDGET_CONFIG).find(([t]) => t === type);
-  if (entry?.[1].onClick) {
-    entry[1].onClick(event);
+  const cfg = WIDGET_CONFIG_MAP[type];
+  if (cfg?.onClick) {
+    cfg.onClick(event);
     return true;
   }
   return false;
@@ -221,15 +286,15 @@ export function canAddWidget(type: WidgetType, currentCount: number): boolean {
 }
 
 /** Types that may be added from the "添加组件" modal. */
-export const ADDABLE_WIDGETS = Object.entries(WIDGET_CONFIG)
-  .filter(([, cfg]) => cfg.isAddable)
-  .map(([type, cfg]) => ({
-    type: type as WidgetType,
+export const ADDABLE_WIDGETS = WIDGET_CONFIG.filter((cfg) => cfg.isAddable).map(
+  (cfg) => ({
+    type: cfg.type,
     glyph: cfg.glyph,
     label: cfg.title,
     // 分类由集中映射决定（缺省为 'system'）。
-    category: getWidgetCategory(type as WidgetType),
-  }));
+    category: getWidgetCategory(cfg.type),
+  }),
+);
 
 /** Get addable widgets filtered by category. */
 export function getAddableWidgetsByCategory(category: WidgetCategory) {

@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { ContextMenu, ContextMenuPosition } from './components/ContextMenu';
+import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { MuuriDashboard } from './components/MuuriDashboard';
 import { TopBar } from './components/TopBar';

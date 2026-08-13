@@ -33,6 +33,11 @@ export const SettingsWidget: React.FC<{
     setAiConfig,
     petAutoActivity,
     setPetAutoActivity,
+    updateWallpaper,
+    setScreenBrightness,
+    setWeatherCities,
+    setSelectedCityId,
+    setLastLocation,
   } = useHomeStore(
     useShallow((s) => ({
       isDarkMode: s.isDarkMode,
@@ -55,6 +60,11 @@ export const SettingsWidget: React.FC<{
       setAiConfig: s.setAiConfig,
       petAutoActivity: s.petAutoActivity,
       setPetAutoActivity: s.setPetAutoActivity,
+      updateWallpaper: s.updateWallpaper,
+      setScreenBrightness: s.setScreenBrightness,
+      setWeatherCities: s.setWeatherCities,
+      setSelectedCityId: s.setSelectedCityId,
+      setLastLocation: s.setLastLocation,
     })),
   );
 
@@ -84,17 +94,38 @@ export const SettingsWidget: React.FC<{
       setImportMsg({ type: 'error', text: '仅支持 .json 配置文件' });
       return;
     }
-    file
-      .text()
-      .then((text) => {
+    const run = async () => {
+      try {
+        const text = await file.text();
         try {
-          const { widgets: w, notes: n } = parseImport(text);
+          const cfg = parseImport(text);
+          const { widgets: w, notes: n } = cfg;
           setWidgets(w);
           updateNotes(n);
+          if (cfg.wallpaper) updateWallpaper(cfg.wallpaper);
+          if (cfg.isDarkMode !== undefined) setDarkMode(cfg.isDarkMode);
+          if (cfg.themeColor !== undefined) setThemeColor(cfg.themeColor);
+          if (cfg.soundEnabled !== undefined) setSoundEnabled(cfg.soundEnabled);
+          if (cfg.fontVariant !== undefined) setFontVariant(cfg.fontVariant);
+          if (cfg.cardRadius !== undefined) setCardRadius(cfg.cardRadius);
+          if (cfg.screenBrightness !== undefined)
+            setScreenBrightness(cfg.screenBrightness);
+          if (cfg.aiConfig !== undefined) setAiConfig(cfg.aiConfig);
+          if (cfg.petAutoActivity !== undefined)
+            setPetAutoActivity(cfg.petAutoActivity);
+          if (cfg.weatherCities !== undefined)
+            setWeatherCities(cfg.weatherCities);
+          if (cfg.selectedCityId !== undefined)
+            setSelectedCityId(cfg.selectedCityId);
+          if (cfg.lastLocation !== undefined) setLastLocation(cfg.lastLocation);
 
+          const parts = [`${w.length} 个组件`, `${n.length} 条便签`];
+          if (cfg.wallpaper) parts.push('桌面背景');
+          if (cfg.themeColor || cfg.isDarkMode !== undefined)
+            parts.push('外观设置');
           setImportMsg({
             type: 'success',
-            text: `已导入 ${w.length} 个组件、${n.length} 条便签`,
+            text: `已导入 ${parts.join('、')}`,
           });
         } catch (err) {
           setImportMsg({
@@ -102,8 +133,11 @@ export const SettingsWidget: React.FC<{
             text: err instanceof Error ? err.message : '导入失败',
           });
         }
-      })
-      .catch(() => setImportMsg({ type: 'error', text: '读取文件失败' }));
+      } catch {
+        setImportMsg({ type: 'error', text: '读取文件失败' });
+      }
+    };
+    run();
   };
 
   // Keep the sound engine's master switch in sync with persisted state.
@@ -129,14 +163,28 @@ export const SettingsWidget: React.FC<{
     setTimeout(() => setJustResetSystem(false), 1500);
   };
 
-  // 导出布局：将当前组件顺序、尺寸与便签序列化为 JSON 下载
+  // 导出布局：将本地存储的全部持久化数据（组件、壁纸、便签、外观、主题、音效、字体、圆角、
+  // 亮度、AI 配置、桌宠、天气城市与定位等）序列化为 JSON 下载。
   const handleExport = () => {
+    const s = useHomeStore.getState();
     const payload = {
       app: 'macOS 主页',
       version: 1,
       exportedAt: new Date().toISOString(),
-      widgets,
-      notes,
+      widgets: s.widgets,
+      wallpaper: s.wallpaper,
+      notes: s.notes,
+      isDarkMode: s.isDarkMode,
+      themeColor: s.themeColor,
+      soundEnabled: s.soundEnabled,
+      fontVariant: s.fontVariant,
+      cardRadius: s.cardRadius,
+      screenBrightness: s.screenBrightness,
+      aiConfig: s.aiConfig,
+      petAutoActivity: s.petAutoActivity,
+      weatherCities: s.weatherCities,
+      selectedCityId: s.selectedCityId,
+      lastLocation: s.lastLocation,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: 'application/json;charset=utf-8',
