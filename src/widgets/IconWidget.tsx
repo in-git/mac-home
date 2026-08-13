@@ -23,7 +23,6 @@ export function IconWidget({ editing, size = '1/8', site }: IconWidgetProps) {
   const label = site?.name ?? DEFAULT_ICON.label;
   const iconOnly = ICON_ONLY_SIZES.has(size);
 
-  const bgStyle = site?.background ? { backgroundColor: site.background } : undefined;
 
   return (
     <button
@@ -44,7 +43,9 @@ export function IconWidget({ editing, size = '1/8', site }: IconWidgetProps) {
         <Rocket className="leading-none" strokeWidth={1.75} />
       )}
       {!iconOnly && (
-        <span className="max-w-full truncate">{label}</span>
+        <span className="max-w-full truncate mix-blend-difference text-white">
+          {label}
+        </span>
       )}
     </button>
   );

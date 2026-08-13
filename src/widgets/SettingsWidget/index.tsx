@@ -28,8 +28,6 @@ export const SettingsWidget: React.FC<{
     updateNotes,
     widgets,
     notes,
-    wallpaper,
-    updateWallpaper,
     resetAll,
     aiConfig,
     setAiConfig,
@@ -52,8 +50,6 @@ export const SettingsWidget: React.FC<{
       updateNotes: s.updateNotes,
       widgets: s.widgets,
       notes: s.notes,
-      wallpaper: s.wallpaper,
-      updateWallpaper: s.updateWallpaper,
       resetAll: s.resetAll,
       aiConfig: s.aiConfig,
       setAiConfig: s.setAiConfig,
@@ -88,14 +84,13 @@ export const SettingsWidget: React.FC<{
       setImportMsg({ type: 'error', text: '仅支持 .json 配置文件' });
       return;
     }
-    const run = async () => {
-      try {
-        const text = await file.text();
+    file
+      .text()
+      .then((text) => {
         try {
-          const { widgets: w, notes: n, wallpaper: wp } = parseImport(text);
+          const { widgets: w, notes: n } = parseImport(text);
           setWidgets(w);
           updateNotes(n);
-          if (wp) updateWallpaper(wp);
 
           setImportMsg({
             type: 'success',
@@ -107,11 +102,8 @@ export const SettingsWidget: React.FC<{
             text: err instanceof Error ? err.message : '导入失败',
           });
         }
-      } catch {
-        setImportMsg({ type: 'error', text: '读取文件失败' });
-      }
-    };
-    run();
+      })
+      .catch(() => setImportMsg({ type: 'error', text: '读取文件失败' }));
   };
 
   // Keep the sound engine's master switch in sync with persisted state.
@@ -145,7 +137,6 @@ export const SettingsWidget: React.FC<{
       exportedAt: new Date().toISOString(),
       widgets,
       notes,
-      wallpaper,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: 'application/json;charset=utf-8',

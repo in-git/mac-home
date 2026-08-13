@@ -34,9 +34,12 @@ type BaseWidgetSeed = {
   data?: Record<string, unknown>;
 };
 
-// data.json 为运行期数据，其字段值（type / size / backgroundTheme 等）实际符合对应联合类型，
-// 这里统一断言一次，避免逐字段重复转换。
-const BASE_WIDGETS: BaseWidgetSeed[] = dataJson.widgets as unknown as BaseWidgetSeed[];
+const BASE_WIDGETS: BaseWidgetSeed[] = dataJson.widgets.map((w) => ({
+  ...w,
+  type: w.type as WidgetType,
+  size: w.size as WidgetItem['size'],
+  sizeOptions: w.sizeOptions as WidgetSize[] | undefined,
+}));
 
 export const PRESET_DATA = {
   DEFAULT_WALLPAPER,
@@ -59,7 +62,7 @@ export const PRESET_DATA = {
         ...cfg.cardStyle,
         // 以 data.json 中的 cardStyle（含 background / backgroundTheme）为准
         ...(w.cardStyle ?? {}),
-      } as CardStyle,
+      } as WidgetCardStyle,
       data: w.data ?? {},
     } as WidgetItem;
   }),

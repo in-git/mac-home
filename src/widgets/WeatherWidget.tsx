@@ -85,22 +85,20 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
   useEffect(() => {
     if (!selectedCity) return;
     let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchWeather(selectedCity);
-        if (cancelled) return;
-        setWeather(data);
-      } catch {
+    setLoading(true);
+    setError(null);
+    fetchWeather(selectedCity)
+      .then((data) => {
+        if (!cancelled) setWeather(data);
+      })
+      .catch(() => {
         if (cancelled) return;
         setError('实时天气获取失败，显示离线数据');
         setWeather(PRESET_DATA.PRESET_WEATHER[selectedCity.name] ?? null);
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setLoading(false);
-      }
-    };
-    load();
+      });
     return () => {
       cancelled = true;
     };
@@ -126,18 +124,11 @@ export const WeatherWidget: React.FC<{ onWeatherChange?: (s: WeatherSummary) => 
       return;
     }
     const timer = window.setTimeout(() => {
-      const run = async () => {
-        setSearching(true);
-        try {
-          const results = await searchCity(searchQuery.trim());
-          setSearchResults(results);
-        } catch {
-          setSearchResults([]);
-        } finally {
-          setSearching(false);
-        }
-      };
-      run();
+      setSearching(true);
+      searchCity(searchQuery.trim())
+        .then((results) => setSearchResults(results))
+        .catch(() => setSearchResults([]))
+        .finally(() => setSearching(false));
     }, 300);
     return () => window.clearTimeout(timer);
   }, [searchQuery]);

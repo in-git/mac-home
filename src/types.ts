@@ -214,15 +214,7 @@ export interface WeatherCondition {
   }[];
 }
 
-export interface SystemStatus {
-  isDarkMode: boolean;
-  volume: number;
-  brightness: number;
-  cpuUsage: number;
-  memoryUsage: number;
-  soundEnabled: boolean;
-  isLayoutLocked: boolean;
-}
+
 
 export interface ToolTask {
   name: string;
