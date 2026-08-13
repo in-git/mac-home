@@ -128,6 +128,7 @@ export default function App() {
   };
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [showDesktopIcons, setShowDesktopIcons] = useState<boolean>(true);
   const mainRef = useRef<HTMLElement>(null);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] =
     useState<boolean>(false);
@@ -159,6 +160,10 @@ export default function App() {
   // B 端 WebSocket 对接：监听用户上线事件并让桌宠气泡提示。
   // 详见 md/B端WebSocket对接文档.md。
   useBwsConnection();
+
+  // 「显示桌面图标」关闭时，隐藏桌面上的所有组件（整个仪表盘），
+  // 直接传空数组，确保 Muuri 同步能正确清空所有卡片。
+  const dashboardWidgets = showDesktopIcons ? widgets : [];
 
   // Main Right Click Handler
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -239,7 +244,7 @@ export default function App() {
         >
           {/* Muuri Grid Layout Engine */}
           <MuuriDashboard
-            widgets={widgets}
+            widgets={dashboardWidgets}
             onUpdateWidgetOrder={setWidgets}
             onDeleteWidget={deleteWidget}
             onResizeWidget={resizeWidget}
@@ -282,6 +287,8 @@ export default function App() {
         onOpenWallpaper={openWallpaperModal}
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
+        showDesktopIcons={showDesktopIcons}
+        onToggleDesktopIcons={() => setShowDesktopIcons((v) => !v)}
       />
 
       {/* Wallpaper Setting Modal */}

@@ -78,10 +78,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     const target = e.target as HTMLElement;
     if (target.closest('[data-no-drag]')) return;
     if (executeWidgetClick(widget.type, e)) return;
-    if (widget.type === 'settings') {
-      setSettingsModalOpen(true);
-      return;
-    }
+
     const iconGrid = target.closest('[data-icon-grid]');
     if (!iconGrid) return;
     // web-grid 默认值（无站点）= 系统设置，点击弹出设置模态框

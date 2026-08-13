@@ -1,4 +1,5 @@
 import {
+  Eye,
   Image as ImageIcon,
   Lock,
   Palette,
@@ -36,7 +37,8 @@ export type ContextMenuAction =
   | 'changeBackground'
   | 'editIcon'
   | 'editWidgetConfig'
-  | 'removeWidget';
+  | 'removeWidget'
+  | 'toggleDesktopIcons';
 
 export interface ContextMenuItemConfig {
   id: string;
@@ -49,6 +51,8 @@ export interface ContextMenuItemConfig {
   showOnlyWhenEditLocked?: boolean;
   /** 该项下方是否渲染分隔线。 */
   dividerAfter?: boolean;
+  /** 带勾选标记的开关型条目（如「显示桌面图标」）。 */
+  isToggle?: boolean;
 }
 
 /**
@@ -118,6 +122,13 @@ export const DESKTOP_CONTEXT_MENU: ContextMenuItemConfig[] = [
     icon: Lock,
     action: 'toggleEditMode',
     showOnlyWhenEditLocked: true,
+  },
+  {
+    id: 'toggle-desktop-icons',
+    label: '显示桌面图标',
+    icon: Eye,
+    action: 'toggleDesktopIcons',
+    isToggle: true,
   },
 ];
 

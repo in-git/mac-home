@@ -95,7 +95,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
           <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
             字号
           </div>
-          <div className="mb-4 grid grid-cols-4 gap-2.5">
+          <div className="mb-4 grid grid-cols-3 gap-2.5">
             {CLOCK_FONT_SIZES.map((s) => (
               <button
                 key={s.label}

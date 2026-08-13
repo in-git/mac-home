@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Check } from 'lucide-react';
 import {
   ContextMenuAction,
   ContextMenuItemConfig,
@@ -28,6 +29,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onOpenWallpaper,
   onOpenAddWidget,
   onOpenSettings,
+  showDesktopIcons,
+  onToggleDesktopIcons,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -114,6 +117,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           onClick: () => targetWidget && onDeleteWidget(targetWidget.id),
           visible: !!targetWidget,
         };
+      case 'toggleDesktopIcons':
+        return {
+          onClick: onToggleDesktopIcons,
+          visible: !targetWidget,
+        };
 
       default:
         return null;
@@ -156,6 +164,32 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     }
 
     const Icon = item.icon;
+
+    // Toggle-style item (e.g. "显示桌面图标") renders a checkmark on the right.
+    if (item.isToggle) {
+      const checked =
+        item.action === 'toggleDesktopIcons' ? showDesktopIcons : false;
+      return (
+        <React.Fragment key={item.id}>
+          <button
+            onClick={() => {
+              resolved.onClick();
+              onClose();
+            }}
+            className="w-full px-3 py-2.5 rounded-[var(--card-radius)] flex items-center space-x-3 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            <Icon size={18} className="text-[color:var(--accent)]" />
+            <span className="text-font-md flex-1">{item.label}</span>
+            {checked && (
+              <Check size={16} className="text-[color:var(--accent)]" />
+            )}
+          </button>
+          {item.dividerAfter && (
+            <div className="my-1 border-t border-black/5 dark:border-white/10" />
+          )}
+        </React.Fragment>
+      );
+    }
 
     return (
       <React.Fragment key={item.id}>
