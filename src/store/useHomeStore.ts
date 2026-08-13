@@ -228,18 +228,10 @@ export const useHomeStore = create<HomeState>()(
       resetAll: () => {
         set({
           widgets: PRESET_DATA.INITIAL_WIDGETS,
-          wallpaper: PRESET_DATA.DEFAULT_WALLPAPER,
+          wallpaper: PRESET_DATA.INITIAL_WALLPAPER,
           notes: PRESET_DATA.INITIAL_NOTES,
-          isDarkMode:
-            window.matchMedia &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches,
-          themeColor: '#007AFF',
-          soundEnabled: true,
-          fontVariant: 'A',
-          cardRadius: 'large',
-          screenBrightness: 100,
-          aiConfig: DEFAULT_AI_CONFIG,
-          petAutoActivity: false,
+          // 其余系统配置整体恢复为 data.json 中的默认值
+          ...PRESET_DATA.INITIAL_CONFIG,
         });
       },
 

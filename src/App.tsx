@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
-import { MuuriDashboard } from './components/MuuriDashboard';
+import { MuuriDashboard } from './views/MuuriDashboard';
 import { TopBar } from './components/TopBar';
 import { getStoredUser, LoginUser } from './api/auth';
 import { siteApi, SiteItem } from './api/site';

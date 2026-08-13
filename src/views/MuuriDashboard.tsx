@@ -5,8 +5,8 @@ import {
   getWidgetConfig,
 } from '../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem, WidgetSize } from '../types';
-import { SettingsModal } from '../views/SettingsModal';
-import { WidgetCard } from './dashboard/WidgetCard';
+import { SettingsModal } from './SettingsModal';
+import { WidgetGrid } from './MuuriDashboard/WidgetGrid';
 
 interface MuuriDashboardProps {
   widgets: WidgetItem[];
@@ -134,11 +134,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
       });
 
       muuriInstanceRef.current = grid;
-
-      // 卡片内容高度变化（便签输入、图标网格增减、异步组件/图片加载完成等）
-      // 会改变 .muuri-item 的实际高度，但 Muuri 不会自动重新测量，导致框架
-      // 之间的间距 / 位置错乱。用 ResizeObserver 监听每个 item 的尺寸，
-      // 高度变化后重新测量并布局，使框架间距始终与卡片高度保持一致。
       const ro = new ResizeObserver(() => {
         const container = containerRef.current;
         if (
@@ -226,22 +221,15 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
     };
   }, []);
 
-  // Keep the live edit-mode ref in sync so the dragStartPredicate can gate
-  // dragging without recreating the grid or calling any Muuri instance method.
+
   useEffect(() => {
     isEditModeRef.current = isEditMode;
   }, [isEditMode]);
 
-  // 同步最新 widgets 引用，供 dragEnd 闭包读取，避免用初始化时的过时快照
-  // 重建数组、把用户拖拽前已做的 resize 等修改覆盖回初始值。
   useEffect(() => {
     widgetsRef.current = widgets;
   }, [widgets]);
 
-  // Sync Muuri's items with React's widgets (add/remove/resize) from outside
-  // drag. Crucially, removed widgets must be removed from Muuri too — otherwise
-  // Muuri keeps a dangling reference to the detached DOM node and re-inserts it
-  // on the next layout (the "deleted widget comes back" bug).
   useEffect(() => {
     if (!muuriInstanceRef.current) return;
     const grid = muuriInstanceRef.current;
@@ -294,31 +282,26 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   return (
     <div className="w-full relative h-full">
       {/* Muuri Container */}
-      <div ref={containerRef} className="muuri-grid relative w-full h-full p-2">
-        {widgets.map((widget) => (
-          <WidgetCard
-            key={widget.id}
-            widget={widget}
-            isEditMode={isEditMode}
-            notes={notes}
-            onUpdateNotes={onUpdateNotes}
-            isDarkMode={isDarkMode}
-            onToggleDarkMode={onToggleDarkMode}
-            onWeatherChange={onWeatherChange}
-            enableHeadlessModal={enableHeadlessModal}
-            expandedWidgetId={expandedWidgetId}
-            onCycleSize={cycleWidgetSize}
-            onDeleteWidget={onDeleteWidget}
-            onExpand={setExpandedWidgetId}
-            onClick={handleCardClick}
-            onContextMenuWidget={onContextMenuWidget}
-            onLongPressEdit={onToggleEditMode}
-            onUpdateWidget={onUpdateWidget}
-          />
-        ))}
-      </div>
+      <WidgetGrid
+        containerRef={containerRef}
+        widgets={widgets}
+        isEditMode={isEditMode}
+        notes={notes}
+        onUpdateNotes={onUpdateNotes}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={onToggleDarkMode}
+        onWeatherChange={onWeatherChange}
+        enableHeadlessModal={enableHeadlessModal}
+        expandedWidgetId={expandedWidgetId}
+        onCycleSize={cycleWidgetSize}
+        onDeleteWidget={onDeleteWidget}
+        onExpand={setExpandedWidgetId}
+        onClick={handleCardClick}
+        onContextMenuWidget={onContextMenuWidget}
+        onLongPressEdit={onToggleEditMode}
+        onUpdateWidget={onUpdateWidget}
+      />
 
- 
       {/* 设置弹窗：复用全局 SettingsModal（左右布局 + 三选项卡） */}
       {settingsModalOpen && (
         <SettingsModal
@@ -326,8 +309,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
           onClose={() => setSettingsModalOpen(false)}
         />
       )}
-
-   
     </div>
   );
 };

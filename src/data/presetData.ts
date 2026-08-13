@@ -1,11 +1,16 @@
 import {
+  AIConfig,
+  CardRadiusTier,
   CardStyle,
+  FontVariant,
   StickyNote,
+  WallpaperConfig,
   WeatherCondition,
   WidgetItem,
   WidgetSize,
   WidgetType,
 } from '../types';
+import { WeatherCity } from '../utils/weatherApi';
 import dataJson from './data.json';
 import {
   DEFAULT_WALLPAPER,
@@ -39,6 +44,8 @@ const BASE_WIDGETS: BaseWidgetSeed[] = dataJson.widgets.map((w) => ({
   type: w.type as WidgetType,
   size: w.size as WidgetItem['size'],
   sizeOptions: w.sizeOptions as WidgetSize[] | undefined,
+  // JSON 导入的字符串被推断为宽类型（如 padding: string），需断言为 CardStyle 才能赋给 BaseWidgetSeed
+  cardStyle: w.cardStyle as Partial<CardStyle> | undefined,
 }));
 
 export const PRESET_DATA = {
@@ -62,7 +69,7 @@ export const PRESET_DATA = {
         ...cfg.cardStyle,
         // 以 data.json 中的 cardStyle（含 background / backgroundTheme）为准
         ...(w.cardStyle ?? {}),
-      } as WidgetCardStyle,
+      } as CardStyle,
       data: w.data ?? {},
     } as WidgetItem;
   }),
@@ -70,4 +77,20 @@ export const PRESET_DATA = {
   INITIAL_NOTES: dataJson.notes as StickyNote[],
 
   PRESET_WEATHER: {} as Record<string, WeatherCondition>,
+
+  // 系统默认配置（完整导出格式，来自 src/data/data.json）：重置系统时整体恢复为以下值。
+  INITIAL_WALLPAPER: dataJson.wallpaper as WallpaperConfig,
+  INITIAL_CONFIG: {
+    isDarkMode: dataJson.isDarkMode,
+    themeColor: dataJson.themeColor,
+    soundEnabled: dataJson.soundEnabled,
+    fontVariant: dataJson.fontVariant as FontVariant,
+    cardRadius: dataJson.cardRadius as CardRadiusTier,
+    screenBrightness: dataJson.screenBrightness,
+    aiConfig: dataJson.aiConfig as AIConfig,
+    petAutoActivity: dataJson.petAutoActivity,
+    weatherCities: dataJson.weatherCities as WeatherCity[],
+    selectedCityId: dataJson.selectedCityId,
+    lastLocation: dataJson.lastLocation,
+  },
 };
