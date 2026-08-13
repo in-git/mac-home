@@ -19,7 +19,7 @@ interface IconWidgetProps {
   site?: SiteItem;
 }
 
-export function IconWidget({ editing, size = '1/8', site }: IconWidgetProps) {
+export function IconWidget({ size = '1/12', site }: IconWidgetProps) {
   const label = site?.name ?? DEFAULT_ICON.label;
   const iconOnly = ICON_ONLY_SIZES.has(size);
 
@@ -27,23 +27,24 @@ export function IconWidget({ editing, size = '1/8', site }: IconWidgetProps) {
   return (
     <button
       type="button"
-      disabled={editing}
       title={label}
-     
-      className=" group !pointer-events-auto   flex h-full w-full flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-200  active:scale-95 disabled:cursor-default"
+      className=" group !pointer-events-auto   flex h-full w-full flex-col items-center justify-center gap-1   disabled:cursor-default"
     >
       {site?.logo ? (
-        <img
-          src={site.logo}
-          alt={label}
-          title={label}
-          className="h-full w-full object-cover rounded-[var(--card-radius)] overflow-hidden"
-        />
+        /* 外层 div 通过 flex-1 占据剩余高度，图片加载失败时也不会塌陷 */
+        <div className="flex-1 min-h-0 w-full h-full aspect-square  rounded-[var(--card-radius)] overflow-hidden" style={{ background: site.background || 'transparent'  }}>
+          <img
+            src={site.logo}
+            alt={label}
+            title={label}
+            className="h-full  w-full object-cover  "
+          />
+        </div>
       ) : (
         <Rocket className="leading-none" strokeWidth={1.75} />
       )}
       {!iconOnly && (
-        <span className="max-w-full truncate mix-blend-difference text-white">
+        <span className="truncate text-slate-300">
           {label}
         </span>
       )}

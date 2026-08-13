@@ -41,20 +41,20 @@ const ADD_WIDGET_TEXT = {
 /** 侧边栏分类配置 */
 const CATEGORIES: { id: WidgetCategory; label: string; icon: React.ReactNode }[] = [
   {
-    id: 'system',
-    label: ADD_WIDGET_TEXT.categorySystem,
-    icon: (
-      <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-sky-400 to-indigo-500 text-white">
-        <Settings size={15} />
-      </span>
-    ),
-  },
-  {
     id: 'web',
     label: ADD_WIDGET_TEXT.categoryWeb,
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-emerald-400 to-teal-500 text-white">
         <Globe size={15} />
+      </span>
+    ),
+  },
+  {
+    id: 'system',
+    label: ADD_WIDGET_TEXT.categorySystem,
+    icon: (
+      <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-sky-400 to-indigo-500 text-white">
+        <Settings size={15} />
       </span>
     ),
   },
@@ -72,12 +72,12 @@ export const AddWidgetModal: React.FC<Props> = ({
 }) => {
   const [mounted, setMounted] = useState(isOpen);
   const [visible, setVisible] = useState(isOpen);
-  const [activeCategory, setActiveCategory] = useState<WidgetCategory>('system');
+  const [activeCategory, setActiveCategory] = useState<WidgetCategory>('web');
 
   useEffect(() => {
     if (isOpen) {
       setMounted(true);
-      setActiveCategory('system');
+      setActiveCategory('web');
       const raf = window.requestAnimationFrame(() => setVisible(true));
       return () => window.cancelAnimationFrame(raf);
     }

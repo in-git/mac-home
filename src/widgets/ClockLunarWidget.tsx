@@ -4,7 +4,7 @@ import { getLunarDateText } from '../utils/lunar';
 import { WidgetItem } from '../types';
 
 // 农历时钟小组件：顶部显示当前时间，下方显示日期、星期与农历日期。
-// 支持通过 widget.data.clockFont 自定义顶部数字时间与下方文字的颜色 / 字号。
+// 支持通过 widget.data 自定义顶部数字时间与下方文字的颜色 / 字号 / 是否加粗。
 export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
   widget,
 }) => {
@@ -34,20 +34,21 @@ export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
 
   const lunarText = getLunarDateText(time);
 
-  // 农历时钟字体自定义：color 作用于顶部时间与下方文字，size 作用于顶部数字时间字号。
-  const clockFont = widget?.data?.clockFont;
+  // 农历时钟字体自定义：color 作用于顶部时间与下方文字，size 作用于顶部数字时间字号，bold 仅作用于数字时间。
+  const { color, size, bold } = widget?.data ?? {};
   const timeStyle: React.CSSProperties = {
-    color: clockFont?.color,
-    fontSize: clockFont?.size,
+    color,
+    fontSize: size,
+    fontWeight: bold ?? true ? 800 : 400,
   };
-  const textColorStyle = clockFont?.color ? { color: clockFont.color } : undefined;
+  const textColorStyle = color ? { color } : undefined;
 
   return (
     <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none text-white ">
       {/* 顶部：当前时间 */}
       <div className="text-center">
         <div
-          className="font-extrabold tracking-tight font-mono leading-none tabular-nums"
+          className="tracking-tight font-mono leading-none tabular-nums"
           style={timeStyle}
         >
           {formattedTime}

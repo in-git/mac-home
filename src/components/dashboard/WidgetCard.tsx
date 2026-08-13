@@ -132,8 +132,15 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
               </span>
 
               {/* Controls (right): window dots + drag handle. Hidden by default,
-                shown on card hover (the card uses the `group` class). */}
-              <div className="flex items-center space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
+                  shown on card hover (the card uses the `group` class).
+                  快捷导航 (shortcuts) 常显，不做 hover 浮现。 */}
+              <div
+                className={`flex items-center space-x-2 ${
+                  widget.type === 'shortcuts'
+                    ? ''
+                    : 'opacity-0 transition-opacity group-hover:opacity-100'
+                }`}
+              >
                 <div className="flex space-x-1.5 items-center">
                   {/* Green dot → left click cycles size, right click deletes.
                       Hidden when the widget has only one size option. */}

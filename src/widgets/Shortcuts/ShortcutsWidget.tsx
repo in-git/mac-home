@@ -43,7 +43,24 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
             <div
                 className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
             >
-                <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
+                {shortcuts.length === 0 ? (
+                    /* 空态：提示用户添加网页 */
+                    <div className="flex h-full min-h-24 flex-col items-center justify-center gap-3 py-6 text-center">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            还没有添加网页，点击下方按钮添加
+                        </p>
+                        <button
+                            data-no-drag
+                            type="button"
+                            onClick={onAddClick}
+                            className="flex items-center gap-1.5 rounded-full bg-[color:var(--accent)] px-4 py-1.5 text-sm font-medium text-white shadow-xs transition-colors hover:opacity-90 active:scale-95"
+                        >
+                            <Plus size={16} />
+                            添加网页
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-3 @sm:grid-cols-4 @md:grid-cols-6 @lg:grid-cols-6 @xl:grid-cols-10 @2xl:grid-cols-12 gap-3">
                     {shortcuts.map((item) => (
                             <a
                                 key={item.id || item.link}
@@ -51,7 +68,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                                 target="_blank"
                                 rel="noreferrer"
                                 onClick={() => onOpen(item)}
-                                className="group relative flex flex-col rounded-[var(--card-radius)] transition-colors shadow-xs text-center aspect-square"
+                                className="relative flex flex-col rounded-[var(--card-radius)] transition-colors shadow-xs text-center "
                             >
                                 <ShortcutTile
                                     item={item}
@@ -70,6 +87,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                             <Plus size={28} />
                         </button>
                     </div>
+                )}
             </div>
         </div>
     );

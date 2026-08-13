@@ -115,7 +115,7 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
 
   return (
     <div>
-      <div className="relative h-[240px] bg-black">
+      <div className="relative h-[340px] bg-black">
         <DepthCarousel
           items={items}
           initialIndex={initialIndex}
@@ -129,7 +129,7 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
           blur={5}
           autoplay={false}
           loop
-          cardWidth={250}
+          cardWidth={150}
           cardHeight={300}
           radius={20}
           tint="#05060a"
@@ -148,7 +148,7 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
           }}
         />
       </div>
-      <div className="mt-2.5 flex min-h-[18px] items-center gap-2 px-1">
+      <div className="mt-2.5 flex min-h-[18px] items-center gap-2 px-1 dark:bg-black bg-white p-4 justify-center">
         {isApplied ? (
           <span className="shrink-0 rounded-full bg-[color:var(--accent)] px-2 py-0.5 text-font-sm font-semibold text-white">
             当前
@@ -158,10 +158,10 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
             预览
           </span>
         )}
-        <span className="shrink-0 text-sm font-medium text-slate-700 dark:text-slate-200">
+        <span className="shrink-0  font-medium text-slate-700 dark:text-slate-200">
           {active.name}
         </span>
-        <span className="truncate text-xs  dark:text-slate-500">
+        <span className="truncate   dark:text-slate-500">
           {active.desc}
         </span>
       </div>

@@ -247,6 +247,8 @@ interface MediaProps {
   textColor: string;
   borderRadius?: number;
   font?: string;
+  /** >0 时按可见张数反推卡片尺寸，使可见张数≈该值（仍保留无限循环） */
+  visibleCount?: number;
 }
 
 class Media {
@@ -265,6 +267,7 @@ class Media {
   textColor: string;
   borderRadius: number;
   font?: string;
+  visibleCount?: number;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -291,7 +294,8 @@ class Media {
     bend,
     textColor,
     borderRadius = 0,
-    font
+    font,
+    visibleCount
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -307,6 +311,7 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.visibleCount = visibleCount;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -458,10 +463,17 @@ class Media {
       }
     }
     this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    if (this.visibleCount && this.visibleCount > 0) {
+      // 反推尺寸：让约 visibleCount 张卡片铺满 viewport 宽度，保留无限循环。
+      this.plane.scale.x = this.viewport.width / this.visibleCount;
+      this.plane.scale.y = (this.plane.scale.x * 900) / 700;
+    } else {
+      this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
+      this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    }
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
-    this.padding = 2;
+    // 间距按卡片尺寸等比缩放，保证 visibleCount 模式下卡片之间留白合理。
+    this.padding = (this.visibleCount && this.visibleCount > 0 ? this.plane.scale.x * 0.06 : 2);
     this.width = this.plane.scale.x + this.padding;
     this.widthTotal = this.width * this.length;
     this.x = this.width * this.index;
@@ -480,6 +492,8 @@ interface AppConfig {
   onActiveChange?: (index: number) => void;
   /** 动画真正停止后触发，传入最终停留的卡片索引。用于"等轮播停下再应用"的场景。 */
   onSettle?: (index: number) => void;
+  /** >0 时按可见张数反推卡片尺寸，使可见张数≈该值（仍保留无限循环） */
+  visibleCount?: number;
 }
 
 class App {
@@ -507,6 +521,8 @@ class App {
   itemCount: number = 0;
   activeIndex: number = -1;
   onSettle?: (index: number) => void;
+  /** >0 时按可见张数反推卡片尺寸，使可见张数≈该值（仍保留无限循环） */
+  visibleCount?: number;
   /** activeIndex 变化后置 true，等动画停止后消费一次 onSettle。 */
   pendingSettle: boolean = false;
   /** 连续稳定帧数计数，用于确认动画已停止。 */
@@ -534,7 +550,8 @@ class App {
       scrollEase = 0.05,
       initialIndex,
       onActiveChange,
-      onSettle
+      onSettle,
+      visibleCount
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
@@ -543,6 +560,7 @@ class App {
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onActiveChange = onActiveChange;
     this.onSettle = onSettle;
+    this.visibleCount = visibleCount;
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -595,6 +613,7 @@ class App {
     borderRadius: number,
     font: string
   ) {
+    const visibleCount = this.visibleCount;
     const defaultItems = [
       {
         image: `https://picsum.photos/seed/1/800/600?grayscale`,
@@ -663,7 +682,8 @@ class App {
         bend,
         textColor,
         borderRadius,
-        font
+        font,
+        visibleCount
       });
     });
   }
@@ -843,6 +863,8 @@ interface CircularGalleryProps {
   onActiveChange?: (index: number) => void;
   /** 动画真正停止后触发，传入最终停留的卡片索引。 */
   onSettle?: (index: number) => void;
+  /** >0 时按可见张数反推卡片尺寸，使可见张数≈该值（仍保留无限循环） */
+  visibleCount?: number;
 }
 
 export default function CircularGallery({
@@ -858,7 +880,8 @@ export default function CircularGallery({
   showControls = false,
   showIndicators = false,
   onActiveChange,
-  onSettle
+  onSettle,
+  visibleCount
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<App | null>(null);
@@ -890,7 +913,8 @@ export default function CircularGallery({
         },
         onSettle: (idx) => {
           onSettleRef.current?.(idx);
-        }
+        },
+        visibleCount
       });
       appRef.current = app;
     });
@@ -899,7 +923,7 @@ export default function CircularGallery({
       if (app) app.destroy();
       appRef.current = null;
     };
-  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase, initialIndex]);
+  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase, initialIndex, visibleCount]);
 
   const goTo = (index: number) => appRef.current?.goTo(index);
 

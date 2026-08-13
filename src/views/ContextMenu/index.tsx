@@ -188,13 +188,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         left: `${adjustedX}px`,
         width: '272px',
       }}
-      className="context-menu fixed z-[70] p-2.5 rounded-[var(--card-radius)] bg-white dark:bg-slate-800 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
+      className="context-menu fixed z-[70] p-2.5 rounded-[var(--card-radius)] bg-white dark:bg-black shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
     >
       {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
       {targetWidget ? (
         <>
           <div className="px-3 py-2 mb-1.5 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
-            <span className="font-bold text-font-md uppercase tracking-wider text-slate-700 dark:truncate">
+            <span className="font-bold text-font-md uppercase tracking-wider  dark:truncate">
               {targetWidget.title}
             </span>
             <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 dark:text-slate-400 uppercase">
@@ -203,7 +203,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           </div>
 
           {/* Widget Size Switching */}
-          <div className="px-3 py-1.5 text-font-sm text-slate-700 font-medium">
+          <div className="px-3 py-1.5 text-font-sm  font-medium">
             调整尺寸
           </div>
           <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">

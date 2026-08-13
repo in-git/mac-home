@@ -1,7 +1,7 @@
 {
   "app": "macOS 主页",
   "version": 1,
-  "exportedAt": "2026-08-13T00:53:32.242Z",
+  "exportedAt": "2026-08-13T04:50:14.895Z",
   "widgets": [
     {
       "id": "widget-1786535430656",
@@ -19,9 +19,52 @@
       "logo": "🌙",
       "cardStyle": {
         "padding": "p-4",
-        "glass": false,
-        "background": "#FFFFFF",
+        "glass": false
+      },
+      "data": {
+        "clockFont": {
+          "size": "6rem",
+          "color": "#FFFFFF"
+        },
+        "size": "4rem",
+        "color": "#F0CF6B"
+      }
+    },
+    {
+      "id": "widget-1786583077143",
+      "type": "clock-mini",
+      "title": "时钟",
+      "maxInstances": 1,
+      "size": "1/4",
+      "sizeOptions": [
+        "1/2",
+        "1/4"
+      ],
+      "isAddable": true,
+      "logo": "⏰",
+      "showHeader": false,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
         "backgroundTheme": "light"
+      },
+      "data": {}
+    },
+    {
+      "id": "widget-1786535762886",
+      "type": "control-center",
+      "title": "控制中心",
+      "size": "1/4",
+      "showHeader": false,
+      "maxInstances": 1,
+      "sizeOptions": [
+        "1/4"
+      ],
+      "isAddable": true,
+      "logo": "🎛️",
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
       },
       "data": {}
     },
@@ -66,36 +109,312 @@
       "data": {}
     },
     {
-      "id": "widget-1786535762886",
-      "type": "control-center",
-      "title": "控制中心",
-      "size": "1/4",
-      "showHeader": false,
-      "maxInstances": 1,
+      "id": "widget-1786593739485",
+      "type": "shortcuts",
+      "title": "快捷导航",
+      "maxInstances": null,
+      "size": "1/2",
       "sizeOptions": [
-        "1/4"
+        "1/4",
+        "1/2",
+        "1/1"
       ],
       "isAddable": true,
-      "logo": "🎛️",
+      "logo": "🔗",
+      "showHeader": false,
       "cardStyle": {
         "padding": "p-4",
-        "glass": true
+        "glass": true,
+        "backgroundTheme": "light"
       },
-      "data": {}
+      "data": {
+        "shortcuts": [
+          {
+            "id": "2087492507006705665",
+            "name": "猫建国",
+            "logo": "http://localhost:82/dev/file/download?id=2087674448624525313&sign=NmUxN2M0YmExNGZkYjcxNzYyZGY4ZGRkZjlkZTgzMWNkNjI0MGU1NmNjZDg4MjM1YjVmZWY3MzRiMjUzNTA4MQ==",
+            "des": "文字游戏，系统设定非常丰富，",
+            "link": "https://lolitalibrary.com/maomao/",
+            "count": 4,
+            "visible": true,
+            "recommend": false,
+            "background": "#FFFFFF",
+            "cover": "http://localhost:82/dev/file/download?id=2087674419646078977&sign=NDRhMzQ1NjUzYTVhMzkxNTMyNjllOTY4OWY1YWVkM2U1MjQ3ZmE5MDBkZDU1ZTIwZTVhMDc2OTQ0MmI0YWQ3Mw==",
+            "keyword": "lolitalibrary.com, 智能推荐, 开发工具, Apple HIG",
+            "orderNum": 100,
+            "screenshot": "",
+            "module": "",
+            "createTime": "2026-08-12 18:52:52",
+            "categoryList": [
+              {
+                "id": "2087100719091765249",
+                "parentId": "0",
+                "name": "游戏",
+                "icon": null,
+                "sort": 1,
+                "module": null,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "2087485167675154434",
+            "name": "短途旅行",
+            "logo": "http://localhost:82/dev/file/download?id=2087674081434181634&sign=NGIxZjkwMDVlNTZlMDBiM2U3NTMyYjdhNzk0YTViNGU4NTE0NDgzMDYyZDlmYTAyOGI1NDQzYTBlYWMzNjQ2Zg==",
+            "des": "治愈休闲类游戏，适合风景党，带着一只猫到处走走",
+            "link": "https://alexanderperrin.com.au/paper/shorttrip/",
+            "count": 4,
+            "visible": true,
+            "recommend": false,
+            "background": "#007AFF",
+            "cover": "http://localhost:82/dev/file/download?id=2087485072472842241&sign=OTBiMmViM2M5MmMxZWNmZDY2Mjc1Zjk4NGMyMDNkYjQ4YTIzODExZWZiZTJkMjc5YWZhN2I4YWMyZDgyYjcxNQ==",
+            "keyword": "alexanderperrin.com.au, 智能推荐, 开发工具, Apple HIG",
+            "orderNum": 100,
+            "screenshot": "",
+            "module": "",
+            "createTime": "2026-08-12 18:23:42",
+            "categoryList": [
+              {
+                "id": "2087100719091765249",
+                "parentId": "0",
+                "name": "游戏",
+                "icon": null,
+                "sort": 1,
+                "module": null,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "2087484339572744194",
+            "name": "利爪突袭",
+            "logo": "http://localhost:82/dev/file/download?id=2087512959880044545&sign=MzYyOGY2Nzc4YjE1MWNiMWI1YjQ5MWIyMjgxYWU4YmNjMTEzNDJjNjNlMDRkNmViYWVlZTcwMzI5YzQ3MWE3Yw==",
+            "des": "动作类游戏，用一只小猫通关",
+            "link": "https://js13kgames.com/2025/games/clawstrike#play",
+            "count": 5,
+            "visible": true,
+            "recommend": false,
+            "background": "#007AFF",
+            "cover": "http://localhost:82/dev/file/download?id=2087484842041974785&sign=ZjdhYjM4MDk0Yjc5NjVlOGQzNWM5YTkwNjhlOTU4YTJiMmY1YzdkYjJmNTIyODE3MjUwOTBjN2NkYjQ5OGRiNQ==",
+            "keyword": "js13kgames.com, 智能推荐, 开发工具, Apple HIG",
+            "orderNum": 100,
+            "screenshot": "",
+            "module": "",
+            "createTime": "2026-08-12 18:20:25",
+            "categoryList": [
+              {
+                "id": "2087100719091765249",
+                "parentId": "0",
+                "name": "游戏",
+                "icon": null,
+                "sort": 1,
+                "module": null,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "2087069146011250689",
+            "name": "魔塔24层",
+            "logo": "http://localhost:82/dev/file/download?id=2087709797895737345&sign=MTEyOWMzYWVkMzdhYzI1YThkNjEyODAxZGY1MDJkNTVlYmEwMDIyYzE4YjllY2M0NTk3ZmUxYWIyNTk5MTFlOQ==",
+            "des": "h5魔塔，一起救公主去吧！！！",
+            "link": "https://h5mota.com/games/24/",
+            "count": 36,
+            "visible": true,
+            "recommend": false,
+            "background": "#007AFF",
+            "cover": "http://localhost:82/dev/file/download?id=2087125575422275585&sign=ZjM0OTQ3YzhiZDcyZTE5MDQzM2ViNzU5NjAxNmM0MTkzMzZjZWI5MGUwODYxYjhjNmNjY2IxMDdjYzk4NzFkNw==",
+            "keyword": "h5mota.com, 智能推荐, 开发工具, Apple HIG",
+            "orderNum": 100,
+            "screenshot": "",
+            "module": "",
+            "createTime": "2026-08-11 14:50:35",
+            "categoryList": [
+              {
+                "id": "2087100719091765249",
+                "parentId": "0",
+                "name": "游戏",
+                "icon": null,
+                "sort": 1,
+                "module": null,
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "widget-1786594747188",
+      "type": "web-grid",
+      "title": "猫建国",
+      "maxInstances": null,
+      "size": "1/12",
+      "sizeOptions": [
+        "1/8",
+        "1/16",
+        "1/12",
+        "1/10",
+        "1/6"
+      ],
+      "isAddable": false,
+      "logo": "🌐",
+      "showHeader": false,
+      "data": {
+        "site": {
+          "id": "2087492507006705665",
+          "name": "猫建国",
+          "logo": "http://localhost:82/dev/file/download?id=2087674448624525313&sign=NmUxN2M0YmExNGZkYjcxNzYyZGY4ZGRkZjlkZTgzMWNkNjI0MGU1NmNjZDg4MjM1YjVmZWY3MzRiMjUzNTA4MQ==",
+          "des": "文字游戏，系统设定非常丰富，",
+          "link": "https://lolitalibrary.com/maomao/",
+          "count": 5,
+          "visible": true,
+          "recommend": false,
+          "background": "#FFFFFF",
+          "cover": "http://localhost:82/dev/file/download?id=2087674419646078977&sign=NDRhMzQ1NjUzYTVhMzkxNTMyNjllOTY4OWY1YWVkM2U1MjQ3ZmE5MDBkZDU1ZTIwZTVhMDc2OTQ0MmI0YWQ3Mw==",
+          "keyword": "lolitalibrary.com, 智能推荐, 开发工具, Apple HIG",
+          "orderNum": 100,
+          "screenshot": "",
+          "module": "",
+          "createTime": "2026-08-12 18:52:52",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "widget-1786595917290",
+      "type": "web-grid",
+      "title": "利爪突袭",
+      "maxInstances": null,
+      "size": "1/12",
+      "sizeOptions": [
+        "1/8",
+        "1/16",
+        "1/12",
+        "1/10",
+        "1/6"
+      ],
+      "isAddable": false,
+      "logo": "🌐",
+      "showHeader": false,
+      "data": {
+        "site": {
+          "id": "2087484339572744194",
+          "name": "利爪突袭",
+          "logo": "http://localhost:82/dev/file/download?id=2087512959880044545&sign=MzYyOGY2Nzc4YjE1MWNiMWI1YjQ5MWIyMjgxYWU4YmNjMTEzNDJjNjNlMDRkNmViYWVlZTcwMzI5YzQ3MWE3Yw==",
+          "des": "动作类游戏，用一只小猫通关",
+          "link": "https://js13kgames.com/2025/games/clawstrike#play",
+          "count": 6,
+          "visible": true,
+          "recommend": false,
+          "background": "#007AFF",
+          "cover": "http://localhost:82/dev/file/download?id=2087484842041974785&sign=ZjdhYjM4MDk0Yjc5NjVlOGQzNWM5YTkwNjhlOTU4YTJiMmY1YzdkYjJmNTIyODE3MjUwOTBjN2NkYjQ5OGRiNQ==",
+          "keyword": "js13kgames.com, 智能推荐, 开发工具, Apple HIG",
+          "orderNum": 100,
+          "screenshot": "",
+          "module": "",
+          "createTime": "2026-08-12 18:20:25",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      }
     }
   ],
-  "notes": [],
   "wallpaper": {
     "type": "static",
     "dynamicPreset": "mesh-wave",
     "blur": 0,
-    "brightness": 100,
-    "contrast": 1,
-    "saturation": 1,
+    "brightness": 115,
+    "contrast": 1.05,
+    "saturation": 0.9,
     "hue": 0,
     "sepia": 0,
     "grayscale": 0,
     "invert": 0,
-    "imageUrl": "http://localhost:82/dev/file/download?id=2087360677112750084&sign=YjAyODg0MzM4MmVlOWI1NDg3OTUwZTYxNWQ4NzIyNTE3NTU1NTY2MzhiYWZjZWExMDM4ODY0ODg5MGIyNTcyYg=="
+    "imageUrl": "http://localhost:82/dev/file/download?id=2087360681571295236&sign=MWE3ZWZiNTRjNjViZDlmYTkzY2RiNWViZDk1ZDU3NTNhZjFiOTY2MjY0NjMwZTQ5YTY5MTFhYjk0NzNhOGU4OQ=="
+  },
+  "notes": [],
+  "isDarkMode": false,
+  "themeColor": "#007AFF",
+  "soundEnabled": true,
+  "fontVariant": "C",
+  "cardRadius": "small",
+  "screenBrightness": 62,
+  "aiConfig": {
+    "provider": "local",
+    "baseURL": "http://localhost:82/public/ai/chat",
+    "apiKey": "",
+    "model": "qwen2.5:3b"
+  },
+  "petAutoActivity": false,
+  "weatherCities": [
+    {
+      "id": "city-23.13-113.26",
+      "name": "广州",
+      "country": "中国",
+      "latitude": 23.1291,
+      "longitude": 113.2644
+    },
+    {
+      "id": "city-31.23-121.47",
+      "name": "上海",
+      "country": "中国",
+      "latitude": 31.2304,
+      "longitude": 121.4737
+    },
+    {
+      "id": "city-39.90-116.41",
+      "name": "北京",
+      "country": "中国",
+      "latitude": 39.9042,
+      "longitude": 116.4074
+    },
+    {
+      "id": "city-22.54-114.06",
+      "name": "深圳",
+      "country": "中国",
+      "latitude": 22.5431,
+      "longitude": 114.0579
+    },
+    {
+      "id": "city-30.27-120.16",
+      "name": "杭州",
+      "country": "中国",
+      "latitude": 30.2741,
+      "longitude": 120.1551
+    },
+    {
+      "id": "city-23.12-113.25",
+      "name": "广州",
+      "country": "中国",
+      "admin1": "广东",
+      "latitude": 23.11667,
+      "longitude": 113.25
+    }
+  ],
+  "selectedCityId": "city-23.12-113.25",
+  "lastLocation": {
+    "city": "广州",
+    "lat": 23.197091088834288,
+    "lon": 113.56846831526444
   }
 }

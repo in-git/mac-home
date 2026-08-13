@@ -98,7 +98,7 @@ export default function App() {
       type: 'web-grid',
       title: item.name || '未命名',
       maxInstances: Infinity,
-      size: '1/8',
+      size: '1/12',
       sizeOptions: SIZE_OPTIONS_ICON_GRID,
       isAddable: false,
       logo: '🌐',

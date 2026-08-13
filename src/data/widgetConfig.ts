@@ -130,12 +130,11 @@ export const WIDGET_CONFIG: WidgetItem[] = [
       padding: 'p-4',
       glass: false,
     },
-    // 农历时钟字体自定义：color 控制文本颜色，size 控制顶部数字时间字号。
+    // 农历时钟字体自定义：color 控制文本颜色，size 控制顶部数字时间字号，bold 控制是否加粗（默认加粗）。
     data: {
-      clockFont: {
-        color: 'var(--accent)',
-        size: '3.5rem',
-      },
+      color: 'var(--accent)',
+      size: '3.5rem',
+      bold: true,
     },
   },
   {

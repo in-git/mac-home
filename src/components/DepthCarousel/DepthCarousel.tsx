@@ -18,6 +18,8 @@ export interface DepthCarouselProps {
   tiltDirection?: 'left' | 'right';
   perspective?: number;
   visibleCards?: number;
+  /** 与 visibleCards 等价；>0 时按可见张数反推卡片尺寸，使可见张数≈该值（仍保留无限循环） */
+  visibleCount?: number;
   falloff?: number;
   blur?: number;
   duration?: number;
@@ -77,6 +79,8 @@ const DepthCarousel = ({
   onChange,
   onSettle,
   className = '',
+  visibleCards,
+  visibleCount,
 }: DepthCarouselProps) => {
   const data = useMemo(
     () => (Array.isArray(items) ? items : []).map(normalizeItem),
@@ -110,6 +114,7 @@ const DepthCarousel = ({
         scrollSpeed={count > 1 ? 2 : 0}
         onActiveChange={(index) => onChange?.(index, { image: data[index]?.image ?? '', alt: data[index]?.alt })}
         onSettle={onSettle}
+        visibleCount={visibleCount ?? visibleCards}
       />
     </div>
   );
