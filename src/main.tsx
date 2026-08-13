@@ -2,6 +2,7 @@ import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import MobileUnsupported from './components/MobileUnsupported.tsx';
+import { ToastProvider } from './components/Toast.tsx';
 import './index.css';
 
 // 移动端检测：触屏 + 窄屏（或常见移动 UA）视为移动设备
@@ -14,5 +15,7 @@ const isMobile = (() => {
 })();
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>{isMobile ? <MobileUnsupported /> : <App />}</StrictMode>,
+  <StrictMode>
+    <ToastProvider>{isMobile ? <MobileUnsupported /> : <App />}</ToastProvider>
+  </StrictMode>,
 );

@@ -51,7 +51,7 @@ export interface ContextMenuItemConfig {
   showOnlyWhenEditLocked?: boolean;
   /** 该项下方是否渲染分隔线。 */
   dividerAfter?: boolean;
-  /** 带勾选标记的开关型条目（如「显示桌面图标」）。 */
+  /** 带勾选标记的开关型条目（如「清屏」）。 */
   isToggle?: boolean;
 }
 
@@ -125,7 +125,7 @@ export const DESKTOP_CONTEXT_MENU: ContextMenuItemConfig[] = [
   },
   {
     id: 'toggle-desktop-icons',
-    label: '显示桌面图标',
+    label: '清屏',
     icon: Eye,
     action: 'toggleDesktopIcons',
     isToggle: true,

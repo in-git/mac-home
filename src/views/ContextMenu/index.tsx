@@ -165,7 +165,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
     const Icon = item.icon;
 
-    // Toggle-style item (e.g. "显示桌面图标") renders a checkmark on the right.
+    // Toggle-style item (e.g. "清屏") renders a checkmark on the right.
     if (item.isToggle) {
       const checked =
         item.action === 'toggleDesktopIcons' ? showDesktopIcons : false;

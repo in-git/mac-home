@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   createParticles,
   dynamicPresets,
@@ -27,6 +27,12 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
   screenBrightness = 100,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [staticImgLoaded, setStaticImgLoaded] = useState(false);
+
+  // 切换静态壁纸图片时重置加载状态
+  useEffect(() => {
+    if (wallpaper.type === 'static') setStaticImgLoaded(false);
+  }, [wallpaper.type, wallpaper.imageUrl]);
 
   // 解析当前预设的有效深色模式：预设的 isDarkMode 配置优先，否则跟随全局。
   const presetConfig = dynamicPresets.find(
@@ -149,7 +155,10 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
         <img
           src={wallpaper.imageUrl}
           alt="Desktop Wallpaper"
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          onLoad={() => setStaticImgLoaded(true)}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+            staticImgLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
         />
       ) : wallpaper.type === 'gradient' ? (
         <div

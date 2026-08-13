@@ -1,7 +1,7 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Modal } from '../components/Modal';
-import { WebListPicker } from '../components/WebListPicker';
+import { WebListPicker } from './WebListPicker';
 import { siteApi, SiteItem } from '../api/site';
 import { playSound } from '../utils/sound';
 import { ShortcutsWidgetCard } from '../widgets/Shortcuts';

@@ -1,7 +1,7 @@
 {
   "app": "macOS 主页",
   "version": 1,
-  "exportedAt": "2026-08-13T04:50:14.895Z",
+  "exportedAt": "2026-08-13T10:08:12.895Z",
   "widgets": [
     {
       "id": "widget-1786535430656",
@@ -131,7 +131,6 @@
         "shortcuts": []
       }
     }
-    
   ],
   "wallpaper": {
     "type": "static",
@@ -144,7 +143,7 @@
     "sepia": 0,
     "grayscale": 0,
     "invert": 0,
-    "imageUrl": "http://localhost:82/dev/file/download?id=2087360681571295236&sign=MWE3ZWZiNTRjNjViZDlmYTkzY2RiNWViZDk1ZDU3NTNhZjFiOTY2MjY0NjMwZTQ5YTY5MTFhYjk0NzNhOGU4OQ=="
+    "imageUrl": "https://afe259aae30d616af.bj7.agentos-app.net/api/dev/file/download?id=2087825282078425089&sign=ZmU1ZDg5MzkwODBmNTY3M2EwOWYzYjgzODAzMzViM2UzNTEwMTViYmQxYzBmMzFlNWI0MTExYzg4MGY1NzRmMA=="
   },
   "notes": [],
   "isDarkMode": false,

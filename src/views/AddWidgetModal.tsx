@@ -13,7 +13,7 @@ import {
 } from '../data/widgetConfig';
 import type { WidgetCategory } from '../data/widgetConfig';
 import type { SiteItem } from '../api/site';
-import { WebListPicker } from '../components/WebListPicker';
+import { WebListPicker } from './WebListPicker';
 import { WidgetItem, WidgetType } from '../types';
 
 interface Props {

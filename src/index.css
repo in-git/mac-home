@@ -492,6 +492,18 @@ button{
   }
 }
 
+/* Toast 入场上浮动画 */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* 壁纸模态框：纯色实底，去掉玻璃透明效果 */
 .wallpaper-modal-solid.glass-panel {
   background-color: #ffffff !important;
