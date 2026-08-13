@@ -10,7 +10,6 @@ import {
   getWidgetConfig,
   isWebGrid,
   WIDGET_ICONS,
-  WIDGET_ICON_BUBBLE,
 } from '../data/widgetConfig';
 import type { WidgetCategory } from '../data/widgetConfig';
 import type { SiteItem } from '../api/site';
@@ -208,7 +207,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                         }`}
                       >
                         <span
-                          className={`flex h-9 w-9 items-center justify-center rounded-[var(--card-radius)] ${WIDGET_ICON_BUBBLE[t.type]}`}
+                          className="flex h-9 w-9 items-center justify-center rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]"
                         >
                           <Icon size={18} strokeWidth={1.75} />
                         </span>

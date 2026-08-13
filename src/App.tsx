@@ -276,6 +276,7 @@ export default function App() {
         onDeleteWidget={deleteWidget}
         onResizeWidget={resizeWidget}
         onChangeWidgetBackground={updateWidgetBackground}
+        onUpdateWidget={updateWidget}
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaper={openWallpaperModal}

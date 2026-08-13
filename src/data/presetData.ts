@@ -56,7 +56,7 @@ export const PRESET_DATA = {
       maxInstances: w.maxInstances ?? cfg.maxInstances,
       sizeOptions: w.sizeOptions ?? cfg.sizeOptions,
       isAddable: w.isAddable ?? cfg.isAddable,
-      logo: w.logo ?? cfg.glyph,
+      logo: w.logo ?? cfg.logo,
       cardStyle: {
         ...DEFAULT_CARD_STYLE,
         ...cfg.cardStyle,

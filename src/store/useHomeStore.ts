@@ -151,10 +151,10 @@ export const useHomeStore = create<HomeState>()(
           type,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           maxInstances: cfg.maxInstances,
-          size: cfg.defaultSize,
+          size: cfg.size,
           sizeOptions: cfg.sizeOptions,
           isAddable: cfg.isAddable,
-          logo: cfg.glyph,
+          logo: cfg.logo,
           // Header visibility is driven by the type-level config (default: shown).
           showHeader: cfg.showHeader ?? true,
           cardStyle: {
@@ -166,8 +166,8 @@ export const useHomeStore = create<HomeState>()(
           },
           // 类型级提供的私有数据默认值（如快捷导航的空列表）放在 data 下。
           data: {
-            ...(cfg.shortcuts ? { shortcuts: cfg.shortcuts } : {}),
-            ...(cfg.site ? { site: cfg.site } : {}),
+            ...(cfg.data?.shortcuts ? { shortcuts: cfg.data.shortcuts } : {}),
+            ...(cfg.data?.site ? { site: cfg.data.site } : {}),
           },
         };
         set({ widgets: [...widgets, newWidget] });

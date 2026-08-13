@@ -52,7 +52,7 @@ export const renderWidgetContent = ({
     case 'clock-mini':
       return <ClockWidget />;
     case 'clock-lunar':
-      return <ClockLunarWidget />;
+      return <ClockLunarWidget widget={widget} />;
     case 'control-center':
       return (
         <ControlCenterWidget

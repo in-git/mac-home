@@ -7,6 +7,10 @@ import {
 } from '../../data/contextMenuConfig';
 import { getWidgetConfig } from '../../data/widgetConfig';
 import { BackgroundSubmenu } from './BackgroundSubmenu';
+import {
+  WIDGET_CONFIG_SUBMENUS,
+  WidgetConfigSubmenuProps,
+} from './widgetSubmenus';
 import { ContextMenuProps } from './types';
 
 export type { ContextMenuPosition } from './types';
@@ -18,6 +22,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onDeleteWidget,
   onResizeWidget,
   onChangeWidgetBackground,
+  onUpdateWidget,
   isEditMode,
   onToggleEditMode,
   onOpenWallpaper,
@@ -97,6 +102,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           onClick: () => {},
           visible: !!targetWidget,
         };
+      case 'editWidgetConfig':
+        return {
+          // Hover opens the type-specific secondary submenu; only show when a
+          // submenu is registered for this widget type.
+          onClick: () => {},
+          visible: !!targetWidget && !!WIDGET_CONFIG_SUBMENUS[targetWidget.type],
+        };
       case 'removeWidget':
         return {
           onClick: () => targetWidget && onDeleteWidget(targetWidget.id),
@@ -124,6 +136,23 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           onClose={onClose}
         />
       );
+    }
+
+    // "个性化" reveals the type-specific secondary config submenu (flyout) on hover.
+    if (item.action === 'editWidgetConfig' && targetWidget) {
+      const Submenu = WIDGET_CONFIG_SUBMENUS[targetWidget.type];
+      if (Submenu) {
+        const submenuProps: WidgetConfigSubmenuProps = {
+          item,
+          targetWidget,
+          onUpdateWidgetData: (id, patch) =>
+            onUpdateWidget(id, {
+              data: { ...targetWidget.data, ...patch },
+            }),
+          onClose,
+        };
+        return <Submenu key={item.id} {...submenuProps} />;
+      }
     }
 
     const Icon = item.icon;

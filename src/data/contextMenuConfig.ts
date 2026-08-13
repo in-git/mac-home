@@ -4,6 +4,7 @@ import {
   Palette,
   Pencil,
   Plus,
+  Settings2,
   Settings as SettingsIcon,
   Trash2,
   LucideIcon,
@@ -34,6 +35,7 @@ export type ContextMenuAction =
   | 'toggleEditMode'
   | 'changeBackground'
   | 'editIcon'
+  | 'editWidgetConfig'
   | 'removeWidget';
 
 export interface ContextMenuItemConfig {
@@ -68,6 +70,15 @@ export const WIDGET_CONTEXT_MENU: ContextMenuItemConfig[] = [
     icon: Pencil,
     action: 'editIcon',
     // 仅对 icon / web-grid / settings 组件显示（组件内由 resolveAction 根据类型控制）
+    dividerAfter: true,
+  },
+  {
+    id: 'edit-widget-config',
+    label: '个性化',
+    icon: Settings2,
+    action: 'editWidgetConfig',
+    // 仅当该组件类型在「二级配置子菜单注册表」中注册了子菜单时才显示
+    // （可见性由 ContextMenu 的 resolveAction 依据 WIDGET_CONFIG_SUBMENUS 决定）。
     dividerAfter: true,
   },
   {

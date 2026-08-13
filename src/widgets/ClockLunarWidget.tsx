@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Moon, CalendarDays } from 'lucide-react';
 import { getLunarDateText } from '../utils/lunar';
+import { WidgetItem } from '../types';
 
 // 农历时钟小组件：顶部显示当前时间，下方显示日期、星期与农历日期。
-export const ClockLunarWidget: React.FC = () => {
+// 支持通过 widget.data.clockFont 自定义顶部数字时间与下方文字的颜色 / 字号。
+export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
+  widget,
+}) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -30,24 +34,41 @@ export const ClockLunarWidget: React.FC = () => {
 
   const lunarText = getLunarDateText(time);
 
+  // 农历时钟字体自定义：color 作用于顶部时间与下方文字，size 作用于顶部数字时间字号。
+  const clockFont = widget?.data?.clockFont;
+  const timeStyle: React.CSSProperties = {
+    color: clockFont?.color,
+    fontSize: clockFont?.size,
+  };
+  const textColorStyle = clockFont?.color ? { color: clockFont.color } : undefined;
+
   return (
     <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none text-white ">
       {/* 顶部：当前时间 */}
       <div className="text-center">
-        <div className="text-6xl font-extrabold tracking-tight font-mono leading-none tabular-nums">
+        <div
+          className="font-extrabold tracking-tight font-mono leading-none tabular-nums"
+          style={timeStyle}
+        >
           {formattedTime}
         </div>
       </div>
 
       {/* 下方：日期、星期、农历 */}
       <div className="text-center space-y-3 ">
-        <div className="flex items-center justify-center space-x-1.5 text-font-sm font-medium mt-3">
+        <div
+          className="flex items-center justify-center space-x-1.5 text-font-sm font-medium mt-3"
+          style={textColorStyle}
+        >
           <CalendarDays size={13} className="shrink-0" />
           <span>{formattedDate}</span>
           <span >·</span>
           <span >{weekday}</span>
         </div>
-        <div className="flex items-center justify-center space-x-1.5 text-font-sm ">
+        <div
+          className="flex items-center justify-center space-x-1.5 text-font-sm "
+          style={textColorStyle}
+        >
           <Moon size={13} className="shrink-0" />
           <span>{lunarText}</span>
         </div>

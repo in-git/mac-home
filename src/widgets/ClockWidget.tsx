@@ -68,7 +68,7 @@ export const ClockWidget: React.FC = () => {
       </div>
 
       {/* Digital time */}
-      <div className="mt-2 text-lg font-extrabold tracking-tight font-mono text-[color:var(--accent)]">
+      <div className="mt-2 font-extrabold tracking-tight font-mono text-lg text-[color:var(--accent)]">
         {formattedTime}
       </div>
       <div className="text-font-sm font-medium dark:text-slate-400">
