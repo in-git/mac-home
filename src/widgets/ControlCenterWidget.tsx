@@ -31,23 +31,26 @@ export const ControlCenterWidget: React.FC<Props> = ({
     lat: number;
     lon: number;
   } | null>(null);
+  // 定位失败时的错误原因（图标下方展示「定位失败」+ 具体原因）
+  const [locError, setLocError] = useState<string | null>(null);
 
   /** 点击位置模块：调用 Geolocation API 获取坐标，并反向解析城市名 */
   const locate = () => {
     if (!('geolocation' in navigator)) {
-      setLocCity('浏览器不支持定位');
+      setLocError('浏览器不支持定位');
       return;
     }
     // 浏览器仅在「安全上下文」（localhost 或 https）中才会弹出定位权限。
     // 通过局域网 IP 以 http 访问时 geolocation 会被静默禁用，提前给出明确提示。
     if (!window.isSecureContext) {
-      setLocCity('需在 localhost 或 https 下定位');
+      setLocError('需在 localhost 或 https 下定位');
       return;
     }
     if (locating) return;
 
     setLocating(true);
     setLocCity(null);
+    setLocError(null);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -66,7 +69,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             : err.code === err.POSITION_UNAVAILABLE
               ? '位置信息不可用'
               : '定位超时，请重试';
-        setLocCity(msg);
+        setLocError(msg);
         setLocating(false);
       },
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 10 * 60 * 1000 },
@@ -84,19 +87,34 @@ export const ControlCenterWidget: React.FC<Props> = ({
         >
           <div
             className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-              locCoords || lastLocation
-                ? 'bg-[#34C759] text-white shadow-sm'
-                : 'bg-slate-400/30  shadow-sm'
+              locError
+                ? 'bg-red-500 text-white shadow-sm'
+                : locCoords || lastLocation
+                  ? 'bg-[#34C759] text-white shadow-sm'
+                  : 'bg-slate-400/30  shadow-sm'
             }`}
           >
             <MapPin size={18} />
           </div>
           <div className="min-w-0">
-            <div className="font-semibold text-font-sm leading-tight">
-              {locating
-                ? '定位中…'
-                : (locCity ?? lastLocation?.city ?? '位置')}
-            </div>
+            {locating ? (
+              <div className="font-semibold text-font-sm leading-tight">
+                定位中…
+              </div>
+            ) : locError ? (
+              <>
+                <div className="font-semibold text-font-sm leading-tight text-red-500">
+                  定位失败
+                </div>
+                <div className="text-[11px] text-slate-400 leading-tight mt-0.5">
+                  {locError}
+                </div>
+              </>
+            ) : (
+              <div className="font-semibold text-font-sm leading-tight">
+                {locCity ?? lastLocation?.city ?? '位置'}
+              </div>
+            )}
           </div>
         </button>
 

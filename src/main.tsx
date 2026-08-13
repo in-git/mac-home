@@ -1,7 +1,7 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
-import MobileUnsupported from './components/MobileUnsupported.tsx';
+import MobileUnsupported from './views/MobileUnsupported.tsx';
 import { ToastProvider } from './components/Toast.tsx';
 import './index.css';
 

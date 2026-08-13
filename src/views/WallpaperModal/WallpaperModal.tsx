@@ -10,6 +10,7 @@ import type { WallpaperConfig } from '../../types';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
 import { StaticWallpaperSection } from '../StaticWallpaper';
+import { StaticWallpaperRow } from '../StaticWallpaper/StaticWallpaperRow';
 import { GradientWallpaperGrid } from '../StaticWallpaper/GradientWallpaperGrid';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
 
@@ -82,7 +83,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
   isDarkMode,
   onUpdateWallpaper,
   onToggleDarkMode,
-  className = 'w-full md:max-w-6xl xl:max-w-7xl h-full md:h-[90vh] lg:h-[80vh] 2xl:h-[70vh]',
+  className = 'w-full md:max-w-6xl xl:max-w-7xl h-full md:h-[90vh] lg:h-[90vh] min-[1921px]:h-[70vh]',
   contentClassName = '',
   navClassName = '',
 }) => {
@@ -96,7 +97,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
       className={`wallpaper-modal-solid ${className}`}
     >
       <div
-        className={`flex min-h-0 flex-1 min-h-[80vh] md:min-h-[60vh] ${contentClassName}`}
+        className={`flex flex-1  ${contentClassName}`}
       >
         {/* 侧边 Tab 导航：Apple Settings 风格 */}
         <nav
@@ -128,15 +129,22 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               onToggleDarkMode={onToggleDarkMode}
             />
           ) : activeTab === 'preset' ? (
-            <div className="space-y-4">
-              <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
-                渐变壁纸
-              </h3>
-              <GradientWallpaperGrid
+            <div className="space-y-6">
+              {/* 静态壁纸：置于渐变壁纸上方，一行 4 个 */}
+              <StaticWallpaperRow
                 wallpaper={wallpaper}
-                isDarkMode={isDarkMode}
                 onUpdateWallpaper={onUpdateWallpaper}
               />
+              <div className="space-y-4">
+                <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                  渐变壁纸
+                </h3>
+                <GradientWallpaperGrid
+                  wallpaper={wallpaper}
+                  isDarkMode={isDarkMode}
+                  onUpdateWallpaper={onUpdateWallpaper}
+                />
+              </div>
             </div>
           ) : activeTab === 'static' ? (
             <StaticWallpaperSection
