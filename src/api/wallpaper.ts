@@ -47,7 +47,7 @@ export const wallpaperApi = {
     params: WallpaperPageParams = {},
   ): Promise<PageResult<WallpaperItem>> =>
     dedupe(`page:${JSON.stringify(params)}`, () =>
-      request.get<PageResult<WallpaperItem>>('/public/wallpaper/page', {
+      request.get<PageResult<WallpaperItem>>('/api/public/wallpaper/page', {
         params,
       }),
     ),
@@ -55,10 +55,10 @@ export const wallpaperApi = {
   /** 免登录获取壁纸分类列表 */
   getCategoryList: (): Promise<WallpaperCategory[]> =>
     dedupe('categoryList', () =>
-      request.get<WallpaperCategory[]>('/public/wallpaper/categoryList'),
+      request.get<WallpaperCategory[]>('/api/public/wallpaper/categoryList'),
     ),
 
   /** 免登录更新壁纸下载计数（每次点击都应上报，不去重） */
   recordDownload: (id: string): Promise<string> =>
-    request.get<string>('/public/wallpaper/download', { params: { id } }),
+    request.get<string>('/api/public/wallpaper/download', { params: { id } }),
 };

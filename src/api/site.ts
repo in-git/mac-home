@@ -62,34 +62,34 @@ export const siteApi = {
     params: SitePageParams = {},
   ): Promise<PageResult<SiteItem>> =>
     dedupe(`site:page:${JSON.stringify(params)}`, () =>
-      request.get<PageResult<SiteItem>>('/public/site/page', { params }),
+      request.get<PageResult<SiteItem>>('/api/public/site/page', { params }),
     ),
 
   getCategoryTree: (module?: string): Promise<SiteCategory[]> =>
     dedupe(`site:categoryTree:${module ?? ''}`, () =>
-      request.get<SiteCategory[]>('/public/site/categoryTree', {
+      request.get<SiteCategory[]>('/api/public/site/categoryTree', {
         params: module ? { module } : {},
       }),
     ),
 
   getIdentityList: (): Promise<SiteIdentity[]> =>
     dedupe('site:identityList', () =>
-      request.get<SiteIdentity[]>('/public/site/identityList'),
+      request.get<SiteIdentity[]>('/api/public/site/identityList'),
     ),
 
   getIdentityCategoryTree: (identityId: string): Promise<SiteCategory[]> =>
     dedupe(`site:identityCategoryTree:${identityId}`, () =>
-      request.get<SiteCategory[]>('/public/site/identityCategoryTree', {
+      request.get<SiteCategory[]>('/api/public/site/identityCategoryTree', {
         params: { identityId },
       }),
     ),
 
   getDetail: (id: string): Promise<SiteItem> =>
-    request.get<SiteItem>('/public/site/detail', { params: { id } }),
+    request.get<SiteItem>('/api/public/site/detail', { params: { id } }),
 
   recordClick: (id: string): Promise<string> =>
-    request.post<string>('/public/site/click', null, { params: { id } }),
+    request.post<string>('/api/public/site/click', null, { params: { id } }),
 
   fetchMeta: (link: string): Promise<SiteItem> =>
-    request.post<SiteItem>('/public/site/fetch', null, { params: { link } }),
+    request.post<SiteItem>('/api/public/site/fetch', null, { params: { link } }),
 };

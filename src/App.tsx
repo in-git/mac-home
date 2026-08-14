@@ -5,7 +5,6 @@ import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
 import { MuuriDashboard } from './views/MuuriDashboard';
 import { TopBar } from './components/TopBar';
-import { getStoredUser, LoginUser } from './api/auth';
 import { siteApi, SiteItem } from './api/site';
 import type { WidgetItem } from './types';
 import { isWebGrid } from './data/widgetConfig';
@@ -78,14 +77,6 @@ export default function App() {
     storeActions;
 
   const toggleDarkMode = () => setDarkMode(!isDarkMode);
-
-  // 登录态：初始化时从 localStorage 读取已登录用户
-  const [currentUser, setCurrentUser] = useState<LoginUser | null>(() =>
-    getStoredUser(),
-  );
-
-  const handleLoginSuccess = (user: LoginUser) => setCurrentUser(user);
-  const handleLogout = () => setCurrentUser(null);
 
   // 网页列表：点击「添加」把站点做成桌面图标（web-grid 类型，携带 site 数据）
   const handleAddSite = (item: SiteItem) => {
@@ -226,9 +217,6 @@ export default function App() {
         isEditMode={isEditMode}
         onToggleEditMode={() => setIsEditMode(!isEditMode)}
         onOpenWallpaperModal={openWallpaperModal}
-        currentUser={currentUser}
-        onLoginSuccess={handleLoginSuccess}
-        onLogout={handleLogout}
         weatherCity={weatherInfo.cityName || weatherInfo.country}
         weatherTemp={
           weatherInfo.temp != null ? `${weatherInfo.temp}°` : undefined

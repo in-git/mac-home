@@ -27,8 +27,8 @@ export const AI_PROVIDERS: AIProvider[] = [
     {
         id: 'local',
         label: '本地大模型',
-        // 走本机后端通道（{VITE_API_BASE_URL}/public/ai/chat），由后端对接本地 Ollama 等
-        baseURL: host + '/public/ai/chat',
+        // 走本机后端通道（{VITE_API_BASE_URL}/api/public/ai/chat），由后端对接本地 Ollama 等
+        baseURL: host + '/api/public/ai/chat',
         defaultModel: 'qwen2.5:3b',
     },
     {
@@ -103,10 +103,10 @@ export interface AIConfig {
     model: string;
 }
 
-/** AI 配置默认值：默认对接本地大模型（走本机后端通道 /public/ai/chat） */
+/** AI 配置默认值：默认对接本地大模型（走本机后端通道 /api/public/ai/chat） */
 export const DEFAULT_AI_CONFIG: AIConfig = {
     provider: 'local',
-    baseURL: host + '/public/ai/chat',
+    baseURL: host + '/api/public/ai/chat',
     apiKey: '',
     model: 'qwen2.5:3b',
 };

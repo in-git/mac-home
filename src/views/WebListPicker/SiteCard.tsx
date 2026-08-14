@@ -1,8 +1,9 @@
 import { Trash2, Plus, ExternalLink } from 'lucide-react';
 import React, { useState } from 'react';
-import { Skeleton, Tooltip } from '@heroui/react';
+import { Tooltip } from '@heroui/react';
 import { SiteItem } from '../../api/site';
 import { useToast } from '../../components/Toast';
+import { LazyImage } from '../../components/LazyImage';
 
 interface SiteCardProps {
   item: SiteItem;
@@ -27,13 +28,9 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   const [imgError, setImgError] = useState(false);
   const { showToast } = useToast();
   const coverSrc = item.cover || item.logo;
-  const coverImgRef = React.useRef<HTMLImageElement | null>(null);
   const logoImgRef = React.useRef<HTMLImageElement | null>(null);
 
   // 图片可能来自缓存：已缓存的图片不会触发 onLoad，需主动检查 complete 避免永远空白
-  React.useEffect(() => {
-    if (coverImgRef.current?.complete) setImgLoaded(true);
-  }, [coverSrc]);
   React.useEffect(() => {
     if (logoImgRef.current?.complete) setImgLoaded(true);
   }, [item.logo]);
@@ -44,24 +41,16 @@ export const SiteCard: React.FC<SiteCardProps> = ({
       title={`打开 ${item.name}`}
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        {coverSrc && !imgError ? (
-          <>
-            {!imgLoaded && (
-              <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
-            )}
-            <img
-              ref={coverImgRef}
-              src={coverSrc}
-              alt={item.name}
-              loading="lazy"
-              decoding="async"
-              onLoad={() => setImgLoaded(true)}
-              onError={() => setImgError(true)}
-              className={`h-full w-full object-cover group-hover:scale-105 transition-transform ${
-                imgLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-          </>
+        {coverSrc ? (
+          <LazyImage
+            src={coverSrc}
+            alt={item.name}
+            ratio="16/9"
+            fit="cover"
+            fullWidth
+            rounded="rounded-none"
+            className="bg-transparent group-hover:scale-105 transition-transform"
+          />
         ) : (
           <div
             className="h-full w-full flex items-center justify-center text-white text-3xl font-bold"

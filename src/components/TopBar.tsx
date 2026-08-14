@@ -6,13 +6,8 @@ import {
   Sun,
   Volume2,
   Wifi,
-  User as UserIcon,
-  LogOut,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Modal } from './Modal';
-import { LoginModal } from '../views/login/LoginModal';
-import { LoginUser, doLogout, clearStoredAuth } from '../api/auth';
 
 interface Props {
   isDarkMode: boolean;
@@ -22,9 +17,6 @@ interface Props {
   onOpenWallpaperModal: () => void;
   weatherTemp?: string;
   weatherCity?: string;
-  currentUser?: LoginUser | null;
-  onLoginSuccess: (user: LoginUser) => void;
-  onLogout: () => void;
 }
 
 export const TopBar: React.FC<Props> = ({
@@ -35,15 +27,9 @@ export const TopBar: React.FC<Props> = ({
   onOpenWallpaperModal,
   weatherTemp,
   weatherCity,
-  currentUser,
-  onLoginSuccess,
-  onLogout,
 }) => {
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -68,26 +54,6 @@ export const TopBar: React.FC<Props> = ({
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await doLogout();
-    } catch {
-      /* 忽略退出接口异常，本地清理即可 */
-    } finally {
-      clearStoredAuth();
-      setIsLoggingOut(false);
-      setIsLogoutOpen(false);
-      onLogout();
-    }
-  };
-
-  const displayName =
-    currentUser?.nickname ||
-    currentUser?.realName ||
-    currentUser?.account ||
-    '未登录';
 
   return (
     <header className="sticky top-0 z-50 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs font-medium border-b border-white/20 dark:border-white/10 select-none shadow-xs">
@@ -147,66 +113,7 @@ export const TopBar: React.FC<Props> = ({
           <span className="hidden sm:inline opacity-70">{dateStr}</span>
           <span>{timeStr}</span>
         </div>
-
-        {/* Login / User（置于最右侧） */}
-        {currentUser ? (
-          <button
-            onClick={() => setIsLogoutOpen(true)}
-            className="flex items-center space-x-1.5 px-1.5 py-0.5 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors max-w-[120px]"
-            title="点击退出登录"
-          >
-            <UserIcon size={14} />
-            <span className="hidden sm:inline truncate">{displayName}</span>
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsLoginOpen(true)}
-            className="flex items-center space-x-1 px-2 py-0.5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] hover:bg-[color:var(--accent)]/20 transition-colors"
-          >
-            <UserIcon size={14} />
-            <span>登录</span>
-          </button>
-        )}
       </div>
-
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onSuccess={onLoginSuccess}
-      />
-
-      <Modal
-        isOpen={isLogoutOpen}
-        onClose={() => !isLoggingOut && setIsLogoutOpen(false)}
-        title="退出登录"
-        icon={<LogOut size={18} className="text-red-500" />}
-        maxWidth="max-w-xs"
-      >
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-slate-600 dark:text-slate-300">
-            确定要退出登录吗？
-          </p>
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => setIsLogoutOpen(false)}
-              disabled={isLoggingOut}
-              className="rounded-[var(--card-radius)] bg-black/5 px-4 py-2 text-sm font-medium transition-colors hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 disabled:opacity-50"
-            >
-              取消
-            </button>
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="flex items-center gap-1.5 rounded-[var(--card-radius)] bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600 disabled:opacity-60"
-            >
-              {isLoggingOut && (
-                <span className="h-3 w-3 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              )}
-              退出登录
-            </button>
-          </div>
-        </div>
-      </Modal>
     </header>
   );
 };

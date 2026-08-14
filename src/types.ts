@@ -167,6 +167,8 @@ export interface WallpaperConfig {
   dynamicPreset?: DynamicPreset;
   /** 仅 static：静态图片地址 */
   imageUrl?: string;
+  /** 仅 static：当前所选壁纸在在线库中的唯一标识（用于列表高亮，避免用 URL 误匹配） */
+  id?: string;
   /** 仅 gradient：CSS 渐变背景字符串 */
   gradient?: string;
   blur: number; // 0 to 20px

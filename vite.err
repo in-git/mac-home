@@ -1,2 +1,0 @@
-[33mFiles in the public directory are served at the root path.
-Instead of [36m/public/wallpaper/page?current=1&size=3[33m, use [36m/wallpaper/page?current=1&size=3[33m.[39m

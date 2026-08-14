@@ -62,16 +62,14 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
   // 当前选中的壁纸（用于顶部独立预览行），可能不在当前分类/分页列表中
   const selectedItem: WallpaperItem | null = selectedKey
     ? (() => {
-        const found = items.find(
-          (it) => (it.thumbnailUrl ?? it.imageUrl) === selectedKey,
-        );
+        const found = items.find((it) => it.id === selectedKey);
         if (found) return found;
-        // 选中项不在当前列表：构造预览项
+        // 选中项不在当前列表：仅保留 id 与地址占位，用于顶部预览
         return {
-          id: '__selected__',
+          id: selectedKey,
           title: '当前壁纸',
-          imageUrl: selectedKey,
-          thumbnailUrl: selectedKey,
+          imageUrl: undefined,
+          thumbnailUrl: undefined,
         } as WallpaperItem;
       })()
     : null;
@@ -183,10 +181,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
                   imageUrl: item.imageUrl,
                   thumbnailUrl: item.thumbnailUrl,
                 }}
-                isSelected={
-                  item.imageUrl === selectedKey ||
-                  item.thumbnailUrl === selectedKey
-                }
+                isSelected={item.id === selectedKey}
                 onSelect={onSelect}
               />
             ))}

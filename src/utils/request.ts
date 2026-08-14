@@ -2,7 +2,7 @@
  * 基于 axios 的 API 请求封装
  * 严格遵循「后端响应规范」：
  * - 统一响应结构：{ code, msg, data, traceId }
- * - 状态码处理：200 成功；非 200 提示 msg；401/1011007/1011008 跳转登录
+ * - 状态码处理：200 成功；非 200 提示 msg；401/1011007/1011008 未授权（静默，不跳转）
  * - 分页参数与返回结构封装
  *
  * 依赖：axios（需在 package.json 中安装）
@@ -57,7 +57,7 @@ const UNAUTHORIZED_CODES = [401, 1011007, 1011008];
  * 新增业务接口请在此登记，组件层不要自己拼地址。
  */
 export const API_ENDPOINTS = {
-  aiChat: '/public/ai/chat',
+  aiChat: '/api/public/ai/chat',
 } as const;
 
 /** 可自定义配置 */
@@ -85,8 +85,9 @@ function createRequest(options: RequestConfig = {}) {
     baseURL = import.meta.env.VITE_API_BASE_URL ?? '',
     getToken = () => localStorage.getItem(TOKEN_KEY),
     onUnauthorized = (code) => {
-      console.warn(`[request] 未授权 (${code})，跳转登录页`);
-      window.location.href = '/login';
+      // 本项目无登录页路由，整页跳转 /login 会造成重定向死循环；
+      // 改为仅警告，由调用方自行处理未授权（如 auth.ts 已静默）。
+      console.warn(`[request] 未授权 (${code})，已静默处理（无登录页可跳转）`);
     },
     onError = (error) =>
       console.error(`[request] ${error.code}: ${error.message}`, error.traceId),

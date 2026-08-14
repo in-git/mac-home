@@ -15,15 +15,16 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
   const handleSelect = (item: ImageWallpaperItem) => {
     onUpdateWallpaper({
       type: 'static',
+      id: item.id,
       imageUrl: item.imageUrl,
       gradient: undefined,
     });
   };
 
-  // 当前已选图片壁纸的标识（用于列表高亮）。
-  // 仅当当前壁纸类型为 static 时才视为「选中」，避免切到动态/渐变后残留 imageUrl 误勾所有项。
+  // 当前已选图片壁纸的标识（用于列表高亮），使用在线库中的唯一 id。
+  // 仅当当前壁纸类型为 static 时才视为「选中」，避免切到动态/渐变后残留 id 误勾所有项。
   const selectedKey =
-    wallpaper.type === 'static' ? wallpaper.imageUrl ?? '' : '';
+    wallpaper.type === 'static' ? wallpaper.id ?? '' : '';
 
   return (
     <div className="space-y-6">
