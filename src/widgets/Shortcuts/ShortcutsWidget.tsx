@@ -41,7 +41,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
         >
             {/* Grid of Shortcuts */}
             <div
-                className={`${expanded ? 'flex-1 min-h-0' : 'max-h-52'} my-2 overflow-y-auto pr-1 @container`}
+                className={`${expanded ? 'flex-1 min-h-0' : ''} my-2 overflow-y-auto pr-1 @container overflow-x-hidden`}
             >
                 {shortcuts.length === 0 ? (
                     /* 空态：提示用户添加网页 */
@@ -53,7 +53,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                             data-no-drag
                             type="button"
                             onClick={onAddClick}
-                            className="flex items-center gap-1.5 rounded-full bg-[color:var(--accent)] px-4 py-1.5 text-sm font-medium text-white shadow-xs transition-colors hover:opacity-90 active:scale-95"
+                            className="flex items-center gap-1.5 rounded-full bg-[color:var(--accent)] px-4 py-1.5 text-sm font-medium text-white transition-colors hover:opacity-90 active:scale-95"
                         >
                             <Plus size={16} />
                             添加网页
@@ -68,10 +68,11 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                                 target="_blank"
                                 rel="noreferrer"
                                 onClick={() => onOpen(item)}
-                                className="relative flex flex-col rounded-[var(--card-radius)] transition-colors shadow-xs text-center "
+                                className="relative flex flex-col items-center rounded-[var(--card-radius)] transition-colors text-center"
                             >
                                 <ShortcutTile
                                     item={item}
+                                    iconSize={64}
                                     onDelete={onDelete ? (id, e) => onDelete(id, e) : () => { }}
                                 />
                             </a>
