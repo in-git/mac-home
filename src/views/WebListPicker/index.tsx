@@ -2,7 +2,6 @@ import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '@heroui/react';
 import { siteApi } from '../../api/site';
-import { useToast } from '../../components/Toast';
 import { Button } from '../../components/Button';
 import { SiteCard } from './SiteCard';
 import { FilterBar } from './FilterBar';

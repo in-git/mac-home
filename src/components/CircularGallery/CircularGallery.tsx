@@ -896,7 +896,8 @@ export default function CircularGallery({
     if (!containerRef.current) return;
     let app: App | undefined;
     let isMounted = true;
-    resolveFont(font, fontUrl).then(resolvedFont => {
+    (async () => {
+      const resolvedFont = await resolveFont(font, fontUrl);
       if (!isMounted || !containerRef.current) return;
       app = new App(containerRef.current, {
         items,
@@ -917,7 +918,7 @@ export default function CircularGallery({
         visibleCount
       });
       appRef.current = app;
-    });
+    })();
     return () => {
       isMounted = false;
       if (app) app.destroy();

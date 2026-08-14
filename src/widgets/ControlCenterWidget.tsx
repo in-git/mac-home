@@ -185,10 +185,11 @@ export const ControlCenterWidget: React.FC<Props> = ({
             className="absolute top-1 bottom-1 rounded-[calc(var(--card-radius)-4px)] bg-white dark:bg-slate-700 shadow-sm transition-transform duration-200 ease-out"
             style={{
               width: 'calc((100% - 0.5rem) / 3)',
-              transform: `translateX(${(['A', 'B', 'C'].indexOf(fontVariant)) * 100}%)`,
+              transform: `translateX(${FONT_VARIANT.findIndex((f) => f.value === fontVariant) * 100}%)`,
             }}
           />
-          {(['A', 'B', 'C'] as const).map((v) => {
+          {FONT_VARIANT.map((f) => {
+            const v = f.value;
             const active = fontVariant === v;
             return (
               <label
@@ -207,7 +208,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                   onChange={() => setFontVariant(v)}
                   className="sr-only"
                 />
-                {FONT_VARIANT[v].label}
+                {f.label}
               </label>
             );
           })}

@@ -92,11 +92,15 @@ const DepthCarousel = ({
   const [rendered, setRendered] = useState<{ image: string; text: string }[]>([]);
   useEffect(() => {
     let cancelled = false;
-    Promise.all(
-      data.map((it) => renderFiltered(it.image, it.filter).then((image) => ({ image, text: it.alt }))),
-    ).then((res) => {
+    (async () => {
+      const res = await Promise.all(
+        data.map(async (it) => ({
+          image: await renderFiltered(it.image, it.filter),
+          text: it.alt,
+        })),
+      );
       if (!cancelled) setRendered(res);
-    });
+    })();
     return () => {
       cancelled = true;
     };

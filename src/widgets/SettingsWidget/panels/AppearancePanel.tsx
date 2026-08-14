@@ -5,7 +5,7 @@ import {
   FONT_VARIANT,
 } from '@/types';
 import { ACCENT_COLORS } from '../constants';
-import { SegmentedControl } from '../SegmentedControl';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import type { AppearancePanelProps } from '../types';
 
 /**
@@ -100,18 +100,19 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
               字体大小
             </div>
             <div className="text-xs  mt-0.5">
-              小 {FONT_VARIANT[fontVariant].px.sm} / 中{' '}
-              {FONT_VARIANT[fontVariant].px.md} / 大 {FONT_VARIANT[fontVariant].px.lg}{' '}
-              px
+              小 {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.sm} / 中{' '}
+              {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.md} / 大{' '}
+              {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.lg} px
             </div>
           </div>
           <SegmentedControl
             ariaLabel="字体大小"
             value={fontVariant}
             onChange={setFontVariant}
-            options={(['A', 'B', 'C'] as const).map((v) => ({
-              value: v,
-              label: FONT_VARIANT[v].label,
+            size='sm'
+            options={FONT_VARIANT.map((f) => ({
+              value: f.value,
+              label: f.label,
             }))}
           />
         </div>

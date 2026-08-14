@@ -35,7 +35,7 @@ export function useThemeVariables({
   // Write the three font-size CSS variables directly from the chosen font variant.
   useEffect(() => {
     const root = document.documentElement;
-    const t = FONT_VARIANT[fontVariant].px;
+    const t = FONT_VARIANT.find((f) => f.value === fontVariant)!.px;
     root.style.setProperty('--font-sm', `${t.sm}px`);
     root.style.setProperty('--font-md', `${t.md}px`);
     root.style.setProperty('--font-lg', `${t.lg}px`);

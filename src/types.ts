@@ -7,15 +7,19 @@ import { SiteItem } from './api/site';
 //   C → --font-sm 14 / --font-md 16 / --font-lg 18
 export type FontVariant = 'A' | 'B' | 'C';
 
-/** 字号方案：UI 展示名 + 三档字号（直接写入 CSS 变量，不做派生）。 */
-export const FONT_VARIANT: Record<
-  FontVariant,
-  { label: string; px: { sm: number; md: number; lg: number } }
-> = {
-  A: { label: '小', px: { sm: 12, md: 14, lg: 16 } },
-  B: { label: '中', px: { sm: 13, md: 15, lg: 17 } },
-  C: { label: '大', px: { sm: 14, md: 16, lg: 18 } },
-};
+/** 单项字体方案：存储 key + UI 展示名 + 三档字号（直接写入 CSS 变量，不做派生）。 */
+export interface FontVariantOption {
+  value: FontVariant;
+  label: string;
+  px: { sm: number; md: number; lg: number };
+}
+
+/** 字号方案列表（数组形式，按 value 查找）。 */
+export const FONT_VARIANT: FontVariantOption[] = [
+  { value: 'A', label: '小', px: { sm: 12, md: 14, lg: 16 } },
+  { value: 'B', label: '中', px: { sm: 13, md: 15, lg: 17 } },
+  { value: 'C', label: '大', px: { sm: 14, md: 16, lg: 18 } },
+];
 
 // 卡片圆角：极小 / 小 / 中 / 大 四档，写入 CSS 变量 --card-radius 供全站卡片引用。
 export type CardRadiusTier = 'tiny' | 'small' | 'medium' | 'large';

@@ -44,7 +44,7 @@ export function IconWidget({ size = '1/12', site }: IconWidgetProps) {
         <Rocket className="leading-none" strokeWidth={1.75} />
       )}
       {!iconOnly && (
-        <span className="truncate text-slate-300">
+        <span className="truncate text-slate-600 dark:text-slate-300">
           {label}
         </span>
       )}

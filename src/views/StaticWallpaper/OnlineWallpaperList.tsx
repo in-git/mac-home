@@ -24,28 +24,35 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
 
   // 加载分类列表
   useEffect(() => {
-    wallpaperApi
-      .getCategoryList()
-      .then((res) => {
+    (async () => {
+      try {
+        const res = await wallpaperApi.getCategoryList();
         if (Array.isArray(res)) setCategories(res);
-      })
-      .catch(() => {});
+      } catch {
+        // ignore
+      }
+    })();
   }, []);
 
   // 加载壁纸列表
-  const fetchWallpapers = (p = 1, cat = selectedCat) => {
+  const fetchWallpapers = async (p = 1, cat = selectedCat) => {
     setLoading(true);
-    wallpaperApi
-      .getPage({ current: p, size: 12, categoryTag: cat || undefined })
-      .then((res) => {
-        if (res && Array.isArray(res.records)) {
-          setItems(res.records);
-          setPage(res.current ?? p);
-          setTotalPages(res.pages ?? 1);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    try {
+      const res = await wallpaperApi.getPage({
+        current: p,
+        size: 12,
+        categoryTag: cat || undefined,
+      });
+      if (res && Array.isArray(res.records)) {
+        setItems(res.records);
+        setPage(res.current ?? p);
+        setTotalPages(res.pages ?? 1);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

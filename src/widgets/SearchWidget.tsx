@@ -1,5 +1,6 @@
 import { ArrowRight, ExternalLink, Globe, Search } from 'lucide-react';
 import React, { useState } from 'react';
+import { SegmentedControl } from '../components/SegmentedControl';
 
 export type SearchEngineId = 'google' | 'bing' | 'baidu';
 
@@ -88,26 +89,16 @@ export const SearchWidget: React.FC = () => {
           <span>搜索</span>
         </div>
 
-        {/* 12px 哑光容器 + 10px Pill 选中项 */}
-        <div className="flex items-center bg-black/5 dark:bg-white/10 p-0.5 rounded-[var(--card-radius)]">
-          {SEARCH_ENGINES.map((engine) => {
-            const isSelected = engine.id === engineId;
-            return (
-              <button
-                key={engine.id}
-                type="button"
-                onClick={() => handleSelectEngine(engine.id)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-[var(--card-radius)] transition-colors ${
-                  isSelected
-                    ? 'bg-white dark:bg-slate-800 text-[color:var(--accent)] shadow-xs'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                {engine.name}
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedControl
+          ariaLabel="搜索引擎"
+          size="sm"
+          options={SEARCH_ENGINES.map((engine) => ({
+            value: engine.id,
+            label: engine.name,
+          }))}
+          value={engineId}
+          onChange={handleSelectEngine}
+        />
       </div>
 
       {/* 搜索输入表单（遵循 UI 规范：12px 圆角、哑光磨砂底色、Focus 蓝光） */}
