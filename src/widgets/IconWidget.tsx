@@ -52,7 +52,7 @@ export function IconWidget({ size = '1/12', site, iconSize }: IconWidgetProps) {
         <Rocket className="leading-none" strokeWidth={1.75} {...(iconSize ? { size: iconSize } : {})} />
       )}
       {!iconOnly && (
-        <span className="w-full min-w-0 truncate text-center text-slate-600 dark:text-slate-300">
+        <span className="w-full min-w-0 truncate text-center text-white dark:text-black">
           {label}
         </span>
       )}

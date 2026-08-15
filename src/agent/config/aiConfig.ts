@@ -21,13 +21,14 @@ export interface AIProvider {
     /** 官网/文档地址，便于用户获取 KEY */
     docs?: string;
 }
-const host = import.meta.env.VITE_API_BASE_URL + ''
+// 前端走同源相对路径，由 dev server 的 proxy 转发到后端，不暴露真实后端地址
+const host = ''
 /** 内置主流厂商预设 */
 export const AI_PROVIDERS: AIProvider[] = [
     {
         id: 'local',
         label: '本地大模型',
-        // 走本机后端通道（{VITE_API_BASE_URL}/api/public/ai/chat），由后端对接本地 Ollama 等
+        // 走本机后端通道（同源 /api/public/ai/chat），由后端对接本地 Ollama 等
         baseURL: host + '/api/public/ai/chat',
         defaultModel: 'qwen2.5:3b',
     },

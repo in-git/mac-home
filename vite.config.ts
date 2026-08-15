@@ -1,9 +1,14 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  // 从 .env.development / .env.production 读取后端地址，仅作 dev server proxy 目标使用。
+  // 注意：变量名故意不加 VITE_ 前缀，避免被 Vite 注入前端 bundle 而暴露后端地址（前端走同源 /api 转发）。
+  const env = loadEnv(mode, process.cwd(), '');
+  const backendTarget = env.API_PROXY_TARGET || 'https://wwl.mx2d.cn';
+
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
@@ -20,25 +25,16 @@ export default defineConfig(() => {
     },
     server: {
       port: 14579,
-
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
-
-      // 代理模式：前端请求走同源相对路径（VITE_API_BASE_URL 留空），
-      // 由 dev server 转发到后端，避免浏览器跨域。
       proxy: {
-        // 前端统一用 /api 前缀：/api/public/...（免登录）、/api/biz/...（需登录）
-        // 代理转发到后端根并去掉 /api 前缀，即 /api/public/site/page -> https://wwl.mx2d.cn/public/site/page
         '/api': {
-          target: 'https://wwl.mx2d.cn',
+          target: backendTarget,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
         '/ws': {
-          target: 'https://wwl.mx2d.cn',
+          target: backendTarget,
           changeOrigin: true,
           ws: true,
         },

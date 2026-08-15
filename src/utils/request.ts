@@ -80,9 +80,9 @@ const TOKEN_KEY = 'CLIENT_TOKEN';
 
 function createRequest(options: RequestConfig = {}) {
   const {
-    // baseURL 仅含后端根地址（不含 /api 前缀），接口 path 由 API_ENDPOINTS 提供；
-    // 未配置环境变量时回退空串，即走同源相对路径。
-    baseURL = import.meta.env.VITE_API_BASE_URL ?? '',
+
+    // API_PROXY_TARGET 不带 VITE_ 前缀，不会注入前端；前端不直连后端，避免跨域且避免暴露后端地址。
+    baseURL = '',
     getToken = () => localStorage.getItem(TOKEN_KEY),
     onUnauthorized = (code) => {
       // 本项目无登录页路由，整页跳转 /login 会造成重定向死循环；

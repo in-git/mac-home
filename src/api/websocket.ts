@@ -41,11 +41,9 @@ class BwsClient {
   private manualClose = false;
   private handlers = new Set<WsMessageHandler>();
 
-  // 解析基础地址：基于 VITE_API_BASE_URL 拼接 /ws，SockJS 自动处理 http/https 协议
+  // 走同源相对路径 /ws，由 dev server 的 proxy 转发到后端（见 vite.config.ts），不暴露真实后端地址
   private resolveUrl(): string {
-    const base = import.meta.env.VITE_API_BASE_URL ?? '';
-    const baseNoProto = base.replace(/\/$/, '');
-    return `${baseNoProto}${WS_ENDPOINT}`;
+    return `${WS_ENDPOINT}`;
   }
 
   // 构造带鉴权 token 的连接地址（仅在已登录时携带）

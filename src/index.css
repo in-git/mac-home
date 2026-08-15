@@ -446,31 +446,8 @@ button{
   background-color: #ffffff !important;
 }
 
-/* 站点库模态框：强制白色主题，不受暗色模式影响 */
-.site-library-modal.glass-panel {
-  background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.15) !important;
-}
-.site-library-modal.dark\:border-white\/10,
-.site-library-modal .dark\:border-white\/10,
-.site-library-modal .dark\:border-white\/15 {
-  border-color: rgba(0, 0, 0, 0.1) !important;
-}
-.site-library-modal .dark\:bg-white\/5,
-.site-library-modal .dark\:bg-white\/10,
-.site-library-modal .dark\:bg-white\/15 {
-  background-color: rgba(0, 0, 0, 0.05) !important;
-}
-.site-library-modal .dark\:text-slate-100,
-.site-library-modal .dark\:text-slate-300,
-.site-library-modal .dark\:text-slate-400 {
-  color: #475569 !important; /* slate-600 */
-}
-.site-library-modal .dark\:hover\:bg-white\/10:hover,
-.site-library-modal .dark\:hover\:bg-white\/15:hover {
-  background-color: rgba(0, 0, 0, 0.08) !important;
-}
+/* 站点库模态框：移除原先「强制白色主题」的覆盖，使其跟随暗色模式。
+   背景、边框、卡片、文字均沿用 .dark .glass-panel 与组件内 dark: 工具类。 */
 
 /* 右键菜单入场过渡（替代原 motion 动画） */
 @keyframes context-menu-in {
