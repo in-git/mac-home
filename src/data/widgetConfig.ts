@@ -9,6 +9,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   StickyNote,
+  UsersRound,
   type LucideIcon,
 } from 'lucide-react';
 import { WidgetType, CardStyle, WidgetItem } from '../types';
@@ -178,18 +179,18 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     data: { shortcuts: [] },
   },
   {
-    id: 'cfg-banner',
-    type: 'banner',
-    title: 'Prismatic Burst',
-    maxInstances: Infinity,
-    size: '1/2',
-    sizeOptions: SIZE_OPTIONS_FIFTH_UP,
+    id: 'cfg-member-count',
+    type: 'member-count',
+    title: '在线人数',
+    maxInstances: 1,
+    size: '1/3',
+    sizeOptions: SIZE_OPTIONS_WIDE_SM,
     isAddable: true,
-    logo: '🌈',
+    logo: '👥',
     showHeader: false,
     cardStyle: {
-      padding: 'p-0',
-      glass: false,
+      padding: 'p-4',
+      glass: true,
     },
     data: {},
   },
@@ -212,7 +213,7 @@ export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   'control-center': SlidersHorizontal,
   'web-grid': Globe,
   application: Globe,
-  banner: Sparkles,
+  'member-count': UsersRound,
 };
 
 /**

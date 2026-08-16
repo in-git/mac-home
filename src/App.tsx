@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -10,7 +10,6 @@ import type { WidgetItem } from './types';
 import { isWebGrid } from './data/widgetConfig';
 import { SIZE_OPTIONS_ICON_GRID } from './data/options';
 import { useAppInit } from './hooks/useAppInit';
-import { useBwsConnection } from './hooks/useBwsConnection';
 import { useGreeting } from './hooks/useGreeting';
 import { usePetAutoActivity } from './hooks/usePetAutoActivity';
 import { useThemeVariables } from './hooks/useThemeVariables';
@@ -20,6 +19,7 @@ import { SettingsModal } from './views/SettingsModal';
 import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/RoleCharacterCanvas';
+import { visitorApi } from './api/visitor';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -142,15 +142,20 @@ export default function App() {
   const openWallpaperModal = () => setIsWallpaperModalOpen(true);
   useAppInit({ onOpenAddWidget: () => setIsAddWidgetModalOpen(true) });
 
+  // 进入页面上报访客信息（PV/UV/IP 统计），仅触发一次。
+  useEffect(() => {
+    visitorApi
+      .report()
+      .catch(() => {
+        /* 上报失败静默，不影响主流程 */
+      });
+  }, []);
+
   // 进入页面打招呼（仅触发一次）。
   useGreeting();
 
   // 桌宠定时自主活动（仅在设置开启时运行）。
   usePetAutoActivity(petAutoActivity);
-
-  // B 端 WebSocket 对接：监听用户上线事件并让桌宠气泡提示。
-  // 详见 md/B端WebSocket对接文档.md。
-  useBwsConnection();
 
   // 「清屏」关闭时，隐藏桌面上的所有组件（整个仪表盘），
   // 直接传空数组，确保 Muuri 同步能正确清空所有卡片。

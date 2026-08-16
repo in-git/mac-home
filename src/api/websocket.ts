@@ -7,9 +7,8 @@ type IMessage = Stomp.Message;
 
 // 后端 WebSocket 端点（SockJS 强制走 HTTP/HTTPS，由 SockJS 内部自动完成 ws/wss 转换）
 const WS_ENDPOINT = '/ws';
-// 订阅目的地
-const DEST_ONLINE = '/user/online/broadcast';
-const DEST_WELCOME = '/user/welcome/queue';
+// 人数卡片订阅目的地（免登录，进入页面即有数据）
+const DEST_MEMBER_COUNT = '/user/membercount/queue';
 // 心跳间隔（与服务端保持一致，HTML 中为 10000ms）
 const HEARTBEAT = 10000;
 // 断线重连间隔（HTML 中为 5000ms）
@@ -25,12 +24,11 @@ export interface WsMessage {
 
 export type WsMessageHandler = (msg: WsMessage) => void;
 
-// 用户上线事件 data 结构（module = 'USER'，type = 'ONLINE'）
-export interface WsUserOnlineData {
-  userId?: string | number;
-  userName?: string;
-  account?: string;
-  onlineTime?: number;
+// 人数卡片 data 结构（module = 'membercount'，当前在线/今日/当月）
+export interface MemberCountData {
+  currentCount: number;
+  todayCount: number;
+  monthCount: number;
   [key: string]: unknown;
 }
 
@@ -72,9 +70,8 @@ class BwsClient {
       () => {
         this.connected = true;
         this.retryTimer = null;
-        // 连接成功后订阅用户上线与欢迎消息
-        client.subscribe(DEST_ONLINE, (frame: IMessage) => this.dispatch(frame));
-        client.subscribe(DEST_WELCOME, (frame: IMessage) => this.dispatch(frame));
+        // 连接成功后订阅人数卡片（免登录）。重连成功后此处会再次订阅并收到 snapshot。
+        client.subscribe(DEST_MEMBER_COUNT, (frame: IMessage) => this.dispatch(frame));
       },
       (error: string | unknown) => {
         this.connected = false;
@@ -131,3 +128,117 @@ class BwsClient {
 }
 
 export const bwsClient = new BwsClient();
+
+// ===== 在线人数专用：原生 WebSocket /ws/ws-online（免登录，非 STOMP）=====
+// 参照 md/socket-test.html：连接即 +1、断开即 -1，服务端实时推送
+// 消息格式：{ "code": 200, "data": { "total": N } }
+
+const ONLINE_WS_PATH = '/ws/ws-online';
+const ONLINE_RECONNECT_INTERVAL = 5000;
+
+/** 在线人数推送消息结构（与 socket-test.html 对齐） */
+export interface OnlineCountMessage {
+  code: number;
+  data?: {
+    total?: number;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+export type OnlineCountHandler = (total: number) => void;
+
+class OnlineCountClient {
+  private ws: WebSocket | null = null;
+  private retryTimer: ReturnType<typeof setTimeout> | null = null;
+  private manualClose = false;
+  private handlers = new Set<OnlineCountHandler>();
+  private _connected = false;
+
+  get connected(): boolean {
+    return this._connected;
+  }
+
+  /** 同源相对路径 /ws/ws-online，由 dev server proxy 转发到后端（见 vite.config.ts） */
+  private resolveUrl(): string {
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${proto}//${window.location.host}${ONLINE_WS_PATH}`;
+  }
+
+  connect() {
+    if (this._connected || this.retryTimer || this.manualClose) return;
+
+    const url = this.resolveUrl();
+    let ws: WebSocket;
+    try {
+      ws = new WebSocket(url);
+    } catch {
+      this.scheduleReconnect();
+      return;
+    }
+    this.ws = ws;
+
+    ws.onopen = () => {
+      this._connected = true;
+      this.retryTimer = null;
+    };
+
+    ws.onmessage = (evt: MessageEvent) => {
+      let msg: OnlineCountMessage | null = null;
+      try {
+        msg = JSON.parse(evt.data as string) as OnlineCountMessage;
+      } catch {
+        msg = null;
+      }
+      if (msg && msg.code === 200 && msg.data && typeof msg.data.total === 'number') {
+        const total = msg.data.total;
+        this.handlers.forEach((h) => h(total));
+      }
+    };
+
+    ws.onclose = () => {
+      this._connected = false;
+      this.ws = null;
+      this.scheduleReconnect();
+    };
+
+    ws.onerror = () => {
+      // 错误后浏览器会触发 onclose，由 onclose 负责重连
+      this._connected = false;
+    };
+  }
+
+  private scheduleReconnect() {
+    if (this.manualClose || this.retryTimer) return;
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = null;
+      this.connect();
+    }, ONLINE_RECONNECT_INTERVAL);
+  }
+
+  onCount(handler: OnlineCountHandler) {
+    this.handlers.add(handler);
+    return () => {
+      this.handlers.delete(handler);
+    };
+  }
+
+  disconnect() {
+    this.manualClose = true;
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = null;
+    }
+    if (this.ws) {
+      try {
+        this.ws.close();
+      } catch {
+        /* noop */
+      }
+      this.ws = null;
+    }
+    this._connected = false;
+  }
+}
+
+export const onlineCountClient = new OnlineCountClient();

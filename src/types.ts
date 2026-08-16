@@ -50,7 +50,7 @@ export type WidgetType =
   | 'control-center'
   | 'web-grid'
   | 'application'
-  | 'banner';
+  | 'member-count';
 
 // 尺寸统一使用分数写法（如 1/2、1/8），值即展示文案，无需额外映射表。
 export type WidgetSize =

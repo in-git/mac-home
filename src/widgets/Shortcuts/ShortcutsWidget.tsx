@@ -3,6 +3,9 @@ import { Plus } from 'lucide-react';
 import { SiteItem } from '../../api/site';
 import { ShortcutTile } from './ShortcutTile';
 
+/** 磁贴图标尺寸（像素），磁贴与“添加”按钮共用，保证高度一致、动态跟随 */
+const ICON_SIZE = 64;
+
 export interface ShortcutsWidgetCardProps {
     shortcuts: SiteItem[];
     expanded: boolean;
@@ -72,21 +75,24 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                             >
                                 <ShortcutTile
                                     item={item}
-                                    iconSize={64}
+                                    iconSize={ICON_SIZE}
                                     onDelete={onDelete ? (id, e) => onDelete(id, e) : () => { }}
                                 />
                             </a>
                         ))}
-                        {/* 新增：矩形 Plus 占位，尺寸与其他磁贴一致 */}
-                        <button
-                            data-no-drag
-                            type="button"
-                            onClick={onAddClick}
-                            title="添加网址"
-                            className="group relative h-full w-full flex flex-col items-center justify-center rounded-[var(--card-radius)] border border-dashed border-slate-300 dark:border-slate-600 bg-white hover:bg-slate-50 dark:bg-white/10 dark:hover:bg-white/15 transition-colors text-[color:var(--accent)]"
-                        >
-                            <Plus size={28} />
-                        </button>
+                        {/* 新增：矩形 Plus 占位，尺寸与其他磁贴一致（动态跟随 iconSize） */}
+                        <div className="relative flex flex-col items-center rounded-[var(--card-radius)] transition-colors text-center">
+                            <button
+                                data-no-drag
+                                type="button"
+                                onClick={onAddClick}
+                                title="添加网址"
+                                style={{ height: ICON_SIZE, width: ICON_SIZE }}
+                                className="group relative flex flex-col items-center justify-center rounded-[var(--card-radius)] border border-dashed border-slate-300 dark:border-slate-600 bg-white hover:bg-slate-50 dark:bg-white/10 dark:hover:bg-white/15 text-[color:var(--accent)]"
+                            >
+                                <Plus size={28} />
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

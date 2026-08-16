@@ -12,6 +12,7 @@ import { SettingsWidget } from '../../widgets/SettingsWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../../widgets/WeatherWidget';
 import { ShortcutsWidget } from '@/views/ShortcutsWidget';
+import { MemberCountWidget } from '../../widgets/MemberCountWidget';
 
 interface RenderWidgetContentProps {
   widget: WidgetItem;
@@ -87,8 +88,9 @@ export const renderWidgetContent = ({
     case 'application': {
       return <WebListWidget site={widget.data.site} />;
     }
-    case 'banner': {
-      return <BannerWidget size={widget.size} />;
+
+    case 'member-count': {
+      return <MemberCountWidget />;
     }
     default:
       return null;

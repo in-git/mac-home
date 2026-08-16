@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>当前在线人数</title>
+  <style>
+    body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; margin: 60px; background: #f5f6f8; color: #333; }
+    h2 { margin-bottom: 8px; }
+    .tip { color: #888; font-size: 13px; margin-bottom: 24px; }
+    .card { background: #fff; border-radius: 12px; padding: 28px 36px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .card .label { font-size: 14px; color: #888; }
+    .card .value { font-size: 48px; font-weight: 700; margin-top: 8px; color: #2b6cff; }
+    .status { margin-top: 24px; font-size: 14px; }
+    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .dot.on { background: #29c46a; }
+    .dot.off { background: #f0506e; }
+    .log { margin-top: 24px; max-width: 520px; background: #fff; border-radius: 10px; padding: 14px 18px; box-shadow: 0 2px 8px rgba(0,0,0,.04); font-size: 12px; color: #555; max-height: 200px; overflow: auto; }
+    .log .line { padding: 2px 0; border-bottom: 1px dashed #eee; }
+    .log .line:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <h2>当前在线人数</h2>
+  <div class="tip">原生 WebSocket 端点 <code>/ws/ws-online</code>，免登录，连接即 +1、断开即 -1，实时推送。</div>
+
+  <div class="card">
+    <div class="label">当前在线人数</div>
+    <div class="value" id="vOnline">-</div>
+  </div>
+
+  <div class="status">
+    <span class="dot off" id="dot"></span><span id="connText">未连接</span>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <script>
+    // ===== 后端地址（file:// 打开时必须填真实后端地址）=====
+    var BASE_URL = 'http://localhost:82';
+    // 原生 WebSocket 用 ws://（https 页面用 wss://）
+    var WS_URL = BASE_URL.replace(/^http/, 'ws') + '/ws/ws-online';
+
+    var ws = null;
+
+    function setStatus(connected) {
+      document.getElementById('dot').className = 'dot ' + (connected ? 'on' : 'off');
+      document.getElementById('connText').textContent = connected ? '已连接' : '未连接';
+    }
+
+    function appendLog(text) {
+      console.log('[online]', text);
+      var box = document.getElementById('log');
+      var line = document.createElement('div');
+      line.className = 'line';
+      var t = new Date();
+      var ts = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2) + ':' + ('0' + t.getSeconds()).slice(-2);
+      line.textContent = '[' + ts + '] ' + text;
+      box.insertBefore(line, box.firstChild);
+    }
+
+    function connect() {
+      appendLog('开始连接 ' + WS_URL);
+      ws = new WebSocket(WS_URL);
+
+      ws.onopen = function () {
+        setStatus(true);
+        appendLog('WebSocket 连接已打开');
+      };
+
+      // 服务端推送 JSON：{"code":200,"data":{"total":N}}
+      ws.onmessage = function (evt) {
+        appendLog('收到消息：' + evt.data);
+        try {
+          var result = JSON.parse(evt.data);
+          if (result.code === 200 && result.data) {
+            document.getElementById('vOnline').textContent = result.data.total;
+            appendLog('当前在线人数：' + result.data.total);
+          } else {
+            appendLog('消息格式不符合预期');
+          }
+        } catch (e) {
+          appendLog('解析消息失败：' + e.message);
+        }
+      };
+
+      ws.onclose = function (event) {
+        setStatus(false);
+        document.getElementById('vOnline').textContent = '-';
+        appendLog('连接已关闭 code=' + event.code + ' reason=' + (event.reason || '无'));
+      };
+
+      ws.onerror = function () {
+        setStatus(false);
+        appendLog('连接发生错误，请检查后端地址/端口/是否启动');
+        console.error('[online] WebSocket 错误', arguments);
+      };
+    }
+
+    connect();
+  </script>
+</body>
+</html>
