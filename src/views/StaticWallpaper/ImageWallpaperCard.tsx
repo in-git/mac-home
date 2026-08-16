@@ -79,7 +79,7 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
             <ImageIcon className="mr-1 h-4 w-4" />
-            暂无预览{item.imageUrl}
+            暂无预览
           </div>
         )}
       </div>

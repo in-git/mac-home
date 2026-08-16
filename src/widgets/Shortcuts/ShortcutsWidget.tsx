@@ -77,13 +77,13 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                                 />
                             </a>
                         ))}
-                        {/* 新增：矩形 Plus 占位 */}
+                        {/* 新增：矩形 Plus 占位，尺寸与其他磁贴一致 */}
                         <button
                             data-no-drag
                             type="button"
                             onClick={onAddClick}
                             title="添加网址"
-                            className="group flex  flex-col items-center justify-center rounded-[var(--card-radius)] border border-dashed border-slate-300 dark:border-slate-600 bg-white hover:bg-slate-50 dark:bg-white/10 dark:hover:bg-white/15 transition-colors text-[color:var(--accent)] aspect-square"
+                            className="group relative h-full w-full flex flex-col items-center justify-center rounded-[var(--card-radius)] border border-dashed border-slate-300 dark:border-slate-600 bg-white hover:bg-slate-50 dark:bg-white/10 dark:hover:bg-white/15 transition-colors text-[color:var(--accent)]"
                         >
                             <Plus size={28} />
                         </button>

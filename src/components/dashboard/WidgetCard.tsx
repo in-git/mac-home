@@ -103,9 +103,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`muuri-item p-2 lg:p-4 z-10 ${sizeClasses}${
-        isExpanded ? ' hidden' : ''
-      }`}
+      className={`muuri-item p-2 lg:p-4 z-10 ${sizeClasses}`}
       onClick={handleCardClick}
     >
       {/* Muuri Required Item Content Wrapper */}
