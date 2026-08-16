@@ -8,7 +8,7 @@ import { TopBar } from './components/TopBar';
 import { siteApi, SiteItem } from './api/site';
 import type { WidgetItem } from './types';
 import { isWebGrid } from './data/widgetConfig';
-import { SIZE_OPTIONS_ICON_GRID } from './data/options';
+import { getSizeOptions } from './data/options';
 import { useAppInit } from './hooks/useAppInit';
 import { useGreeting } from './hooks/useGreeting';
 import { usePetAutoActivity } from './hooks/usePetAutoActivity';
@@ -90,7 +90,7 @@ export default function App() {
       title: item.name || '未命名',
       maxInstances: Infinity,
       size: '1/12',
-      sizeOptions: SIZE_OPTIONS_ICON_GRID,
+      sizeOptions: getSizeOptions('icon-grid'),
       isAddable: false,
       logo: '🌐',
       showHeader: false,

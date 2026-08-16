@@ -242,7 +242,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             调整尺寸
           </div>
           <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
-            {getWidgetConfig(targetWidget.type).sizeOptions.map((sz) => (
+            {(getWidgetConfig(targetWidget.type).sizeOptions ?? []).map((sz) => (
               <button
                 key={sz}
                 onClick={() => {

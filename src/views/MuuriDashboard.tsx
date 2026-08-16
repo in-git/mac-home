@@ -56,7 +56,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
 
   // Cycle a widget through its available sizes on each click of the green dot.
   const cycleWidgetSize = (widget: WidgetItem) => {
-    const sizes = getWidgetConfig(widget.type).sizeOptions;
+    const sizes = getWidgetConfig(widget.type).sizeOptions ?? [];
     const currentIndex = sizes.indexOf(widget.size);
     const nextSize = sizes[(currentIndex + 1) % sizes.length];
     if (nextSize && nextSize !== widget.size) {

@@ -78,7 +78,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
     <div className="flex h-full w-full flex-col gap-3 text-slate-800 dark:text-slate-100">
       <div className="flex items-center justify-between">
         <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400">
-          人数统计
+          在线
         </span>
         <span
           className={`flex items-center gap-1 text-[11px] ${
@@ -92,10 +92,10 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2">
-        {/* 主指标：当前在线（实时，WebSocket） */}
-        <div className="flex flex-col items-center justify-center rounded-[var(--card-radius)] bg-black/5 px-2 py-4 text-center dark:bg-white/10">
-          <Users size={18} className="mb-1 text-slate-400 dark:text-slate-300" />
-          <span className="text-3xl font-semibold tabular-nums leading-none">
+        {/* 主指标：当前在线（实时，WebSocket），跟随主题色 */}
+        <div className="flex flex-col items-center justify-center rounded-[var(--card-radius)] px-2 py-4 text-center bg-[color:var(--accent)]/10">
+          <Users size={18} className="mb-1 text-[color:var(--accent)]" />
+          <span className="text-3xl font-semibold tabular-nums leading-none text-[color:var(--accent)]">
             {online != null ? online.toLocaleString() : '—'}
           </span>
           <span className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
@@ -103,7 +103,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
           </span>
         </div>
 
-        {/* 访客统计：月 / 周 / 当日，一排三列 */}
+        {/* 访客统计：月 / 周 / 当日，一排三列，图标跟随主题色 */}
         <div className="grid grid-cols-3 gap-2">
           {STAT_ITEMS.filter((item) => item.label !== '当前在线').map(
             ({ label, icon: Icon, getValue }) => {
@@ -115,7 +115,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
                 >
                   <Icon
                     size={16}
-                    className="mb-1 text-slate-400 dark:text-slate-300"
+                    className="mb-1 text-[color:var(--accent)]"
                   />
                   <span className="text-xl font-semibold tabular-nums leading-none">
                     {value != null ? value.toLocaleString() : '—'}

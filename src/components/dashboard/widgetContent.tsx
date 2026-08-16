@@ -92,6 +92,16 @@ export const renderWidgetContent = ({
     case 'member-count': {
       return <MemberCountWidget />;
     }
+    case 'blank': {
+      // 空白占位：编辑态显示提示文字，正常态为纯空卡片（用于布局留白）
+      return isEditMode ? (
+        <div className="flex h-full w-full items-center justify-center text-[color:var(--accent)]/70 dark:text-[color:var(--accent)]/70">
+          <span className="text-sm">空白占位</span>
+        </div>
+      ) : (
+        <div className="h-full w-full" />
+      );
+    }
     default:
       return null;
   }

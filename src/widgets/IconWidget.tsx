@@ -30,6 +30,7 @@ export function IconWidget({ size = '1/12', site, iconSize }: IconWidgetProps) {
     <button
       type="button"
       title={label}
+      style={{ ['--label-size' as string]: iconSize ? `${Math.max(10, Math.round(iconSize * 0.18))}px` : '12px' }}
       className=" group !pointer-events-auto   flex h-full w-full flex-col items-center justify-center gap-1   disabled:cursor-default"
     >
       {site?.logo ? (
@@ -52,7 +53,7 @@ export function IconWidget({ size = '1/12', site, iconSize }: IconWidgetProps) {
         <Rocket className="leading-none" strokeWidth={1.75} {...(iconSize ? { size: iconSize } : {})} />
       )}
       {!iconOnly && (
-        <span className="w-full min-w-0 truncate text-center text-white dark:text-black">
+        <span className="w-full min-w-0 truncate text-center text-white text-sm">
           {label}
         </span>
       )}

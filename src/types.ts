@@ -50,7 +50,8 @@ export type WidgetType =
   | 'control-center'
   | 'web-grid'
   | 'application'
-  | 'member-count';
+  | 'member-count'
+  | 'blank';
 
 // 尺寸统一使用分数写法（如 1/2、1/8），值即展示文案，无需额外映射表。
 export type WidgetSize =
@@ -98,8 +99,8 @@ export interface WidgetItem {
   maxInstances: number;
   /** Size applied to a newly created widget of this type. */
   size: WidgetSize;
-  /** Sizes offered in the size picker for this type. */
-  sizeOptions: WidgetSize[];
+  /** Sizes offered in the size picker for this type (可按 id 从 sizes.ts 查询；搜索等组件可不设置，回退到默认). */
+  sizeOptions?: WidgetSize[];
   /** Whether this type can be added from the "添加组件" modal. */
   isAddable: boolean;
   /** Emoji/glyph shown in the add-widget picker. */

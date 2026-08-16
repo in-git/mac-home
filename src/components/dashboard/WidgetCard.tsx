@@ -114,7 +114,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
           }}
           className={`widget-card h-full w-full ${isGlass ? 'glass-panel  shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
-          }${isEditMode ? ' edit-wiggle' : ''}`}
+          }${isEditMode ? ' edit-wiggle border-2 border-dashed border-[color:var(--accent)]' : ''}`}
           onPointerDown={handlePointerDown}
           onPointerUp={cancelLongPress}
           onPointerLeave={cancelLongPress}
@@ -142,7 +142,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
                 <div className="flex space-x-1.5 items-center">
                   {/* Green dot → left click cycles size, right click deletes.
                       Hidden when the widget has only one size option. */}
-                  {getWidgetConfig(widget.type).sizeOptions.length > 1 && (
+                  {(getWidgetConfig(widget.type).sizeOptions?.length ?? 0) > 1 && (
                     <Tooltip delay={150}>
                       <Tooltip.Trigger className="inline-flex">
                         <div
