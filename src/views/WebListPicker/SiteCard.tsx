@@ -1,9 +1,10 @@
-import { Trash2, Plus, ExternalLink } from 'lucide-react';
+import { Trash2, Download, Eye, Check } from 'lucide-react';
 import React, { useState } from 'react';
 import { Tooltip } from '@heroui/react';
 import { SiteItem } from '../../api/site';
 import { useToast } from '../../components/Toast';
 import { LazyImage } from '../../components/LazyImage';
+import Button from '../../components/Button';
 
 interface SiteCardProps {
   item: SiteItem;
@@ -37,8 +38,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   return (
     <div
       onClick={() => onOpen(item)}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40  bg-white dark:bg-white/5 min-h-[190px] cursor-pointer"
-      title={`打开 ${item.name}`}
+      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40  bg-white dark:bg-white/5 cursor-pointer"
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         {coverSrc ? (
@@ -64,57 +64,13 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           </div>
         )}
         {item.count !== undefined && item.count > 0 && (
-          <span className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
-            <ExternalLink size={13} className="opacity-90" />
+          <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
+            <Eye size={13} className="opacity-90" />
             {item.count > 999 ? '999+' : item.count}
           </span>
         )}
-
-        {/* 右上角操作区：未添加时显示添加按钮（悬停时出现）；已添加时显示红色删除按钮 */}
-        <div className="absolute top-2 right-2 flex items-center gap-1.5">
-          {exists ? (
-            onRemove && (
-              <Tooltip>
-                <Tooltip.Trigger>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRemove(item);
-                      showToast(`已从桌面移除「${item.name}」`, 'info');
-                    }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md ring-1 ring-white/15 hover:bg-red-600 transition-colors"
-                    title={removeTip}
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Content showArrow placement="top" className="text-xs">
-                  {removeTip}
-                </Tooltip.Content>
-              </Tooltip>
-            )
-          ) : (
-            <Tooltip>
-              <Tooltip.Trigger>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAdd(item);
-                    showToast(`已添加「${item.name}」到桌面`, 'success');
-                  }}
-                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--accent)] text-white shadow hover:bg-[color:var(--accent-hover)] transition-transform active:scale-95 opacity-0 group-hover:opacity-100"
-                >
-                  <Plus size={15} />
-                </button>
-              </Tooltip.Trigger>
-              <Tooltip.Content showArrow placement="top" className="text-xs">
-                {addTip}
-              </Tooltip.Content>
-            </Tooltip>
-          )}
-        </div>
       </div>
-      <div className="p-2.5 text-left">
+      <div className="relative p-2.5 text-left">
         <div className="flex items-center gap-2">
           {item.logo && !imgError ? (
             <img
@@ -125,13 +81,13 @@ export const SiteCard: React.FC<SiteCardProps> = ({
               decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
-              className={`h-5 w-5 shrink-0 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10 ${
+              className={`h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10 ${
                 imgLoaded ? 'opacity-100' : 'opacity-0'
               }`}
             />
           ) : (
             <div
-              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
               style={{
                 background:
                   item.background ||
@@ -144,6 +100,65 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
             {item.name}
           </p>
+          {/* 操作区：标题行右侧，固定尺寸格；三态按钮绝对定位叠加在同一位置，互斥显示 */}
+          <div className="relative ml-auto h-6 w-6 shrink-0">
+            {exists ? (
+              <>
+                {/* 已安装：默认绿色对勾；鼠标移到卡片上切换为红色删除按钮（互斥，只显示一个） */}
+                {onRemove && (
+                  <Tooltip>
+                    <Tooltip.Trigger>
+                      <Button
+                        iconOnly
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemove(item);
+                          showToast(`已从桌面移除「${item.name}」`, 'info');
+                        }}
+                        className="absolute inset-0 !h-6 !w-6 rounded-full bg-red-500 text-white shadow-md ring-1 ring-white/15 hover:bg-red-600 transition-opacity opacity-0 group-hover:opacity-100"
+                        title={removeTip}
+                        icon={<Trash2 size={13} />}
+                      />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content showArrow placement="top" className="text-xs">
+                      {removeTip}
+                    </Tooltip.Content>
+                  </Tooltip>
+                )}
+                <Button
+                  iconOnly
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  className={`absolute inset-0 !h-6 !w-6 rounded-full bg-green-500 text-white shadow-md ring-1 ring-white/15 transition-opacity ${
+                    onRemove ? 'opacity-100 group-hover:opacity-0' : ''
+                  }`}
+                  title="已安装"
+                  icon={<Check size={14} strokeWidth={3} />}
+                />
+              </>
+            ) : (
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Button
+                    iconOnly
+                    size="sm"
+                    variant="primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAdd(item);
+                      showToast(`已添加「${item.name}」到桌面`, 'success');
+                    }}
+                    className="absolute inset-0 !h-6 !w-6 rounded-full shadow-md"
+                    icon={<Download size={15} />}
+                  />
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow placement="top" className="text-xs">
+                  {addTip}
+                </Tooltip.Content>
+              </Tooltip>
+            )}
+          </div>
         </div>
         {item.des && (
           <p className="truncate text-xs dark:text-slate-400 mt-0.5">

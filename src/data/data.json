@@ -154,7 +154,7 @@
   "screenBrightness": 62,
   "aiConfig": {
     "provider": "local",
-    "baseURL": "http://localhost:82/public/ai/chat",
+    "baseURL": "/api/public/ai/chat",
     "apiKey": "",
     "model": "qwen2.5:3b"
   },
