@@ -5,7 +5,12 @@ import { siteApi } from '../../api/site';
 import { Button } from '../../components/Button';
 import { SiteCard } from './SiteCard';
 import { FilterBar } from './FilterBar';
-import { flattenCategories, WebListPickerProps } from './types';
+import {
+  flattenCategories,
+  getChildCategories,
+  findParentId,
+  WebListPickerProps,
+} from './types';
 
 /**
  * 网页列表（WebListPicker）：
@@ -24,6 +29,18 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   const [categories, setCategories] = useState<ReturnType<typeof flattenCategories>>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
   const [selectedCat, setSelectedCat] = useState<string>('');
+  // 当前选中的父级（用于第二排渲染对应子级）；空表示「全部」
+  const [activeParent, setActiveParent] = useState<string>('');
+
+  // 选择分类：父级或子级均会同步 activeParent，保证第二排始终对应其所属父级
+  const handleSelectCategory = (id: string) => {
+    setSelectedCat(id);
+    if (!id) {
+      setActiveParent('');
+    } else {
+      setActiveParent(findParentId(categories, id));
+    }
+  };
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [items, setItems] = useState<
     Awaited<ReturnType<typeof siteApi.getPage>>['records']
@@ -117,13 +134,14 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   return (
     <div className="flex flex-col h-full max-h-[75vh]">
       <FilterBar
-        categories={categories}
+        parentCategories={categories}
+        childCategories={getChildCategories(categories, activeParent)}
         categoryLoading={categoryLoading}
         selectedCat={selectedCat}
         searchKeyword={searchKeyword}
         loading={loading}
         onSearchChange={setSearchKeyword}
-        onSelectCategory={setSelectedCat}
+        onSelectCategory={handleSelectCategory}
         onRefresh={() => fetchSites(page, selectedCat, searchKeyword)}
       />
 

@@ -4,13 +4,14 @@ import { getRoleSkin } from '../../data/roles';
 import type { RoleSkinConfig, RoleTextures } from './types';
 
 // 按角色配置批量导入所有角色资源目录下的图片（皮肤化：换图只需改 roles.ts 与目录）
-const skinImages = import.meta.glob('../../assets/*/*.png', {
+// 支持平铺（assetDir/*.png）与子目录分组（assetDir/face/*.png 等）两种布局
+const skinImages = import.meta.glob('../../assets/*/*/*.png', {
   eager: true,
   import: 'default',
 }) as Record<string, string>;
 
 // 额外支持 .webp（立华奏等较小体积皮肤）
-const skinImagesWebp = import.meta.glob('../../assets/*/*.webp', {
+const skinImagesWebp = import.meta.glob('../../assets/*/*/*.webp', {
   eager: true,
   import: 'default',
 }) as Record<string, string>;

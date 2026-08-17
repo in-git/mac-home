@@ -13,22 +13,10 @@ export const ROLE_SKINS: RoleSkinConfig[] = [
     author: '',
     assetDir: 'klrx',
     textures: {
-      face: ['b1.png', 'b2.png', 'b3.png', 'b4.png'],
-      left: ['l1.png', 'l2.png', 'l3.png', 'l4.png'],
-      right: ['r1.png', 'r2.png', 'r3.png', 'r4.png'],
-      idle: ['f1.png', 'f2.png', 'f3.png', 'f4.png'],
-    },
-  },
-  {
-    id: 'lhzou',
-    name: '立华奏',
-    author: '',
-    assetDir: 'lhzou',
-    textures: {
-      face: [],
-      left: ['l1.webp', 'l2.webp', 'l3.webp', 'l4.webp'],
-      right: ['r1.webp', 'r2.webp', 'r3.webp', 'r4.webp'],
-      idle: ['f1.webp', 'f2.webp', 'f3.webp', 'f4.webp'],
+      face: ['face/b1.webp', 'face/b2.webp', 'face/b3.webp', 'face/b4.webp'],
+      left: ['left/l1.webp', 'left/l2.webp', 'left/l3.webp', 'left/l4.webp'],
+      right: ['right/r1.webp', 'right/r2.webp', 'right/r3.webp', 'right/r4.webp'],
+      idle: ['idle/f1.webp', 'idle/f2.webp', 'idle/f3.webp', 'idle/f4.webp'],
     },
   },
 ];

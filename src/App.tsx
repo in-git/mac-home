@@ -156,6 +156,20 @@ export default function App() {
   // 桌宠定时自主活动（仅在设置开启时运行）。
   usePetAutoActivity(petAutoActivity);
 
+  // SEO：动态同步标题与描述，确保关键词「吴文龙 / 吴文龙的互联空间」一致。
+  useEffect(() => {
+    document.title = '吴文龙的互联空间 | 吴文龙';
+    const desc =
+      '吴文龙的互联空间——吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽组件、便签、天气、实时任务提醒与动态壁纸。';
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'description');
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', desc);
+  }, []);
+
   // 「清屏」关闭时，隐藏桌面上的所有组件（整个仪表盘），
   // 直接传空数组，确保 Muuri 同步能正确清空所有卡片。
   const dashboardWidgets = showDesktopIcons ? widgets : [];
@@ -168,6 +182,15 @@ export default function App() {
       y: e.clientY,
       targetWidgetId: null,
     });
+  };
+
+  // 点击仪表盘容器（<main>）外的区域时，退出编辑模式
+  const dashboardRef = React.useRef<HTMLElement | null>(null);
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (!isEditMode) return;
+    if (dashboardRef.current && !dashboardRef.current.contains(e.target as Node)) {
+      setIsEditMode(false);
+    }
   };
 
   // Specific Widget Right Click Handler
@@ -217,10 +240,24 @@ export default function App() {
       />
 
       {/* Scroll wrapper — sits ABOVE <main>, owns the scrollbar styling. */}
-      <div className="flex-1 w-full overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        className={
+          'flex-1 w-full overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden transition-colors duration-200 ' +
+          (isEditMode
+            ? 'cursor-default bg-black/30 ring-1 ring-inset ring-black/10'
+            : '')
+        }
+        onClick={handleOutsideClick}
+      >
         {/* Main Desktop Dashboard Container */}
         <main
-          className="relative max-w-7xl w-full mx-auto p-3 sm:p-6 pb-16"
+          ref={dashboardRef}
+          className={
+            'relative max-w-7xl w-full mx-auto p-3 sm:p-6 pb-16 rounded-2xl transition-shadow duration-200 ' +
+            (isEditMode
+              ? 'ring-2 ring-[color:var(--accent)] shadow-[0_0_0_4px_color-mix(in_srgb,var(--accent)_25%,transparent)]'
+              : '')
+          }
         >
           {/* Muuri Grid Layout Engine */}
           <MuuriDashboard

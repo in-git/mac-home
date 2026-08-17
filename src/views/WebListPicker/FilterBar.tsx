@@ -5,7 +5,10 @@ import { Button } from '../../components/Button';
 import { SiteCategory } from '../../api/site';
 
 interface FilterBarProps {
-  categories: SiteCategory[];
+  /** 父级（顶层）分类列表，用于第一排 */
+  parentCategories: SiteCategory[];
+  /** 当前父级对应的子级列表，用于第二排；为空不渲染第二排 */
+  childCategories: SiteCategory[];
   categoryLoading: boolean;
   selectedCat: string;
   searchKeyword: string;
@@ -28,7 +31,7 @@ function FilterRow({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-slate-400 text-xs mr-1">{label}</span>
+      <span className="text-slate-400 text-xs mr-1 shrink-0">{label}</span>
       {loading ? (
         Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className={SKELETON_BTN} />
@@ -41,7 +44,8 @@ function FilterRow({
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
-  categories,
+  parentCategories,
+  childCategories,
   categoryLoading,
   selectedCat,
   searchKeyword,
@@ -85,12 +89,15 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </Button>
       </div>
 
-      {/* Category filter */}
+      {/* 第一排：父级分类（顶层） */}
       <FilterRow label="分类" loading={categoryLoading}>
-        <button onClick={() => onSelectCategory('')} className={chipClass(selectedCat === '')}>
+        <button
+          onClick={() => onSelectCategory('')}
+          className={chipClass(selectedCat === '')}
+        >
           全部
         </button>
-        {categories.map((c) => (
+        {parentCategories.map((c) => (
           <button
             key={c.id}
             onClick={() => onSelectCategory(c.id)}
@@ -100,6 +107,21 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </button>
         ))}
       </FilterRow>
+
+      {/* 第二排：子级分类（仅当前父级存在子级时显示，不会出现第三排） */}
+      {!categoryLoading && childCategories.length > 0 && (
+        <FilterRow label="子类" loading={false}>
+          {childCategories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => onSelectCategory(c.id)}
+              className={chipClass(selectedCat === c.id)}
+            >
+              {c.name}
+            </button>
+          ))}
+        </FilterRow>
+      )}
     </div>
   );
 };
