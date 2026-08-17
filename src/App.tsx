@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
@@ -120,7 +120,6 @@ export default function App() {
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [showDesktopIcons, setShowDesktopIcons] = useState<boolean>(true);
-  const mainRef = useRef<HTMLElement>(null);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] =
     useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
@@ -182,16 +181,6 @@ export default function App() {
     });
   };
 
-  // Clicking outside <main> (e.g. background/topbar/empty desktop margin outside main) exits edit mode.
-  const handleRootClick = (e: React.MouseEvent) => {
-    if (!isEditMode) return;
-    const target = e.target as HTMLElement;
-    const insideMain = mainRef.current?.contains(target);
-    if (!insideMain) {
-      setIsEditMode(false);
-    }
-  };
-
   // 天气状态：以天气卡片为准，同步给顶部状态栏
   const [weatherInfo, setWeatherInfo] = useState<{
     cityName: string;
@@ -201,7 +190,6 @@ export default function App() {
 
   return (
     <div
-      onClick={handleRootClick}
       onContextMenu={handleContextMenu}
       className="relative h-screen w-full flex flex-col overflow-y-hidden font-sans overflow-x-hidden selection:bg-[color:var(--accent)] selection:text-white"
     >
@@ -232,7 +220,6 @@ export default function App() {
       <div className="flex-1 w-full overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {/* Main Desktop Dashboard Container */}
         <main
-          ref={mainRef}
           className="relative max-w-7xl w-full mx-auto p-3 sm:p-6 pb-16"
         >
           {/* Muuri Grid Layout Engine */}
@@ -252,15 +239,15 @@ export default function App() {
             onUpdateWidget={updateWidget}
           />
 
-          {/* 右下角完成按钮（仅在编辑模式展示） */}
+          {/* 右下角完成按钮（仅在编辑模式展示）：圆形放大 */}
           {isEditMode && (
             <button
               type="button"
               onClick={() => setIsEditMode(false)}
-              className="fixed right-4 sm:right-6 bottom-5 z-[60] flex items-center space-x-1.5 px-4 py-2 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] active:scale-95 text-white text-xs font-semibold rounded-[var(--card-radius)] shadow-lg"
+              aria-label="完成"
+              className="fixed right-5 sm:right-7 bottom-6 z-[60] flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] active:scale-95 text-white shadow-lg shadow-black/20 transition-transform"
             >
-              <Check size={14} strokeWidth={2.5} />
-              <span>完成</span>
+              <Check size={28} strokeWidth={3} />
             </button>
           )}
         </main>

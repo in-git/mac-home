@@ -35,4 +35,6 @@ export interface AIPanelProps {
 export interface PetPanelProps {
   enabled: boolean;
   onToggleEnabled: () => void;
+  selectedRoleId: string;
+  onSelectRole: (id: string) => void;
 }

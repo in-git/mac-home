@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { bwsClient, WsMessage, WsUserOnlineData } from '../api/websocket';
+import { bwsClient, WsMessage,  } from '../api/websocket';
 
 // 监听 SOCKET 推送，处理「用户上线」等业务事件
 export function useBwsConnection() {
@@ -7,7 +7,7 @@ export function useBwsConnection() {
     const off = bwsClient.onMessage((msg: WsMessage) => {
       // 仅处理用户上线事件（参照 socket-test.html：module = USER, type = ONLINE）
       if (msg.module === 'USER' && msg.type === 'ONLINE') {
-        const data = (msg.data ?? {}) as WsUserOnlineData;
+        const data = (msg.data ?? {}) as { userName: string; account: string; userId: string }
         const name = data.userName || data.account || data.userId || '一位用户';
 
         // 触发桌宠气泡提示（上线问候）

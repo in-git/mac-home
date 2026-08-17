@@ -1,6 +1,7 @@
 import type { WidgetItem } from '../../types';
 import type { ContextMenuItemConfig } from '../../data/contextMenuConfig';
 import { ClockFontSubmenu } from './ClockFontSubmenu';
+import { AspectSubmenu } from './AspectSubmenu';
 
 /**
  * 组件特有「二级配置子菜单」注册表。
@@ -31,4 +32,5 @@ export const WIDGET_CONFIG_SUBMENUS: Partial<
   Record<WidgetItem['type'], React.FC<WidgetConfigSubmenuProps>>
 > = {
   'clock-lunar': ClockFontSubmenu,
+  blank: AspectSubmenu,
 };

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
 import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widgetConfig';
 import {
@@ -53,6 +54,8 @@ interface HomeState {
   petChatHistory: import('../agent/types').AgentChatMessage[];
   // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
   petAutoActivity: boolean;
+  // 当前选中的桌宠形象（角色皮肤 id），持久化以便下次进入恢复
+  selectedRoleId: string;
   // 天气卡片已添加的城市列表（持久化，跟随主页整体存储）
   weatherCities: WeatherCity[];
   // 当前选中的天气城市 id（持久化，保证下次进入恢复上次的查看/定位城市）
@@ -92,6 +95,8 @@ interface HomeState {
     messages: import('../agent/types').AgentChatMessage[],
   ) => void;
   setPetAutoActivity: (value: boolean) => void;
+  /** 切换当前桌宠形象（角色皮肤 id）。 */
+  setSelectedRoleId: (id: string) => void;
   // 天气城市：整体替换列表（增/删/改后调用），并在被删城市为当前选中时回退选中项
   setWeatherCities: (cities: WeatherCity[]) => void;
   // 切换当前选中的天气城市
@@ -115,6 +120,7 @@ export const useHomeStore = create<HomeState>()(
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_STATE.aiConfig),
       // 桌宠对话历史不随默认配置重置，初始为空
       petChatHistory: [],
+      selectedRoleId: DEFAULT_ROLE_ID,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -256,6 +262,7 @@ export const useHomeStore = create<HomeState>()(
         // 统一在 store 层截断到最近 10 轮，超出自动删除最早记录（调用方无需各自处理）
         set({ petChatHistory: messages.slice(-MAX_PET_CHAT_MESSAGES) }),
       setPetAutoActivity: (value) => set({ petAutoActivity: value }),
+      setSelectedRoleId: (id) => set({ selectedRoleId: id }),
       setWeatherCities: (cities) =>
         set((state) => ({
           weatherCities: cities,

@@ -199,7 +199,9 @@ export const WIDGET_CONFIG: WidgetItem[] = [
       padding: 'p-0',
       glass: false,
     },
-    data: {},
+    data: {
+      aspect: '1 / 1',
+    },
   },
 ];
 

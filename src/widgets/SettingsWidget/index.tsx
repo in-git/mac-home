@@ -33,6 +33,8 @@ export const SettingsWidget: React.FC<{
     setAiConfig,
     petAutoActivity,
     setPetAutoActivity,
+    selectedRoleId,
+    setSelectedRoleId,
     updateWallpaper,
     setScreenBrightness,
     setWeatherCities,
@@ -60,6 +62,8 @@ export const SettingsWidget: React.FC<{
       setAiConfig: s.setAiConfig,
       petAutoActivity: s.petAutoActivity,
       setPetAutoActivity: s.setPetAutoActivity,
+      selectedRoleId: s.selectedRoleId,
+      setSelectedRoleId: s.setSelectedRoleId,
       updateWallpaper: s.updateWallpaper,
       setScreenBrightness: s.setScreenBrightness,
       setWeatherCities: s.setWeatherCities,
@@ -232,6 +236,8 @@ export const SettingsWidget: React.FC<{
           <PetPanel
             enabled={petAutoActivity}
             onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
+            selectedRoleId={selectedRoleId}
+            onSelectRole={setSelectedRoleId}
           />
             <AIPanel config={aiConfig} onChange={setAiConfig} />
         </>

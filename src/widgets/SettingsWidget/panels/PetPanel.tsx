@@ -1,5 +1,6 @@
-import { PawPrint, Zap } from 'lucide-react';
+import { Check, PawPrint, Zap } from 'lucide-react';
 import React from 'react';
+import { ROLE_SKINS } from '../../../data/roles';
 import { ToggleDot } from '../ToggleDot';
 import type { PetPanelProps } from '../types';
 
@@ -7,13 +8,62 @@ import type { PetPanelProps } from '../types';
  * 宠物设置面板：遵循 macOS System Settings 列表式分组卡片规范。
  * 可配置桌宠是否开启「自由活动」（模型定时驱动移动 / 跳跃 / 问候），
  * 触发间隔在 10~60 秒之间随机，并提示开启后会更频繁消耗模型 Token。
+ * 可在此切换桌宠形象（角色皮肤）。
  */
 export const PetPanel: React.FC<PetPanelProps> = ({
   enabled,
   onToggleEnabled,
+  selectedRoleId,
+  onSelectRole,
 }) => {
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
+      {/* 形象选择 */}
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
+        <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
+          <div className="font-medium text-slate-800 dark:text-slate-200">
+            桌宠形象
+          </div>
+          <div className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
+            选择桌面上显示的桌宠角色
+          </div>
+        </div>
+        <div className="divide-y divide-black/5 dark:divide-white/10">
+          {ROLE_SKINS.map((skin) => {
+            const active = skin.id === selectedRoleId;
+            return (
+              <button
+                key={skin.id}
+                onClick={() => onSelectRole(skin.id)}
+                className={`flex items-center justify-between w-full px-4 py-3 transition-colors ${
+                  active
+                    ? 'bg-[color:var(--accent)]/10'
+                    : 'hover:bg-black/5 dark:hover:bg-white/10'
+                }`}
+              >
+                <span className="flex items-center space-x-3">
+                  <span
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                      active
+                        ? 'bg-[color:var(--accent)] text-white'
+                        : 'bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400'
+                    }`}
+                  >
+                    {skin.name.slice(0, 1)}
+                  </span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {skin.name}
+                  </span>
+                </span>
+                {active && (
+                  <Check size={16} className="text-[color:var(--accent)]" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* 自由活动开关 */}
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         <div className="flex items-center justify-between px-4 py-3">

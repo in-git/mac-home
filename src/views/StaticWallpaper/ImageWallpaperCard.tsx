@@ -53,7 +53,7 @@ export const ImageWallpaperCard: React.FC<ImageWallpaperCardProps> = ({
       {/* 图片预览 */}
       <div
         className={clsx(
-          'relative w-full bg-black/5 dark:bg-white/5',
+          'relative w-full bg-black/5 dark:bg-white/5 overflow-hidden ',
           compact ? 'aspect-[16/10]' : 'aspect-[16/9]',
         )}
       >

@@ -129,6 +129,8 @@ export interface WidgetItem {
     size?: string;
     /** 是否加粗（仅作用于数字时间），默认 true。 */
     bold?: boolean;
+    /** 空白占位组件私有属性 */
+    aspect?: string;
   }
 }
 

@@ -1,13 +1,15 @@
 import { Application, Sprite } from 'pixi.js';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { useHomeStore } from '../store/useHomeStore';
 import { loadRoleTextures } from './role/assets';
 import { RoleControls } from './role/controls';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './role/physics';
-import { DialogState, RoleState } from './role/types';
+import { DialogState, RoleState, RoleTextures } from './role/types';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const selectedRoleId = useHomeStore((s) => s.selectedRoleId);
 
   // 对话框状态与角色实时坐标
   const [dialog, setDialog] = useState<DialogState>({
@@ -26,6 +28,8 @@ export const RoleCharacterCanvas: React.FC = () => {
     let app: Application | null = null;
     let isDestroyed = false;
     let hideTimerId: NodeJS.Timeout | null = null;
+    let textures: RoleTextures | null = null;
+    let lastPosUpdate = 0;
 
     const controls = new RoleControls();
 
@@ -34,7 +38,7 @@ export const RoleCharacterCanvas: React.FC = () => {
       const customEvent = e as CustomEvent<{ text: string; duration?: number }>;
       if (customEvent.detail?.text) {
         setDialog({
-          text: customEvent.detail.text,
+          text: `${textures?.name ?? ''}：${customEvent.detail.text}`,
           visible: true,
         });
 
@@ -98,13 +102,13 @@ export const RoleCharacterCanvas: React.FC = () => {
       app = pixiApp;
       container.appendChild(pixiApp.canvas);
 
-      // Load character textures
-      const textures = await loadRoleTextures();
+      // Load character textures（按当前选中的角色皮肤加载）
+      textures = await loadRoleTextures(selectedRoleId);
 
       if (isDestroyed || !app) return;
 
-      // Create Pixi Sprite
-      const sprite = new Sprite(textures.face);
+      // Create Pixi Sprite（初始纹理取 idle 首帧）
+      const sprite = new Sprite(textures.idleFrames[0]);
       sprite.width = DEFAULT_PHYSICS_CONFIG.roleWidth;
       sprite.height = DEFAULT_PHYSICS_CONFIG.roleHeight;
 
@@ -169,17 +173,27 @@ export const RoleCharacterCanvas: React.FC = () => {
         sprite.x = state.x;
         sprite.y = state.y;
 
-        // 更新 React 状态以同步气泡位置
-        setRolePos({ x: state.x, y: state.y });
+        // 更新 React 状态以同步气泡位置（节流 ~80ms，避免每帧 setState 造成高频重渲染）
+        const now = performance.now();
+        if (now - lastPosUpdate > 80) {
+          lastPosUpdate = now;
+          setRolePos({ x: state.x, y: state.y });
+        }
 
         // Texture / Animation switching (6帧除数，降低一档切帧频率)
-        const frameIndex = Math.floor(state.animFrameCounter / 6) % 3;
         if (state.facingDirection === 'left') {
+          const frameIndex =
+            Math.floor(state.animFrameCounter / 6) % textures.leftFrames.length;
           sprite.texture = textures.leftFrames[frameIndex];
         } else if (state.facingDirection === 'right') {
+          const frameIndex =
+            Math.floor(state.animFrameCounter / 6) % textures.rightFrames.length;
           sprite.texture = textures.rightFrames[frameIndex];
         } else {
-          sprite.texture = textures.face;
+          // 静止态循环播放 idle 帧序列（皮肤驱动，其余帧来自 role.json）
+          const idleIndex =
+            Math.floor(state.animFrameCounter / 6) % textures.idleFrames.length;
+          sprite.texture = textures.idleFrames[idleIndex];
         }
       });
     };
@@ -198,7 +212,7 @@ export const RoleCharacterCanvas: React.FC = () => {
         app.destroy(true, { children: true, texture: false });
       }
     };
-  }, []);
+  }, [selectedRoleId]);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[190] overflow-hidden">
