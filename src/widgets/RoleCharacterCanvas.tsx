@@ -81,9 +81,18 @@ export const RoleCharacterCanvas: React.FC = () => {
       resetRequested = true;
     };
 
+    // 监听庆祝动作指令：播放一次 celebration 帧序列后回退 idle
+    let celebrateUntil = 0;
+    const handleRoleCelebrate = (e: Event) => {
+      const detail = (e as CustomEvent<{ duration?: number }>).detail ?? {};
+      const duration = Math.max(0, Number(detail.duration) || 2000);
+      celebrateUntil = performance.now() + duration;
+    };
+
     window.addEventListener('role-move', handleRoleMove);
     window.addEventListener('role-jump', handleRoleJump);
     window.addEventListener('role-reset', handleRoleReset);
+    window.addEventListener('role-celebrate', handleRoleCelebrate);
 
     const initPixi = async () => {
       const pixiApp = new Application();
@@ -181,7 +190,16 @@ export const RoleCharacterCanvas: React.FC = () => {
         }
 
         // Texture / Animation switching (6帧除数，降低一档切帧频率)
-        if (state.facingDirection === 'left') {
+        if (
+          textures.celebrationFrames.length > 0 &&
+          performance.now() < celebrateUntil
+        ) {
+          // 庆祝动作优先播放（来自 role.json 的 celebration 帧组）
+          const celIndex =
+            Math.floor(state.animFrameCounter / 6) %
+            textures.celebrationFrames.length;
+          sprite.texture = textures.celebrationFrames[celIndex];
+        } else if (state.facingDirection === 'left') {
           const frameIndex =
             Math.floor(state.animFrameCounter / 6) % textures.leftFrames.length;
           sprite.texture = textures.leftFrames[frameIndex];
@@ -206,6 +224,7 @@ export const RoleCharacterCanvas: React.FC = () => {
       window.removeEventListener('role-move', handleRoleMove);
       window.removeEventListener('role-jump', handleRoleJump);
       window.removeEventListener('role-reset', handleRoleReset);
+      window.removeEventListener('role-celebrate', handleRoleCelebrate);
       if (hideTimerId) clearTimeout(hideTimerId);
       controls.destroy();
       if (app) {

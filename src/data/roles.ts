@@ -17,6 +17,12 @@ export const ROLE_SKINS: RoleSkinConfig[] = [
       left: ['left/l1.webp', 'left/l2.webp', 'left/l3.webp', 'left/l4.webp'],
       right: ['right/r1.webp', 'right/r2.webp', 'right/r3.webp', 'right/r4.webp'],
       idle: ['idle/f1.webp', 'idle/f2.webp', 'idle/f3.webp', 'idle/f4.webp'],
+      celebration: [
+        'celebration/1.webp',
+        'celebration/2.webp',
+        'celebration/3.webp',
+        'celebration/4.webp',
+      ],
     },
   },
 ];

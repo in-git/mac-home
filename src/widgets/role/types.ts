@@ -29,6 +29,8 @@ export interface RoleTextures {
   leftFrames: Texture[];
   rightFrames: Texture[];
   idleFrames: Texture[];
+  /** 庆祝动作帧序列（可选，未配置则为空数组并回退 idle） */
+  celebrationFrames: Texture[];
 }
 
 /** role.json 的角色皮肤配置（驱动资源管理，便于换肤） */
@@ -42,6 +44,8 @@ export interface RoleSkinConfig {
     left: string[];
     right: string[];
     idle: string[];
+    /** 庆祝动作帧序列（可选） */
+    celebration?: string[];
   };
 }
 
