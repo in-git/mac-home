@@ -1,11 +1,8 @@
 import { Check, ExternalLink, Key, Loader2, Sparkles } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import {
-  MAX_PET_CHAT_MESSAGES,
-  useHomeStore,
-} from '@/store/useHomeStore';
+import { useHomeStore } from '@/store/useHomeStore';
 import { AI_PROVIDERS } from '@/types';
-import { chatWithPet, testConnection } from '@/utils/aiClient';
+import { testConnection } from '@/utils/aiClient';
 import type { AIPanelProps } from '../types';
 
 /**
@@ -19,13 +16,6 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
     ok: boolean;
     message: string;
   } | null>(null);
-  // 对话式连接测试
-  const [chatInput, setChatInput] = useState('');
-  const [chatting, setChatting] = useState(false);
-  const [chatReply, setChatReply] = useState<string | null>(null);
-  const [chatError, setChatError] = useState<string | null>(null);
-  const petChatHistory = useHomeStore((s) => s.petChatHistory);
-  const setPetChatHistory = useHomeStore((s) => s.setPetChatHistory);
 
   const selected = AI_PROVIDERS.find((p) => p.id === config.provider);
   const isCustom = config.provider === 'custom';
@@ -51,60 +41,6 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
       setTestResult(res);
     } finally {
       setTesting(false);
-    }
-  };
-
-  // 对话式连接测试：用桌宠系统提示词真正发一条对话，返回模型回复
-  const handleChatTest = async () => {
-    const text = chatInput.trim();
-    if (!text || chatting) return;
-    setChatting(true);
-    setChatReply(null);
-    setChatError(null);
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 20000);
-    try {
-      // 携带已持久化的桌宠对话历史，让连接测试也能延续上下文；
-      // chatWithPet 内部会安全清洗（只保留 user/assistant 文本），不会触发 400。
-      const historyForModel: import('@/utils/aiClient').ChatMessage[] =
-        petChatHistory.map((m) => ({
-          role: m.role as 'user' | 'assistant',
-          content: m.content,
-        }));
-      const reply = await chatWithPet(
-        config,
-        text,
-        historyForModel,
-        controller.signal,
-      );
-      if (!reply) {
-        setChatError('已连通，但模型未返回内容（请检查模型名）');
-      } else {
-        setChatReply(reply);
-        // 测试成功：把本轮 user + 模型回复写入跨轮历史，便于真正对话时延续
-        const userMsg = {
-          id: 'ai-test-user-' + Date.now(),
-          role: 'user' as const,
-          content: text,
-          timestamp: new Date().toLocaleTimeString(),
-        };
-        const assistantMsg = {
-          id: 'ai-test-assistant-' + Date.now(),
-          role: 'assistant' as const,
-          content: reply,
-          timestamp: new Date().toLocaleTimeString(),
-        };
-        setPetChatHistory(
-          [...petChatHistory, userMsg, assistantMsg].slice(
-            -MAX_PET_CHAT_MESSAGES,
-          ),
-        );
-      }
-    } catch (e) {
-      setChatError(e instanceof Error ? e.message : String(e));
-    } finally {
-      clearTimeout(timer);
-      setChatting(false);
     }
   };
 
@@ -254,40 +190,6 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
               {testResult.message}
             </span>
           )}
-        </div>
-
-        {/* 对话式连接测试：输入框 + 发送按钮，验证模型真实对话能力 */}
-        <div className="mt-5 space-y-2.5">
-          <p className="text-xs ">
-            对话测试（内置桌宠系统提示词，发送一条真实对话验证模型回复）
-          </p>
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleChatTest();
-              }}
-              placeholder="对桌宠说点什么…"
-              disabled={chatting}
-              className="flex-1 px-3 py-2.5 bg-black/[0.04] dark:bg-white/[0.06] rounded-[var(--card-radius)] text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400 disabled:opacity-50"
-            />
-            <button
-              onClick={handleChatTest}
-              disabled={chatting || !chatInput.trim() || !config.model}
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
-            >
-              {chatting && <Loader2 size={15} className="animate-spin" />}
-              <span>{chatting ? '发送中…' : '发送'}</span>
-            </button>
-          </div>
-          {chatReply && (
-            <div className="rounded-[var(--card-radius)] bg-black/[0.03] dark:bg-white/[0.06] p-3 text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
-              {chatReply}
-            </div>
-          )}
-          {chatError && <p className="text-sm text-[#FF3B30]">{chatError}</p>}
         </div>
       </section>
     </div>

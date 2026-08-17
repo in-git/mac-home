@@ -1,7 +1,8 @@
-import { Check, PawPrint, Zap } from 'lucide-react';
-import React from 'react';
+import { Check, PawPrint, Zap, Send } from 'lucide-react';
+import React, { useState } from 'react';
 import { ROLE_SKINS } from '../../../data/roles';
 import { ToggleDot } from '../ToggleDot';
+import { usePetAgent } from '../../../hooks/usePetAgent';
 import type { PetPanelProps } from '../types';
 
 /**
@@ -16,6 +17,16 @@ export const PetPanel: React.FC<PetPanelProps> = ({
   selectedRoleId,
   onSelectRole,
 }) => {
+  const { send, loading } = usePetAgent();
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    const text = input.trim();
+    if (!text || loading) return;
+    setInput('');
+    void send(text);
+  };
+
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
       {/* 形象选择 */}
@@ -98,6 +109,38 @@ export const PetPanel: React.FC<PetPanelProps> = ({
             开启自由活动后，桌宠将每隔 10~60 秒（随机）持续向 AI 模型发起请求，
             会明显消耗更多 Token，请根据用量预算自行选择是否开启。
           </p>
+        </div>
+      </div>
+
+      {/* 和桌宠说话：用户一句话，模型决策调用桌宠行为（petTools） */}
+      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
+        <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
+          <div className="font-medium text-slate-800 dark:text-slate-200">
+            和桌宠说话
+          </div>
+          <div className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
+            输入一句话，由大模型决定让桌宠做什么（说话 / 移动 / 跳跃 / 庆祝）
+          </div>
+        </div>
+        <div className="flex items-center space-x-2 px-4 py-3">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSend();
+            }}
+            placeholder={loading ? '桌宠思考中…' : '例如：跟我说声嗨，然后跳一下'}
+            disabled={loading}
+            className="flex-1 min-w-0 px-3 py-2 text-sm rounded-lg bg-white/70 dark:bg-black/30 border border-black/10 dark:border-white/10 outline-none focus:ring-2 focus:ring-[color:var(--accent)] disabled:opacity-50"
+          />
+          <button
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
+            aria-label="发送给桌宠"
+            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg bg-[color:var(--accent)] text-white disabled:opacity-40 transition-opacity"
+          >
+            <Send size={15} />
+          </button>
         </div>
       </div>
 

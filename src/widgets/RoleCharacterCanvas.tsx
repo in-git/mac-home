@@ -33,8 +33,12 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     const controls = new RoleControls();
 
-    // 监听外部 AI 对话发出的 Speak 事件（定义在 effect 作用域，供注册与卸载共用）
-    const handleRoleSpeak = (e: Event) => {
+    // 角色行为事件处理器。键名对应 skill.json 中 action.event，
+    // 与 actions.ts 派发的事件保持一致，便于 skill 调用链路对齐。
+    // 通过合成输入注入 ticker 物理循环，与键盘操作互不冲突。
+
+    // 说话：弹对话气泡
+    const onRoleSpeak = (e: Event) => {
       const customEvent = e as CustomEvent<{ text: string; duration?: number }>;
       if (customEvent.detail?.text) {
         setDialog({
@@ -51,15 +55,10 @@ export const RoleCharacterCanvas: React.FC = () => {
         }, duration);
       }
     };
-    window.addEventListener('role-dialog-speak', handleRoleSpeak);
 
-    // 监听 AI 桌宠工具（src/agent/pet）发出的动作指令：移动 / 跳跃 / 重置。
-    // 通过合成输入注入 ticker 物理循环，与键盘操作互不冲突。
+    // 移动：合成一次方向输入，持续到 until
     let moveCmd: { direction: 'left' | 'right'; until: number } | null = null;
-    let jumpPattern: number[] = [];
-    let resetRequested = false;
-
-    const handleRoleMove = (e: Event) => {
+    const onRoleMove = (e: Event) => {
       const detail =
         (e as CustomEvent<{ direction?: string; duration?: number }>).detail ??
         {};
@@ -71,28 +70,48 @@ export const RoleCharacterCanvas: React.FC = () => {
       moveCmd = { direction, until: performance.now() + duration };
     };
 
-    const handleRoleJump = (e: Event) => {
+    // 跳跃：合成跳跃输入序列（单跳或二段跳）
+    let jumpPattern: number[] = [];
+    const onRoleJump = (e: Event) => {
       const detail = (e as CustomEvent<{ double?: boolean }>).detail ?? {};
       // 单跳：[按下]；二段跳：[按下, 松开, 再按下]，配合 wasJumpPressed 触发两次起跳
       jumpPattern = detail.double === true ? [1, 0, 1] : [1];
     };
 
-    const handleRoleReset = () => {
+    // 重置：请求回到屏幕中央底部
+    let resetRequested = false;
+    const onRoleReset = () => {
       resetRequested = true;
     };
 
-    // 监听庆祝动作指令：播放一次 celebration 帧序列后回退 idle
-    let celebrateUntil = 0;
-    const handleRoleCelebrate = (e: Event) => {
-      const detail = (e as CustomEvent<{ duration?: number }>).detail ?? {};
-      const duration = Math.max(0, Number(detail.duration) || 2000);
-      celebrateUntil = performance.now() + duration;
+    // 庆祝：固定连续播放 count 次 celebration 帧序列后回退 idle
+    // 用「剩余次数」驱动，而非时间窗口，确保每次都完整播放一遍
+    let celebrateCyclesLeft = 0;
+    let celebrateCycleStart = 0;
+    // 每帧步进 6 帧、约 60fps，单帧 ≈ 100ms；一遍时长 = 帧数 * 100ms
+    const celebrateFrameMs = 100;
+    const onRoleCelebrate = (e: Event) => {
+      const detail = (e as CustomEvent<{ count?: number }>).detail ?? {};
+      const count =
+        typeof detail.count === 'number' && detail.count > 0
+          ? Math.round(detail.count)
+          : 2;
+      celebrateCyclesLeft = count;
+      celebrateCycleStart = performance.now();
     };
 
-    window.addEventListener('role-move', handleRoleMove);
-    window.addEventListener('role-jump', handleRoleJump);
-    window.addEventListener('role-reset', handleRoleReset);
-    window.addEventListener('role-celebrate', handleRoleCelebrate);
+    // 统一注册所有角色行为事件（键 = skill.json 中的 event）。
+    // 后续新增行为只需在此表中追加一项即可，注册/卸载统一遍历。
+    const roleActionHandlers: Record<string, (e: Event) => void> = {
+      'role-dialog-speak': onRoleSpeak,
+      'role-move': onRoleMove,
+      'role-jump': onRoleJump,
+      'role-reset': onRoleReset,
+      'role-celebrate': onRoleCelebrate,
+    };
+    Object.entries(roleActionHandlers).forEach(([type, handler]) => {
+      window.addEventListener(type, handler);
+    });
 
     const initPixi = async () => {
       const pixiApp = new Application();
@@ -192,13 +211,21 @@ export const RoleCharacterCanvas: React.FC = () => {
         // Texture / Animation switching (6帧除数，降低一档切帧频率)
         if (
           textures.celebrationFrames.length > 0 &&
-          performance.now() < celebrateUntil
+          celebrateCyclesLeft > 0
         ) {
           // 庆祝动作优先播放（来自 role.json 的 celebration 帧组）
           const celIndex =
             Math.floor(state.animFrameCounter / 6) %
             textures.celebrationFrames.length;
           sprite.texture = textures.celebrationFrames[celIndex];
+
+          // 当前这一遍播放完整一遍帧序列后，次数 -1；归零回退 idle
+          const cycleMs = textures.celebrationFrames.length * celebrateFrameMs;
+          const nowMs = performance.now();
+          if (nowMs - celebrateCycleStart >= cycleMs) {
+            celebrateCycleStart = nowMs;
+            celebrateCyclesLeft -= 1;
+          }
         } else if (state.facingDirection === 'left') {
           const frameIndex =
             Math.floor(state.animFrameCounter / 6) % textures.leftFrames.length;
@@ -220,11 +247,9 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     return () => {
       isDestroyed = true;
-      window.removeEventListener('role-dialog-speak', handleRoleSpeak);
-      window.removeEventListener('role-move', handleRoleMove);
-      window.removeEventListener('role-jump', handleRoleJump);
-      window.removeEventListener('role-reset', handleRoleReset);
-      window.removeEventListener('role-celebrate', handleRoleCelebrate);
+      Object.entries(roleActionHandlers).forEach(([type, handler]) => {
+        window.removeEventListener(type, handler);
+      });
       if (hideTimerId) clearTimeout(hideTimerId);
       controls.destroy();
       if (app) {

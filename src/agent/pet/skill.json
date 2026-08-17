@@ -1,0 +1,84 @@
+{
+  "skill": "role-actions",
+  "title": "桌面宠物角色行为",
+  "description": "封装桌面宠物（桌宠）支持的全部行为。外部（如 AI Agent）通过调用对应工具派发 window CustomEvent，由 RoleCharacterCanvas 监听并驱动 Pixi 渲染/物理循环。",
+  "prefix": "pet_",
+  "actions": [
+    {
+      "name": "pet_speak",
+      "event": "role-dialog-speak",
+      "title": "让桌宠说话",
+      "description": "让桌面宠物说一句话（在其头顶弹出对话气泡，展示约 5 秒）。",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string",
+          "description": "要说的内容",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "description": "气泡展示时长（毫秒），默认 5000",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "pet_move",
+      "event": "role-move",
+      "title": "让桌宠移动",
+      "description": "让桌面宠物向左或向右移动一段距离。direction 必填（left 或 right）；可传 distance（像素）或 duration（毫秒），两者都传时以 duration 为准。",
+      "parameters": [
+        {
+          "name": "direction",
+          "type": "string",
+          "description": "移动方向：left 或 right",
+          "enum": ["left", "right"],
+          "required": true
+        },
+        {
+          "name": "distance",
+          "type": "number",
+          "description": "移动距离（像素），默认 200",
+          "required": false
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "description": "移动持续时间（毫秒），不传时按 distance 估算",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "pet_jump",
+      "event": "role-jump",
+      "title": "让桌宠跳跃",
+      "description": "让桌面宠物跳起来，可指定是否二段跳（double）。",
+      "parameters": [
+        {
+          "name": "double",
+          "type": "boolean",
+          "description": "是否二段跳，默认 false",
+          "required": false
+        }
+      ]
+    },
+    
+    {
+      "name": "pet_celebrate",
+      "event": "role-celebrate",
+      "title": "让桌宠庆祝",
+      "description": "让桌面宠物播放庆祝动画（celebration 帧序列），固定连续播放 2 次后回退 idle（按次数，非时长）。",
+      "parameters": [
+        {
+          "name": "count",
+          "type": "number",
+          "description": "庆祝动作播放次数，固定为 2，一般无需修改",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

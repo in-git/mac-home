@@ -1,52 +1,105 @@
 import { useEffect, useRef } from 'react';
-import { chatWithPet } from '../utils/aiClient';
-import { useHomeStore } from '../store/useHomeStore';
+import { petActions, runPetAction } from '../agent/pet';
 
 /**
- * 模型定时驱动桌宠自主活动：把当前设备宽度上报给模型，由模型随机决定本次
- * 动作（移动 / 跳跃 / 说一句对话问候），配合 RoleCharacterCanvas 的物理循环执行。
- * 每次触发后在 10~60 秒之间随机选取下一次延迟，让活动更自然。
- * 仅在设置中开启「宠物 → 自由活动」时运行；busy ref 防止上一次请求
- * 未结束时堆积新一轮请求。
+ * 随机自由活动规则。
+ * 开启后，桌宠每隔一段时间随机触发一个行为（本地随机，不消耗大模型 token），
+ * 模拟「活着的宠物」而非静止摆设。保留 hook 签名以保证调用处（App）无需改动。
  */
+
+// 自由活动台词池：随机挑一句让桌宠自言自语，显得有生气
+const IDLE_LINES = [
+  '发呆中…',
+  '今天天气不错呀～',
+  '要不要来点音乐？',
+  '嗯…刚才想到一件事',
+  '偷偷打个盹',
+  '在等你来找我玩呢',
+  '我是你的桌面小伙伴！',
+  '好无聊，动一动吧',
+];
+
+// 各行为的相对权重（越高越常被触发）；reset 权重很低，避免频繁归位
+const WEIGHTS: Record<string, number> = {
+  pet_speak: 3,
+  pet_move: 4,
+  pet_jump: 3,
+  pet_celebrate: 1,
+  pet_reset: 0.4,
+};
+
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/** 按权重随机选一个行为名 */
+function pickActionName(): string {
+  const pool: string[] = [];
+  for (const a of petActions) {
+    const w = WEIGHTS[a.name] ?? 1;
+    const times = Math.max(1, Math.round(w * 10));
+    for (let i = 0; i < times; i++) pool.push(a.name);
+  }
+  return pickRandom(pool);
+}
+
+/** 为某个行为生成随机参数 */
+function randomArgs(name: string): Record<string, unknown> {
+  switch (name) {
+    case 'pet_speak':
+      return { text: pickRandom(IDLE_LINES) };
+    case 'pet_move':
+      return {
+        direction: pickRandom(['left', 'right'] as const),
+        distance: 80 + Math.floor(Math.random() * 240),
+      };
+    case 'pet_jump':
+      return { double: Math.random() < 0.3 };
+    case 'pet_celebrate':
+      return { count: 2 };
+    default:
+      return {};
+  }
+}
+
+/** 随机触发一个桌宠行为 */
+function triggerRandomAction() {
+  const name = pickActionName();
+  runPetAction(name, randomArgs(name));
+}
+
 export function usePetAutoActivity(petAutoActivity: boolean) {
-  const petActivityBusyRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!petAutoActivity) return;
+    if (!petAutoActivity) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
+    }
 
-    const drivePetActivity = () => {
-      if (petActivityBusyRef.current) return;
-      petActivityBusyRef.current = true;
-      const aiConfig = useHomeStore.getState().aiConfig;
-      const deviceWidth = window.innerWidth;
-      const activityPrompt =
-        `现在是桌宠定时自主活动时刻。当前设备宽度为 ${deviceWidth} 像素。` +
-        '请随机选择以下三种动作之一执行：' +
-        '1) 调用 pet_move 工具让桌宠向左或向右移动一次（方向可自由选择，' +
-        '移动距离请结合设备宽度合理取值，建议 80~300 像素，注意不要移出屏幕）；' +
-        '2) 调用 pet_jump 工具让桌宠跳一下（可偶尔二段跳）；' +
-        '3) 调用 pet_speak 工具，让桌宠随口说一句简短、活泼的对话问候语' +
-        '（10~20 字，符合桌宠身份，不要复述指令）。' +
-        '三种动作随机选取，避免每次固定同一种。';
-      chatWithPet(aiConfig, activityPrompt, [])
-        .catch((err) => {
-          console.warn('定时驱动桌宠自主活动失败（忽略）：', err);
-        })
-        .finally(() => {
-          petActivityBusyRef.current = false;
-        });
-    };
-
-    // 每次触发后，在 10~60 秒之间随机选取下一次延迟，让桌宠活动更自然。
+    // 随机间隔（6~12 秒）递归调度，比固定 setInterval 更自然
     const scheduleNext = () => {
-      const delay = 10000 + Math.random() * 50000; // 10s ~ 60s
-      return window.setTimeout(() => {
-        drivePetActivity();
-        timerRef.current = scheduleNext();
+      const delay = 6000 + Math.floor(Math.random() * 6000);
+      timerRef.current = setTimeout(() => {
+        triggerRandomAction();
+        scheduleNext();
       }, delay);
     };
-    const timerRef = { current: scheduleNext() };
-    return () => window.clearTimeout(timerRef.current);
+
+    // 进入后稍等片刻来第一次，避免与进页面打招呼重叠
+    timerRef.current = setTimeout(() => {
+      triggerRandomAction();
+      scheduleNext();
+    }, 3000);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [petAutoActivity]);
 }
