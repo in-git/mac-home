@@ -1,130 +1,131 @@
 {
   "app": "macOS 主页",
   "version": 1,
-  "exportedAt": "2026-08-13T10:08:12.895Z",
+  "exportedAt": "2026-08-18T10:37:18.547Z",
   "widgets": [
     {
-      "id": "widget-1786535430656",
-      "type": "clock-lunar",
-      "title": "农历时钟",
-      "size": "1/1",
-      "maxInstances": 1,
-      "sizeOptions": [
-        "1/4",
-        "1/2",
-        "1/1"
-      ],
-      "isAddable": true,
-      "logo": "🌙",
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": false
-      },
-      "data": {
-        "clockFont": {
-          "size": "6rem",
-          "color": "#FFFFFF"
-        },
-        "size": "4rem",
-        "color": "#F0CF6B"
-      }
-    },
-    {
-      "id": "widget-1786583077143",
+      "id": "widget-1787048767724",
       "type": "clock-mini",
       "title": "时钟",
       "maxInstances": 1,
-      "size": "1/4",
-      "sizeOptions": [
-        "1/2",
-        "1/4"
-      ],
       "isAddable": true,
-      "logo": "⏰",
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "dark",
+        "background": "#1a1a1a"
+      },
+      "data": {},
+      "grid": {
+        "x": 1,
+        "y": 24,
+        "w": 4,
+        "h": 10
+      },
+      "size": 4
+    },
+    {
+      "id": "widget-1787048786721",
+      "type": "search",
+      "title": "网络搜索",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light",
+        "background": "#FFFFFF"
+      },
+      "data": {},
+      "grid": {
+        "x": 0,
+        "y": 15,
+        "w": 6,
+        "h": 9
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-1787048825695",
+      "type": "clock",
+      "title": "时钟日历",
+      "maxInstances": 1,
+      "isAddable": true,
       "cardStyle": {
         "padding": "p-4",
         "glass": true,
         "backgroundTheme": "light"
       },
-      "data": {}
+      "data": {},
+      "grid": {
+        "x": 0,
+        "y": 50,
+        "w": 6,
+        "h": 17
+      },
+      "size": 6
     },
     {
-      "id": "widget-1786535762886",
-      "type": "control-center",
-      "title": "控制中心",
-      "size": "1/4",
+      "id": "widget-1787048847223",
+      "type": "sticky-notes",
+      "title": "便签笔记",
       "maxInstances": 1,
-      "sizeOptions": [
-        "1/4"
-      ],
       "isAddable": true,
-      "logo": "🎛️",
       "cardStyle": {
         "padding": "p-4",
-        "glass": true
+        "glass": true,
+        "backgroundTheme": "light"
       },
-      "data": {}
+      "data": {},
+      "grid": {
+        "x": 0,
+        "y": 34,
+        "w": 6,
+        "h": 16
+      }
     },
     {
-      "id": "widget-1786535392755",
+      "id": "widget-1787048898329",
       "type": "weather",
       "title": "天气预报",
-      "size": "1/2",
       "maxInstances": 1,
-      "sizeOptions": [
-        "1/2",
-        "1/1"
-      ],
       "isAddable": true,
-      "logo": "⛅",
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true
-      },
-      "data": {}
-    },
-    {
-      "id": "widget-clock",
-      "type": "clock",
-      "title": "时间 & 日历",
-      "size": "1/4",
-      "maxInstances": 1,
-      "sizeOptions": [
-        "1/4",
-        "1/2",
-        "1/1"
-      ],
-      "isAddable": true,
-      "logo": "🕒",
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "background": "#1a1a1a",
-        "backgroundTheme": "dark"
-      },
-      "data": {}
-    },
-    {
-      "id": "widget-1786593739485",
-      "type": "shortcuts",
-      "title": "快捷导航",
-      "maxInstances": null,
-      "size": "1/2",
-      "sizeOptions": [
-        "1/4",
-        "1/2",
-        "1/1"
-      ],
-      "isAddable": true,
-      "logo": "🔗",
       "cardStyle": {
         "padding": "p-4",
         "glass": true,
         "backgroundTheme": "light"
       },
+      "data": {},
+      "grid": {
+        "x": 6,
+        "y": 15,
+        "w": 6,
+        "h": 17
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-1787049195527",
+      "type": "clock-lunar",
+      "title": "农历时钟",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light",
+        "background": "transparent"
+      },
       "data": {
-        "shortcuts": []
-      }
+        "size": "5rem"
+      },
+      "grid": {
+        "x": 0,
+        "y": 0,
+        "w": 10,
+        "h": 15
+      },
+      "size": 10
     }
   ],
   "wallpaper": {
@@ -140,7 +141,16 @@
     "invert": 0,
     "imageUrl": "https://afe259aae30d616af.bj7.agentos-app.net/api/dev/file/download?id=2087825282078425089&sign=ZmU1ZDg5MzkwODBmNTY3M2EwOWYzYjgzODAzMzViM2UzNTEwMTViYmQxYzBmMzFlNWI0MTExYzg4MGY1NzRmMA=="
   },
-  "notes": [],
+  "notes": [
+    {
+      "id": "note-1787048854477",
+      "title": "新便签",
+      "content": "在此记录你的新想法与灵感...",
+      "color": "yellow",
+      "updatedAt": "18:27",
+      "pinned": false
+    }
+  ],
   "isDarkMode": false,
   "themeColor": "#007AFF",
   "soundEnabled": true,

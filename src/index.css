@@ -131,31 +131,21 @@ button{
   animation: auroraShift 18s ease-in-out infinite alternate;
 }
 
-/* Muuri drag performance: promote dragging item & placeholder to their own
-   compositor layer so the heavy glass cards don't repaint on every frame. */
-.muuri-item.muuri-item-dragging,
-.muuri-item.muuri-item-releasing,
-.muuri-item-placeholder {
+/* react-grid-layout drag performance: promote dragging item & placeholder to
+   their own compositor layer so the heavy glass cards don't repaint every frame. */
+.react-grid-item.react-draggable-dragging,
+.react-grid-item.react-draggable-dragging .glass-panel,
+.react-grid-placeholder {
   will-change: transform;
   z-index: 20;
 }
 
-.muuri-item-placeholder .glass-panel {
-  background-color: rgba(0, 122, 255, 0.08);
-  border: 1px dashed rgba(0, 122, 255, 0.4);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  box-shadow: none;
-}
-
-/* 首次布局前让 item 保持普通文档流（逐行堆叠），避免 Muuri 尚未布局时
-   所有 absolute 卡片一起叠在 (0,0)。布局完成（grid 加 .muuri-laid-out）
-   后再切换到绝对定位，由 Muuri 的 transform 负责摆放。 */
-.muuri-grid .muuri-item {
-  position: absolute;
-}
-.muuri-grid:not(.muuri-laid-out) .muuri-item {
-  position: relative;
+.react-grid-item.react-grid-placeholder {
+  background-color: rgba(59, 130, 246, 0.25) !important;
+  border: 1.5px dashed rgba(59, 130, 246, 0.6) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15) !important;
+  opacity: 1 !important;
 }
 
 /* During an active drag, drop the backdrop-blur on every card. Recomputing
@@ -171,8 +161,8 @@ button{
 }
 
 /* Edit-mode subtle looping wiggle so it's obvious the dashboard is unlocked.
-   Applied to the inner .glass-panel (not .muuri-item) so it never fights with
-   Muuri's positioning transform on the item wrapper. */
+   Applied to the inner .glass-panel (not the rgl item) so it never fights with
+   RGL's positioning transform on the item wrapper. */
 @keyframes widget-wiggle {
   0%,
   100% {
@@ -191,8 +181,7 @@ button{
 }
 
 /* Stop the wiggle on the card being dragged so it sits still while moving. */
-.muuri-item.muuri-item-dragging .glass-panel,
-.muuri-item.muuri-item-releasing .glass-panel {
+.react-grid-item.react-draggable-dragging .glass-panel {
   animation: none !important;
 }
 

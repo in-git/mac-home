@@ -6,14 +6,11 @@ import { ClockWidget } from '../../widgets/ClockWidget';
 import { ClockLunarWidget } from '../../widgets/ClockLunarWidget';
 import { ControlCenterWidget } from '../../widgets/ControlCenterWidget';
 import { IconWidget } from '../../widgets/IconWidget';
-import { BannerWidget } from '../../widgets/BannerWidget';
 import { SearchWidget } from '../../widgets/SearchWidget';
-import { SettingsWidget } from '../../widgets/SettingsWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../../widgets/WeatherWidget';
 import { ShortcutsWidget } from '@/views/ShortcutsWidget';
 import { MemberCountWidget } from '../../widgets/MemberCountWidget';
-import { BlankWidget } from '../../widgets/BlankWidget';
 
 interface RenderWidgetContentProps {
   widget: WidgetItem;
@@ -36,7 +33,6 @@ export const renderWidgetContent = ({
   onUpdateNotes,
   isDarkMode,
   onToggleDarkMode,
-  isEditMode,
   onWeatherChange,
   onExpand,
   inModal = false,
@@ -79,10 +75,12 @@ export const renderWidgetContent = ({
  
     case 'web-grid': {
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
-      // 无站点且无自定义图标时，默认值为系统设置图标（点击弹出设置模态框）
+      // 保持 1:1 比例正方形居中展示
       return (
-        <div data-icon-grid className="h-full w-full">
-          <IconWidget size={widget.size} site={widget.data.site} />
+        <div data-icon-grid className="h-full w-full flex items-center justify-center">
+          <div className="w-full aspect-square flex items-center justify-center">
+            <IconWidget site={widget.data.site} />
+          </div>
         </div>
       );
     }
@@ -93,8 +91,6 @@ export const renderWidgetContent = ({
     case 'member-count': {
       return <MemberCountWidget />;
     }
-    case 'blank':
-      return <BlankWidget isEditMode={isEditMode} aspect={widget.data.aspect} />;
     default:
       return null;
   }

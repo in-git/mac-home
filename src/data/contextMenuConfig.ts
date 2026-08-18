@@ -121,7 +121,6 @@ export const DESKTOP_CONTEXT_MENU: ContextMenuItemConfig[] = [
     label: '布局',
     icon: Lock,
     action: 'toggleEditMode',
-    showOnlyWhenEditLocked: true,
   },
   {
     id: 'toggle-desktop-icons',

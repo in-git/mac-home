@@ -2,7 +2,6 @@ import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Skeleton } from '@heroui/react';
 import { siteApi } from '../../api/site';
-import { Button } from '../../components/Button';
 import { SiteCard } from './SiteCard';
 import { FilterBar } from './FilterBar';
 import {
@@ -15,7 +14,7 @@ import {
 /**
  * 网页列表（WebListPicker）：
  * 通用站点选择器，供多个组件复用（如快捷导航的「站点库」）。
- * 内置搜索/分类过滤、分页加载与站点卡片网格。
+ * 内置搜索/分类过滤与站点卡片网格。
  * 选中状态由父组件传入（selected），新增 / 删除等变更事件均交由父组件处理。
  */
 export const WebListPicker: React.FC<WebListPickerProps> = ({
@@ -23,8 +22,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   onAdd,
   onRemove,
   onOpen,
-  addTip = '添加',
-  removeTip = '删除',
 }) => {
   const [categories, setCategories] = useState<ReturnType<typeof flattenCategories>>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
@@ -143,6 +140,10 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         onSearchChange={setSearchKeyword}
         onSelectCategory={handleSelectCategory}
         onRefresh={() => fetchSites(page, selectedCat, searchKeyword)}
+        page={page}
+        totalPages={totalPages}
+        onPrevPage={() => fetchSites(page - 1, selectedCat, searchKeyword)}
+        onNextPage={() => fetchSites(page + 1, selectedCat, searchKeyword)}
       />
 
       {/* Site Grid */}
@@ -158,49 +159,22 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
                 onOpen={handleOpen}
                 onAdd={onAdd}
                 onRemove={onRemove}
-                exists={selected.some((s) => s.link === (item.link || '#'))}
-                addTip={addTip}
-                removeTip={removeTip}
+                exists={selected.some(
+                  (s) =>
+                    (item.id && s.id === item.id) ||
+                    (item.link && s.link === item.link) ||
+                    (item.name && s.name === item.name),
+                )}
               />
             ))}
           </div>
         ) : (
-          <div className="flex h-40 flex-col items-center justify-center  gap-2 min-h-[320px]">
+          <div className="flex h-40 flex-col items-center justify-center gap-2 min-h-[320px]">
             <Globe size={36} strokeWidth={1} />
             <p className="text-base">暂无站点</p>
           </div>
         )}
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="px-5 py-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-sm text-slate-500">
-          <span>
-            共 {totalPages} 页 · {items.length} 条/页
-          </span>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={page <= 1 || loading}
-              onClick={() => fetchSites(page - 1, selectedCat, searchKeyword)}
-            >
-              上一页
-            </Button>
-            <span className="px-2">
-              {page} / {totalPages}
-            </span>
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={page >= totalPages || loading}
-              onClick={() => fetchSites(page + 1, selectedCat, searchKeyword)}
-            >
-              下一页
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

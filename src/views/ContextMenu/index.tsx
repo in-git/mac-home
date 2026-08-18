@@ -7,6 +7,7 @@ import {
   WIDGET_CONTEXT_MENU,
 } from '../../data/contextMenuConfig';
 import { getSizeOptions } from '../../data/options/size.options';
+import { useHomeStore } from '../../store/useHomeStore';
 import { BackgroundSubmenu } from './BackgroundSubmenu';
 import {
   WIDGET_CONFIG_SUBMENUS,
@@ -94,8 +95,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
   if (!position) return null;
 
+  // 查不到或者位置未配置列表时，按默认列表或第一项 fallback
+  const storeWidgets = useHomeStore.getState().widgets;
+  const allWidgets = widgets && widgets.length > 0 ? widgets : storeWidgets;
   const targetWidget = position.targetWidgetId
-    ? widgets.find((w) => w.id === position.targetWidgetId)
+    ? allWidgets.find((w) => w.id === position.targetWidgetId)
     : null;
 
   // Map an action id to its handler + whether it should currently render.
@@ -113,7 +117,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       case 'toggleEditMode':
         return {
           onClick: onToggleEditMode,
-          visible: !isEditMode && !!item.showOnlyWhenEditLocked,
+          visible: true,
         };
       case 'changeBackground':
         return {
@@ -181,11 +185,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
     const Icon = item.icon;
 
-    // Toggle-style item (e.g. "清屏") renders a checkmark on the right.
-    // 勾选表示「已清屏」（即桌面组件已隐藏）。
-    if (item.isToggle) {
+    // Toggle-style item (e.g. "清屏"、"布局") renders a checkmark on the right.
+    if (item.isToggle || item.action === 'toggleEditMode') {
       const checked =
-        item.action === 'toggleDesktopIcons' ? !showDesktopIcons : false;
+        item.action === 'toggleDesktopIcons'
+          ? !showDesktopIcons
+          : item.action === 'toggleEditMode'
+          ? isEditMode
+          : false;
       return (
         <React.Fragment key={item.id}>
           <button
@@ -253,36 +260,56 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               {targetWidget.title}
             </span>
             <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 dark:text-slate-400 uppercase">
-              {targetWidget.size}
+              {targetWidget.grid?.w ? `${targetWidget.grid.w}/12` : ''}
             </span>
           </div>
 
           {/* Widget Size Switching */}
-          <div className="px-3 py-1.5 text-font-sm  font-medium">
-            调整尺寸
-          </div>
-          <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
-            {getSizeOptions(targetWidget.type).map((sz) => (
-              <button
-                key={sz}
-                onClick={() => {
-                  onResizeWidget(targetWidget.id, sz);
-                  onClose();
-                }}
-                className={`py-1.5 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
-                  targetWidget.size === sz
-                    ? 'bg-[color:var(--accent)] text-white shadow-md'
-                    : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
-                }`}
-              >
-                {sz}
-              </button>
-            ))}
-          </div>
+          {(() => {
+            const options = getSizeOptions(targetWidget.type);
+            const sizeList = options.length > 0 ? options : [1, 2, 3, 4, 6, 12];
+            return (
+              <>
+                <div className="px-3 py-1.5 text-font-sm font-medium">
+                  调整尺寸
+                </div>
+                <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
+                  {sizeList.map((sz) => {
+                    const isCurrent = targetWidget.grid?.w === sz;
+                    const label = `${sz}/12`;
+                    return (
+                      <button
+                        key={sz}
+                        onClick={() => {
+                          onResizeWidget(targetWidget.id, sz as any);
+                          onClose();
+                        }}
+                        className={`py-1.5 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
+                          isCurrent
+                            ? 'bg-[color:var(--accent)] text-white shadow-md'
+                            : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            );
+          })()}
 
           <div className="my-1 border-t border-black/5 dark:border-white/10" />
 
           {WIDGET_CONTEXT_MENU.map(renderItem)}
+
+          {/* 底部显示当前卡片的高度和宽度参数 (grid: w, h) */}
+          <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-1 flex items-center justify-between text-font-sm text-slate-500 dark:text-slate-400">
+            <span>当前尺寸</span>
+            <span className="font-mono font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded text-slate-700 dark:text-slate-200">
+              宽(w): {targetWidget.grid?.w ?? '-'} | 高(h): {targetWidget.grid?.h ?? '-'}
+            </span>
+          </div>
         </>
       ) : (
         /* Desktop (empty area) right-click */

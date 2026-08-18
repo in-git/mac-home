@@ -3,11 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas';
-import { MuuriDashboard } from './views/MuuriDashboard';
+import { DashboardGrid } from './views/DashboardGrid';
 import { TopBar } from './components/TopBar';
-import { siteApi, SiteItem } from './api/site';
-import type { WidgetItem } from './types';
-import { isWebGrid } from './data/widgetConfig';
 import { useAppInit } from './hooks/useAppInit';
 import { useGreeting } from './hooks/useGreeting';
 import { usePetAutoActivity } from './hooks/usePetAutoActivity';
@@ -19,6 +16,7 @@ import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/RoleCharacterCanvas';
 import { visitorApi } from './api/visitor';
+import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -72,47 +70,10 @@ export default function App() {
     updateWidgetBackground,
     updateWidget,
   } = storeActions;
-  const { updateNotes, updateWallpaper, setDarkMode, setThemeColor } =
+  const { updateNotes, updateWallpaper, setDarkMode } =
     storeActions;
 
   const toggleDarkMode = () => setDarkMode(!isDarkMode);
-
-  // 网页列表：点击「添加」把站点做成桌面图标（web-grid 类型，携带 site 数据）
-  const handleAddSite = (item: SiteItem) => {
-    const url = item.link || '#';
-    if (widgets.some((w) => isWebGrid(w.type) && w.data.site?.link === url)) {
-      return;
-    }
-    const newWidget: WidgetItem = {
-      id: `widget-${Date.now()}`,
-      type: 'web-grid',
-      title: item.name || '未命名',
-      maxInstances: Infinity,
-      size: '1/12',
-      isAddable: false,
-      data: {
-        site: item,
-      },
-    };
-    setWidgets([...widgets, newWidget]);
-    void (async () => {
-      try {
-        await siteApi.recordClick(item.id);
-      } catch {
-        /* noop */
-      }
-    })();
-  };
-
-  // 网页列表：点击「删除」移除对应的桌面图标（web-grid）
-  const handleRemoveSite = (item: SiteItem) => {
-    const url = item.link || '#';
-    const target = widgets.find(
-      (w) => isWebGrid(w.type) && w.data.site?.link === url,
-    );
-    if (!target) return;
-    deleteWidget(target.id);
-  };
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [showDesktopIcons, setShowDesktopIcons] = useState<boolean>(true);
@@ -240,7 +201,7 @@ export default function App() {
         className={
           'flex-1 w-full overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden transition-colors duration-200 ' +
           (isEditMode
-            ? 'cursor-default bg-black/30 ring-1 ring-inset ring-black/10'
+            ? 'cursor-default ring-1 ring-inset ring-black/10'
             : '')
         }
         onClick={handleOutsideClick}
@@ -249,17 +210,18 @@ export default function App() {
         <main
           ref={dashboardRef}
           className={
-            'relative max-w-7xl w-full mx-auto p-3 sm:p-6 pb-16 rounded-2xl transition-shadow duration-200 ' +
+            'relative max-w-7xl w-full mx-auto px-3 sm:px-6 pb-16 rounded-2xl transition-shadow duration-200 ' +
             (isEditMode
               ? 'ring-2 ring-[color:var(--accent)] shadow-[0_0_0_4px_color-mix(in_srgb,var(--accent)_25%,transparent)]'
               : '')
           }
         >
-          {/* Muuri Grid Layout Engine */}
-          <MuuriDashboard
+          {/* Grid Layout Engine */}
+          <DashboardGrid
             widgets={dashboardWidgets}
             onUpdateWidgetOrder={setWidgets}
             onContextMenuWidget={handleContextMenuWidget}
+            onEnterEditMode={() => setIsEditMode(true)}
             isEditMode={isEditMode}
             onToggleEditMode={() => setIsEditMode(!isEditMode)}
             notes={notes}

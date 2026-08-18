@@ -3,11 +3,10 @@ import { getWidgetConfig, DEFAULT_CARD_STYLE } from '../../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WeatherSummary } from '../../widgets/WeatherWidget';
 import { renderWidgetContent } from './widgetContent';
-import { getItemSizeClasses, getWebGridPx } from './itemSize';
 import { isWebGrid } from '../../data/widgetConfig';
 
 /** 长按卡片进入编辑布局的按压时长（ms），与右键菜单「布局」功能等价 */
-const LONG_PRESS_MS = 500;
+const LONG_PRESS_MS = 300;
 
 interface WidgetCardProps {
   widget: WidgetItem;
@@ -46,24 +45,22 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onLongPressEdit,
   onUpdateWidget,
 }) => {
-  const sizeClasses = getItemSizeClasses(widget.size, widget.type);
   const isWebGridType = isWebGrid(widget.type);
   // 纯图标类型：固定像素正方形作用在「内层 content」上（外层已 w-fit 收缩），
   // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
-  const webGridPx = isWebGridType ? getWebGridPx(widget.size) : undefined;
   const isExpanded = widget.id === expandedWidgetId;
-  // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认），纯图标尺寸保持贴边
-  const widgetPadding =
-    widget.size === '1/16'
-      ? 'p-0'
-      : (getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding);
+  // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认；web-grid 纯图标类型强制无内边距）
+  const widgetPadding = isWebGridType
+    ? 'p-0'
+    : (getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding);
 
   // 卡片外观配置（毛玻璃），回退到默认
   const cardStyleCfg = getWidgetConfig(widget.type).cardStyle ?? DEFAULT_CARD_STYLE;
-  const isGlass = cardStyleCfg.glass;
-  // 组件自定义高度：用于固定卡片高度（如 clock-mini 指定 160），
-  // 内部组件通过 h-full 自适应填满该高度。
-  const cardHeightStyle = cardStyleCfg.height ? { height: cardStyleCfg.height } : undefined;
+  // 显式指定了 custom background（如 'transparent', '#1a1a1a', 渐变等）时禁用毛玻璃样式
+  const hasCustomBg = !!widget.cardStyle?.background;
+  const isGlass = !hasCustomBg && (cardStyleCfg.glass ?? true);
+  // 卡片高度彻底以 react-grid-layout 的 grid.h（行数）为准（唯一真相）。
+
 
   // 长按进入编辑模式：按压计时，松开/移出/取消时清除；
   // 触发后标记本次按压，避免随后的 click 再执行打开链接等操作。
@@ -79,8 +76,15 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isEditMode || !onLongPressEdit) return;
-    // 控制栏按钮/拖拽手柄等交互元素上不触发长按
-    if ((e.target as HTMLElement).closest('[data-no-drag], .drag-handle')) return;
+    const target = e.target as HTMLElement | null;
+    // 如果按下的是输入框、文本域、contenteditable、控制栏按钮或拖拽手柄等交互元素，不触发长按进入编辑模式
+    if (
+      target?.closest(
+        'input, textarea, select, [contenteditable="true"], [data-no-drag], .drag-handle',
+      )
+    ) {
+      return;
+    }
     cancelLongPress();
     longPressTriggeredRef.current = false;
     longPressTimerRef.current = window.setTimeout(() => {
@@ -101,22 +105,25 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`muuri-item z-10 p-2 lg:p-4 ${sizeClasses}`}
+      className={`rgl-item-card h-full w-full ${isWebGridType ? 'w-fit' : ''}`}
       onClick={handleCardClick}
     >
-      {/* Muuri Required Item Content Wrapper */}
-      <div className="muuri-item-content h-full w-full">
+      {/* RGL child content wrapper（撑满网格单元） */}
+      <div className='h-full'>
         <div
           style={{
-            ...(widget.cardStyle?.background ? { background: widget.cardStyle.background } : {}),
-            ...(cardHeightStyle ?? {}),
-            // 纯图标：固定像素正方形作用在可见的 .widget-card 上（外层 p-2 lg:p-4
-            // 提供间距），尺寸切换时盒子变化会触发 Muuri 重新测量，避免被内联尺寸锁死。
-            ...(isWebGridType ? { width: webGridPx, height: webGridPx } : {}),
+            ...(widget.cardStyle?.background
+              ? {
+                  background:
+                    widget.cardStyle.background === 'transparent'
+                      ? 'transparent'
+                      : widget.cardStyle.background,
+                }
+              : {}),
           }}
-          className={`widget-card ${isWebGridType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel  shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
+          className={`widget-card ${isWebGridType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
-          }${isEditMode ? ' edit-wiggle border-2 border-dashed border-[color:var(--accent)]' : ''}`}
+          }${isEditMode ? ' edit-wiggle border border-dashed border-[color:var(--accent)]/80' : ''}`}
           onPointerDown={handlePointerDown}
           onPointerUp={cancelLongPress}
           onPointerLeave={cancelLongPress}
@@ -128,9 +135,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
               disabled) but the card is still draggable from this area
               because the event passes through to the .widget-card handle. */}
           <div
-            className={`flex-1${
-              widget.size === '1/16' ? '' : ' pt-0'
-            }${isEditMode ? ' pointer-events-none' : ''}`}
+            className={`flex-1 ${isEditMode ? ' pointer-events-none' : ''}`}
           >
             {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand, onUpdateWidget })}
           </div>

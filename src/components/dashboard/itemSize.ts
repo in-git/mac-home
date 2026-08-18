@@ -1,71 +1,111 @@
-import { WidgetSize, WidgetType } from '../../types';
+import { WidgetItem, WidgetType } from '../../types';
 import { isWebGrid } from '../../data/widgetConfig';
 
-// Size helper for responsive width classes on Muuri item containers
-// IMPORTANT: widths MUST be fixed percentages (no Tailwind responsive
-// breakpoints). Muuri measures each item's real pixel width via
-// getBoundingClientRect() to compute layout & free space. Responsive
-// classes (sm:/lg:/md:) change the width with the viewport, so below
-// 1024px a `sm` item was actually full-width and Muuri saw NO 1/4 gap ->
-// a ≤1/4 component could never be dragged up into the "remaining" space.
-// Fixed % keeps Muuri's measured width viewport-independent and correct.
-// 纯图标类型（web-grid）使用固定像素正方形尺寸（不再随视口百分比缩放），
-// 由尺寸分数映射到像素边长。锚点：1/16→48、1/12→64、1/10→96，后续尺寸按
-// 同一递增规律延展，且整体以 48 为最小边长（最小值即 48x48）。
-// 注意：固定 px 必须作用于「内部图标容器」而非 .muuri-item 外层。Muuri 在布局
-// 时会给 .muuri-item 写内联 width/height，覆盖 Tailwind 类，导致切尺寸时类名
-// 变化无法被观测到（内部 w-full 不变量 → ResizeObserver 不触发 → 无法重排）。
-// 因此外层用 w-fit 收缩到内容宽度，真正的固定 px 由 WidgetCard 以内联样式写到
-// 内层 .muuri-item-content 上，尺寸变化时内层盒子改变即可驱动 Muuri 重新测量。
-export const WEB_GRID_PX: Record<WidgetSize, number> = {
-  '1/16': 48,
-  '1/12': 64,
-  '1/10': 96,
-  '1/8': 128,
-  '1/6': 160,
-  '1/5': 192,
-  '1/4': 224,
-  '1/3': 288,
-  '1/2': 352,
-  '1/1': 416,
-};
+// ############################################################
+// react-grid-layout 辅助参数与工具函数
+// ############################################################
 
-export const getWebGridPx = (size: WidgetSize): number =>
-  Math.max(48, WEB_GRID_PX[size] ?? 48);
+/** RGL 网格基准参数（与 DashboardGrid 中 GridLayout 保持一致） */
+export const RGL_COLS = 12;
+export const RGL_ROW_HEIGHT = 10;
+export const RGL_MARGIN: [number, number] = [16, 16];
 
-export const getItemSizeClasses = (
-  size: WidgetSize,
+/** RGL 行数 → 卡片像素高度（含行间距），用于卡片内联高度。 */
+export function gridHeightPx(h: number): number {
+  return h * RGL_ROW_HEIGHT + (h - 1) * RGL_MARGIN[1];
+}
+
+/** 非 web-grid 组件初始默认占用的列数（半宽）。 */
+export const DEFAULT_GRID_W = 6;
+
+/** web-grid 初始默认像素宽 */
+const DEFAULT_WEB_GRID_PX = 180;
+
+/**
+ * 生成初始 react-grid-layout 坐标。
+ * - 高度：默认估算行数 h（高度由 grid.h 控制，用户后续拖拽调整）；
+ * - 宽度：web-grid 默认列数，其余类型用统一默认列数 DEFAULT_GRID_W。
+ */
+export function buildInitialGrid(
   type: WidgetType,
-): string => {
-  // 纯图标类型（web-grid）：外层收缩到内容宽度，固定 px 由 WidgetCard 内层承载
-  if (isWebGrid(type)) {
-    return 'w-fit';
+  containerWidth?: number,
+): { x: number; y: number; w: number; h: number } {
+  const h = 8;
+  const w = isWebGrid(type)
+    ? (() => {
+        const colWidth = containerWidth
+          ? containerWidth / RGL_COLS - RGL_MARGIN[0]
+          : 1440 / RGL_COLS - RGL_MARGIN[0];
+        return Math.min(RGL_COLS, Math.max(2, Math.round(DEFAULT_WEB_GRID_PX / colWidth)));
+      })()
+    : DEFAULT_GRID_W;
+  return { x: 0, y: 0, w, h };
+}
+
+/** 确保 widget 带有 grid：缺失时生成初始 grid（迁移旧数据用）。 */
+export function ensureGrid(
+  w: WidgetItem,
+  containerWidth?: number,
+): WidgetItem {
+  const g = (w as { grid?: { x: number; y: number; w: number; h: number } }).grid;
+  if (g && typeof g.x === 'number') return w;
+  return { ...w, grid: buildInitialGrid(w.type, containerWidth) };
+}
+
+/**
+ * 寻找网格中可容纳大小为 (w, h) 的首个可用 (x, y) 空闲位置
+ * @param existingWidgets 当前已存在的组件列表
+ * @param itemWidth 待放置组件的宽度 w
+ * @param itemHeight 待放置组件的高度 h
+ * @param cols 总列数，默认 12
+ */
+export function findFirstAvailablePosition(
+  existingWidgets: WidgetItem[],
+  itemWidth: number,
+  itemHeight: number,
+  cols: number = RGL_COLS,
+): { x: number; y: number } {
+  // 如果没有组件，直接放在 (0, 0)
+  if (!existingWidgets.length) {
+    return { x: 0, y: 0 };
   }
-  const widthClass = (() => {
-    switch (size) {
-      case '1/4':
-        return 'w-[25%]'; // 1/4
-      case '1/3':
-        return 'w-[33.333%]'; // 1/3
-      case '1/5':
-        return 'w-[20%]'; // 1/5
-      case '1/6':
-        return 'w-[16.666%]'; // 1/6
-      case '1/10':
-        return 'w-[10%]'; // 1/10
-      case '1/12':
-        return 'w-[8.333%]'; // 1/12
-      case '1/2':
-        return 'w-[50%]'; // 1/2
-      case '1/1':
-        return 'w-full'; // 1/1 占满整行
-      case '1/8':
-        return 'w-[12.5%]'; // 1/8
-      case '1/16':
-        return 'w-[6.25%]'; // 1/16
-      default:
-        return 'w-[50%]';
+
+  // 1. 搜集所有已占据单元格的集合 "x,y"
+  const occupied = new Set<string>();
+  let maxY = 0;
+
+  for (const widget of existingWidgets) {
+    const { x, y, w, h } = widget.grid || { x: 0, y: 0, w: 1, h: 1 };
+    for (let r = y; r < y + h; r++) {
+      for (let c = x; c < x + w; c++) {
+        occupied.add(`${c},${r}`);
+      }
     }
-  })();
-  return widthClass;
-};
+    if (y + h > maxY) {
+      maxY = y + h;
+    }
+  }
+
+  // 2. 从 y = 0 到 maxY + 1 逐行逐列扫描
+  for (let y = 0; y <= maxY + 1; y++) {
+    for (let x = 0; x <= cols - itemWidth; x++) {
+      let canFit = true;
+      // 检查以 (x, y) 为左上角的 (w, h) 区域是否被占用
+      for (let r = y; r < y + itemHeight; r++) {
+        for (let c = x; c < x + itemWidth; c++) {
+          if (occupied.has(`${c},${r}`)) {
+            canFit = false;
+            break;
+          }
+        }
+        if (!canFit) break;
+      }
+
+      if (canFit) {
+        return { x, y };
+      }
+    }
+  }
+
+  return { x: 0, y: maxY };
+}

@@ -48,44 +48,63 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
 };
 
 
-export const WIDGET_CONFIG: WidgetItem[] = [
+/** 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
+ *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
+export const WIDGET_CONFIG: Array<WidgetItem> = [  
   {
     id: 'cfg-search',
     type: 'search',
     title: '网络搜索',
     maxInstances: 1,
-    size: '1/2',
     isAddable: true,
     data: {},
+    grid:{
+      x:0,
+      y:0,
+      w:5,
+      h:10
+    }
   },
   {
     id: 'cfg-weather',
     type: 'weather',
     title: '天气预报',
     maxInstances: 1,
-    size: '1/2',
     isAddable: true,
     data: {},
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 17,
+    },
   },
   {
     id: 'cfg-sticky-notes',
     type: 'sticky-notes',
     title: '便签笔记',
     maxInstances: 1,
-    size: '1/2',
     isAddable: true,
     data: {},
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 17,
+    },
   },
   {
     id: 'cfg-clock',
     type: 'clock',
     title: '时钟日历',
     maxInstances: 1,
-    size: '1/4',
     isAddable: true,
     data: {},
-    cardStyle: {
-      height: 320,
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 17,
     },
   },
   {
@@ -93,13 +112,13 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     type: 'clock-mini',
     title: '时钟',
     maxInstances: 1,
-    size: '1/4',
-
     isAddable: true,
-
     data: {},
-    cardStyle: {
-      height: 160,
+    grid: {
+      x: 0,
+      y: 0,
+      w: 2,
+      h: 10,
     },
   },
   {
@@ -107,28 +126,37 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     type: 'clock-lunar',
     title: '农历时钟',
     maxInstances: 1,
-    size: '1/4',
     isAddable: true,
-    cardStyle: {
-      height: 160,
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 12,
     },
     data: {
       color: 'var(--accent)',
       size: '3.5rem',
       bold: true,
     },
+    cardStyle:{
+      background:'transparent'
+    }
   },
   {
     id: 'cfg-control-center',
     type: 'control-center',
     title: '控制中心',
     maxInstances: 1,
-    size: '1/4',
     isAddable: true,
     data: {},
     cardStyle: {
       ...DEFAULT_CARD_STYLE,
-      height: 320,
+    },
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 17,
     }
   },
   {
@@ -136,10 +164,15 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     type: 'web-grid',
     title: '网页',
     maxInstances: Infinity,
-    size: '1/8',
     isAddable: false,
     cardStyle: {
       glass: false,
+    },
+    grid: {
+      x: 0,
+      y: 0,
+      w: 1,
+      h: 5,
     },
     data: {},
   },
@@ -148,9 +181,14 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     type: 'shortcuts',
     title: '快捷导航',
     maxInstances: Infinity,
-    size: '1/3',
     isAddable: true,
 
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 9,
+    },
     data: { shortcuts: [] },
   },
   {
@@ -158,7 +196,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     type: 'member-count',
     title: '在线人数',
     maxInstances: 1,
-    size: '1/3',
 
     isAddable: true,
 
@@ -166,24 +203,13 @@ export const WIDGET_CONFIG: WidgetItem[] = [
       padding: 'p-4',
       glass: true,
     },
+    grid: {
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 14,
+    },
     data: {},
-  },
-  {
-    id: 'cfg-blank',
-    type: 'blank',
-    title: '空白占位',
-    maxInstances: 999,
-    size: '1/4',
-
-    isAddable: true,
-
-    cardStyle: {
-      padding: 'p-0',
-      glass: false,
-    },
-    data: {
-      aspect: '1 / 1',
-    },
   },
 ];
 
@@ -205,7 +231,6 @@ export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   'web-grid': Globe,
   application: Globe,
   'member-count': UsersRound,
-  blank: Square,
 };
 
 /**
@@ -218,13 +243,17 @@ const FALLBACK_CONFIG: WidgetItem = {
   type: 'unknown' as WidgetType,
   title: '组件',
   maxInstances: Infinity,
-  size: '1/4',
   isAddable: false,
-
+  grid: {
+    x: 0,
+    y: 0,
+    w: 6,
+    h: 9,
+  },
   data: {},
 };
 
-/** 解析后的组件配置：在 WidgetItem 基础上补充运行时查询得到的 sizeOptions。 */
+/** 解析后的组件配置：模板（含默认 grid）+ 运行时查询的 sizeOptions。 */
 export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSize[] };
 
 /** Resolve the config for a widget type (falls back to a safe default). */

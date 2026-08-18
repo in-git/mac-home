@@ -6,16 +6,17 @@ import {
 import { WidgetItem } from '../../types';
 import { SubmenuFlyout } from './SubmenuFlyout';
 
-/** 卡片背景纯色快捷选项 —— 一排并列的「透明 / 纯黑 / 纯白」。 */
+/** 卡片背景纯色快捷选项 —— 一排并列的「磨砂 / 透明 / 纯黑 / 纯白」。 */
 const SOLID_BG_COLORS: {
   label: string;
-  value: string;
-  theme: 'light' | 'dark';
-  transparent?: boolean;
+  value: string | undefined;
+  theme?: 'light' | 'dark';
+  type: 'glass' | 'transparent' | 'color';
 }[] = [
-  { label: '透明', value: 'transparent', theme: 'light', transparent: true },
-  { label: '纯黑', value: '#1a1a1a', theme: 'dark' },
-  { label: '纯白', value: '#FFFFFF', theme: 'light' },
+  { label: '磨砂', value: undefined, type: 'glass' },
+  { label: '透明', value: 'transparent', theme: 'light', type: 'transparent' },
+  { label: '纯黑', value: '#1a1a1a', theme: 'dark', type: 'color' },
+  { label: '纯白', value: '#FFFFFF', theme: 'light', type: 'color' },
 ];
 
 interface BackgroundSubmenuProps {
@@ -98,42 +99,58 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
             <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
               卡片背景
             </div>
-    {/* 纯色快捷选项：透明 / 纯黑 / 纯白，一排并列 */}
-            <div className="mb-3 grid grid-cols-3 gap-3">
-              {SOLID_BG_COLORS.map((c) => (
-                <button
-                  key={c.label}
-                  title={c.label}
-                  onClick={() => {
-                    onChangeWidgetBackground(
-                      targetWidget.id,
-                      c.transparent ? undefined : c.value,
-                      c.transparent ? undefined : c.theme,
-                    );
-                    setBgSubmenuOpen(false);
-                    onClose();
-                  }}
-                  style={
-                    c.transparent
-                      ? {
-                          backgroundImage:
-                            'linear-gradient(45deg,#ccc 25%,transparent 25%,transparent 75%,#ccc 75%),linear-gradient(45deg,#ccc 25%,transparent 25%,transparent 75%,#ccc 75%)',
-                          backgroundSize: '10px 10px',
-                          backgroundPosition: '0 0,5px 5px',
-                          backgroundColor: '#fff',
-                        }
-                      : { background: c.value }
-                  }
-                  className={`h-12 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform ${
-                    (c.transparent
-                      ? targetWidget.cardStyle?.background === undefined &&
-                        targetWidget.cardStyle?.backgroundTheme === undefined
-                      : targetWidget.cardStyle?.background === c.value)
-                      ? 'border-[color:var(--accent)] ring-4 ring-[color:var(--accent)]/40'
-                      : 'border-black/10 dark:border-white/15'
-                  }`}
-                />
-              ))}
+            {/* 纯色快捷选项：磨砂 / 透明 / 纯黑 / 纯白 */}
+            <div className="mb-3 grid grid-cols-4 gap-2">
+              {SOLID_BG_COLORS.map((c) => {
+                const isSelected =
+                  c.type === 'glass'
+                    ? targetWidget.cardStyle?.background === undefined &&
+                      targetWidget.cardStyle?.backgroundTheme === undefined
+                    : targetWidget.cardStyle?.background === c.value;
+
+                return (
+                  <button
+                    key={c.label}
+                    title={c.label}
+                    onClick={() => {
+                      onChangeWidgetBackground(
+                        targetWidget.id,
+                        c.value,
+                        c.theme,
+                      );
+                      setBgSubmenuOpen(false);
+                      onClose();
+                    }}
+                    style={
+                      c.type === 'glass'
+                        ? {
+                            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                            backdropFilter: 'blur(8px)',
+                          }
+                        : c.type === 'transparent'
+                        ? {
+                            backgroundImage:
+                              'linear-gradient(45deg,#ccc 25%,transparent 25%,transparent 75%,#ccc 75%),linear-gradient(45deg,#ccc 25%,transparent 25%,transparent 75%,#ccc 75%)',
+                            backgroundSize: '10px 10px',
+                            backgroundPosition: '0 0,5px 5px',
+                            backgroundColor: '#fff',
+                          }
+                        : { background: c.value }
+                    }
+                    className={`h-10 rounded-[var(--card-radius)] border-2 text-xs font-medium transition-all hover:scale-105 hover:shadow-md flex items-center justify-center ${
+                      isSelected
+                        ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+                        : 'border-black/10 dark:border-white/15'
+                    }`}
+                  >
+                    {c.type === 'glass' && (
+                      <span className="text-slate-800 dark:text-slate-200 drop-shadow-xs">
+                        磨砂
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
             {/* 亮色 / 暗色 选项卡，点击切换 */}
             <div className="mb-4 flex p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">

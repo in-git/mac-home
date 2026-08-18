@@ -101,7 +101,7 @@ export const AddWidgetModal: React.FC<Props> = ({
 
   // 已添加到桌面的站点（web-grid 类型携带 site 数据），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
-    .filter((w) => isWebGrid(w.type) && w.data.site)
+    .filter((w) => isWebGrid(w.type) && w.data?.site)
     .map((w) => w.data.site as SiteItem);
 
   return createPortal(
@@ -165,7 +165,6 @@ export const AddWidgetModal: React.FC<Props> = ({
               </h2>
               <button
                 onClick={onClose}
-                aria-label={ADD_WIDGET_TEXT.close}
                 className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
               >
                 <X size={18} />
@@ -179,8 +178,6 @@ export const AddWidgetModal: React.FC<Props> = ({
                   selected={webSelectedSites}
                   onAdd={onAddSite}
                   onRemove={onRemoveSite}
-                  addTip={ADD_WIDGET_TEXT.addToDesktop}
-                  removeTip={ADD_WIDGET_TEXT.removeFromDesktop}
                 />
               </div>
             ) : (

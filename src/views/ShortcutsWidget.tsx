@@ -53,6 +53,8 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     if (shortcuts.some((s) => s.link === url)) {
       return;
     }
+    console.log('---------');
+    
     // 直接以 SiteItem 结构存储，保留原站点的封面/背景/计数等字段
     const shortcut: SiteItem = {
       ...item,
@@ -122,8 +124,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
           onAdd={handleAddFromSite}
           onRemove={handleRemoveFromPicker}
           onOpen={handleOpenSite}
-          addTip="添加到快捷导航"
-          removeTip="从快捷导航移除"
         />
       </Modal>
     </>

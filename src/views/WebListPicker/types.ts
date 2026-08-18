@@ -9,10 +9,6 @@ export interface WebListPickerProps {
   onRemove?: (item: SiteItem) => void;
   /** 点击卡片打开站点时的回调；缺省时在新窗口打开 */
   onOpen?: (item: SiteItem) => void;
-  /** 添加按钮的 Tooltip 文案 */
-  addTip?: string;
-  /** 删除按钮的 Tooltip 文案 */
-  removeTip?: string;
 }
 
 /**

@@ -50,21 +50,10 @@ export type WidgetType =
   | 'control-center'
   | 'web-grid'
   | 'application'
-  | 'member-count'
-  | 'blank';
+  | 'member-count';
 
-// 尺寸统一使用分数写法（如 1/2、1/8），值即展示文案，无需额外映射表。
-export type WidgetSize =
-  | '1/1' // 1/1 占满整行
-  | '1/2'
-  | '1/3'
-  | '1/4'
-  | '1/5'
-  | '1/6'
-  | '1/8'
-  | '1/10'
-  | '1/12'
-  | '1/16'; // 1/16 纯图标, 不显示文本
+// 尺寸统一使用分母数字形式（最多12）
+export type WidgetSize = 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12;
 
 // Behaviour of an icon widget (web-grid / settings). `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.
@@ -88,8 +77,6 @@ export interface CardStyle {
   background?: string;
   /** 卡片背景主题：light / dark / none，影响卡片内文字与图标的对比度处理。 */
   backgroundTheme?: 'light' | 'dark' | 'none';
-  // 卡片高度
-  height?: 32 | 64 | 96 | 128 | 160 | 192 | 224 | 256 | 288 | 320 | 352 | 384 | 416
 }
 export interface WidgetItem {
   id: string;
@@ -99,8 +86,8 @@ export interface WidgetItem {
   title: string;
   /** 最大安装数量，有些只能安装一次，所以用它限制 */
   maxInstances: number;
-  /** Size applied to a newly created widget of this type. */
-  size: WidgetSize;
+  /** Size applied to a newly created widget of this type (resize 档位标签；
+
   /** Whether this type can be added from the "添加组件" modal. */
   isAddable: boolean;
 
@@ -113,6 +100,10 @@ export interface WidgetItem {
 
   /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
   cardStyle?: CardStyle;
+  /** react-grid-layout 网格坐标（必填）：位置与大小以该参数为唯一真相。
+   *  对应 RGL Layout 的 {x,y,w,h}，i 由 id 推导无需存储。
+   *  创建/迁移时按「当前元素的宽高」生成初始值，之后由用户拖拽调整并持久化。 */
+  grid: { x: number; y: number; w: number; h: number };
   // 私有数据：组件实例级别的自定义数据（快捷导航、图标站点、卡片背景等）集中存放。
   data: {
     /** 快捷导航等组件的私有数据空间：存储 SiteItem[]。 */

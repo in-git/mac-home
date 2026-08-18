@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
-import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widgetConfig';
+import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, isWebGrid } from '../data/widgetConfig';
+import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
 import {
   AIConfig,
   CardRadiusTier,
@@ -113,7 +114,9 @@ export const useHomeStore = create<HomeState>()(
       // 默认配置（data.json）整体展开，首次启动后由 persist 接管；
       // 下方仅覆盖需要旧版 localStorage 迁移的字段与对话历史。
       ...DEFAULT_STATE,
-      widgets: readLegacy('apple_homepage_widgets', DEFAULT_STATE.widgets),
+      widgets: (readLegacy<WidgetItem[]>('apple_homepage_widgets', DEFAULT_STATE.widgets)).map(
+        (w) => ensureGrid(w),
+      ),
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
       notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
       soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
@@ -137,12 +140,15 @@ export const useHomeStore = create<HomeState>()(
         }
 
         const cfg = getWidgetConfig(type);
+        const targetW = cfg.grid?.w ?? 1;
+        const targetH = cfg.grid?.h ?? 1;
+        const pos = findFirstAvailablePosition(widgets, targetW, targetH);
+
         const newWidget: WidgetItem = {
           id: `widget-${Date.now()}`,
           type,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           maxInstances: cfg.maxInstances,
-          size: cfg.size,
           isAddable: cfg.isAddable,
           cardStyle: {
             ...DEFAULT_CARD_STYLE,
@@ -156,6 +162,13 @@ export const useHomeStore = create<HomeState>()(
             ...(cfg.data?.shortcuts ? { shortcuts: cfg.data.shortcuts } : {}),
             ...(cfg.data?.site ? { site: cfg.data.site } : {}),
           },
+          // 初始网格坐标：查找桌面剩余空间计算出的 x, y
+          grid: {
+            x: pos.x,
+            y: pos.y,
+            w: targetW,
+            h: targetH,
+          },
         };
         set({ widgets: [...widgets, newWidget] });
       },
@@ -166,9 +179,20 @@ export const useHomeStore = create<HomeState>()(
 
       resizeWidget: (id, newSize) => {
         set({
-          widgets: get().widgets.map((w) =>
-            w.id === id ? { ...w, size: newSize } : w,
-          ),
+          widgets: get().widgets.map((w) => {
+            if (w.id !== id) return w;
+            const w_cols = typeof newSize === 'number' ? newSize : 4;
+            // 网页类型 (web-grid) 特殊适配：1/12 对应 h=5，2/12 对应 h=10
+            let newH = w.grid?.h ?? 5;
+            if (isWebGrid(w.type)) {
+              newH = w_cols === 2 ? 10 : 5;
+            }
+            return {
+              ...w,
+              size: newSize,
+              grid: { ...w.grid, w: w_cols, h: newH },
+            };
+          }),
         });
       },
 
@@ -276,6 +300,15 @@ export const useHomeStore = create<HomeState>()(
       partialize: (state) => ({
  ...state
       }),
+      // hydration 后用 ensureGrid 补齐旧数据中缺失的 grid 坐标，
+      // 保证 grid 必选契约在任意持久化数据下都成立。
+      merge: (persisted, current) => {
+        const merged = { ...current, ...(persisted as Partial<HomeState>) };
+        if (Array.isArray(merged.widgets)) {
+          merged.widgets = merged.widgets.map((w) => ensureGrid(w));
+        }
+        return merged;
+      },
     },
   ),
 );
