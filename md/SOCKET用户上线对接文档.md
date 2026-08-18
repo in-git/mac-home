@@ -1,71 +1,59 @@
----
-name: socket-member-count-skill
-description: "人数卡片实时数据免登录对接文档：当前在线/今日/当月三个人数，端点 /ws 免登录，订阅 /user/membercount/queue 即可，极简说明"
-version: 1.0.0
-tags:
-  - 免登录
-  - WebSocket
-  - 人数卡片
-  - 实时统计
-  - 前端对接文档
----
+# 在线人数（免登录）WebSocket 对接文档
 
+## 一、功能说明
 
-## 1. 概述
+实时推送"当前在线人数"：
 
-页面进入时展示一个"人数卡片"，含三个字段，全部来自 WebSocket 推送：
+- 客户端连接 `/ws/ws-online` 即视为上线，在线人数 +1
+- 客户端需**定时发送心跳**（任意文本，如 `ping`）以维持在线状态
+- 服务端 **90 秒未收到心跳**判定访客离线（如关闭浏览器窗口/标签页、切后台、网络断开），主动关闭连接并移除，在线人数 -1
+- 服务端定时（每 30 秒）扫描心跳超时的连接并清理，**彻底避免关闭窗口后残留的在线人数**
+- 新连接建立时、人数变化时、心跳超时剔除时，向所有在线连接广播最新人数
 
-| 字段 | 说明 |
-| --- | --- |
-| currentCount | 当前在线人数（实时变化） |
-| todayCount | 今日累计人数 |
-| monthCount | 当月累计人数 |
+> 在线人数 = 当前 WebSocket 真实连接数（基于心跳），**不再**依赖 `BIZ_VISITOR_ONLINE` 表，因此关闭窗口后即可正确下线。
 
-- **免登录**：端点 `/ws` 无任何权限要求，游客可直接连接。
-- 连接时带登录 `token`（query 参数，可选）可识别身份，不带也正常。
+后端实现：`OnlineCountWebSocket` + `VisitorOnlineManager`（`@ServerEndpoint` 原生 WebSocket，与项目 `DevMessageWebSocket` 同构），免登录。
+`dashboard` 接口返回的 `overview.onlineCount` 也直接读取该实时在线连接数。
 
-## 2. 连接
+## 二、端点与协议
 
-- 端点：`/ws`，必须用 **SockJS + STOMP**（不要裸 WebSocket）。
-  - `sockjs-client@1.6.1`
-  - `stompjs@2.3.3`（UMD，全局 `Stomp.over()`）
-- 流程：`new SockJS(url)` → `Stomp.over(socket)` → `connect()` → **connect 回调后再订阅**。
-- URL 必须为 `http:`/`https:`（`ws:`/`wss:` 需先转换）。
-- 建议心跳 `heartbeat.incoming/outgoing = 10000`。
+| 项目 | 值 | 说明 |
+| --- | --- | --- |
+| 端点 | `/ws/ws-online` | 原生 WebSocket，非 STOMP。以 `/ws` 开头命中免登录放行规则 `/ws/**`，无需改拦截器 |
+| 协议 | `ws://`（https 页面用 `wss://`） | 浏览器原生 `new WebSocket(url)` 即可，无需 SockJS |
+| 鉴权 | **无需登录** | `/ws/**` 已在 `GlobalConfigure.NO_LOGIN_PATH_ARR` 放行 |
+| 上行 | **需定时发送心跳** | 建议每 30 秒发送一次（任意文本，如 `ping`），否则 90 秒超时下线 |
 
-## 3. 订阅
+### 心跳参数
 
-连接成功回调中订阅：
+| 参数 | 值 | 说明 |
+| --- | --- | --- |
+| 心跳超时阈值（服务端） | 90 秒 | 超过该时间未收到任意上行消息即判定离线 |
+| 心跳扫描周期（服务端） | 30 秒 | 每 30 秒扫描一次超时连接并关闭 |
+| 推荐客户端心跳间隔 | 30 秒 | 留出余量，避免网络抖动误判 |
 
-```js
-stompClient.subscribe('/user/membercount/queue', function(frame) {
-  var msg = JSON.parse(frame.body);
-  // msg.data 即三个字段
-  card.render(msg.data);
-});
-```
+## 三、消息结构
 
-## 4. 消息结构
+服务端推送为 JSON 字符串：
 
 ```json
 {
-  "module": "membercount",
-  "type": "snapshot",
-  "timestamp": 1754000000000,
-  "data": { "currentCount": 5, "todayCount": 12, "monthCount": 89 }
+  "data": {
+    "total": 12
+  }
 }
 ```
 
-- `type = "snapshot"`：订阅后立即推送一次（进入页面即有数据）。
-- `type = "update"`：人数变化时广播推送。
-- 两种类型 `data` 结构相同，前端收到后直接覆盖卡片三个字段即可。
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `data.total` | number | 当前在线人数 |
 
-## 5. 断线与重连
+## 四、前端对接要点
 
-- 断开后服务端视为下线；建议 5 秒自动重连，**重连成功后必须重新订阅** `/user/membercount/queue`（会再次收到 snapshot）。
-- 重连时保留原 `token`（游客无需）。
+1. 使用浏览器原生 WebSocket：`new WebSocket('ws://host:port/ws/ws-online')`
+2. `onopen` 表示连接成功，已计入在线人数，**立即启动心跳定时器（每 30 秒 `send('ping')`）**
+3. `onmessage` 收到 JSON，解析 `data.total` 渲染即可
+4. `onclose` 表示已下线，人数已 -1；可延迟重连
+5. **必须定时发送上行心跳**，否则连接会被服务端超时剔除
+6. `onbeforeunload` 时可主动 `socket.close()` 加速下线（非必须，服务端会超时清理）
 
-## 6. 数据来源说明（后端）
-
-- 当前在线人数：实时在线连接数。
-- 今日/当月人数：每次连接累计 +1，跨天/跨月自动清零，持久化在系统配置 `MEMBER_COUNT`（前端无需关心）。

@@ -130,15 +130,17 @@ class BwsClient {
 export const bwsClient = new BwsClient();
 
 // ===== 在线人数专用：原生 WebSocket /ws/ws-online（免登录，非 STOMP）=====
-// 参照 md/socket-test.html：连接即 +1、断开即 -1，服务端实时推送
-// 消息格式：{ "code": 200, "data": { "total": N } }
+// 参照 md/SOCKET用户上线对接文档.md：连接即 +1、断开即 -1，服务端实时推送
+// 消息格式：{ "data": { "total": N } }（后端实际不含 code 字段）
 
 const ONLINE_WS_PATH = '/ws/ws-online';
 const ONLINE_RECONNECT_INTERVAL = 5000;
+// 心跳间隔：参照对接文档「推荐客户端心跳间隔 30 秒」，留出余量避免网络抖动误判（服务端 90s 超时）
+const ONLINE_HEARTBEAT_INTERVAL = 30_000;
 
-/** 在线人数推送消息结构（与 socket-test.html 对齐） */
+/** 在线人数推送消息结构（与对接文档一致） */
 export interface OnlineCountMessage {
-  code: number;
+  code?: number;
   data?: {
     total?: number;
     [key: string]: unknown;
@@ -151,6 +153,7 @@ export type OnlineCountHandler = (total: number) => void;
 class OnlineCountClient {
   private ws: WebSocket | null = null;
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private manualClose = false;
   private handlers = new Set<OnlineCountHandler>();
   private _connected = false;
@@ -181,6 +184,8 @@ class OnlineCountClient {
     ws.onopen = () => {
       this._connected = true;
       this.retryTimer = null;
+      // 连接成功即计入在线人数，立即启动心跳定时器（每 30s 上行 'ping' 维持在线）
+      this.startHeartbeat();
     };
 
     ws.onmessage = (evt: MessageEvent) => {
@@ -190,7 +195,8 @@ class OnlineCountClient {
       } catch {
         msg = null;
       }
-      if (msg && msg.code === 200 && msg.data && typeof msg.data.total === 'number') {
+      // 后端实际推送 {"data":{"total":N}}（见对接文档，无 code 字段），只要 data.total 为数字即渲染
+      if (msg && msg.data && typeof msg.data.total === 'number') {
         const total = msg.data.total;
         this.handlers.forEach((h) => h(total));
       }
@@ -199,6 +205,7 @@ class OnlineCountClient {
     ws.onclose = () => {
       this._connected = false;
       this.ws = null;
+      this.stopHeartbeat();
       this.scheduleReconnect();
     };
 
@@ -206,6 +213,28 @@ class OnlineCountClient {
       // 错误后浏览器会触发 onclose，由 onclose 负责重连
       this._connected = false;
     };
+  }
+
+  /** 启动心跳：定时上行任意文本（'ping'）以维持在线状态，断开连接后由 onclose 停止 */
+  private startHeartbeat() {
+    this.stopHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        try {
+          this.ws.send('ping');
+        } catch {
+          /* 发送失败等待 onclose 重连 */
+        }
+      }
+    }, ONLINE_HEARTBEAT_INTERVAL);
+  }
+
+  /** 停止心跳定时器 */
+  private stopHeartbeat() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
   }
 
   private scheduleReconnect() {
@@ -229,6 +258,7 @@ class OnlineCountClient {
       clearTimeout(this.retryTimer);
       this.retryTimer = null;
     }
+    this.stopHeartbeat();
     if (this.ws) {
       try {
         this.ws.close();
@@ -242,3 +272,10 @@ class OnlineCountClient {
 }
 
 export const onlineCountClient = new OnlineCountClient();
+
+// 页面卸载时主动关闭连接，加速下线（对接文档要点 6；服务端仍会超时兜底清理）
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    onlineCountClient.disconnect();
+  });
+}

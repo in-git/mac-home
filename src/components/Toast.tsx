@@ -1,4 +1,5 @@
-import React, { createRoot, type Root } from 'react-dom/client';
+import React from 'react';
+import { createRoot, type Root } from 'react-dom/client';
 import { CheckCircle2, XCircle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
