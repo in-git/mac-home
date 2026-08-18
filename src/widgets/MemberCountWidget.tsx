@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, CalendarDays, CalendarRange, Clock, Radio } from 'lucide-react';
+import { Calendar, TrendingUp, Clock, Radio, Users } from 'lucide-react';
 import { onlineCountClient } from '../api/websocket';
 import { visitorApi, type VisitorOverview } from '../api/visitor';
 
@@ -10,7 +10,7 @@ interface MemberCountWidgetProps {
 /** 统计小项：label 文案、icon 图标、value 取值函数 */
 interface StatItem {
   label: string;
-  icon: typeof Users;
+  icon: typeof Calendar;
   /** 从实时在线人数（WebSocket）与看板概览（HTTP）中取值 */
   getValue: (online: number | null, overview: VisitorOverview | null) => number | null;
 }
@@ -18,12 +18,12 @@ interface StatItem {
 const STAT_ITEMS: StatItem[] = [
   {
     label: '月访客',
-    icon: CalendarDays,
+    icon: Calendar,
     getValue: (_online, overview) => (overview ? overview.monthUv : null),
   },
   {
     label: '周访客',
-    icon: CalendarRange,
+    icon: TrendingUp,
     getValue: (_online, overview) => (overview ? overview.weekUv : null),
   },
   {
@@ -75,13 +75,14 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col gap-3 text-slate-800 dark:text-slate-100">
-      <div className="flex items-center justify-between">
-        <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400">
-          在线
+    <div className="flex h-full w-full flex-col text-slate-800 dark:text-slate-100 p-0.5 select-none justify-between">
+      {/* 顶栏标题与连接状态 */}
+      <div className="flex items-center justify-between shrink-0 mb-1">
+        <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400 leading-tight">
+          在线统计
         </span>
         <span
-          className={`flex items-center gap-1 text-[11px] ${
+          className={`flex items-center gap-1 text-[11px] leading-tight ${
             connected ? 'text-emerald-500' : 'text-amber-500'
           }`}
           title={connected ? '已连接' : '连接中…'}
@@ -91,43 +92,39 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2">
-        {/* 主指标：当前在线（实时，WebSocket），跟随主题色 */}
-        <div className="flex flex-col items-center justify-center rounded-[var(--card-radius)] px-2 py-4 text-center bg-[color:var(--accent)]/10">
-          <Users size={18} className="mb-1 text-[color:var(--accent)]" />
-          <span className="text-3xl font-semibold tabular-nums leading-none text-[color:var(--accent)]">
-            {online != null ? online.toLocaleString() : '—'}
-          </span>
-          <span className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-            当前在线
-          </span>
-        </div>
+      {/* 主指标：当前在线（实时，WebSocket），自适应高度居中 */}
+      <div className="flex flex-1 flex-col items-center justify-center rounded-[var(--card-radius)] px-2 py-1.5 text-center bg-[color:var(--accent)]/10 min-h-0 mb-1.5">
+        <Users size={16} className="mb-0.5 text-[color:var(--accent)]" />
+        <span className="text-4xl font-bold tabular-nums leading-tight text-[color:var(--accent)]">
+          {online != null ? online.toLocaleString() : '—'}
+        </span>
+        <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+          当前在线
+        </span>
+      </div>
 
-        {/* 访客统计：月 / 周 / 当日，一排三列，图标跟随主题色 */}
-        <div className="grid grid-cols-3 gap-2">
-          {STAT_ITEMS.filter((item) => item.label !== '当前在线').map(
-            ({ label, icon: Icon, getValue }) => {
-              const value = getValue(online, overview);
-              return (
-                <div
-                  key={label}
-                  className="flex flex-col items-center justify-center rounded-[var(--card-radius)] bg-black/5 px-2 py-3 text-center dark:bg-white/10"
-                >
-                  <Icon
-                    size={16}
-                    className="mb-1 text-[color:var(--accent)]"
-                  />
-                  <span className="text-xl font-semibold tabular-nums leading-none">
-                    {value != null ? value.toLocaleString() : '—'}
-                  </span>
-                  <span className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    {label}
-                  </span>
-                </div>
-              );
-            },
-          )}
-        </div>
+      {/* 访客统计：月 / 周 / 当日，一排三列 */}
+      <div className="grid grid-cols-3 gap-1.5 shrink-0">
+        {STAT_ITEMS.map(({ label, icon: Icon, getValue }) => {
+          const value = getValue(online, overview);
+          return (
+            <div
+              key={label}
+              className="flex flex-col items-center justify-center rounded-[var(--card-radius)] bg-black/5 px-1.5 py-1 text-center dark:bg-white/10"
+            >
+              <Icon
+                size={14}
+                className="mb-0.5 text-[color:var(--accent)]"
+              />
+              <span className="text-base font-semibold tabular-nums leading-tight">
+                {value != null ? value.toLocaleString() : '—'}
+              </span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                {label}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

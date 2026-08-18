@@ -55,6 +55,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
         layout={layout}
         cols={24}
         rowHeight={10}
+        margin={[10, 10]}
         isDraggable={isEditMode}
         isResizable={isEditMode}
         onLayoutChange={handleLayoutChange}

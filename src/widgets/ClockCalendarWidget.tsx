@@ -34,21 +34,21 @@ export const ClockCalendarWidget: React.FC = () => {
   const paddingDays = Array.from({ length: firstDayOfMonth }, (_, i) => i);
 
   return (
-    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1">
+    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none">
       {/* Clock Display */}
-      <div className="flex items-center justify-center mb-3">
+      <div className="flex items-center justify-center mb-1.5 shrink-0">
         <div className="text-center">
-          <div className="text-3xl font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs">
+          <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs leading-tight">
             {formattedTime}
           </div>
-          <div className="text-xs font-medium mt-1 text-slate-500 dark:text-slate-400">
+          <div className="text-xs font-medium mt-1 text-slate-500 dark:text-slate-400 leading-tight">
             {formattedDate}
           </div>
         </div>
       </div>
 
       {/* Mini Calendar Grid */}
-      <div className="pt-2 border-t border-black/5 dark:border-white/10 text-xs">
+      <div className="pt-1.5 border-t border-black/5 dark:border-white/10 text-xs min-h-0 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-7 gap-1 text-center font-medium text-slate-500 dark:text-slate-400 mb-1">
           <span>日</span>
           <span>一</span>
@@ -60,14 +60,14 @@ export const ClockCalendarWidget: React.FC = () => {
         </div>
         <div className="grid grid-cols-7 gap-1 text-center text-slate-800 dark:text-slate-100">
           {paddingDays.map((_, i) => (
-            <div key={`pad-${i}`} className="p-1" />
+            <div key={`pad-${i}`} className="py-1" />
           ))}
           {daysArray.map((day) => {
             const isToday = day === todayDate;
             return (
               <div
                 key={day}
-                className={`p-1 rounded-full font-medium transition-colors ${
+                className={`py-1 rounded-full font-medium transition-colors leading-none flex items-center justify-center ${
                   isToday
                     ? 'bg-[color:var(--accent)] text-white font-bold shadow-xs'
                     : 'hover:bg-black/5 dark:hover:bg-white/10'

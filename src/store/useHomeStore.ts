@@ -4,6 +4,7 @@ import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
 import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, isWebGrid } from '../data/widgetConfig';
 import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
+import { migrateData } from '../utils/migration';
 import {
   AIConfig,
   CardRadiusTier,
@@ -15,11 +16,6 @@ import {
   WidgetType,
 } from '../types';
 import { WeatherCity } from '../utils/weatherApi';
-
-// 桌宠对话历史上限：最多保留 10 轮（每轮 = 1 条 user + 1 条 assistant，
-// 即最多 20 条消息），超出时自动删除最早的记录。
-export const MAX_PET_CHAT_ROUNDS = 10;
-export const MAX_PET_CHAT_MESSAGES = MAX_PET_CHAT_ROUNDS * 2;
 
 // One-time migration from the previous per-key localStorage layout so existing
 // user data is not lost when switching to the single-store persist key.
@@ -38,12 +34,18 @@ const DEFAULT_STATE = PRESET_DATA.DEFAULT_STATE;
 interface HomeState {
   // Persisted data
   widgets: WidgetItem[];
+  // 当前数据版本号
+  version: number;
+  // 壁纸配置
   wallpaper: WallpaperConfig;
   notes: StickyNoteType[];
+  // 是否开启暗黑模式
   isDarkMode: boolean;
+  // 主题颜色
   themeColor: string;
+  // 是否开启音效
   soundEnabled: boolean;
-  // 字体方案：A(12/14/16) / B(13/15/17) / C(14/16/18)
+  // 字体方案
   fontVariant: FontVariant;
   // 卡片圆角：small / medium / large
   cardRadius: CardRadiusTier;
@@ -51,8 +53,7 @@ interface HomeState {
   screenBrightness: number;
   // AI 模型对接配置（厂商 / 自定义 BaseURL / KEY / 模型名）
   aiConfig: AIConfig;
-  // 桌宠对话历史（跨轮上下文，持久化），只存 user/assistant 文本，不含 tool 消息
-  petChatHistory: import('../agent/types').AgentChatMessage[];
+
   // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
   petAutoActivity: boolean;
   // 当前选中的桌宠形象（角色皮肤 id），持久化以便下次进入恢复
@@ -91,10 +92,6 @@ interface HomeState {
   setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
   setAiConfig: (patch: Partial<AIConfig>) => void;
-  // 桌宠对话历史写入（追加本轮 user/assistant 消息）
-  setPetChatHistory: (
-    messages: import('../agent/types').AgentChatMessage[],
-  ) => void;
   setPetAutoActivity: (value: boolean) => void;
   /** 切换当前桌宠形象（角色皮肤 id）。 */
   setSelectedRoleId: (id: string) => void;
@@ -121,8 +118,6 @@ export const useHomeStore = create<HomeState>()(
       notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
       soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_STATE.aiConfig),
-      // 桌宠对话历史不随默认配置重置，初始为空
-      petChatHistory: [],
       selectedRoleId: DEFAULT_ROLE_ID,
 
       setWidgets: (widgets) => set({ widgets }),
@@ -278,9 +273,7 @@ export const useHomeStore = create<HomeState>()(
         set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
       setAiConfig: (patch) =>
         set({ aiConfig: { ...get().aiConfig, ...patch } }),
-      setPetChatHistory: (messages) =>
-        // 统一在 store 层截断到最近 10 轮，超出自动删除最早记录（调用方无需各自处理）
-        set({ petChatHistory: messages.slice(-MAX_PET_CHAT_MESSAGES) }),
+  
       setPetAutoActivity: (value) => set({ petAutoActivity: value }),
       setSelectedRoleId: (id) => set({ selectedRoleId: id }),
       setWeatherCities: (cities) =>
@@ -303,11 +296,8 @@ export const useHomeStore = create<HomeState>()(
       // hydration 后用 ensureGrid 补齐旧数据中缺失的 grid 坐标，
       // 保证 grid 必选契约在任意持久化数据下都成立。
       merge: (persisted, current) => {
-        const merged = { ...current, ...(persisted as Partial<HomeState>) };
-        if (Array.isArray(merged.widgets)) {
-          merged.widgets = merged.widgets.map((w) => ensureGrid(w));
-        }
-        return merged;
+        const migrated = migrateData<Partial<HomeState>>(persisted, current.version);
+        return { ...current, ...migrated };
       },
     },
   ),

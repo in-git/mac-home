@@ -210,7 +210,7 @@ export default function App() {
         <main
           ref={dashboardRef}
           className={
-            'relative max-w-7xl w-full mx-auto px-3 sm:px-6 pb-16 rounded-2xl transition-shadow duration-200 ' +
+            'relative max-w-7xl w-full mx-auto px-3 sm:px-6 pb-6 rounded-2xl transition-shadow duration-200 ' +
             (isEditMode
               ? 'ring-2 ring-[color:var(--accent)] shadow-[0_0_0_4px_color-mix(in_srgb,var(--accent)_25%,transparent)]'
               : '')

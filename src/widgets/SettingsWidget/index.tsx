@@ -3,6 +3,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useHomeStore } from '../../store/useHomeStore';
 import { playSound } from '../../utils/sound';
 import { parseImport } from './constants';
+import { CURRENT_DATA_VERSION } from '../../utils/migration';
 import { AIPanel } from './panels/AIPanel';
 import { AppearancePanel } from './panels/AppearancePanel';
 import { PetPanel } from './panels/PetPanel';
@@ -41,35 +42,7 @@ export const SettingsWidget: React.FC<{
     setSelectedCityId,
     setLastLocation,
   } = useHomeStore(
-    useShallow((s) => ({
-      isDarkMode: s.isDarkMode,
-      setDarkMode: s.setDarkMode,
-      themeColor: s.themeColor,
-      setThemeColor: s.setThemeColor,
-      soundEnabled: s.soundEnabled,
-      setSoundEnabled: s.setSoundEnabled,
-      fontVariant: s.fontVariant,
-      setFontVariant: s.setFontVariant,
-      cardRadius: s.cardRadius,
-      setCardRadius: s.setCardRadius,
-      resetLayout: s.resetLayout,
-      setWidgets: s.setWidgets,
-      updateNotes: s.updateNotes,
-      widgets: s.widgets,
-      notes: s.notes,
-      resetAll: s.resetAll,
-      aiConfig: s.aiConfig,
-      setAiConfig: s.setAiConfig,
-      petAutoActivity: s.petAutoActivity,
-      setPetAutoActivity: s.setPetAutoActivity,
-      selectedRoleId: s.selectedRoleId,
-      setSelectedRoleId: s.setSelectedRoleId,
-      updateWallpaper: s.updateWallpaper,
-      setScreenBrightness: s.setScreenBrightness,
-      setWeatherCities: s.setWeatherCities,
-      setSelectedCityId: s.setSelectedCityId,
-      setLastLocation: s.setLastLocation,
-    })),
+    useShallow((s) => s),
   );
 
   const [justReset, setJustReset] = useState(false);
@@ -173,22 +146,9 @@ export const SettingsWidget: React.FC<{
     const s = useHomeStore.getState();
     const payload = {
       app: 'macOS 主页',
-      version: 1,
+      version: CURRENT_DATA_VERSION,
       exportedAt: new Date().toISOString(),
-      widgets: s.widgets,
-      wallpaper: s.wallpaper,
-      notes: s.notes,
-      isDarkMode: s.isDarkMode,
-      themeColor: s.themeColor,
-      soundEnabled: s.soundEnabled,
-      fontVariant: s.fontVariant,
-      cardRadius: s.cardRadius,
-      screenBrightness: s.screenBrightness,
-      aiConfig: s.aiConfig,
-      petAutoActivity: s.petAutoActivity,
-      weatherCities: s.weatherCities,
-      selectedCityId: s.selectedCityId,
-      lastLocation: s.lastLocation,
+      ...s
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: 'application/json;charset=utf-8',
@@ -239,7 +199,7 @@ export const SettingsWidget: React.FC<{
             selectedRoleId={selectedRoleId}
             onSelectRole={setSelectedRoleId}
           />
-            <AIPanel config={aiConfig} onChange={setAiConfig} />
+          <AIPanel config={aiConfig} onChange={setAiConfig} />
         </>
       )}
     </div>

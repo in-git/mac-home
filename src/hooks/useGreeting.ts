@@ -16,8 +16,6 @@ export function useGreeting() {
     if (greetingDispatchedRef) return;
     greetingDispatchedRef = true;
 
-    void send('现在用户刚刚打开了主页，请用一句话热情地打招呼，可以顺带做一个欢迎动作。', {
-      keepHistory: false,
-    });
+    void send('现在用户刚刚打开了主页，请用一句话热情地打招呼，可以顺带做一个欢迎动作。');
   }, [send]);
 }

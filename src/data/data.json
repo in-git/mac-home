@@ -1,29 +1,8 @@
 {
   "app": "macOS 主页",
-  "version": 1,
-  "exportedAt": "2026-08-18T11:35:54.636Z",
+  "version": 1.2,
+  "exportedAt": "2026-08-18T12:25:26.931Z",
   "widgets": [
-    {
-      "id": "widget-1787048767724",
-      "type": "clock-mini",
-      "title": "时钟",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "dark",
-        "background": "#1a1a1a"
-      },
-      "data": {},
-      "grid": {
-        "x": 0,
-        "y": 24,
-        "w": 4,
-        "h": 10
-      },
-      "size": 4
-    },
     {
       "id": "widget-1787048786721",
       "type": "search",
@@ -39,68 +18,9 @@
       "data": {},
       "grid": {
         "x": 0,
-        "y": 15,
+        "y": 10,
         "w": 12,
-        "h": 9
-      },
-      "size": 12
-    },
-    {
-      "id": "widget-1787048825695",
-      "type": "clock",
-      "title": "时钟日历",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
-      },
-      "data": {},
-      "grid": {
-        "x": 0,
-        "y": 34,
-        "w": 12,
-        "h": 17
-      },
-      "size": 12
-    },
-    {
-      "id": "widget-1787048847223",
-      "type": "sticky-notes",
-      "title": "便签笔记",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
-      },
-      "data": {},
-      "grid": {
-        "x": 12,
-        "y": 32,
-        "w": 12,
-        "h": 16
-      }
-    },
-    {
-      "id": "widget-1787048898329",
-      "type": "weather",
-      "title": "天气预报",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
-      },
-      "data": {},
-      "grid": {
-        "x": 12,
-        "y": 15,
-        "w": 12,
-        "h": 17
+        "h": 10
       },
       "size": 12
     },
@@ -117,20 +37,288 @@
         "background": "transparent"
       },
       "data": {
-        "size": "5rem"
+        "size": "6rem",
+        "color": "#000000"
       },
       "grid": {
         "x": 0,
         "y": 0,
         "w": 24,
-        "h": 15
+        "h": 10
       },
       "size": 24
+    },
+    {
+      "id": "widget-2088059652088283137",
+      "type": "web-grid",
+      "title": "Windows XP 专业版",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2088059652088283137",
+          "name": "Windows XP 专业版",
+          "logo": "https://www.mx2d.cn/2026/8/14/2088210335145943042.png",
+          "des": "仿Windows系列之Windows XP",
+          "link": "https://win32.run/",
+          "count": 10,
+          "visible": true,
+          "recommend": false,
+          "background": "transparent",
+          "cover": "https://www.mx2d.cn/2026/8/14/2088210336085467138.png",
+          "orderNum": 100,
+          "createTime": "2026-08-14 08:26:30",
+          "categoryList": [
+            {
+              "id": "2087826731004936194",
+              "parentId": "0",
+              "name": "仿Windows合集",
+              "icon": null,
+              "sort": 2,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 16,
+        "y": 30,
+        "w": 2,
+        "h": 5
+      },
+      "size": 2
+    },
+    {
+      "id": "widget-2087069146011250689",
+      "type": "web-grid",
+      "title": "魔塔24层",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2087069146011250689",
+          "name": "魔塔24层",
+          "logo": "https://www.mx2d.cn/2026/8/17/site_logo_1786951099254.webp",
+          "des": "h5魔塔，一起救公主去吧！！！",
+          "link": "https://h5mota.com/games/24/",
+          "count": 37,
+          "visible": true,
+          "recommend": false,
+          "background": "#1D1D1F",
+          "cover": "https://www.mx2d.cn/2026/8/17/site_cover_1786951098947.webp",
+          "orderNum": 100,
+          "createTime": "2026-08-11 14:50:35",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089249885767184385",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 11,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 16,
+        "y": 25,
+        "w": 2,
+        "h": 5
+      },
+      "size": 2
+    },
+    {
+      "id": "widget-2088028231881736194",
+      "type": "web-grid",
+      "title": "Windows2000",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2088028231881736194",
+          "name": "Windows2000",
+          "logo": "https://www.mx2d.cn/2026/8/14/2088210309673934850.png",
+          "des": "仿Windows系列之2000",
+          "link": "http://copy.sh/v86/?profile=windows2000",
+          "count": 6,
+          "visible": true,
+          "recommend": false,
+          "background": "transparent",
+          "cover": "https://www.mx2d.cn/2026/8/14/2088210310194028545.png",
+          "orderNum": 100,
+          "createTime": "2026-08-14 06:21:39",
+          "categoryList": [
+            {
+              "id": "2087826731004936194",
+              "parentId": "0",
+              "name": "仿Windows合集",
+              "icon": null,
+              "sort": 2,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 12,
+        "y": 25,
+        "w": 2,
+        "h": 5
+      }
+    },
+    {
+      "id": "widget-2087835971799040001",
+      "type": "web-grid",
+      "title": "WINDOWS93",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2087835971799040001",
+          "name": "WINDOWS93",
+          "logo": "https://www.mx2d.cn/2026/8/15/site_logo_1786798973515.webp",
+          "des": "浏览器仿Windows系列之Windows93",
+          "link": "https://windows93.net/",
+          "count": 11,
+          "visible": true,
+          "recommend": false,
+          "background": "transparent",
+          "cover": "https://www.mx2d.cn/2026/8/14/2088210300475826178.png",
+          "orderNum": 100,
+          "createTime": "2026-08-13 17:37:40",
+          "categoryList": [
+            {
+              "id": "2087826731004936194",
+              "parentId": "0",
+              "name": "仿Windows合集",
+              "icon": null,
+              "sort": 2,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 14,
+        "y": 25,
+        "w": 2,
+        "h": 5
+      }
+    },
+    {
+      "id": "widget-1787054953034",
+      "type": "weather",
+      "title": "天气预报",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light"
+      },
+      "data": {},
+      "grid": {
+        "x": 0,
+        "y": 20,
+        "w": 12,
+        "h": 20
+      },
+      "size": 12
+    },
+    {
+      "id": "widget-1787054960066",
+      "type": "sticky-notes",
+      "title": "便签笔记",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light"
+      },
+      "data": {},
+      "grid": {
+        "x": 18,
+        "y": 10,
+        "w": 6,
+        "h": 15
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-1787054972669",
+      "type": "control-center",
+      "title": "控制中心",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light"
+      },
+      "data": {},
+      "grid": {
+        "x": 12,
+        "y": 10,
+        "w": 6,
+        "h": 15
+      }
+    },
+    {
+      "id": "widget-1787055828075",
+      "type": "clock-mini",
+      "title": "时钟",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light"
+      },
+      "data": {},
+      "grid": {
+        "x": 12,
+        "y": 30,
+        "w": 4,
+        "h": 10
+      }
+    },
+    {
+      "id": "widget-1787055838591",
+      "type": "member-count",
+      "title": "在线人数",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light"
+      },
+      "data": {},
+      "grid": {
+        "x": 18,
+        "y": 25,
+        "w": 6,
+        "h": 15
+      }
     }
   ],
   "wallpaper": {
-    "type": "static",
-    "dynamicPreset": "mesh-wave",
+    "type": "gradient",
     "blur": 0,
     "brightness": 115,
     "contrast": 1.05,
@@ -139,7 +327,7 @@
     "sepia": 0,
     "grayscale": 0,
     "invert": 0,
-    "imageUrl": "https://afe259aae30d616af.bj7.agentos-app.net/api/dev/file/download?id=2087825282078425089&sign=ZmU1ZDg5MzkwODBmNTY3M2EwOWYzYjgzODAzMzViM2UzNTEwMTViYmQxYzBmMzFlNWI0MTExYzg4MGY1NzRmMA=="
+    "gradient": "linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%)"
   },
   "notes": [
     {
@@ -147,14 +335,14 @@
       "title": "新便签",
       "content": "1.方向键控制桌宠\n2.右键设置壁纸，新增组件",
       "color": "yellow",
-      "updatedAt": "19:35",
+      "updatedAt": "20:02",
       "pinned": false
     }
   ],
   "isDarkMode": false,
-  "themeColor": "#007AFF",
+  "themeColor": "#B07CD6",
   "soundEnabled": true,
-  "fontVariant": "C",
+  "fontVariant": "A",
   "cardRadius": "small",
   "screenBrightness": 62,
   "aiConfig": {
