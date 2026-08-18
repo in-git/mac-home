@@ -1,8 +1,9 @@
-import React from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 export interface SegmentOption<T extends string> {
   value: T;
-  label: React.ReactNode;
+  /** 仅允许纯文本，禁止传入 DOM。 */
+  label: string;
   /** 可选：禁用该项。 */
   disabled?: boolean;
 }
@@ -33,7 +34,6 @@ export function SegmentedControl<T extends string>({
   onChange,
   ariaLabel,
   size = 'md',
-  fullWidth = false,
   className = '',
 }: SegmentedControlProps<T>) {
   const activeIndex = Math.max(
@@ -41,35 +41,44 @@ export function SegmentedControl<T extends string>({
     options.findIndex((opt) => opt.value === value),
   );
 
+  // 精确测量当前选中按钮的位置与宽度，避免高亮块与按钮错位
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [highlight, setHighlight] = useState({ left: 0, width: 0 });
+
+  useLayoutEffect(() => {
+    const btn = btnRefs.current[activeIndex];
+    if (btn) {
+      setHighlight({ left: btn.offsetLeft, width: btn.offsetWidth });
+    }
+  }, [activeIndex, options]);
+
   return (
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className={`relative flex p-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 ${
-        fullWidth ? 'w-full' : ''
-      } ${className}`}
+      className={`relative inline-flex p-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 w-fit ${className}`}
     >
-      {/* 滑动高亮块：随选中项平移，过渡产生切换动画 */}
+      {/* 滑动高亮块：精确跟随选中按钮的位置与宽度 */}
       <span
         aria-hidden
-        className="absolute top-0.5 bottom-0.5 rounded-[var(--card-radius)] bg-white dark:bg-[#3A3A3C] shadow-xs transition-transform duration-200 ease-out pointer-events-none"
-        style={{
-          width: `calc(${100 / options.length}% - 0.25rem)`,
-          transform: `translateX(calc(${activeIndex} * 100%))`,
-        }}
+        className="absolute top-0.5 bottom-0.5 rounded-[var(--card-radius)] bg-white dark:bg-[#3A3A3C] shadow-xs transition-all duration-200 ease-out pointer-events-none"
+        style={{ left: highlight.left, width: highlight.width }}
       />
 
-      {options.map((opt) => {
+      {options.map((opt, i) => {
         const active = value === opt.value;
         return (
           <button
             key={opt.value}
+            ref={(el) => {
+              btnRefs.current[i] = el;
+            }}
             type="button"
             role="radio"
             aria-checked={active}
             disabled={opt.disabled}
             onClick={() => onChange(opt.value)}
-            className={`relative z-10 flex-1 transition-colors font-medium rounded-[var(--card-radius)] ${SIZE_CLASS[size]} ${
+            className={`relative z-10 shrink-0 whitespace-nowrap transition-colors font-medium rounded-[var(--card-radius)] ${SIZE_CLASS[size]} ${
               active
                 ? 'text-[color:var(--accent)] dark:text-white'
                 : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'

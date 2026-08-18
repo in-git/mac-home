@@ -1,4 +1,4 @@
-import { Check, Moon, Sun } from 'lucide-react';
+import { Check } from 'lucide-react';
 import React from 'react';
 import {
   CARD_RADIUS,
@@ -36,24 +36,8 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
             value={isDarkMode ? 'dark' : 'light'}
             onChange={(v) => setDarkMode(v === 'dark')}
             options={[
-              {
-                value: 'light',
-                label: (
-                  <span className="flex items-center space-x-1.5">
-                    <Sun size={13} />
-                    <span>浅色</span>
-                  </span>
-                ),
-              },
-              {
-                value: 'dark',
-                label: (
-                  <span className="flex items-center space-x-1.5">
-                    <Moon size={13} />
-                    <span>深色</span>
-                  </span>
-                ),
-              },
+              { value: 'light', label: '浅色' },
+              { value: 'dark', label: '深色' },
             ]}
           />
         </div>
