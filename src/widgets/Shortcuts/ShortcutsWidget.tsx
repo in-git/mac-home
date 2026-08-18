@@ -56,7 +56,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                             data-no-drag
                             type="button"
                             onClick={onAddClick}
-                            className="flex items-center gap-1.5 rounded-full bg-[color:var(--accent)] px-4 py-1.5 text-sm font-medium text-white transition-colors hover:opacity-90 active:scale-95"
+                            className="flex items-center gap-1.5 rounded-full bg-[color:var(--accent)] px-4 py-1.5 text-sm  text-white transition-colors hover:opacity-90 active:scale-95"
                         >
                             <Plus size={16} />
                             添加网页

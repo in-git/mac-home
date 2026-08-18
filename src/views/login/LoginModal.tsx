@@ -185,7 +185,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           type="button"
           disabled={loading}
           onClick={handleSubmit}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] py-3 text-font-md font-medium text-white shadow-sm duration-150 hover:bg-[color:var(--accent-hover)] active:scale-[0.985] disabled:opacity-60"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] py-3 text-font-md  text-white shadow-sm duration-150 hover:bg-[color:var(--accent-hover)] active:scale-[0.985] disabled:opacity-60"
         >
           {loading && <Loader2 size={17} className="animate-spin" />}
           {loading ? '处理中…' : view === 'login' ? '登录' : '注册'}
@@ -198,7 +198,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               还没有账户？{' '}
               <button
                 onClick={() => switchView('register')}
-                className="font-medium text-[color:var(--accent)]"
+                className=" text-[color:var(--accent)]"
               >
                 创建账户
               </button>
@@ -208,7 +208,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               已有账户？{' '}
               <button
                 onClick={() => switchView('login')}
-                className="font-medium text-[color:var(--accent)]"
+                className=" text-[color:var(--accent)]"
               >
                 去登录
               </button>

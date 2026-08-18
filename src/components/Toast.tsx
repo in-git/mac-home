@@ -68,7 +68,7 @@ function ToastCard({ item }: { item: ToastItem }) {
             item.action?.onClick();
             removeToast(item.id);
           }}
-          className="ml-1 rounded-[var(--card-radius)] px-2 py-1 text-xs font-medium text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="ml-1 rounded-[var(--card-radius)] px-2 py-1 text-xs  text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         >
           {item.action.label}
         </button>

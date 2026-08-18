@@ -143,7 +143,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
               onClick={() => {
                 setActiveNoteId(n.id);
               }}
-              className={`px-2.5 py-1 rounded-[var(--card-radius)] font-medium truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
+              className={`px-2.5 py-1 rounded-[var(--card-radius)]  truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
                 activeNoteId === n.id
                   ? 'bg-[color:var(--accent)] text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
@@ -258,7 +258,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
                       className={`text-xs ${
                         item.completed
                           ? 'line-through opacity-50'
-                          : 'font-medium'
+                          : ''
                       }`}
                     >
                       {item.text}

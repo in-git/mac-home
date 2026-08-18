@@ -57,7 +57,7 @@ export const TopBar: React.FC<Props> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs font-medium border-b border-white/20 dark:border-white/10 select-none shadow-xs">
+    <header className="sticky top-0 z-50 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs  border-b border-white/20 dark:border-white/10 select-none shadow-xs">
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
         <span className="font-semibold text-slate-800 dark:text-slate-100 hidden sm:inline">
@@ -71,7 +71,7 @@ export const TopBar: React.FC<Props> = ({
       <div className="flex items-center space-x-2 sm:space-x-3 text-slate-700 dark:text-slate-200">
         {/* Weather Quick Stat（位置与温度以天气卡片为准同步） */}
         {weatherTemp && (
-          <div className="hidden md:flex items-center space-x-1 text-font-sm font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-[var(--card-radius)]">
+          <div className="hidden md:flex items-center space-x-1 text-font-sm  bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-[var(--card-radius)]">
             <CloudSun size={13} className="text-amber-500" />
             <span>
               {weatherCity ? `${weatherCity} ` : ''}

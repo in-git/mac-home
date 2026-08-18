@@ -71,7 +71,7 @@ export const CityHeader: React.FC<Props> = ({
         {/* 右：城市下拉列表触发器 */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-1 shrink-0 px-2 py-1 rounded-[var(--card-radius)] text-xs font-medium bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+          className="flex items-center gap-1 shrink-0 px-2 py-1 rounded-[var(--card-radius)] text-xs  bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
         >
           <span className="whitespace-nowrap">切换城市</span>
           <ChevronDown size={13} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -97,7 +97,7 @@ export const CityHeader: React.FC<Props> = ({
                       onSelect(c.id);
                       setOpen(false);
                     }}
-                    className="flex-1 text-left text-xs font-medium truncate"
+                    className="flex-1 text-left text-xs  truncate"
                   >
                     {c.name}
                     {c.admin1 ? <span className="text-font-sm ml-1">{c.admin1}</span> : null}

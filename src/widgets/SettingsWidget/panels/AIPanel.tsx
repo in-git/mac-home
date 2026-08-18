@@ -77,7 +77,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
               <button
                 key={p.id}
                 onClick={() => handleProviderChange(p.id)}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-[var(--card-radius)] border text-sm font-medium transition-colors active:scale-95 ${
+                className={`flex items-center justify-between px-3 py-2.5 rounded-[var(--card-radius)] border text-sm  transition-colors active:scale-95 ${
                   active
                     ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] dark:text-white'
                     : 'border-black/10 dark:border-white/15 hover:bg-black/[0.03] dark:hover:bg-white/5'
@@ -172,7 +172,7 @@ export const AIPanel: React.FC<AIPanelProps> = ({ config, onChange }) => {
           <button
             onClick={handleTest}
             disabled={testing || !config.model}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm  hover:bg-[color:var(--accent-hover)] active:scale-[0.98] transition-colors disabled:opacity-40 disabled:pointer-events-none"
           >
             {testing ? (
               <Loader2 size={15} className="animate-spin" />

@@ -71,7 +71,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   const chipClass = (active: boolean) =>
     `rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
       active
-        ? 'bg-[color:var(--accent)] font-medium text-white'
+        ? 'bg-[color:var(--accent)]  text-white'
         : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
     }`;
 

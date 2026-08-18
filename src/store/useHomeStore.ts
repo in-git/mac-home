@@ -297,7 +297,7 @@ export const useHomeStore = create<HomeState>()(
       // 保证 grid 必选契约在任意持久化数据下都成立。
       merge: (persisted, current) => {
         const migrated = migrateData<Partial<HomeState>>(persisted, current.version);
-        return { ...current, ...migrated };
+        return { ...current, ...migrated, version: current.version };
       },
     },
   ),

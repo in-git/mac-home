@@ -32,7 +32,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
       {/* 形象选择 */}
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
         <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
-          <div className="font-medium text-slate-800 dark:text-slate-200">
+          <div className=" text-slate-800 dark:text-slate-200">
             桌宠形象
           </div>
           <div className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
@@ -62,7 +62,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
                   >
                     {skin.name.slice(0, 1)}
                   </span>
-                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                  <span className=" text-slate-800 dark:text-slate-200">
                     {skin.name}
                   </span>
                 </span>
@@ -89,7 +89,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
               <PawPrint size={15} />
             </span>
             <div>
-              <div className="font-medium text-slate-800 dark:text-slate-200">
+              <div className=" text-slate-800 dark:text-slate-200">
                 自由活动
               </div>
               <div className="text-xs  mt-0.5">
@@ -115,7 +115,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
       {/* 和桌宠说话：用户一句话，模型决策调用桌宠行为（petTools） */}
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
         <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
-          <div className="font-medium text-slate-800 dark:text-slate-200">
+          <div className=" text-slate-800 dark:text-slate-200">
             和桌宠说话
           </div>
           <div className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">

@@ -191,7 +191,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                         className="rounded-2xl border border-black/[0.06] bg-white/80 p-4 backdrop-blur-sm transition-shadow hover:shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-white/[0.04]"
                       >
                         <div className="mb-2 flex items-center justify-between text-sm">
-                          <span className="font-medium text-slate-800 dark:text-slate-100">
+                          <span className=" text-slate-800 dark:text-slate-100">
                             {filter.label}
                           </span>
                           <span className="tabular-nums dark:text-slate-400">

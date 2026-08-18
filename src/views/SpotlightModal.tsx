@@ -105,7 +105,7 @@ export const SpotlightModal: React.FC<Props> = ({
                       className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[color:var(--accent)] hover:text-white flex items-center space-x-3 transition-colors text-left"
                     >
                       <Icon size={16} />
-                      <span className="font-medium">{w.name}</span>
+                      <span className="">{w.name}</span>
                     </button>
                   );
                 })}
@@ -130,7 +130,7 @@ export const SpotlightModal: React.FC<Props> = ({
                   >
                     <StickyNote size={15} className="text-amber-500 mt-0.5 shrink-0" />
                     <div>
-                      <div className="font-medium text-slate-800 dark:text-slate-100">{n.title}</div>
+                      <div className=" text-slate-800 dark:text-slate-100">{n.title}</div>
                       {n.content && (
                         <div className="dark:text-slate-400 line-clamp-1">{n.content}</div>
                       )}

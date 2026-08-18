@@ -18,11 +18,11 @@ export const CurrentWeatherCard: React.FC<Props> = ({ weather }) => (
       </div>
       <div className="my-2">
         <div className="text-2xl font-extrabold tracking-tight">{weather.temp}°</div>
-        <div className="text-xs font-medium text-slate-600 dark:text-slate-300 capitalize mt-0.5">
+        <div className="text-xs  text-slate-600 dark:text-slate-300 capitalize mt-0.5">
           {CONDITION_TEXT[weather.condition] ?? weather.condition}
         </div>
       </div>
-      <div className="flex items-center justify-between text-font-sm font-medium">
+      <div className="flex items-center justify-between text-font-sm ">
         <span>最高 {weather.high}°</span>
         <span>最低 {weather.low}°</span>
       </div>

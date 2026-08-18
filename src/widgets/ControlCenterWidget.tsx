@@ -148,7 +148,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
         <div>
           <div className="flex justify-between items-center text-font-sm mb-1.5">
-            <span className="flex items-center space-x-1.5 font-medium">
+            <span className="flex items-center space-x-1 ">
               <Sun size={13} />
               <span>屏幕亮度</span>
             </span>
@@ -168,7 +168,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
       {/* Font size: A (12/14/16) / B (13/15/17) / C (14/16/18) */}
       <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
         <div className="flex items-center justify-between mb-1.5">
-          <span className="flex items-center space-x-1.5 text-font-sm font-medium">
+          <span className="flex items-center space-x-1.5 text-font-sm ">
             <span className="w-4 h-4 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>

@@ -128,7 +128,7 @@ export const DynamicWallpaperSection: React.FC<
           isDark={preset.isDarkMode ?? isDarkMode}
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2.5 py-2">
-          <div className="truncate text-xs font-medium text-white">
+          <div className="truncate text-xs  text-white">
             {preset.name}
           </div>
           <div className="truncate text-font-sm text-white/70">

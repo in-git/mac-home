@@ -45,7 +45,7 @@ export const CitySearchPanel: React.FC<Props> = ({
             onClick={() => onSelect(r)}
             className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[var(--card-radius)] text-left hover:bg-[color:var(--accent)]/10 transition-colors"
           >
-            <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
+            <span className="text-xs  text-slate-700 dark:text-slate-200">
               {r.name}
               <span className="text-font-sm ml-1">
                 {r.admin1 ? `${r.admin1} · ` : ''}

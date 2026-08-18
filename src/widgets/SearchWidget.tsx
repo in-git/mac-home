@@ -120,7 +120,7 @@ export const SearchWidget: React.FC = () => {
           {/* 右侧直接提交按钮（遵循 UI 规范 严格 2:1 或正方形操作，使用 Apple 蓝） */}
           <button
             type="submit"
-            className="absolute right-1.5 px-3 py-1.5 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] text-white rounded-[var(--card-radius)] text-xs font-medium active:scale-95 flex items-center space-x-1 shadow-xs"
+            className="absolute right-1.5 px-3 py-1.5 bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] text-white rounded-[var(--card-radius)] text-xs  active:scale-95 flex items-center space-x-1 shadow-xs"
           >
             <span>搜索</span>
             <ArrowRight size={12} />

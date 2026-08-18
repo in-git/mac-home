@@ -105,7 +105,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`rgl-item-card h-full w-full ${isWebGridType ? 'w-fit' : ''}`}
+      className={`rgl-item-card h-full p-2 w-full ${isWebGridType ? 'w-fit' : ''}`}
       onClick={handleCardClick}
     >
       {/* RGL child content wrapper（撑满网格单元） */}

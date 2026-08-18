@@ -28,7 +28,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         {/* 外观 */}
         <div className="flex items-center justify-between px-4 py-3">
-          <span className="font-medium text-slate-800 dark:text-slate-200">
+          <span className=" text-slate-800 dark:text-slate-200">
             外观
           </span>
           <SegmentedControl
@@ -44,7 +44,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
 
         {/* 强调色 */}
         <div className="flex items-center justify-between px-4 py-3">
-          <span className="font-medium text-slate-800 dark:text-slate-200">
+          <span className=" text-slate-800 dark:text-slate-200">
             主题色
           </span>
           <div className="flex items-center space-x-2">
@@ -80,7 +80,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
         {/* 字体大小 */}
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <div className="font-medium text-slate-800 dark:text-slate-200">
+            <div className=" text-slate-800 dark:text-slate-200">
               字体大小
             </div>
             <div className="text-xs  mt-0.5">
@@ -103,7 +103,7 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
 
         {/* 卡片圆角 */}
         <div className="flex items-center justify-between px-4 py-3">
-          <span className="font-medium text-slate-800 dark:text-slate-200">
+          <span className=" text-slate-800 dark:text-slate-200">
             卡片圆角
           </span>
           <SegmentedControl

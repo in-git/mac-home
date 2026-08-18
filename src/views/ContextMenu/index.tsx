@@ -224,7 +224,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           }}
           className={`w-full px-3 py-2.5 rounded-[var(--card-radius)] flex items-center space-x-3 text-left transition-colors ${
             item.danger
-              ? 'hover:bg-red-500/10 text-red-500 font-medium'
+              ? 'hover:bg-red-500/10 text-red-500 '
               : 'hover:bg-black/5 dark:hover:bg-white/10'
           }`}
         >
@@ -270,8 +270,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             const sizeList = options.length > 0 ? options : [1, 2, 3, 4, 6, 12];
             return (
               <>
-                <div className="px-3 py-1.5 text-font-sm font-medium">
-                  调整尺寸
+                <div className="px-3 py-1.5 text-font-sm ">
+                  调整高度
                 </div>
                 <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
                   {sizeList.map((sz) => {
@@ -306,7 +306,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           {/* 底部显示当前卡片的高度和宽度参数 (grid: w, h) */}
           <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-1 flex items-center justify-between text-font-sm text-slate-500 dark:text-slate-400">
             <span>当前尺寸</span>
-            <span className="font-mono font-medium bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded text-slate-700 dark:text-slate-200">
+            <span className="font-mono  bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded text-slate-700 dark:text-slate-200">
               宽(w): {targetWidget.grid?.w ?? '-'} | 高(h): {targetWidget.grid?.h ?? '-'}
             </span>
           </div>

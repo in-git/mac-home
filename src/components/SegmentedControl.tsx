@@ -78,7 +78,7 @@ export function SegmentedControl<T extends string>({
             aria-checked={active}
             disabled={opt.disabled}
             onClick={() => onChange(opt.value)}
-            className={`relative z-10 shrink-0 whitespace-nowrap transition-colors font-medium rounded-[var(--card-radius)] ${SIZE_CLASS[size]} ${
+            className={`relative z-10 shrink-0 whitespace-nowrap transition-colors  rounded-[var(--card-radius)] ${SIZE_CLASS[size]} ${
               active
                 ? 'text-[color:var(--accent)] dark:text-white'
                 : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'

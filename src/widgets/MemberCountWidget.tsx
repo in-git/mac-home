@@ -78,7 +78,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
     <div className="flex h-full w-full flex-col text-slate-800 dark:text-slate-100 p-0.5 select-none justify-between">
       {/* 顶栏标题与连接状态 */}
       <div className="flex items-center justify-between shrink-0 mb-1">
-        <span className="text-font-sm font-medium text-slate-500 dark:text-slate-400 leading-tight">
+        <span className="text-font-sm  text-slate-500 dark:text-slate-400 leading-tight">
           在线统计
         </span>
         <span

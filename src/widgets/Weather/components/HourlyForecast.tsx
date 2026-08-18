@@ -16,7 +16,7 @@ export const HourlyForecast: React.FC<Props> = ({ hourly }) => (
         >
           <span className="text-xs text-slate-500 dark:text-slate-400">{h.time}</span>
           <span className="my-1 text-xl">{getWeatherIcon(h.condition)}</span>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{h.temp}°</span>
+          <span className="text-sm  text-slate-700 dark:text-slate-200">{h.temp}°</span>
         </div>
       ))}
     </div>

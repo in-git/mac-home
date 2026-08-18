@@ -41,7 +41,7 @@ export const ClockCalendarWidget: React.FC = () => {
           <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs leading-tight">
             {formattedTime}
           </div>
-          <div className="text-xs font-medium mt-1 text-slate-500 dark:text-slate-400 leading-tight">
+          <div className="text-xs  mt-1 text-slate-500 dark:text-slate-400 leading-tight">
             {formattedDate}
           </div>
         </div>
@@ -49,7 +49,7 @@ export const ClockCalendarWidget: React.FC = () => {
 
       {/* Mini Calendar Grid */}
       <div className="pt-1.5 border-t border-black/5 dark:border-white/10 text-xs min-h-0 flex-1 flex flex-col justify-center">
-        <div className="grid grid-cols-7 gap-1 text-center font-medium text-slate-500 dark:text-slate-400 mb-1">
+        <div className="grid grid-cols-7 gap-1 text-center  text-slate-500 dark:text-slate-400 mb-1">
           <span>日</span>
           <span>一</span>
           <span>二</span>
@@ -67,7 +67,7 @@ export const ClockCalendarWidget: React.FC = () => {
             return (
               <div
                 key={day}
-                className={`py-1 rounded-full font-medium transition-colors leading-none flex items-center justify-center ${
+                className={`py-1 rounded-full  transition-colors leading-none flex items-center justify-center ${
                   isToday
                     ? 'bg-[color:var(--accent)] text-white font-bold shadow-xs'
                     : 'hover:bg-black/5 dark:hover:bg-white/10'

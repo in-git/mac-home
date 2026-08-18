@@ -54,7 +54,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             >
               {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
             </span>
-            <span className="font-medium text-slate-800 dark:text-slate-200">
+            <span className=" text-slate-800 dark:text-slate-200">
               点击音效
             </span>
           </span>
@@ -73,7 +73,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <Download size={15} />
             </span>
             <div>
-              <div className="font-medium text-slate-800 dark:text-[#F1F5F9]">
+              <div className=" text-slate-800 dark:text-[#F1F5F9]">
                 导出配置文件
               </div>
               <div className="text-xs ">
@@ -83,7 +83,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </span>
           <button
             onClick={onExport}
-            className="px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs font-medium transition-colors"
+            className="px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs  transition-colors"
           >
             导出
           </button>
@@ -96,7 +96,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <RotateCcw size={15} />
             </span>
             <div>
-              <div className="font-medium text-slate-800 dark:text-[#F1F5F9]">
+              <div className=" text-slate-800 dark:text-[#F1F5F9]">
                 重置组件布局
               </div>
               <div className="text-xs ">
@@ -106,7 +106,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </span>
           <button
             onClick={onReset}
-            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs  transition-colors ${
               justReset
                 ? 'bg-[#28C840]/15 text-[#28C840]'
                 : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15'
@@ -123,7 +123,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <Upload size={15} />
             </span>
             <div>
-              <div className="font-medium text-slate-800 dark:text-[#F1F5F9]">
+              <div className=" text-slate-800 dark:text-[#F1F5F9]">
                 导入配置文件
               </div>
               <div className="text-xs ">
@@ -160,7 +160,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               if (file) onImportFile(file);
             }}
             onClick={() => fileInputRef.current?.click()}
-            className={`px-3 py-1.5 rounded-[var(--card-radius)] border border-dashed text-xs font-medium cursor-pointer transition-colors ${
+            className={`px-3 py-1.5 rounded-[var(--card-radius)] border border-dashed text-xs  cursor-pointer transition-colors ${
               isDragging
                 ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                 : 'border-black/15 dark:border-white/20 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15'
@@ -190,7 +190,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <RefreshCw size={15} />
             </span>
             <div>
-              <div className="font-medium text-red-500">重置整个系统</div>
+              <div className=" text-red-500">重置整个系统</div>
               <div className="text-xs ">
                 清除本地所有缓存、壁纸、便签及自定义偏好
               </div>
@@ -198,7 +198,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </span>
 
           <Button
-            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs  transition-colors ${
               justResetSystem
                 ? 'bg-[#28C840]/15 text-[#28C840]'
                 : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'

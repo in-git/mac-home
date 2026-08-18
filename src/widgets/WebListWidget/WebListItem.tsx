@@ -69,7 +69,7 @@ export const WebListItem: React.FC<WebListItemProps> = ({
       >
         <Cover site={site} />
         {site.recommend && (
-          <span className="absolute left-1 top-1 rounded bg-amber-400/90 px-1 text-font-xs font-medium text-white">
+          <span className="absolute left-1 top-1 rounded bg-amber-400/90 px-1 text-font-xs  text-white">
             荐
           </span>
         )}
@@ -87,7 +87,7 @@ export const WebListItem: React.FC<WebListItemProps> = ({
           <button
             type="button"
             onClick={() => onSelect(site)}
-            className={`min-w-0 flex-1 truncate text-left text-font-sm font-medium ${
+            className={`min-w-0 flex-1 truncate text-left text-font-sm  ${
               active ? 'text-[color:var(--accent)]' : 'text-slate-800 dark:text-slate-100'
             }`}
             title={site.name}

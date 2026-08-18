@@ -143,7 +143,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                 >
                   {cat.icon}
                   <span
-                    className={`font-medium ${
+                    className={` ${
                       active
                         ? 'text-[color:var(--accent)] dark:text-white'
                         : 'text-slate-600 dark:text-slate-300'
@@ -208,7 +208,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                         >
                           <Icon size={18} strokeWidth={1.75} />
                         </span>
-                        <span className="text-center text-xs font-medium text-slate-700 dark:text-slate-200">
+                        <span className="text-center text-xs  text-slate-700 dark:text-slate-200">
                           {t.label}
                         </span>
                         {disabled && (

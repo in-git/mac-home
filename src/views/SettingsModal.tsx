@@ -91,7 +91,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 >
                   {t.icon}
                   <span
-                    className={`font-medium ${
+                    className={` ${
                       active
                         ? 'text-[color:var(--accent)] dark:text-white'
                         : 'text-slate-600 dark:text-slate-300'

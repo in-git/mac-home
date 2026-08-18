@@ -74,7 +74,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={[
-        'inline-flex items-center justify-center rounded-[var(--card-radius)] font-medium',
+        'inline-flex items-center justify-center rounded-[var(--card-radius)] ',
         'transition-[transform,background-color,filter,box-shadow] duration-150 select-none',
         'hover:scale-[1.03] active:scale-95',
         'focus-visible:outline-none focus-visible:ring-2 ring-[color:var(--accent)]/50',

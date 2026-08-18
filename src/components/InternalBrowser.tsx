@@ -137,7 +137,7 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
             </p>
             <button
              
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm font-medium hover:bg-[color:var(--accent-hover)] transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--card-radius)] bg-[color:var(--accent)] text-white text-sm  hover:bg-[color:var(--accent-hover)] transition-colors"
             >
               <ExternalLink size={16} />
               在外部浏览器打开

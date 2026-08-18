@@ -3,7 +3,7 @@ import { ensureGrid } from '../components/dashboard/itemSize';
 import { DEFAULT_CARD_STYLE } from '../data/widgetConfig';
 
 /** 当前全局数据规范版本号 */
-export const CURRENT_DATA_VERSION = 1;
+export const CURRENT_DATA_VERSION = 1.2;
 
 /**
  * 核心数据版本迁移与自动修复函数。
