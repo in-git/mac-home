@@ -96,7 +96,7 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
             onMouseLeave={scheduleCloseBgSubmenu}
             className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
           >
-            <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
+            <div className="px-1 mb-3 text-font-md   tracking-wide">
               卡片背景
             </div>
             {/* 纯色快捷选项：磨砂 / 透明 / 纯黑 / 纯白 */}
@@ -144,7 +144,7 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
                     }`}
                   >
                     {c.type === 'glass' && (
-                      <span className="text-slate-800 dark:text-slate-200 drop-shadow-xs">
+                      <span className="text-slate-800  drop-shadow-xs">
                         磨砂
                       </span>
                     )}
@@ -158,10 +158,10 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
                 <button
                   key={tab}
                   onClick={() => setBgTab(tab)}
-                  className={`flex-1 py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
+                  className={`flex-1 py-2 rounded-[var(--card-radius)] text-font-md  transition-colors ${
                     bgTab === tab
-                      ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow'
-                      : 'dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                      ? 'bg-white dark:bg-slate-700 dark:text-white shadow'
+                      : ' hover:text-slate-700 dark:hover:text-slate-200'
                   }`}
                 >
                   {tab === 'light' ? '亮色' : '暗色'}

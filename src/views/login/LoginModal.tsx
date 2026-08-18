@@ -136,10 +136,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     >
       <div className="space-y-3">
         <div>
-          <h2 className="text-[26px] font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-[26px]  tracking-tight dark:text-white">
             {view === 'login' ? '登录' : '创建账户'}
           </h2>
-          <p className="mt-1 text-font-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-font-sm  ">
             {view === 'login'
               ? '欢迎回来，请登录您的账户'
               : '填写信息以注册新账户'}

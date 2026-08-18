@@ -60,7 +60,7 @@ export const TopBar: React.FC<Props> = ({
     <header className="sticky top-0 z-50 w-full h-8 px-3 glass-panel flex items-center justify-between text-xs  border-b border-white/20 dark:border-white/10 select-none shadow-xs">
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
-        <span className="font-semibold text-slate-800 dark:text-slate-100 hidden sm:inline">
+        <span className="  hidden sm:inline">
           吴文龙的互联空间
         </span>
       </div>
@@ -68,7 +68,7 @@ export const TopBar: React.FC<Props> = ({
       {/* Center spacer */}
 
       {/* Right Controls */}
-      <div className="flex items-center space-x-2 sm:space-x-3 text-slate-700 dark:text-slate-200">
+      <div className="flex items-center space-x-2 sm:space-x-3 ">
         {/* Weather Quick Stat（位置与温度以天气卡片为准同步） */}
         {weatherTemp && (
           <div className="hidden md:flex items-center space-x-1 text-font-sm  bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-[var(--card-radius)]">
@@ -110,7 +110,7 @@ export const TopBar: React.FC<Props> = ({
         </div>
 
         {/* Time and Date */}
-        <div className="flex items-center space-x-1 font-semibold text-font-sm pl-1">
+        <div className="flex items-center space-x-1  text-font-sm pl-1">
           <span className="hidden sm:inline opacity-70">{dateStr}</span>
           <span>{timeStr}</span>
         </div>

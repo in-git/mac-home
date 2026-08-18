@@ -35,7 +35,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onWeatherChange })
   } = useWeatherData(onWeatherChange);
 
   return (
-    <div className="w-full h-full flex flex-col justify-between text-slate-800 dark:text-slate-100">
+    <div className="w-full h-full flex flex-col justify-between ">
       <CityHeader
         cities={cities}
         selectedId={selectedId}

@@ -32,7 +32,7 @@ export const ClockWidget: React.FC = () => {
   const hourAngle = (hours % 12) * 30 + minutes * 0.5;
 
   return (
-    <div className="h-full flex flex-col items-center justify-center text-slate-800 dark:text-slate-100 p-1 select-none overflow-hidden">
+    <div className="h-full flex flex-col items-center justify-center  p-1 select-none overflow-hidden">
       {/* Analog dial */}
       <div className="relative aspect-square h-[55%] max-h-24 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-black/30 flex items-center justify-center shadow-inner">
         {[
@@ -43,7 +43,7 @@ export const ClockWidget: React.FC = () => {
         ].map(({ n, style }) => (
           <span
             key={n}
-            className="absolute text-font-sm font-bold dark:text-slate-400"
+            className="absolute text-font-sm font-bold "
             style={style}
           >
             {n}
@@ -71,7 +71,7 @@ export const ClockWidget: React.FC = () => {
       <div className="mt-2 font-extrabold tracking-tight font-mono text-lg text-[color:var(--accent)]">
         {formattedTime}
       </div>
-      <div className="text-font-sm  dark:text-slate-400">
+      <div className="text-font-sm  ">
         {formattedDate}
       </div>
     </div>

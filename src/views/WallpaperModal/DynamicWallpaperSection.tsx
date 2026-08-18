@@ -155,7 +155,7 @@ export const DynamicWallpaperSection: React.FC<
 
   return (
     <section>
-      <h3 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200 ">
+      <h3 className="mb-3 text-sm   ">
         动态效果
       </h3>
       {/* 深色在上 */}

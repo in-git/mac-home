@@ -66,7 +66,7 @@ export const SpotlightModal: React.FC<Props> = ({
           exit={{ y: -20, opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.15 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-xl glass-panel rounded-[var(--card-radius)] shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100"
+          className="w-full max-w-xl glass-panel rounded-[var(--card-radius)] shadow-2xl border border-white/50 dark:border-white/15 overflow-hidden "
         >
           {/* Spotlight Search Bar */}
           <div className="flex items-center px-4 py-3.5 border-b border-black/5 dark:border-white/10">
@@ -89,7 +89,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Widget Commands */}
             {widgetCommands.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-sm font-semibold  dark:uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm   dark:uppercase tracking-wider">
                   功能 & 小组件
                 </div>
                 {widgetCommands.map((w, i) => {
@@ -115,7 +115,7 @@ export const SpotlightModal: React.FC<Props> = ({
             {/* Notes Results */}
             {filteredNotes.length > 0 && (
               <div>
-                <div className="px-3 py-1 text-font-sm font-semibold  dark:uppercase tracking-wider">
+                <div className="px-3 py-1 text-font-sm   dark:uppercase tracking-wider">
                   便签卡片 ({filteredNotes.length})
                 </div>
                 {filteredNotes.map((n) => (
@@ -130,9 +130,9 @@ export const SpotlightModal: React.FC<Props> = ({
                   >
                     <StickyNote size={15} className="text-amber-500 mt-0.5 shrink-0" />
                     <div>
-                      <div className=" text-slate-800 dark:text-slate-100">{n.title}</div>
+                      <div className=" ">{n.title}</div>
                       {n.content && (
-                        <div className="dark:text-slate-400 line-clamp-1">{n.content}</div>
+                        <div className=" line-clamp-1">{n.content}</div>
                       )}
                     </div>
                   </div>
@@ -146,7 +146,7 @@ export const SpotlightModal: React.FC<Props> = ({
                 href={`https://www.baidu.com/s?wd=${encodeURIComponent(query)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[color:var(--accent)] hover:text-white flex items-center justify-between transition-colors text-slate-600 dark:text-slate-300"
+                className="w-full px-3 py-2 rounded-[var(--card-radius)] hover:bg-[color:var(--accent)] hover:text-white flex items-center justify-between transition-colors  "
               >
                 <div className="flex items-center space-x-2">
                   <ExternalLink size={14} />

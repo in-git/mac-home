@@ -34,14 +34,14 @@ export const ClockCalendarWidget: React.FC = () => {
   const paddingDays = Array.from({ length: firstDayOfMonth }, (_, i) => i);
 
   return (
-    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none">
+    <div className="h-full flex flex-col justify-between  p-1 select-none">
       {/* Clock Display */}
       <div className="flex items-center justify-center mb-1.5 shrink-0">
         <div className="text-center">
           <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono text-[color:var(--accent)] drop-shadow-xs leading-tight">
             {formattedTime}
           </div>
-          <div className="text-xs  mt-1 text-slate-500 dark:text-slate-400 leading-tight">
+          <div className="text-xs  mt-1   leading-tight">
             {formattedDate}
           </div>
         </div>
@@ -49,7 +49,7 @@ export const ClockCalendarWidget: React.FC = () => {
 
       {/* Mini Calendar Grid */}
       <div className="pt-1.5 border-t border-black/5 dark:border-white/10 text-xs min-h-0 flex-1 flex flex-col justify-center">
-        <div className="grid grid-cols-7 gap-1 text-center  text-slate-500 dark:text-slate-400 mb-1">
+        <div className="grid grid-cols-7 gap-1 text-center    mb-1">
           <span>日</span>
           <span>一</span>
           <span>二</span>
@@ -58,7 +58,7 @@ export const ClockCalendarWidget: React.FC = () => {
           <span>五</span>
           <span>六</span>
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-slate-800 dark:text-slate-100">
+        <div className="grid grid-cols-7 gap-1 text-center ">
           {paddingDays.map((_, i) => (
             <div key={`pad-${i}`} className="py-1" />
           ))}

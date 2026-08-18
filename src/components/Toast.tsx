@@ -52,12 +52,12 @@ function removeToast(id: number) {
 
 function ToastCard({ item }: { item: ToastItem }) {
   return (
-    <div className="flex items-center gap-2 px-3.5 py-2 rounded-[var(--card-radius)] bg-white/90 dark:bg-[#2C2C2E]/90 backdrop-blur shadow-lg ring-1 ring-black/5 dark:ring-white/10 text-sm text-slate-700 dark:text-slate-100 pointer-events-auto animate-[toastIn_0.2s_ease-out]">
+    <div className="flex items-center gap-2 px-3.5 py-2 rounded-[var(--card-radius)] bg-white/90 dark:bg-[#2C2C2E]/90 backdrop-blur shadow-lg ring-1 ring-black/5 dark:ring-white/10 text-sm  pointer-events-auto animate-[toastIn_0.2s_ease-out]">
       {ICONS[item.type]}
       <div className="flex flex-col">
         <span>{item.message}</span>
         {item.description && (
-          <span className="text-xs text-slate-500 dark:text-slate-400">
+          <span className="text-xs  ">
             {item.description}
           </span>
         )}
@@ -75,7 +75,7 @@ function ToastCard({ item }: { item: ToastItem }) {
       )}
       <button
         onClick={() => removeToast(item.id)}
-        className="ml-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+        className="ml-1 text-slate-400 hover: dark:hover:text-slate-200"
         aria-label="关闭"
       >
         <X size={14} />

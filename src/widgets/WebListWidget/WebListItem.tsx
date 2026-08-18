@@ -88,7 +88,7 @@ export const WebListItem: React.FC<WebListItemProps> = ({
             type="button"
             onClick={() => onSelect(site)}
             className={`min-w-0 flex-1 truncate text-left text-font-sm  ${
-              active ? 'text-[color:var(--accent)]' : 'text-slate-800 dark:text-slate-100'
+              active ? 'text-[color:var(--accent)]' : 'text-slate-800 '
             }`}
             title={site.name}
           >
@@ -109,13 +109,13 @@ export const WebListItem: React.FC<WebListItemProps> = ({
         </div>
 
         {site.des && (
-          <p className="mt-0.5 line-clamp-2 text-font-xs dark:text-slate-400">
+          <p className="mt-0.5 line-clamp-2 text-font-xs ">
             {site.des}
           </p>
         )}
 
         {(categoryName || keywordText) && (
-          <p className="mt-1 flex flex-wrap items-center gap-x-1 gap-y-0.5 truncate text-font-xs  dark:text-slate-500">
+          <p className="mt-1 flex flex-wrap items-center gap-x-1 gap-y-0.5 truncate text-font-xs  dark:">
             {categoryName && <span>· {categoryName}</span>}
             {keywordText && <span>· {keywordText}</span>}
           </p>

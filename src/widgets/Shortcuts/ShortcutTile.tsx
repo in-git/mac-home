@@ -21,7 +21,7 @@ export const ShortcutTile: React.FC<ShortcutTileProps> = ({ item, onDelete, icon
       <button
         onClick={(e) => onDelete(itemId, e)}
         title="删除快捷方式"
-        className="absolute -top-1.5 -right-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-slate-500 shadow-sm backdrop-blur-sm opacity-0 scale-75 transition-all duration-150 group-hover/shortcut:opacity-100 group-hover/shortcut:scale-100 hover:bg-red-500 hover:text-white"
+        className="absolute -top-1.5 -right-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-white/90  shadow-sm backdrop-blur-sm opacity-0 scale-75 transition-all duration-150 group-hover/shortcut:opacity-100 group-hover/shortcut:scale-100 hover:bg-red-500 hover:text-white"
       >
         <X size={13} strokeWidth={2.5} />
       </button>

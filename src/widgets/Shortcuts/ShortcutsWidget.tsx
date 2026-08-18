@@ -49,7 +49,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
                 {shortcuts.length === 0 ? (
                     /* 空态：提示用户添加网页 */
                     <div className="flex h-full min-h-24 flex-col items-center justify-center gap-3 py-6 text-center">
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                        <p className="text-sm  ">
                             还没有添加网页，点击下方按钮添加
                         </p>
                         <button

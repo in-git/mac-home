@@ -75,10 +75,10 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col text-slate-800 dark:text-slate-100 p-0.5 select-none justify-between">
+    <div className="flex h-full w-full flex-col  p-0.5 select-none justify-between">
       {/* 顶栏标题与连接状态 */}
       <div className="flex items-center justify-between shrink-0 mb-1">
-        <span className="text-font-sm  text-slate-500 dark:text-slate-400 leading-tight">
+        <span className="text-font-sm    leading-tight">
           同频同仁
         </span>
         <span
@@ -97,7 +97,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
         <span className="text-6xl font-bold tabular-nums leading-tight text-[color:var(--accent)]">
           {online != null ? online.toLocaleString() : '—'}
         </span>
-        <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+        <span className="leading-tight">
           当前在线
         </span>
       </div>
@@ -115,10 +115,10 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
                 size={14}
                 className="mb-0.5 text-[color:var(--accent)]"
               />
-              <span className="text-base font-semibold tabular-nums leading-tight">
+              <span className="text-base  tabular-nums leading-tight">
                 {value != null ? value.toLocaleString() : '—'}
               </span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+              <span className="leading-tight text-sm">
                 {label}
               </span>
             </div>

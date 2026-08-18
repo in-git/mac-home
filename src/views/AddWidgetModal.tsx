@@ -120,12 +120,12 @@ export const AddWidgetModal: React.FC<Props> = ({
             opacity: visible ? 1 : 0,
             transition: `transform ${MODAL_TRANSITION_MS}ms ease-out, opacity ${MODAL_TRANSITION_MS}ms ease-out`,
           }}
-          className="flex flex-col sm:flex-row w-full h-full sm:w-[75%] sm:h-[80vh] lg:h-[90vh] wide:h-[70vh]  rounded-none sm:rounded-[var(--card-radius)] shadow-2xl overflow-hidden text-slate-800 dark:text-slate-100 bg-white dark:bg-[#1C1C1E]"
+          className="flex flex-col sm:flex-row w-full h-full sm:w-[75%] sm:h-[80vh] lg:h-[90vh] wide:h-[70vh]  rounded-none sm:rounded-[var(--card-radius)] shadow-2xl overflow-hidden  bg-white dark:bg-[#1C1C1E]"
         >
           {/* 左侧栏 */}
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-52 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
             <div className="hidden sm:block px-2.5 pt-2 pb-3">
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
+              <h1 className="text-lg  dark:text-white">
                 {ADD_WIDGET_TEXT.title}
               </h1>
             </div>
@@ -146,7 +146,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                     className={` ${
                       active
                         ? 'text-[color:var(--accent)] dark:text-white'
-                        : 'text-slate-600 dark:text-slate-300'
+                        : ' '
                     }`}
                   >
                     {cat.label}
@@ -160,7 +160,7 @@ export const AddWidgetModal: React.FC<Props> = ({
           <div className="flex-1 min-w-0 flex flex-col">
             {/* 顶部：关闭按钮 */}
             <div className="flex items-center justify-between px-4 h-12 shrink-0 border-b border-black/5 dark:border-white/10">
-              <h2 className="text-base font-semibold text-slate-900 dark:text-white">
+              <h2 className="text-base  dark:text-white">
                 {CATEGORIES.find((c) => c.id === activeCategory)?.label}
               </h2>
               <button
@@ -208,7 +208,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                         >
                           <Icon size={18} strokeWidth={1.75} />
                         </span>
-                        <span className="text-center text-xs  text-slate-700 dark:text-slate-200">
+                        <span className="text-center text-xs  ">
                           {t.label}
                         </span>
                         {disabled && (

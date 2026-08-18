@@ -67,13 +67,13 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
           exit={{ y: -20, opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.15 }}
           onClick={(e) => e.stopPropagation()}
-          className="flex flex-col sm:flex-row w-full h-full rounded-none sm:w-[80%] sm:h-[85vh] sm:rounded-[var(--card-radius)] lg:w-[70%] lg:h-[80vh] shadow-2xl border border-black/5 dark:border-white/15 overflow-hidden text-slate-800 dark:text-slate-100 bg-white dark:bg-[#1C1C1E]"
+          className="flex flex-col sm:flex-row w-full h-full rounded-none sm:w-[80%] sm:h-[85vh] sm:rounded-[var(--card-radius)] lg:w-[70%] lg:h-[80vh] shadow-2xl border border-black/5 dark:border-white/15 overflow-hidden  bg-white dark:bg-[#1C1C1E]"
         >
           {/* 左侧栏：苹果系统设置风格，大图标 + 文字 */}
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-56 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
             {/* 顶部标题：系统设置 */}
             <div className="hidden sm:block px-2.5 pt-2 pb-3">
-              <h1 className="text-xl font-semibold text-slate-900 dark:text-white">
+              <h1 className="text-xl  dark:text-white">
                 系统设置
               </h1>
             </div>
@@ -94,7 +94,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     className={` ${
                       active
                         ? 'text-[color:var(--accent)] dark:text-white'
-                        : 'text-slate-600 dark:text-slate-300'
+                        : ' '
                     }`}
                   >
                     {t.label}

@@ -13,7 +13,7 @@ export const DailyForecast: React.FC<Props> = ({ daily }) => (
           key={idx}
           className="p-2.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/5 flex flex-col items-center justify-between space-y-1.5"
         >
-          <span className="text-font-sm  dark:text-slate-400">{day.day}</span>
+          <span className="text-font-sm  ">{day.day}</span>
           <div className="my-1">{getWeatherIcon(day.condition, 18)}</div>
           <span className="text-font-sm font-bold">{day.low}~{day.high}°</span>
         </div>

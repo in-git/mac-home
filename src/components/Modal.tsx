@@ -86,13 +86,13 @@ export const Modal: React.FC<ModalProps> = ({
             opacity: visible ? 1 : 0,
             transition: `transform ${MODAL_TRANSITION_MS}ms ease-out, opacity ${MODAL_TRANSITION_MS}ms ease-out`,
           }}
-          className={` glass-panel rounded-[var(--card-radius)] shadow-2xl overflow-hidden border border-white/50 dark:border-white/15 text-slate-800 dark:text-slate-100 flex flex-col ${className}`}
+          className={` glass-panel rounded-[var(--card-radius)] shadow-2xl overflow-hidden border border-white/50 dark:border-white/15  flex flex-col ${className}`}
         >
           {title && (
             <div className="px-6 py-4 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 {icon}
-                <h2 className="text-base font-semibold">{title}</h2>
+                <h2 className="text-base ">{title}</h2>
               </div>
               {showCloseButton && (
                 <button

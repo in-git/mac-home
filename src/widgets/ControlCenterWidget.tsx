@@ -1,7 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { FONT_VARIANT } from '../types';
+import { CARD_RADIUS, CardRadiusTier } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -14,8 +14,8 @@ export const ControlCenterWidget: React.FC<Props> = ({
   isDarkMode,
   onToggleDarkMode,
 }) => {
-  const fontVariant = useHomeStore((s) => s.fontVariant);
-  const setFontVariant = useHomeStore((s) => s.setFontVariant);
+  const cardRadius = useHomeStore((s) => s.cardRadius);
+  const setCardRadius = useHomeStore((s) => s.setCardRadius);
   const screenBrightness = useHomeStore((s) => s.screenBrightness);
   const setScreenBrightness = useHomeStore((s) => s.setScreenBrightness);
   // 上一次成功定位的位置（持久化，用于本次进入时回显）
@@ -75,7 +75,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="h-full flex flex-col justify-between gap-2.5 text-slate-800 dark:text-slate-100">
+    <div className="h-full flex flex-col justify-between gap-2.5 ">
       {/* Module grid: 2 columns of equal square-ish tiles */}
       <div className="grid grid-cols-2 gap-2.5">
         {/* Location tile */}
@@ -96,12 +96,12 @@ export const ControlCenterWidget: React.FC<Props> = ({
           </div>
           <div className="min-w-0">
             {locating ? (
-              <div className="font-semibold text-font-sm leading-tight">
+              <div className=" text-font-sm leading-tight">
                 定位中…
               </div>
             ) : locError ? (
               <>
-                <div className="font-semibold text-font-sm leading-tight text-red-500">
+                <div className=" text-font-sm leading-tight text-red-500">
                   定位失败
                 </div>
                 <div className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate max-w-[70px]">
@@ -109,7 +109,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 </div>
               </>
             ) : (
-              <div className="font-semibold text-font-sm leading-tight truncate max-w-[80px]">
+              <div className=" text-font-sm leading-tight truncate max-w-[80px]">
                 {locCity ?? lastLocation?.city ?? '位置'}
               </div>
             )}
@@ -131,13 +131,13 @@ export const ControlCenterWidget: React.FC<Props> = ({
             className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
               isDarkMode
                 ? 'bg-amber-400/20 text-amber-300'
-                : 'bg-slate-200 text-slate-700'
+                : 'bg-slate-200'
             }`}
           >
             {isDarkMode ? <Moon size={15} /> : <Sun size={15} />}
           </div>
           <div className="min-w-0">
-            <div className="font-semibold text-font-sm leading-tight">
+            <div className=" text-font-sm leading-tight">
               {isDarkMode ? '深色模式' : '浅色模式'}
             </div>
           </div>
@@ -165,50 +165,57 @@ export const ControlCenterWidget: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Font size: A (12/14/16) / B (13/15/17) / C (14/16/18) */}
+      {/* Card Radius */}
       <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
         <div className="flex items-center justify-between mb-1.5">
           <span className="flex items-center space-x-1.5 text-font-sm ">
             <span className="w-4 h-4 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
-            <span>字体大小</span>
+            <span>卡片圆角</span>
           </span>
         </div>
-        <div className="relative grid grid-cols-3 gap-1 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
+        <div className="relative grid grid-cols-4 gap-1 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
           {/* 苹果风格滑块高亮：跟随选中项移动 */}
-          <span
-            aria-hidden
-            className="absolute top-1 bottom-1 rounded-[calc(var(--card-radius)-4px)] bg-white dark:bg-slate-700 shadow-sm transition-transform duration-200 ease-out"
-            style={{
-              width: 'calc((100% - 0.5rem) / 3)',
-              transform: `translateX(${FONT_VARIANT.findIndex((f) => f.value === fontVariant) * 100}%)`,
-            }}
-          />
-          {FONT_VARIANT.map((f) => {
-            const v = f.value;
-            const active = fontVariant === v;
+          {(() => {
+            const tiers: CardRadiusTier[] = ['tiny', 'small', 'medium', 'large'];
+            const activeIndex = tiers.indexOf(cardRadius);
             return (
-              <label
-                key={v}
-                className={`relative z-10 py-1 text-xs font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
-                  active
-                    ? 'text-slate-900 dark:text-white'
-                    : ' hover:text-slate-700 dark:hover:text-slate-300'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="fontVariant"
-                  value={v}
-                  checked={active}
-                  onChange={() => setFontVariant(v)}
-                  className="sr-only"
+              <>
+                <span
+                  aria-hidden
+                  className="absolute top-1 bottom-1 rounded-[calc(var(--card-radius)-4px)] bg-white dark:bg-slate-700 shadow-sm transition-transform duration-200 ease-out"
+                  style={{
+                    width: 'calc((100% - 0.75rem) / 4)',
+                    transform: `translateX(${activeIndex * 100}%)`,
+                  }}
                 />
-                {f.label}
-              </label>
+                {tiers.map((tier) => {
+                  const active = cardRadius === tier;
+                  return (
+                    <label
+                      key={tier}
+                      className={`relative z-10 py-1 text-xs font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
+                        active
+                          ? 'text-slate-900 dark:text-white'
+                          : ' hover:text-slate-700 dark:hover:text-slate-300'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="cardRadius"
+                        value={tier}
+                        checked={active}
+                        onChange={() => setCardRadius(tier)}
+                        className="sr-only"
+                      />
+                      {CARD_RADIUS[tier].label}
+                    </label>
+                  );
+                })}
+              </>
             );
-          })}
+          })()}
         </div>
       </div>
     </div>

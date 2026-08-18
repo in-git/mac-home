@@ -37,9 +37,9 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary:
     'bg-[color:var(--accent)] text-white hover:brightness-110 active:brightness-95 shadow-sm',
   secondary:
-    'bg-black/5 text-slate-700 hover:bg-black/10 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15',
+    'bg-black/5 hover:bg-black/10 dark:bg-white/10  dark:hover:bg-white/15',
   ghost:
-    'bg-transparent text-slate-600 hover:bg-black/5 dark:text-slate-300 dark:hover:bg-white/10',
+    'bg-transparent  hover:bg-black/5  dark:hover:bg-white/10',
 };
 
 /** 基于组件库图标的旋转 spinner。 */

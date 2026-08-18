@@ -61,7 +61,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
           className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
         >
           {/* 字体颜色 */}
-          <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
+          <div className="px-1 mb-3 text-font-md   tracking-wide">
             字体颜色
           </div>
           <div className="mb-4 grid grid-cols-4 gap-2.5">
@@ -80,7 +80,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
                     onClose();
                   }}
                   style={c.value ? { background: c.value } : undefined}
-                  className={`relative h-9 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform flex items-center justify-center text-font-sm font-semibold ${
+                  className={`relative h-9 rounded-[var(--card-radius)] border-2 hover:scale-105 hover:shadow-lg transition-transform flex items-center justify-center text-font-sm  ${
                     c.value === '' ? 'bg-black/5 dark:bg-white/10' : ''
                   } ${
                     isSelected
@@ -95,7 +95,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
        
 
           {/* 字号 */}
-          <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
+          <div className="px-1 mb-3 text-font-md   tracking-wide">
             字号
           </div>
           <div className="mb-4 grid grid-cols-3 gap-2.5">
@@ -107,7 +107,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
                   setOpen(false);
                   onClose();
                 }}
-                className={`py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors border-2 ${
+                className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
                   currentSize === s.value
                     ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                     : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
@@ -119,7 +119,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
           </div>
 
           {/* 是否加粗（作用于数字时间） */}
-          <div className="mt-4 px-1 mb-2 text-font-md font-semibold dark:text-slate-400 tracking-wide">
+          <div className="mt-4 px-1 mb-2 text-font-md   tracking-wide">
             数字加粗
           </div>
           <div className="grid grid-cols-2 gap-2.5">
@@ -129,7 +129,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
                 setOpen(false);
                 onClose();
               }}
-              className={`py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors border-2 ${
+              className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
                 currentBold
                   ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                   : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
@@ -143,7 +143,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
                 setOpen(false);
                 onClose();
               }}
-              className={`py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors border-2 ${
+              className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
                 !currentBold
                   ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                   : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'

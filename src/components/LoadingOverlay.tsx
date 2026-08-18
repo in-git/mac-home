@@ -20,7 +20,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   return (
     <div className="fixed inset-0 z-[80] flex flex-col items-center justify-center gap-3 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-2xl">
       <Loader2 size={28} className="animate-spin text-[color:var(--accent)]" />
-      <span className="text-sm text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="text-sm  ">{label}</span>
     </div>
   );
 };

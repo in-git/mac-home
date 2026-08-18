@@ -32,10 +32,10 @@ export const PetPanel: React.FC<PetPanelProps> = ({
       {/* 形象选择 */}
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
         <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
-          <div className=" text-slate-800 dark:text-slate-200">
+          <div className=" ">
             桌宠形象
           </div>
-          <div className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
+          <div className="text-xs mt-0.5  ">
             选择桌面上显示的桌宠角色
           </div>
         </div>
@@ -54,15 +54,15 @@ export const PetPanel: React.FC<PetPanelProps> = ({
               >
                 <span className="flex items-center space-x-3">
                   <span
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs  transition-colors ${
                       active
                         ? 'bg-[color:var(--accent)] text-white'
-                        : 'bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400'
+                        : 'bg-black/5 dark:bg-white/10  '
                     }`}
                   >
                     {skin.name.slice(0, 1)}
                   </span>
-                  <span className=" text-slate-800 dark:text-slate-200">
+                  <span className=" ">
                     {skin.name}
                   </span>
                 </span>
@@ -89,7 +89,7 @@ export const PetPanel: React.FC<PetPanelProps> = ({
               <PawPrint size={15} />
             </span>
             <div>
-              <div className=" text-slate-800 dark:text-slate-200">
+              <div className=" ">
                 自由活动
               </div>
               <div className="text-xs  mt-0.5">
@@ -115,10 +115,10 @@ export const PetPanel: React.FC<PetPanelProps> = ({
       {/* 和桌宠说话：用户一句话，模型决策调用桌宠行为（petTools） */}
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
         <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
-          <div className=" text-slate-800 dark:text-slate-200">
+          <div className=" ">
             和桌宠说话
           </div>
-          <div className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
+          <div className="text-xs mt-0.5  ">
             输入一句话，由大模型决定让桌宠做什么（说话 / 移动 / 跳跃 / 庆祝）
           </div>
         </div>

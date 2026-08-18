@@ -57,7 +57,7 @@ export function confirm(options: ConfirmOptions): void {
       <Modal isOpen onClose={close} title={options.title} showCloseButton={false}>
         <div className="px-6 py-5">
           {options.body && (
-            <div className="text-sm text-slate-600 dark:text-slate-300">
+            <div className="text-sm  ">
               {options.body}
             </div>
           )}

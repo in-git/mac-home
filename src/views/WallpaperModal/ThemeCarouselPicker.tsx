@@ -150,18 +150,18 @@ export const ThemeCarouselPicker: React.FC<ThemeCarouselPickerProps> = ({
       </div>
       <div className="mt-2.5 flex min-h-[18px] items-center gap-2 px-1 dark:bg-black bg-white p-4 justify-center">
         {isApplied ? (
-          <span className="shrink-0 rounded-full bg-[color:var(--accent)] px-2 py-0.5 text-font-sm font-semibold text-white">
+          <span className="shrink-0 rounded-full bg-[color:var(--accent)] px-2 py-0.5 text-font-sm  text-white">
             当前
           </span>
         ) : (
-          <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-font-sm  dark:bg-white/10 dark:text-slate-300">
+          <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-font-sm  dark:bg-white/10 ">
             预览
           </span>
         )}
-        <span className="shrink-0   text-slate-700 dark:text-slate-200">
+        <span className="shrink-0   ">
           {active.name}
         </span>
-        <span className="truncate   dark:text-slate-500">
+        <span className="truncate   dark:">
           {active.desc}
         </span>
       </div>

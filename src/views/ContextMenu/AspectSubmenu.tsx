@@ -66,7 +66,7 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
         onMouseLeave={scheduleClose}
         className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
       >
-          <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
+          <div className="px-1 mb-3 text-font-md   tracking-wide">
             纵横比
           </div>
           <div className="mb-4 grid grid-cols-2 gap-2.5">
@@ -76,7 +76,7 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
                 <button
                   key={p.value}
                   onClick={() => applyAspect(p.value)}
-                  className={`py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors border-2 ${
+                  className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
                     isSelected
                       ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
                       : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
@@ -88,7 +88,7 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
             })}
           </div>
 
-          <div className="px-1 mb-2 text-font-md font-semibold dark:text-slate-400 tracking-wide">
+          <div className="px-1 mb-2 text-font-md   tracking-wide">
             自定义（CSS aspect-ratio）
           </div>
           <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
             />
             <button
               onClick={() => applyAspect(custom.trim())}
-              className="px-3 py-2 rounded-[var(--card-radius)] text-font-md font-semibold border-2 border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] hover:bg-[color:var(--accent)]/20"
+              className="px-3 py-2 rounded-[var(--card-radius)] text-font-md  border-2 border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)] hover:bg-[color:var(--accent)]/20"
             >
               应用
             </button>
@@ -108,7 +108,7 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
 
           <button
             onClick={() => applyAspect('')}
-            className="mt-3 w-full py-2 rounded-[var(--card-radius)] text-font-md font-semibold border-2 border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10"
+            className="mt-3 w-full py-2 rounded-[var(--card-radius)] text-font-md  border-2 border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10"
           >
             清除（使用默认布局）
           </button>

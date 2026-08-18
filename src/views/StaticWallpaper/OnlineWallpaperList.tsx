@@ -79,7 +79,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
       {/* 顶部独立「当前壁纸」预览行（苹果风格） */}
       {selectedItem && (
         <div className="mb-4">
-          <div className="mb-2 flex items-center gap-1.5 text-xs  text-slate-500 dark:text-slate-400">
+          <div className="mb-2 flex items-center gap-1.5 text-xs   ">
             <Check size={13} className="text-[color:var(--accent)]" />
             当前壁纸
           </div>
@@ -121,7 +121,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
             </Button>
           ))}
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500">
+        <div className="flex items-center gap-2 text-xs ">
           {totalPages > 1 && (
             <>
               <span className="tabular-nums">

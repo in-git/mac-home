@@ -3,14 +3,11 @@ import {
   Download,
   RefreshCw,
   RotateCcw,
-  Type,
   Upload,
   Volume2,
   VolumeX,
 } from 'lucide-react';
 import React, { useState } from 'react';
-import { FONT_VARIANT } from '@/types';
-import { SegmentedControl } from '@/components/SegmentedControl';
 import { ToggleDot } from '../ToggleDot';
 import { confirm } from '@/components/confirm';
 import type { SystemPanelProps } from '../types';
@@ -22,8 +19,6 @@ import type { SystemPanelProps } from '../types';
 export const SystemPanel: React.FC<SystemPanelProps> = ({
   soundEnabled,
   onToggleSound,
-  fontVariant,
-  setFontVariant,
   onExport,
   onReset,
   justReset,
@@ -59,42 +54,13 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             >
               {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
             </span>
-            <span className=" text-slate-800 dark:text-slate-200">
+            <span className=" ">
               点击音效
             </span>
           </span>
           <button onClick={onToggleSound} aria-label="切换点击音效">
             <ToggleDot active={soundEnabled} />
           </button>
-        </div>
-
-        {/* 字体大小 */}
-        <div className="flex items-center justify-between px-4 py-3">
-          <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
-              <Type size={15} />
-            </span>
-            <div>
-              <div className=" text-slate-800 dark:text-slate-200">
-                字体大小
-              </div>
-              <div className="text-xs  mt-0.5">
-                小 {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.sm} / 中{' '}
-                {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.md} / 大{' '}
-                {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.lg} px
-              </div>
-            </div>
-          </span>
-          <SegmentedControl
-            ariaLabel="字体大小"
-            value={fontVariant}
-            onChange={setFontVariant}
-            size="sm"
-            options={FONT_VARIANT.map((f) => ({
-              value: f.value,
-              label: f.label,
-            }))}
-          />
         </div>
       </div>
 
@@ -107,7 +73,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
               <Download size={15} />
             </span>
             <div>
-              <div className=" text-slate-800 dark:text-[#F1F5F9]">
+              <div className=" dark:text-[#F1F5F9]">
                 导出配置文件
               </div>
               <div className="text-xs ">
@@ -126,11 +92,11 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
         {/* 恢复默认布局 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 ">
               <RotateCcw size={15} />
             </span>
             <div>
-              <div className=" text-slate-800 dark:text-[#F1F5F9]">
+              <div className=" dark:text-[#F1F5F9]">
                 重置组件布局
               </div>
               <div className="text-xs ">
@@ -153,11 +119,11 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
         {/* 导入配置 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 text-slate-500">
+            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 ">
               <Upload size={15} />
             </span>
             <div>
-              <div className=" text-slate-800 dark:text-[#F1F5F9]">
+              <div className=" dark:text-[#F1F5F9]">
                 导入配置文件
               </div>
               <div className="text-xs ">

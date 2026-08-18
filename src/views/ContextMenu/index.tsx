@@ -250,7 +250,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         left: `${renderX}px`,
         width: '272px',
       }}
-      className="context-menu fixed z-[70] p-2.5 rounded-[var(--card-radius)] bg-white dark:bg-black shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
+      className="context-menu fixed z-[70] p-2.5 rounded-[var(--card-radius)] bg-white dark:bg-black shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15 text-font-md  select-none"
     >
       {/* Widget right-click: header + 调整尺寸 + widget-specific menu */}
       {targetWidget ? (
@@ -259,7 +259,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             <span className="font-bold text-font-md uppercase tracking-wider  dark:truncate">
               {targetWidget.title}
             </span>
-            <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 dark:text-slate-400 uppercase">
+            <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10  uppercase">
               {targetWidget.grid?.w ? `${targetWidget.grid.w}/12` : ''}
             </span>
           </div>
@@ -271,7 +271,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             return (
               <>
                 <div className="px-3 py-1.5 text-font-sm ">
-                  调整高度
+                  调整宽度
                 </div>
                 <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
                   {sizeList.map((sz) => {
@@ -284,10 +284,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                           onResizeWidget(targetWidget.id, sz as any);
                           onClose();
                         }}
-                        className={`py-1.5 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
+                        className={`py-1.5 rounded-[var(--card-radius)] text-font-md  transition-colors ${
                           isCurrent
                             ? 'bg-[color:var(--accent)] text-white shadow-md'
-                            : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
+                            : 'hover:bg-black/5 dark:hover:bg-white/10  '
                         }`}
                       >
                         {label}
@@ -304,9 +304,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           {WIDGET_CONTEXT_MENU.map(renderItem)}
 
           {/* 底部显示当前卡片的高度和宽度参数 (grid: w, h) */}
-          <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-1 flex items-center justify-between text-font-sm text-slate-500 dark:text-slate-400">
+          <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-1 flex items-center justify-between text-font-sm  ">
             <span>当前尺寸</span>
-            <span className="font-mono  bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded text-slate-700 dark:text-slate-200">
+            <span className="font-mono  bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded ">
               宽(w): {targetWidget.grid?.w ?? '-'} | 高(h): {targetWidget.grid?.h ?? '-'}
             </span>
           </div>

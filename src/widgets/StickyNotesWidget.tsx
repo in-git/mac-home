@@ -57,7 +57,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
     },
     glass: {
       bg: 'glass-panel border-white/40 dark:border-white/10',
-      text: 'text-slate-900 dark:text-slate-100',
+      text: 'text-slate-900 ',
       accent: 'bg-[color:var(--accent)]',
     },
   };
@@ -146,7 +146,7 @@ export const StickyNotesWidget: React.FC<Props> = ({
               className={`px-2.5 py-1 rounded-[var(--card-radius)]  truncate max-w-[100px] transition-colors flex items-center space-x-1 ${
                 activeNoteId === n.id
                   ? 'bg-[color:var(--accent)] text-white shadow-xs'
-                  : 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-black/10'
+                  : 'bg-black/5 dark:bg-white/10  hover:bg-black/10'
               }`}
             >
               {n.pinned && <Pin size={10} className="fill-current shrink-0" />}

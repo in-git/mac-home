@@ -48,7 +48,7 @@ export const GlassTabs: React.FC<GlassTabsProps> = ({
             className={`shrink-0 text-nowrap rounded-full ${sizeCls}  duration-300 ${
               isActive
                 ? 'bg-white/60 text-[color:var(--accent)] shadow-md shadow-black/10 backdrop-blur-sm dark:bg-white/20 dark:text-white'
-                : 'text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white'
+                : ' hover:text-slate-800  dark:hover:text-white'
             }`}
           >
             {item.label}

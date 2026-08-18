@@ -44,7 +44,7 @@ export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
   const textColorStyle = color ? { color } : undefined;
 
   return (
-    <div className="h-full flex flex-col justify-center text-slate-800 dark:text-slate-100 p-1 select-none text-white ">
+    <div className="h-full flex flex-col justify-center  p-1 select-none text-white ">
       {/* 顶部：当前时间 */}
       <div className="text-center">
         <div

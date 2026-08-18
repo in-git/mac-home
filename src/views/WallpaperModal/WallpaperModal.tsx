@@ -111,13 +111,13 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                 onClick={() => setActiveTab(tab.id)}
                 className={`group flex items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm transition-all duration-200 ease-out ${
                   active
-                    ? 'bg-[color:var(--accent)]/10 font-semibold text-[color:var(--accent)] dark:bg-[color:var(--accent)]/20 dark:text-[color:var(--accent)]'
-                    : 'text-slate-600 hover:bg-black/[0.05] hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/[0.06] dark:hover:text-slate-100'
+                    ? 'bg-[color:var(--accent)]/10  text-[color:var(--accent)] dark:bg-[color:var(--accent)]/20 dark:text-[color:var(--accent)]'
+                    : ' hover:bg-black/[0.05] hover:text-slate-900  dark:hover:bg-white/[0.06] dark:hover:text-slate-100'
                 }`}
               >
                 <span
                   className={`transition-colors duration-200 ${
-                    active ? 'text-[color:var(--accent)]' : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'
+                    active ? 'text-[color:var(--accent)]' : 'text-slate-400 group-hover: dark: dark:group-hover:text-slate-300'
                   }`}
                 >
                   {tab.icon}
@@ -139,7 +139,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
             />
           ) : activeTab === 'preset' ? (
             <div className="space-y-4">
-              <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+              <h3 className="text-base  ">
                 渐变壁纸
               </h3>
               <GradientWallpaperGrid
@@ -157,7 +157,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
             <div className="space-y-8">
               {/* 桌面主题：3D 卡片轮播选择 */}
               <section>
-                <h3 className="mb-4 text-base font-semibold text-slate-800 dark:text-slate-100">
+                <h3 className="mb-4 text-base  ">
                   桌面主题
                 </h3>
                 <ThemeCarouselPicker
@@ -169,7 +169,7 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
               {/* 手动微调 */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                  <h3 className="text-base  ">
                     手动微调
                   </h3>
                   <Button
@@ -191,10 +191,10 @@ export const WallpaperModal: React.FC<WallpaperModalProps> = ({
                         className="rounded-2xl border border-black/[0.06] bg-white/80 p-4 backdrop-blur-sm transition-shadow hover:shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-white/[0.04]"
                       >
                         <div className="mb-2 flex items-center justify-between text-sm">
-                          <span className=" text-slate-800 dark:text-slate-100">
+                          <span className=" ">
                             {filter.label}
                           </span>
-                          <span className="tabular-nums dark:text-slate-400">
+                          <span className="tabular-nums ">
                             {filter.format(value)}
                           </span>
                         </div>

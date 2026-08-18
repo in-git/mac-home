@@ -84,7 +84,7 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
   const openExternal = () => window.open(currentUrl, '_blank', 'noopener,noreferrer');
 
   const toolBtn =
-    'p-2 rounded-[var(--card-radius)] text-slate-700 dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-default transition-colors';
+    'p-2 rounded-[var(--card-radius)]  hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-default transition-colors';
 
   return createPortal(
     <AnimatedShell isOpen={isOpen} onClose={onClose} title={title}>
@@ -113,7 +113,7 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
               navigate(/^https?:\/\//.test(v) ? v : `https://${v}`);
             }
           }}
-          className="flex-1 mx-2 px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50"
+          className="flex-1 mx-2 px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 text-sm  outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50"
           spellCheck={false}
         />
         <button className={toolBtn} onClick={openExternal} title="在外部浏览器打开">
@@ -132,7 +132,7 @@ export const InternalBrowser: React.FC<InternalBrowserProps> = ({
       <div className="relative flex-1 bg-white dark:bg-slate-950"  onClick={openExternal}>
         {loadError ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-6">
-            <p className="text-slate-600 dark:text-slate-300">
+            <p className=" ">
               该网站不允许在内部浏览器中嵌入显示。
             </p>
             <button
@@ -180,7 +180,7 @@ const AnimatedShell: React.FC<{
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.96, opacity: 0 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="w-full h-full flex flex-col bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 overflow-hidden"
+            className="w-full h-full flex flex-col bg-white dark:bg-slate-900  overflow-hidden"
           >
             {children}
           </motion.div>

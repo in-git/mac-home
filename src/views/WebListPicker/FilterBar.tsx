@@ -72,11 +72,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     `rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
       active
         ? 'bg-[color:var(--accent)]  text-white'
-        : 'bg-black/5 text-slate-600 hover:bg-black/10 dark:bg-white/10 dark:text-slate-300'
+        : 'bg-black/5  hover:bg-black/10 dark:bg-white/10 '
     }`;
 
   const paginationControl = totalPages > 1 && (
-    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+    <div className="flex items-center gap-1.5 text-xs ">
       <Button
         size="sm"
         variant="secondary"

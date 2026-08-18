@@ -42,7 +42,7 @@ export function AuthCard({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
-              <p className="text-xl font-semibold text-white drop-shadow">
+              <p className="text-xl  text-white drop-shadow">
                 欢迎回来
               </p>
               <p className="mt-1 text-sm text-white/80">登录以同步你的工作台</p>

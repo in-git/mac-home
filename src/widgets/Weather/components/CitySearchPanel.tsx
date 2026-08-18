@@ -32,7 +32,7 @@ export const CitySearchPanel: React.FC<Props> = ({
         className="flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 py-0.5 min-w-0"
       />
       {searching && <Loader2 size={12} className="animate-spin shrink-0" />}
-      <button onClick={onClose} className="text-slate-400 hover:text-slate-600 shrink-0">
+      <button onClick={onClose} className="text-slate-400 hover: shrink-0">
         <X size={12} />
       </button>
     </div>
@@ -45,7 +45,7 @@ export const CitySearchPanel: React.FC<Props> = ({
             onClick={() => onSelect(r)}
             className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[var(--card-radius)] text-left hover:bg-[color:var(--accent)]/10 transition-colors"
           >
-            <span className="text-xs  text-slate-700 dark:text-slate-200">
+            <span className="text-xs  ">
               {r.name}
               <span className="text-font-sm ml-1">
                 {r.admin1 ? `${r.admin1} · ` : ''}

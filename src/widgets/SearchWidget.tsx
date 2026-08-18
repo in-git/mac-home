@@ -81,10 +81,10 @@ export const SearchWidget: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1">
+    <div className="h-full flex flex-col justify-between  p-1">
       {/* 引擎分段切换器 (Segmented Control 遵循 UI 规范 12px / 10px 圆角与哑光底色) */}
       <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/10">
-        <div className="flex items-center space-x-1.5 text-xs font-semibold dark:text-slate-400 uppercase tracking-wider">
+        <div className="flex items-center space-x-1.5 text-xs   uppercase tracking-wider">
           <Globe size={13} className="text-[color:var(--accent)]" />
           <span>搜索</span>
         </div>
@@ -114,7 +114,7 @@ export const SearchWidget: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={currentEngine.placeholder}
-            className="search-input w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
+            className="search-input w-full pl-9 pr-24 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 focus:bg-white dark:focus:bg-slate-900 text-xs  rounded-[var(--card-radius)] transition-colors outline-none focus:ring-2 focus:ring-[color:var(--accent)]/50 placeholder:text-slate-400"
           />
 
           {/* 右侧直接提交按钮（遵循 UI 规范 严格 2:1 或正方形操作，使用 Apple 蓝） */}
@@ -129,10 +129,10 @@ export const SearchWidget: React.FC = () => {
       </form>
 
       {/* 底部常用热搜/快速提示脚部 */}
-      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-sm dark:text-slate-400">
+      <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-font-sm ">
         <span>
           当前引擎:{' '}
-          <strong className="text-slate-700 dark:text-slate-200">
+          <strong className="text-slate-700 ">
             {currentEngine.name}
           </strong>
         </span>

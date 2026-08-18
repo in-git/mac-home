@@ -69,7 +69,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           </div>
         )}
         {item.count !== undefined && item.count > 0 && (
-          <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px] font-semibold leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
+          <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px]  leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
             <Eye size={13} className="opacity-90" />
             {item.count > 999 ? '999+' : item.count}
           </span>
@@ -106,11 +106,11 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           )}
 
           <div className="flex flex-col flex-1 min-w-0 justify-center">
-            <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <p className="truncate text-sm  ">
               {item.name}
             </p>
             {item.des && (
-              <p className="truncate text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="truncate text-xs   mt-0.5">
                 {item.des}
               </p>
             )}
