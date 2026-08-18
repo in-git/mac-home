@@ -12,8 +12,9 @@ import {
   UsersRound,
   type LucideIcon,
 } from 'lucide-react';
-import { WidgetType, CardStyle, WidgetItem } from '../types';
+import { WidgetType, CardStyle, WidgetItem, WidgetSize } from '../types';
 import type { MouseEvent } from 'react';
+import { getSizeOptions } from './options/size.options';
 
 /**
  * Type-level configuration registry for every widget type. This consolidates
@@ -43,7 +44,7 @@ export function getWidgetCategory(type: WidgetType): WidgetCategory {
 export const DEFAULT_CARD_STYLE: CardStyle = {
   padding: 'p-4',
   glass: true,
-  'backgroundTheme':undefined
+  'backgroundTheme': undefined
 };
 
 
@@ -52,10 +53,9 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     id: 'cfg-search',
     type: 'search',
     title: '网络搜索',
-    maxInstances: Infinity,
+    maxInstances: 1,
     size: '1/2',
     isAddable: true,
-    showHeader: false,
     data: {},
   },
   {
@@ -64,9 +64,7 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '天气预报',
     maxInstances: 1,
     size: '1/2',
-    sizeOptions: ['1/2', '1/1'],
     isAddable: true,
-    showHeader: false,
     data: {},
   },
   {
@@ -75,9 +73,7 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '便签笔记',
     maxInstances: 1,
     size: '1/2',
-    sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    showHeader: false,
     data: {},
   },
   {
@@ -86,10 +82,11 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '时钟日历',
     maxInstances: 1,
     size: '1/4',
-    sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    showHeader: false,
     data: {},
+    cardStyle: {
+      height: 320,
+    },
   },
   {
     id: 'cfg-clock-mini',
@@ -97,10 +94,13 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '时钟',
     maxInstances: 1,
     size: '1/4',
-    sizeOptions: ['1/3', '1/5', '1/6'],
+
     isAddable: true,
-    showHeader: false,
+
     data: {},
+    cardStyle: {
+      height: 160,
+    },
   },
   {
     id: 'cfg-clock-lunar',
@@ -108,12 +108,9 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '农历时钟',
     maxInstances: 1,
     size: '1/4',
-    sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    showHeader: false,
     cardStyle: {
-      padding: 'p-4',
-      glass: false,
+      height: 160,
     },
     data: {
       color: 'var(--accent)',
@@ -127,10 +124,12 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '控制中心',
     maxInstances: 1,
     size: '1/4',
-    sizeOptions: ['1/4'],
     isAddable: true,
-    showHeader: false,
     data: {},
+    cardStyle: {
+      ...DEFAULT_CARD_STYLE,
+      height: 320,
+    }
   },
   {
     id: 'cfg-web-grid',
@@ -138,11 +137,8 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '网页',
     maxInstances: Infinity,
     size: '1/8',
-    sizeOptions: ['1/8', '1/16', '1/12', '1/10', '1/6'],
     isAddable: false,
-    showHeader: false,
     cardStyle: {
-      padding: 'p-0',
       glass: false,
     },
     data: {},
@@ -153,9 +149,8 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '快捷导航',
     maxInstances: Infinity,
     size: '1/3',
-    sizeOptions: ['1/3', '1/5','1/4', '1/6'],
     isAddable: true,
-    showHeader: false,
+
     data: { shortcuts: [] },
   },
   {
@@ -164,9 +159,9 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '在线人数',
     maxInstances: 1,
     size: '1/3',
-    sizeOptions: ['1/3', '1/5', '1/6'],
+
     isAddable: true,
-    showHeader: false,
+
     cardStyle: {
       padding: 'p-4',
       glass: true,
@@ -179,9 +174,9 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '空白占位',
     maxInstances: 999,
     size: '1/4',
-    sizeOptions: ['1/1', '1/2', '1/3', '1/4', '1/5', '1/6', '1/8', '1/10', '1/12', '1/16'],
+
     isAddable: true,
-    showHeader: false,
+
     cardStyle: {
       padding: 'p-0',
       glass: false,
@@ -224,15 +219,18 @@ const FALLBACK_CONFIG: WidgetItem = {
   title: '组件',
   maxInstances: Infinity,
   size: '1/4',
-  sizeOptions: ['1/2', '1/4', '1/1'],
   isAddable: false,
-  showHeader: false,
+
   data: {},
 };
 
+/** 解析后的组件配置：在 WidgetItem 基础上补充运行时查询得到的 sizeOptions。 */
+export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSize[] };
+
 /** Resolve the config for a widget type (falls back to a safe default). */
-export function getWidgetConfig(type: WidgetType): WidgetItem {
-  return WIDGET_CONFIG_MAP[type] ?? FALLBACK_CONFIG;
+export function getWidgetConfig(type: WidgetType): ResolvedWidgetConfig {
+  const cfg = WIDGET_CONFIG_MAP[type] ?? FALLBACK_CONFIG;
+  return { ...cfg, sizeOptions: getSizeOptions(type) };
 }
 
 /**

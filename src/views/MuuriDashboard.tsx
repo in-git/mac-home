@@ -11,8 +11,6 @@ import { WidgetGrid } from './MuuriDashboard/WidgetGrid';
 interface MuuriDashboardProps {
   widgets: WidgetItem[];
   onUpdateWidgetOrder: (newWidgets: WidgetItem[]) => void;
-  onDeleteWidget: (id: string) => void;
-  onResizeWidget: (id: string, newSize: WidgetSize) => void;
   onContextMenuWidget: (e: React.MouseEvent, widgetId: string) => void;
   isEditMode: boolean;
   /** 长按组件卡片切换编辑布局（与右键菜单「布局」一致） */
@@ -21,8 +19,6 @@ interface MuuriDashboardProps {
   onUpdateNotes: (notes: StickyNoteType[]) => void;
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
-  /** 是否在 widget 控制栏显示黄色按钮（点击后该 widget 以无头模态框居中显示） */
-  enableHeadlessModal?: boolean;
   /** 卡片天气变化回调（顶部状态栏以卡片为准） */
   onWeatherChange?: (s: import('../widgets/WeatherWidget').WeatherSummary) => void;
   /** 更新任意 widget 实例字段（如快捷导航的 shortcuts 数据空间）。 */
@@ -32,8 +28,6 @@ interface MuuriDashboardProps {
 export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   widgets,
   onUpdateWidgetOrder,
-  onDeleteWidget,
-  onResizeWidget,
   onContextMenuWidget,
   isEditMode,
   onToggleEditMode,
@@ -41,7 +35,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   onUpdateNotes,
   isDarkMode,
   onToggleDarkMode,
-  enableHeadlessModal = true,
   onWeatherChange,
   onUpdateWidget,
 }) => {
@@ -54,15 +47,6 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
   // 过时快照重建数组，覆盖掉拖拽前已做的 resize 等字段修改）。
   const widgetsRef = useRef(widgets);
 
-  // Cycle a widget through its available sizes on each click of the green dot.
-  const cycleWidgetSize = (widget: WidgetItem) => {
-    const sizes = getWidgetConfig(widget.type).sizeOptions ?? [];
-    const currentIndex = sizes.indexOf(widget.size);
-    const nextSize = sizes[(currentIndex + 1) % sizes.length];
-    if (nextSize && nextSize !== widget.size) {
-      onResizeWidget(widget.id, nextSize);
-    }
-  };
   const isEditModeRef = useRef(isEditMode);
 
   // 无头模态：当前以 fixed 居中放大的 widget id（null 表示普通网格状态）。
@@ -112,9 +96,9 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         // or from the explicit grip handle. Edit-mode gating is done below.
         dragHandle: '.drag-handle, .widget-card',
         // Muuri 0.9.x has no runtime drag() API, so we gate dragging with a
-        // functional predicate that reads the live edit-mode ref. Functional
-        // controls inside the header are excluded via [data-no-drag] so their
-        // clicks are never swallowed by a drag gesture.
+        // functional predicate that reads the live edit-mode ref. Interactive
+        // elements inside the card use [data-no-drag] so their clicks are never
+        // swallowed by a drag gesture.
         dragStartPredicate: (_item: unknown, args: any) => {
           if (!isEditModeRef.current) return false;
           const target = args?.event?.target as HTMLElement | null;
@@ -291,10 +275,7 @@ export const MuuriDashboard: React.FC<MuuriDashboardProps> = ({
         isDarkMode={isDarkMode}
         onToggleDarkMode={onToggleDarkMode}
         onWeatherChange={onWeatherChange}
-        enableHeadlessModal={enableHeadlessModal}
         expandedWidgetId={expandedWidgetId}
-        onCycleSize={cycleWidgetSize}
-        onDeleteWidget={onDeleteWidget}
         onExpand={setExpandedWidgetId}
         onClick={handleCardClick}
         onContextMenuWidget={onContextMenuWidget}

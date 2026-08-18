@@ -1,7 +1,7 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useHomeStore } from '../store/useHomeStore';
-import { CARD_RADIUS, FONT_VARIANT } from '../types';
+import { FONT_VARIANT } from '../types';
 
 import { reverseGeocodeCityName } from '../utils/weatherApi';
 
@@ -16,8 +16,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
 }) => {
   const fontVariant = useHomeStore((s) => s.fontVariant);
   const setFontVariant = useHomeStore((s) => s.setFontVariant);
-  const cardRadius = useHomeStore((s) => s.cardRadius);
-  const setCardRadius = useHomeStore((s) => s.setCardRadius);
   const screenBrightness = useHomeStore((s) => s.screenBrightness);
   const setScreenBrightness = useHomeStore((s) => s.setScreenBrightness);
   // 上一次成功定位的位置（持久化，用于本次进入时回显）
@@ -217,54 +215,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
 
 
 
-      {/* Card corner radius: visual picker pinned to the bottom of the screen */}
-      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
-        <div className="flex items-center justify-between mb-3">
-          <span className="flex items-center space-x-1.5 text-font-sm  font-medium">
-            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
-              <Sliders size={11} />
-            </span>
-            <span>圆角</span>
-          </span>
-          <span className="text-font-sm font-mono ">
-            {CARD_RADIUS[cardRadius].label} · {CARD_RADIUS[cardRadius].px}px
-          </span>
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          {(['tiny', 'small', 'medium', 'large'] as const).map((v) => {
-            const active = cardRadius === v;
-            return (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setCardRadius(v)}
-                aria-label={CARD_RADIUS[v].label}
-                className={`flex flex-col items-center gap-1 py-1.5 rounded-lg  active:scale-[0.97] ${
-                  active
-                    ? ''
-                    : 'hover:bg-white/50 dark:hover:bg-white/5'
-                }`}
-              >
-                <span
-                  className={`w-7 h-7 border border-black/10 dark:border-white/15 transition-colors ${
-                    active
-                      ? 'bg-[color:var(--accent)]'
-                      : 'bg-black/10 dark:bg-white/10'
-                  }`}
-                  style={{ borderRadius: CARD_RADIUS[v].px }}
-                />
-                <span
-                  className={`text-font-xs font-bold ${
-                    active ? 'text-[color:var(--accent)]' : 'text-slate-400'
-                  }`}
-                >
-                  {CARD_RADIUS[v].px}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 };

@@ -81,13 +81,15 @@ export interface WidgetProps {
  */
 export interface CardStyle {
   /** 卡片内容区内边距，例如 'p-4' 常规留白，'p-0' 内容满铺。 */
-  padding: 'p-2' | 'p-0' | 'p-4';
+  padding?: 'p-2' | 'p-0' | 'p-4';
   /** 是否启用毛玻璃质感（对应 `.glass-panel`：半透明底 + backdrop-filter 模糊）。关闭后卡片不再有毛玻璃效果。 */
-  glass: boolean;
-// 卡片颜色
+  glass?: boolean;
+  // 卡片颜色
   background?: string;
   /** 卡片背景主题：light / dark / none，影响卡片内文字与图标的对比度处理。 */
   backgroundTheme?: 'light' | 'dark' | 'none';
+  // 卡片高度
+  height?: 32 | 64 | 96 | 128 | 160 | 192 | 224 | 256 | 288 | 320 | 352 | 384 | 416
 }
 export interface WidgetItem {
   id: string;
@@ -99,12 +101,9 @@ export interface WidgetItem {
   maxInstances: number;
   /** Size applied to a newly created widget of this type. */
   size: WidgetSize;
-  /** Sizes offered in the size picker for this type (可按 id 从 sizes.ts 查询；搜索等组件可不设置，回退到默认). */
-  sizeOptions?: WidgetSize[];
   /** Whether this type can be added from the "添加组件" modal. */
   isAddable: boolean;
 
-  showHeader?: boolean;
   /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
   onClick?: (event: any) => void;
   /** 封面：组件封面图地址，可选。 */

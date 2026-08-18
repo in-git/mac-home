@@ -8,7 +8,6 @@
       "type": "clock-lunar",
       "title": "农历时钟",
       "size": "1/1",
-      "showHeader": false,
       "maxInstances": 1,
       "sizeOptions": [
         "1/4",
@@ -42,7 +41,6 @@
       ],
       "isAddable": true,
       "logo": "⏰",
-      "showHeader": false,
       "cardStyle": {
         "padding": "p-4",
         "glass": true,
@@ -55,7 +53,6 @@
       "type": "control-center",
       "title": "控制中心",
       "size": "1/4",
-      "showHeader": false,
       "maxInstances": 1,
       "sizeOptions": [
         "1/4"
@@ -73,7 +70,6 @@
       "type": "weather",
       "title": "天气预报",
       "size": "1/2",
-      "showHeader": false,
       "maxInstances": 1,
       "sizeOptions": [
         "1/2",
@@ -121,7 +117,6 @@
       ],
       "isAddable": true,
       "logo": "🔗",
-      "showHeader": false,
       "cardStyle": {
         "padding": "p-4",
         "glass": true,

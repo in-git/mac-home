@@ -14,10 +14,7 @@ interface WidgetGridProps {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
   onWeatherChange?: (s: WeatherSummary) => void;
-  enableHeadlessModal?: boolean;
   expandedWidgetId: string | null;
-  onCycleSize: (widget: WidgetItem) => void;
-  onDeleteWidget: (id: string) => void;
   onExpand: (id: string | null) => void;
   onClick: (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => void;
   onContextMenuWidget: (e: React.MouseEvent, widgetId: string) => void;
@@ -37,10 +34,7 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
   isDarkMode,
   onToggleDarkMode,
   onWeatherChange,
-  enableHeadlessModal = true,
   expandedWidgetId,
-  onCycleSize,
-  onDeleteWidget,
   onExpand,
   onClick,
   onContextMenuWidget,
@@ -67,10 +61,7 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
             isDarkMode={isDarkMode}
             onToggleDarkMode={onToggleDarkMode}
             onWeatherChange={onWeatherChange}
-            enableHeadlessModal={enableHeadlessModal}
             expandedWidgetId={expandedWidgetId}
-            onCycleSize={onCycleSize}
-            onDeleteWidget={onDeleteWidget}
             onExpand={onExpand}
             onClick={onClick}
             onContextMenuWidget={onContextMenuWidget}

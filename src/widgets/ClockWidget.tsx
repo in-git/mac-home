@@ -32,9 +32,9 @@ export const ClockWidget: React.FC = () => {
   const hourAngle = (hours % 12) * 30 + minutes * 0.5;
 
   return (
-    <div className="h-full flex flex-col items-center justify-center text-slate-800 dark:text-slate-100 p-1 select-none">
+    <div className="h-full flex flex-col items-center justify-center text-slate-800 dark:text-slate-100 p-1 select-none overflow-hidden">
       {/* Analog dial */}
-      <div className="relative w-20 h-20 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-black/30 flex items-center justify-center shadow-inner">
+      <div className="relative aspect-square h-[55%] max-h-24 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-black/30 flex items-center justify-center shadow-inner">
         {[
           { n: 12, style: { top: 4, left: '50%', transform: 'translateX(-50%)' } },
           { n: 3, style: { right: 4, top: '50%', transform: 'translateY(-50%)' } },

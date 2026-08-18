@@ -44,7 +44,7 @@ export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
   const textColorStyle = color ? { color } : undefined;
 
   return (
-    <div className="h-full flex flex-col justify-between text-slate-800 dark:text-slate-100 p-1 select-none text-white ">
+    <div className="h-full flex flex-col justify-center text-slate-800 dark:text-slate-100 p-1 select-none text-white ">
       {/* 顶部：当前时间 */}
       <div className="text-center">
         <div
@@ -56,9 +56,9 @@ export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
       </div>
 
       {/* 下方：日期、星期、农历 */}
-      <div className="text-center space-y-3 ">
+      <div className="text-center space-y-3 mt-4">
         <div
-          className="flex items-center justify-center space-x-1.5 text-font-sm font-medium mt-3"
+          className="flex items-center justify-center space-x-1.5 text-font-sm font-medium"
           style={textColorStyle}
         >
           <CalendarDays size={13} className="shrink-0" />

@@ -143,10 +143,7 @@ export const useHomeStore = create<HomeState>()(
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           maxInstances: cfg.maxInstances,
           size: cfg.size,
-          sizeOptions: cfg.sizeOptions,
           isAddable: cfg.isAddable,
-          // Header visibility is driven by the type-level config (default: shown).
-          showHeader: cfg.showHeader ?? true,
           cardStyle: {
             ...DEFAULT_CARD_STYLE,
             ...cfg.cardStyle,

@@ -6,7 +6,7 @@ import {
   DESKTOP_CONTEXT_MENU,
   WIDGET_CONTEXT_MENU,
 } from '../../data/contextMenuConfig';
-import { getWidgetConfig } from '../../data/widgetConfig';
+import { getSizeOptions } from '../../data/options/size.options';
 import { BackgroundSubmenu } from './BackgroundSubmenu';
 import {
   WIDGET_CONFIG_SUBMENUS,
@@ -262,7 +262,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             调整尺寸
           </div>
           <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
-            {(getWidgetConfig(targetWidget.type).sizeOptions ?? []).map((sz) => (
+            {getSizeOptions(targetWidget.type).map((sz) => (
               <button
                 key={sz}
                 onClick={() => {

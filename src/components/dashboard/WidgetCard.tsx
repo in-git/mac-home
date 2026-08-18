@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
-import { Tooltip } from '@heroui/react';
-import { GripHorizontal, X } from 'lucide-react';
 import { getWidgetConfig, DEFAULT_CARD_STYLE } from '../../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WeatherSummary } from '../../widgets/WeatherWidget';
 import { renderWidgetContent } from './widgetContent';
-import { getItemSizeClasses } from './itemSize';
+import { getItemSizeClasses, getWebGridPx } from './itemSize';
+import { isWebGrid } from '../../data/widgetConfig';
 
 /** 长按卡片进入编辑布局的按压时长（ms），与右键菜单「布局」功能等价 */
 const LONG_PRESS_MS = 500;
@@ -18,12 +17,8 @@ interface WidgetCardProps {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
   onWeatherChange?: (s: WeatherSummary) => void;
-  /** 是否在 widget 控制栏显示黄色按钮（点击后该 widget 以无头模态框居中显示） */
-  enableHeadlessModal?: boolean;
   /** 当前以无头模态放大的 widget id（此时卡片内容区不渲染，避免双份 DOM） */
   expandedWidgetId: string | null;
-  onCycleSize: (widget: WidgetItem) => void;
-  onDeleteWidget: (id: string) => void;
   onExpand: (id: string) => void;
   onClick: (e: React.MouseEvent<HTMLDivElement>, widget: WidgetItem) => void;
   /** 卡片整体右键菜单回调（参数与 App.handleContextMenuWidget 一致：事件 + widgetId）。 */
@@ -34,8 +29,8 @@ interface WidgetCardProps {
   onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
 
-// 单个 widget 的卡片：外层包裹（供 Muuri 测量） + 玻璃面板（header 控制栏 + 内容区）。
-// 控制栏的三个圆点（绿/黄/红）与拖拽手柄在此渲染；卡片整体点击逻辑交由父组件传入的 onClick。
+// 单个 widget 的卡片：外层包裹（供 Muuri 测量） + 玻璃面板（内容区）。
+// 卡片整体点击逻辑交由父组件传入的 onClick；组件删除/调整比例等由右键菜单（ContextMenu）提供。
 export const WidgetCard: React.FC<WidgetCardProps> = ({
   widget,
   isEditMode,
@@ -44,10 +39,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   isDarkMode,
   onToggleDarkMode,
   onWeatherChange,
-  enableHeadlessModal = true,
   expandedWidgetId,
-  onCycleSize,
-  onDeleteWidget,
   onExpand,
   onClick,
   onContextMenuWidget,
@@ -55,7 +47,10 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onUpdateWidget,
 }) => {
   const sizeClasses = getItemSizeClasses(widget.size, widget.type);
-  const showHeader = widget.showHeader !== false;
+  const isWebGridType = isWebGrid(widget.type);
+  // 纯图标类型：固定像素正方形作用在「内层 content」上（外层已 w-fit 收缩），
+  // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
+  const webGridPx = isWebGridType ? getWebGridPx(widget.size) : undefined;
   const isExpanded = widget.id === expandedWidgetId;
   // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认），纯图标尺寸保持贴边
   const widgetPadding =
@@ -66,6 +61,9 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   // 卡片外观配置（毛玻璃），回退到默认
   const cardStyleCfg = getWidgetConfig(widget.type).cardStyle ?? DEFAULT_CARD_STYLE;
   const isGlass = cardStyleCfg.glass;
+  // 组件自定义高度：用于固定卡片高度（如 clock-mini 指定 160），
+  // 内部组件通过 h-full 自适应填满该高度。
+  const cardHeightStyle = cardStyleCfg.height ? { height: cardStyleCfg.height } : undefined;
 
   // 长按进入编辑模式：按压计时，松开/移出/取消时清除；
   // 触发后标记本次按压，避免随后的 click 再执行打开链接等操作。
@@ -103,7 +101,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`muuri-item p-2 lg:p-4 z-10 ${sizeClasses}`}
+      className={`muuri-item z-10 p-2 lg:p-4 ${sizeClasses}`}
       onClick={handleCardClick}
     >
       {/* Muuri Required Item Content Wrapper */}
@@ -111,8 +109,12 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
         <div
           style={{
             ...(widget.cardStyle?.background ? { background: widget.cardStyle.background } : {}),
+            ...(cardHeightStyle ?? {}),
+            // 纯图标：固定像素正方形作用在可见的 .widget-card 上（外层 p-2 lg:p-4
+            // 提供间距），尺寸切换时盒子变化会触发 Muuri 重新测量，避免被内联尺寸锁死。
+            ...(isWebGridType ? { width: webGridPx, height: webGridPx } : {}),
           }}
-          className={`widget-card h-full w-full ${isGlass ? 'glass-panel  shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
+          className={`widget-card ${isWebGridType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel  shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle border-2 border-dashed border-[color:var(--accent)]' : ''}`}
           onPointerDown={handlePointerDown}
@@ -121,107 +123,6 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
           onPointerCancel={cancelLongPress}
           onContextMenu={(e) => onContextMenuWidget?.(e, widget.id)}
         >
-          {/* Widget Card Title & Control Bar */}
-          {showHeader && (
-            <div className="flex items-center justify-between mb-3">
-              {/* Title (left) */}
-              <span className="text-font-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest select-none">
-                {widget.title}
-              </span>
-
-              {/* Controls (right): window dots + drag handle. Hidden by default,
-                  shown on card hover (the card uses the `group` class).
-                  快捷导航 (shortcuts) 常显，不做 hover 浮现。 */}
-              <div
-                className={`flex items-center space-x-2 ${
-                  widget.type === 'shortcuts'
-                    ? ''
-                    : 'opacity-0 transition-opacity group-hover:opacity-100'
-                }`}
-              >
-                <div className="flex space-x-1.5 items-center">
-                  {/* Green dot → left click cycles size, right click deletes.
-                      Hidden when the widget has only one size option. */}
-                  {(getWidgetConfig(widget.type).sizeOptions?.length ?? 0) > 1 && (
-                    <Tooltip delay={150}>
-                      <Tooltip.Trigger className="inline-flex">
-                        <div
-                          data-no-drag
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onCycleSize(widget);
-                          }}
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onDeleteWidget(widget.id);
-                          }}
-                          className="w-3 h-3 rounded-full bg-[#28C840] hover:bg-[#28C840]/80 transition-colors cursor-pointer"
-                        />
-                      </Tooltip.Trigger>
-                      <Tooltip.Content placement="top">
-                        切换比例
-                      </Tooltip.Content>
-                    </Tooltip>
-                  )}
-                  {/* Yellow dot → toggle headless modal (fixed centered).
-                      放大能力仅对便签 (sticky-notes) 与导航 (shortcuts) 开放。 */}
-                  {enableHeadlessModal &&
-                    (widget.type === 'sticky-notes' ||
-                      widget.type === 'shortcuts') && (
-                      <Tooltip delay={150}>
-                        <Tooltip.Trigger className="inline-flex">
-                          <div
-                            data-no-drag
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onExpand(widget.id);
-                            }}
-                            className="w-3 h-3 rounded-full bg-[#FFCC00] hover:bg-[#FFCC00]/80 transition-colors cursor-pointer"
-                          />
-                        </Tooltip.Trigger>
-                        <Tooltip.Content placement="top">
-                          最大化
-                        </Tooltip.Content>
-                      </Tooltip>
-                    )}
-                  {/* Red dot → delete */}
-                  <Tooltip delay={150}>
-                    <Tooltip.Trigger className="inline-flex">
-                      <button
-                        data-no-drag
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteWidget(widget.id);
-                        }}
-                        className="w-3 h-3 rounded-full bg-[#FF5F57] hover:bg-[#FF5F57]/80 flex items-center justify-center group/dot transition-colors cursor-pointer"
-                        title="移除小组件"
-                      >
-                        <X
-                          size={8}
-                          className="text-black/60 opacity-0 group-hover/dot:opacity-100"
-                        />
-                      </button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content placement="top">
-                      移除小组件
-                    </Tooltip.Content>
-                  </Tooltip>
-                </div>
-
-                {/* Drag Handle (only shown while editing) */}
-                {isEditMode && (
-                  <div
-                    className="drag-handle p-1 rounded-[var(--card-radius)] hover:bg-black/5 dark:hover:bg-white/10  hover:text-slate-700 dark:hover:text-slate-200 cursor-grab active:cursor-grabbing transition-colors"
-                    title="按住拖拽排列位置 (Muuri Grid)"
-                  >
-                    <GripHorizontal size={14} />
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* Inner Widget Component Content.
               In edit mode the content is non-interactive (clicks are
               disabled) but the card is still draggable from this area

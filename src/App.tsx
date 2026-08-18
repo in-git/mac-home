@@ -89,9 +89,7 @@ export default function App() {
       title: item.name || '未命名',
       maxInstances: Infinity,
       size: '1/12',
-      sizeOptions: ['1/8', '1/16', '1/12', '1/10', '1/6'],
       isAddable: false,
-      showHeader: false,
       data: {
         site: item,
       },
@@ -261,8 +259,6 @@ export default function App() {
           <MuuriDashboard
             widgets={dashboardWidgets}
             onUpdateWidgetOrder={setWidgets}
-            onDeleteWidget={deleteWidget}
-            onResizeWidget={resizeWidget}
             onContextMenuWidget={handleContextMenuWidget}
             isEditMode={isEditMode}
             onToggleEditMode={() => setIsEditMode(!isEditMode)}
