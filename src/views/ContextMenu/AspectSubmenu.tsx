@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import type { WidgetConfigSubmenuProps } from './widgetSubmenus';
+import { SubmenuFlyout } from './SubmenuFlyout';
 
 /** 预设纵横比选项。value 为合法 CSS aspect-ratio 字符串。 */
 const ASPECT_PRESETS: { label: string; value: string }[] = [
@@ -59,12 +60,12 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
         <span className="text-slate-400 text-lg leading-none">›</span>
       </button>
 
-      {open && (
-        <div
-          onMouseEnter={openSubmenu}
-          onMouseLeave={scheduleClose}
-          className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
-        >
+      <SubmenuFlyout
+        open={open}
+        onMouseEnter={openSubmenu}
+        onMouseLeave={scheduleClose}
+        className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
+      >
           <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
             纵横比
           </div>
@@ -111,8 +112,7 @@ export const AspectSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
           >
             清除（使用默认布局）
           </button>
-        </div>
-      )}
+      </SubmenuFlyout>
     </div>
   );
 };

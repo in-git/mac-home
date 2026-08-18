@@ -7,7 +7,6 @@ import {
   Moon,
   Search,
   SlidersHorizontal,
-  Sparkles,
   Square,
   StickyNote,
   UsersRound,
@@ -44,6 +43,7 @@ export function getWidgetCategory(type: WidgetType): WidgetCategory {
 export const DEFAULT_CARD_STYLE: CardStyle = {
   padding: 'p-4',
   glass: true,
+  'backgroundTheme':undefined
 };
 
 
@@ -55,7 +55,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     maxInstances: Infinity,
     size: '1/2',
     isAddable: true,
-    logo: '🔍',
     showHeader: false,
     data: {},
   },
@@ -67,7 +66,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/2',
     sizeOptions: ['1/2', '1/1'],
     isAddable: true,
-    logo: '⛅',
     showHeader: false,
     data: {},
   },
@@ -79,7 +77,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/2',
     sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    logo: '📝',
     showHeader: false,
     data: {},
   },
@@ -91,7 +88,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/4',
     sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    logo: '🕒',
     showHeader: false,
     data: {},
   },
@@ -103,7 +99,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/4',
     sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    logo: '⏰',
     showHeader: false,
     data: {},
   },
@@ -115,7 +110,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/4',
     sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    logo: '🌙',
     showHeader: false,
     cardStyle: {
       padding: 'p-4',
@@ -135,7 +129,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/4',
     sizeOptions: ['1/4'],
     isAddable: true,
-    logo: '🎛️',
     showHeader: false,
     data: {},
   },
@@ -147,7 +140,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/8',
     sizeOptions: ['1/8', '1/16', '1/12', '1/10', '1/6'],
     isAddable: false,
-    logo: '🌐',
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
@@ -161,9 +153,8 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     title: '快捷导航',
     maxInstances: Infinity,
     size: '1/3',
-    sizeOptions: ['1/3', '1/5', '1/6'],
+    sizeOptions: ['1/3', '1/5','1/4', '1/6'],
     isAddable: true,
-    logo: '🔗',
     showHeader: false,
     data: { shortcuts: [] },
   },
@@ -175,7 +166,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/3',
     sizeOptions: ['1/3', '1/5', '1/6'],
     isAddable: true,
-    logo: '👥',
     showHeader: false,
     cardStyle: {
       padding: 'p-4',
@@ -191,7 +181,6 @@ export const WIDGET_CONFIG: WidgetItem[] = [
     size: '1/4',
     sizeOptions: ['1/1', '1/2', '1/3', '1/4', '1/5', '1/6', '1/8', '1/10', '1/12', '1/16'],
     isAddable: true,
-    logo: '⬜',
     showHeader: false,
     cardStyle: {
       padding: 'p-0',
@@ -237,7 +226,6 @@ const FALLBACK_CONFIG: WidgetItem = {
   size: '1/4',
   sizeOptions: ['1/2', '1/4', '1/1'],
   isAddable: false,
-  logo: '🔗',
   showHeader: false,
   data: {},
 };

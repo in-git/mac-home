@@ -4,6 +4,7 @@ import {
   ContextMenuItemConfig,
 } from '../../data/contextMenuConfig';
 import { WidgetItem } from '../../types';
+import { SubmenuFlyout } from './SubmenuFlyout';
 
 /** 卡片背景纯色快捷选项 —— 一排并列的「透明 / 纯黑 / 纯白」。 */
 const SOLID_BG_COLORS: {
@@ -88,7 +89,8 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
 
         {/* Hover secondary submenu — pops out to the right of the menu */}
         {bgSubmenuOpen && (
-          <div
+          <SubmenuFlyout
+            open={bgSubmenuOpen}
             onMouseEnter={openBgSubmenu}
             onMouseLeave={scheduleCloseBgSubmenu}
             className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
@@ -96,25 +98,7 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
             <div className="px-1 mb-3 text-font-md font-semibold dark:text-slate-400 tracking-wide">
               卡片背景
             </div>
-
-            {/* 亮色 / 暗色 选项卡，点击切换 */}
-            <div className="mb-4 flex p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
-              {(['light', 'dark'] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setBgTab(tab)}
-                  className={`flex-1 py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
-                    bgTab === tab
-                      ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow'
-                      : 'dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                >
-                  {tab === 'light' ? '亮色' : '暗色'}
-                </button>
-              ))}
-            </div>
-
-            {/* 纯色快捷选项：透明 / 纯黑 / 纯白，一排并列 */}
+    {/* 纯色快捷选项：透明 / 纯黑 / 纯白，一排并列 */}
             <div className="mb-3 grid grid-cols-3 gap-3">
               {SOLID_BG_COLORS.map((c) => (
                 <button
@@ -151,6 +135,24 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
                 />
               ))}
             </div>
+            {/* 亮色 / 暗色 选项卡，点击切换 */}
+            <div className="mb-4 flex p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
+              {(['light', 'dark'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setBgTab(tab)}
+                  className={`flex-1 py-2 rounded-[var(--card-radius)] text-font-md font-semibold transition-colors ${
+                    bgTab === tab
+                      ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow'
+                      : 'dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                >
+                  {tab === 'light' ? '亮色' : '暗色'}
+                </button>
+              ))}
+            </div>
+
+        
 
             <div className="grid grid-cols-4 gap-3.5">
               {backgroundOptions.map((g) => (
@@ -175,7 +177,7 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
                 />
               ))}
             </div>
-          </div>
+          </SubmenuFlyout>
         )}
       </div>
 

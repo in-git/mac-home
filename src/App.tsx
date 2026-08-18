@@ -91,7 +91,6 @@ export default function App() {
       size: '1/12',
       sizeOptions: ['1/8', '1/16', '1/12', '1/10', '1/6'],
       isAddable: false,
-      logo: '🌐',
       showHeader: false,
       data: {
         site: item,

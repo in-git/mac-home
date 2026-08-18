@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { CLOCK_FONT_COLORS, CLOCK_FONT_SIZES } from '../../data/options';
 import type { WidgetConfigSubmenuProps } from './widgetSubmenus';
+import { SubmenuFlyout } from './SubmenuFlyout';
 
 export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
   item,
@@ -53,7 +54,8 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
       </button>
 
       {open && (
-        <div
+        <SubmenuFlyout
+          open={open}
           onMouseEnter={openSubmenu}
           onMouseLeave={scheduleClose}
           className="absolute left-full top-0 ml-3 w-72 p-5 rounded-[var(--card-radius)] bg-white dark:bg-slate-900 shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15"
@@ -150,7 +152,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
               常规
             </button>
           </div>
-        </div>
+        </SubmenuFlyout>
       )}
     </div>
   );

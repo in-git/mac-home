@@ -145,7 +145,6 @@ export const useHomeStore = create<HomeState>()(
           size: cfg.size,
           sizeOptions: cfg.sizeOptions,
           isAddable: cfg.isAddable,
-          logo: cfg.logo,
           // Header visibility is driven by the type-level config (default: shown).
           showHeader: cfg.showHeader ?? true,
           cardStyle: {

@@ -374,7 +374,7 @@ button{
 }
 
 /* 覆盖卡片内常见文本色类（优先级高于 .dark 的 dark: 变体）。 */
-.widget-card.card-theme-light .text-slate-800,
+/* .widget-card.card-theme-light .text-slate-800,
 .widget-card.card-theme-light .text-slate-700,
 .widget-card.card-theme-light .text-slate-600,
 .widget-card.card-theme-light .text-slate-500,
@@ -393,8 +393,8 @@ button{
 .widget-card.card-theme-light .text-gray-300,
 .widget-card.card-theme-light .text-gray-200,
 .widget-card.card-theme-light .text-apple-text {
-  color: var(--card-fg) !important;
-}
+  color: var(--card-fg);
+} */
 
 .widget-card.card-theme-dark .text-slate-800,
 .widget-card.card-theme-dark .text-slate-700,

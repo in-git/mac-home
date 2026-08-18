@@ -103,8 +103,6 @@ export interface WidgetItem {
   sizeOptions?: WidgetSize[];
   /** Whether this type can be added from the "添加组件" modal. */
   isAddable: boolean;
-  /** Emoji/glyph shown in the add-widget picker. */
-  logo: string;
 
   showHeader?: boolean;
   /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
