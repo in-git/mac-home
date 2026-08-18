@@ -262,21 +262,41 @@ export const RoleCharacterCanvas: React.FC = () => {
     <div className="fixed inset-0 pointer-events-none z-[190] overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
 
-      {/* 随角色移动的对话框气泡 */}
-      {dialog.visible && (
-        <div
-          className="absolute z-40 max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-medium rounded-[var(--card-radius)] shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap"
-          style={{
-            left: `${rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2}px`,
-            top: `${rolePos.y - 12}px`,
-            transform: 'translate(-50%, -100%)',
-          }}
-        >
-          {dialog.text}
-          {/* 小尾巴 */}
-          <div className="absolute left-1/2 -bottom-1.5 -translate-x-1/2 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/90 dark:border-t-zinc-800/90" />
-        </div>
-      )}
+      {/* 随角色移动的对话框气泡（靠近屏幕边缘时翻转对齐，避免被挤出视口） */}
+      {dialog.visible &&
+        (() => {
+          const centerX = rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2;
+          const winW = typeof window !== 'undefined' ? window.innerWidth : 1280;
+          const half = 140; // 气泡半宽余量，约等于 max-w 的一半
+          let left = centerX;
+          let transform = 'translate(-50%, -100%)';
+          let tail = 'left-1/2 -translate-x-1/2';
+          if (centerX < half) {
+            // 靠近左边缘：气泡向右展开，尾巴靠左
+            transform = 'translate(0, -100%)';
+            tail = 'left-3 -translate-x-1/2';
+          } else if (centerX > winW - half) {
+            // 靠近右边缘：气泡向左展开，尾巴靠右
+            transform = 'translate(-100%, -100%)';
+            tail = 'right-3 translate-x-1/2';
+          }
+          return (
+            <div
+              className="absolute z-40 max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-medium rounded-[var(--card-radius)] shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap"
+              style={{
+                left: `${left}px`,
+                top: `${rolePos.y - 12}px`,
+                transform,
+              }}
+            >
+              {dialog.text}
+              {/* 小尾巴：随对齐方向切换位置 */}
+              <div
+                className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/90 dark:border-t-zinc-800/90 ${tail}`}
+              />
+            </div>
+          );
+        })()}
     </div>
   );
 };

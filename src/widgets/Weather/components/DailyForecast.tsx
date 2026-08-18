@@ -15,7 +15,7 @@ export const DailyForecast: React.FC<Props> = ({ daily }) => (
         >
           <span className="text-font-sm font-medium dark:text-slate-400">{day.day}</span>
           <div className="my-1">{getWeatherIcon(day.condition, 14)}</div>
-          <span className="text-font-sm font-bold">{day.high}~{day.low}°</span>
+          <span className="text-font-sm font-bold">{day.low}~{day.high}°</span>
         </div>
       ))}
     </div>

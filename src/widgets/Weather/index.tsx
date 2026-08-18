@@ -47,7 +47,6 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onWeatherChange })
         onToggleSearch={() => setSearchOpen((v) => !v)}
         onLocate={locate}
         onRefresh={refresh}
-        searchOpen={searchOpen}
       />
 
       {searchOpen && (

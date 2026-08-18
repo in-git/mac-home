@@ -1,4 +1,5 @@
-import { LocateFixed, MapPin, RefreshCw, Loader2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { LocateFixed, MapPin, RefreshCw, Loader2, ChevronDown, X } from 'lucide-react';
 import type { WeatherCity } from '../../../utils/weatherApi';
 
 interface Props {
@@ -12,7 +13,6 @@ interface Props {
   onToggleSearch: () => void;
   onLocate: () => void;
   onRefresh: () => void;
-  searchOpen: boolean;
 }
 
 export const CityHeader: React.FC<Props> = ({
@@ -26,63 +26,105 @@ export const CityHeader: React.FC<Props> = ({
   onToggleSearch,
   onLocate,
   onRefresh,
-  searchOpen,
-}) => (
-  <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-black/5 dark:border-white/10">
-    <div className="flex items-center space-x-2 shrink-0">
-      <MapPin size={14} className="text-[color:var(--accent)]" />
-      <div className="font-bold text-sm tracking-tight whitespace-nowrap">
-        {selectedCity ? `${selectedCity.name}, ${selectedCity.country}` : '未选择城市'}
-      </div>
-      <button
-        onClick={onLocate}
-        title="自动定位到当前位置"
-        disabled={locating}
-        className="p-1 rounded-[var(--card-radius)] hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
-      >
-        {locating ? <Loader2 size={13} className="animate-spin" /> : <LocateFixed size={13} />}
-      </button>
-      <button
-        onClick={onRefresh}
-        title="刷新天气"
-        className="p-1 rounded-[var(--card-radius)] hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-      >
-        <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-      </button>
-    </div>
+}) => {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    {/* City switcher chips */}
-    <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-      {cities.map((c) => (
-        <div key={c.id} className="relative shrink-0">
+  // 点击下拉容器外部时关闭列表
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-black/5 dark:border-white/10">
+        {/* 左：当前地址 + 定位 / 刷新 */}
+        <div className="flex items-center space-x-2 shrink-0 min-w-0">
+          <MapPin size={14} className="text-[color:var(--accent)] shrink-0" />
+          <div className="font-bold text-sm tracking-tight whitespace-nowrap truncate">
+            {selectedCity ? `${selectedCity.name}, ${selectedCity.country}` : '未选择城市'}
+          </div>
           <button
-            onClick={() => onSelect(c.id)}
-            className={`px-2 py-0.5 rounded-[var(--card-radius)] text-font-sm font-medium transition-colors whitespace-nowrap ${
-              c.id === selectedId
-                ? 'bg-[color:var(--accent)] text-white shadow-xs'
-                : 'bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20'
-            }`}
+            onClick={onLocate}
+            title="自动定位到当前位置"
+            disabled={locating}
+            className="p-1 rounded-[var(--card-radius)] hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60 shrink-0"
           >
-            {c.name}
+            {locating ? <Loader2 size={13} className="animate-spin" /> : <LocateFixed size={13} />}
           </button>
-          {cities.length > 1 && (
-            <button
-              onClick={() => onRemove(c.id)}
-              title="移除城市"
-              className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 flex items-center justify-center rounded-full bg-red-500 text-white shadow-sm opacity-0 hover:opacity-100 focus-visible:opacity-100 transition-opacity"
-            >
-              <span className="text-[8px] leading-none font-bold">×</span>
-            </button>
-          )}
+          <button
+            onClick={onRefresh}
+            title="刷新天气"
+            className="p-1 rounded-[var(--card-radius)] hover:text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
+          >
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+          </button>
         </div>
-      ))}
-      <button
-        onClick={onToggleSearch}
-        title="添加城市"
-        className="shrink-0 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-[color:var(--accent)] hover:text-white transition-colors"
-      >
-        <span className="text-xs leading-none">+</span>
-      </button>
+
+        {/* 右：城市下拉列表触发器 */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="flex items-center gap-1 shrink-0 px-2 py-1 rounded-[var(--card-radius)] text-xs font-medium bg-black/5 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+        >
+          <span className="whitespace-nowrap">切换城市</span>
+          <ChevronDown size={13} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+        </button>
+      </div>
+
+      {/* 城市下拉列表 */}
+      {open && (
+        <div className="absolute right-0 top-full z-20 mt-1 w-44 glass-panel rounded-[var(--card-radius)] p-1 shadow-xl">
+            <div className="px-2 py-1 text-font-sm text-slate-400">选择城市</div>
+            <div className="max-h-52 overflow-y-auto">
+              {cities.map((c) => (
+                <div
+                  key={c.id}
+                  className={`group flex items-center justify-between px-2 py-1.5 rounded-[var(--card-radius)] ${
+                    c.id === selectedId
+                      ? 'bg-[color:var(--accent)]/15 text-[color:var(--accent)]'
+                      : 'hover:bg-black/5 dark:hover:bg-white/10'
+                  }`}
+                >
+                  <button
+                    onClick={() => {
+                      onSelect(c.id);
+                      setOpen(false);
+                    }}
+                    className="flex-1 text-left text-xs font-medium truncate"
+                  >
+                    {c.name}
+                    {c.admin1 ? <span className="text-font-sm ml-1">{c.admin1}</span> : null}
+                  </button>
+                  {cities.length > 1 && (
+                    <button
+                      onClick={() => onRemove(c.id)}
+                      title="移除城市"
+                      className="ml-1 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity shrink-0"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => {
+                setOpen(false);
+                onToggleSearch();
+              }}
+              className="w-full mt-1 flex items-center gap-1 px-2 py-1.5 rounded-[var(--card-radius)] text-xs text-[color:var(--accent)] hover:bg-[color:var(--accent)]/10 transition-colors"
+            >
+              <span className="text-sm leading-none">+</span> 添加城市
+            </button>
+          </div>
+      )}
     </div>
-  </div>
-);
+  );
+};

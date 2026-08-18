@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
 import {
   ContextMenuAction,
@@ -33,6 +33,40 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onToggleDesktopIcons,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
+  // 最终渲染坐标：先按点击位置渲染一次，measure 到真实尺寸后再修正，避免溢出屏幕。
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+
+  // 在渲染后测量菜单真实尺寸，动态夹紧到屏幕边界，避免点击屏幕下方时偏离坐标。
+  useLayoutEffect(() => {
+    if (!position) return;
+    const el = menuRef.current;
+    if (!el) return;
+
+    const menuWidth = el.offsetWidth;
+    const menuHeight = el.offsetHeight;
+    // 有目标组件时主菜单右侧可能弹出二级 flyout 子菜单，水平方向额外预留其宽度，
+    // 避免子菜单被挤出屏幕；无则仅按主菜单宽度夹紧。
+    const submenuReserve = position.targetWidgetId ? 292 : 0;
+
+    const margin = 10;
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+
+    let x = position.x;
+    let y = position.y;
+    // 水平：优先保证点击点位于菜单左侧；溢出右边界时左移。
+    if (x + menuWidth + submenuReserve > screenW - margin) {
+      x = screenW - menuWidth - submenuReserve - margin;
+    }
+    // 垂直：菜单默认从点击点往下展开，溢出底边界时上移，使其底部贴齐点击点。
+    if (y + menuHeight > screenH - margin) {
+      y = screenH - menuHeight - margin;
+    }
+    x = Math.max(margin, x);
+    y = Math.max(margin, y);
+
+    setPos({ x, y });
+  }, [position]);
 
   // Close when clicking outside or pressing Escape
   useEffect(() => {
@@ -63,24 +97,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   const targetWidget = position.targetWidgetId
     ? widgets.find((w) => w.id === position.targetWidgetId)
     : null;
-
-  // Adjust coordinates so the context menu doesn't overflow screen boundaries.
-  // When a widget is targeted it can open the "切换卡片背景" flyout submenu
-  // (240px wide) to its right, so reserve extra horizontal room in that case.
-  const menuWidth = 272;
-  const submenuWidth = 280;
-  const menuHeight = 540;
-  const screenW = window.innerWidth;
-  const screenH = window.innerHeight;
-
-  const horizontalReserve = targetWidget
-    ? menuWidth + submenuWidth + 12
-    : menuWidth;
-  const adjustedX = Math.min(
-    position.x,
-    screenW - Math.max(horizontalReserve, menuWidth) - 10,
-  );
-  const adjustedY = Math.min(position.y, screenH - menuHeight - 10);
 
   // Map an action id to its handler + whether it should currently render.
   const resolveAction = (
@@ -215,12 +231,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     );
   };
 
+  // 渲染坐标：position 为点击位置；measure 完成后用修正后的 pos（避免菜单溢出屏幕）。
+  const renderX = pos ? pos.x : position.x;
+  const renderY = pos ? pos.y : position.y;
+
   return (
     <div
       ref={menuRef}
       style={{
-        top: `${adjustedY}px`,
-        left: `${adjustedX}px`,
+        top: `${renderY}px`,
+        left: `${renderX}px`,
         width: '272px',
       }}
       className="context-menu fixed z-[70] p-2.5 rounded-[var(--card-radius)] bg-white dark:bg-black shadow-[0_30px_80px_rgba(0,0,0,0.28)] border border-black/10 dark:border-white/15 text-font-md text-slate-800 dark:text-slate-100 select-none"
