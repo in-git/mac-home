@@ -43,8 +43,8 @@ export const CityHeader: React.FC<Props> = ({
   }, [open]);
 
   return (
-    <div className="relative" ref={containerRef}>
-      <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-black/5 dark:border-white/10">
+    <div className="relative mb-1" ref={containerRef}>
+      <div className="flex items-center justify-between gap-2 pb-2.5 mb-1 border-b border-black/5 dark:border-white/10">
         {/* 左：当前地址 + 定位 / 刷新 */}
         <div className="flex items-center space-x-2 shrink-0 min-w-0">
           <MapPin size={14} className="text-[color:var(--accent)] shrink-0" />

@@ -75,16 +75,16 @@ export const ControlCenterWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="h-full flex flex-col gap-2 text-slate-800 dark:text-slate-100">
+    <div className="h-full flex flex-col justify-between gap-2.5 text-slate-800 dark:text-slate-100">
       {/* Module grid: 2 columns of equal square-ish tiles */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {/* Location tile */}
         <button
           onClick={locate}
-          className="glass-panel p-4 rounded-[var(--card-radius)] flex flex-col items-center text-center gap-2 transition-transform active:scale-[0.98]"
+          className="glass-panel p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 transition-transform active:scale-[0.98]"
         >
           <div
-            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+            className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
               locError
                 ? 'bg-red-500 text-white shadow-sm'
                 : locCoords || lastLocation
@@ -92,7 +92,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                   : 'bg-slate-400/30  shadow-sm'
             }`}
           >
-            <MapPin size={18} />
+            <MapPin size={15} />
           </div>
           <div className="min-w-0">
             {locating ? (
@@ -104,12 +104,12 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 <div className="font-semibold text-font-sm leading-tight text-red-500">
                   定位失败
                 </div>
-                <div className="text-[11px] text-slate-400 leading-tight mt-0.5">
+                <div className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate max-w-[70px]">
                   {locError}
                 </div>
               </>
             ) : (
-              <div className="font-semibold text-font-sm leading-tight">
+              <div className="font-semibold text-font-sm leading-tight truncate max-w-[80px]">
                 {locCity ?? lastLocation?.city ?? '位置'}
               </div>
             )}
@@ -121,20 +121,20 @@ export const ControlCenterWidget: React.FC<Props> = ({
           onClick={() => {
             onToggleDarkMode();
           }}
-          className={`p-4 rounded-[var(--card-radius)] flex flex-col items-center text-center gap-2  active:scale-[0.98] ${
+          className={`p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 active:scale-[0.98] ${
             isDarkMode
               ? 'bg-slate-800 text-amber-300 border border-slate-700 shadow-md'
               : 'glass-panel'
           }`}
         >
           <div
-            className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+            className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
               isDarkMode
                 ? 'bg-amber-400/20 text-amber-300'
                 : 'bg-slate-200 text-slate-700'
             }`}
           >
-            {isDarkMode ? <Moon size={18} /> : <Sun size={18} />}
+            {isDarkMode ? <Moon size={15} /> : <Sun size={15} />}
           </div>
           <div className="min-w-0">
             <div className="font-semibold text-font-sm leading-tight">
@@ -145,14 +145,14 @@ export const ControlCenterWidget: React.FC<Props> = ({
       </div>
 
       {/* Brightness slider */}
-      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
+      <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
         <div>
-          <div className="flex justify-between items-center text-font-sm  mb-1.5">
+          <div className="flex justify-between items-center text-font-sm mb-1.5">
             <span className="flex items-center space-x-1.5 font-medium">
               <Sun size={13} />
               <span>屏幕亮度</span>
             </span>
-            <span className="font-mono">{screenBrightness}%</span>
+            <span className="font-mono text-xs">{screenBrightness}%</span>
           </div>
           <input
             type="range"
@@ -160,21 +160,20 @@ export const ControlCenterWidget: React.FC<Props> = ({
             max="100"
             value={screenBrightness}
             onChange={(e) => setScreenBrightness(Number(e.target.value))}
-            className="w-full accent-[var(--accent)] cursor-pointer"
+            className="w-full accent-[var(--accent)] cursor-pointer h-2"
           />
         </div>
       </div>
 
       {/* Font size: A (12/14/16) / B (13/15/17) / C (14/16/18) */}
-      <div className="glass-panel p-3.5 rounded-[var(--card-radius)]">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="flex items-center space-x-1.5 text-font-sm  font-medium">
-            <span className="w-5 h-5 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
+      <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="flex items-center space-x-1.5 text-font-sm font-medium">
+            <span className="w-4 h-4 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>字体大小</span>
           </span>
-   
         </div>
         <div className="relative grid grid-cols-3 gap-1 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
           {/* 苹果风格滑块高亮：跟随选中项移动 */}
@@ -192,7 +191,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
             return (
               <label
                 key={v}
-                className={`relative z-10 py-2 text-font-md font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
+                className={`relative z-10 py-1 text-xs font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
                   active
                     ? 'text-slate-900 dark:text-white'
                     : ' hover:text-slate-700 dark:hover:text-slate-300'
@@ -212,9 +211,6 @@ export const ControlCenterWidget: React.FC<Props> = ({
           })}
         </div>
       </div>
-
-
-
     </div>
   );
 };

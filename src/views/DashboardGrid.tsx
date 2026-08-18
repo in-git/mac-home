@@ -53,7 +53,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       <GridLayoutWithWidth
         className="layout"
         layout={layout}
-        cols={12}
+        cols={24}
         rowHeight={10}
         isDraggable={isEditMode}
         isResizable={isEditMode}

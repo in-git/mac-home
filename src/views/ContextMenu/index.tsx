@@ -276,7 +276,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                 <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
                   {sizeList.map((sz) => {
                     const isCurrent = targetWidget.grid?.w === sz;
-                    const label = `${sz}/12`;
+                    const label = `${Math.round(sz * 24) / 24}`;
                     return (
                       <button
                         key={sz}

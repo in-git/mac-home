@@ -6,7 +6,7 @@ import { isWebGrid } from '../../data/widgetConfig';
 // ############################################################
 
 /** RGL 网格基准参数（与 DashboardGrid 中 GridLayout 保持一致） */
-export const RGL_COLS = 12;
+export const RGL_COLS = 24;
 export const RGL_ROW_HEIGHT = 10;
 export const RGL_MARGIN: [number, number] = [16, 16];
 
@@ -16,7 +16,7 @@ export function gridHeightPx(h: number): number {
 }
 
 /** 非 web-grid 组件初始默认占用的列数（半宽）。 */
-export const DEFAULT_GRID_W = 6;
+export const DEFAULT_GRID_W = 12;
 
 /** web-grid 初始默认像素宽 */
 const DEFAULT_WEB_GRID_PX = 180;

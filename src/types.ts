@@ -52,8 +52,8 @@ export type WidgetType =
   | 'application'
   | 'member-count';
 
-// 尺寸统一使用分母数字形式（最多12）
-export type WidgetSize = 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12;
+// 尺寸统一使用分母数字形式
+export type WidgetSize = number
 
 // Behaviour of an icon widget (web-grid / settings). `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.

@@ -182,10 +182,10 @@ export const useHomeStore = create<HomeState>()(
           widgets: get().widgets.map((w) => {
             if (w.id !== id) return w;
             const w_cols = typeof newSize === 'number' ? newSize : 4;
-            // 网页类型 (web-grid) 特殊适配：1/12 对应 h=5，2/12 对应 h=10
+            // 网页类型 (web-grid) 特殊适配：2/24 对应 h=5，4/24 对应 h=10
             let newH = w.grid?.h ?? 5;
             if (isWebGrid(w.type)) {
-              newH = w_cols === 2 ? 10 : 5;
+              newH = w_cols === 4 ? 10 : 5;
             }
             return {
               ...w,
@@ -209,13 +209,13 @@ export const useHomeStore = create<HomeState>()(
           widgets: get().widgets.map((w) =>
             w.id === id
               ? {
-                  ...w,
-                  cardStyle: {
-                    ...w.cardStyle,
-                    background: background ?? undefined,
-                    backgroundTheme: backgroundTheme,
-                  },
-                }
+                ...w,
+                cardStyle: {
+                  ...w.cardStyle,
+                  background: background ?? undefined,
+                  backgroundTheme: backgroundTheme,
+                },
+              }
               : w,
           ),
         });
@@ -298,7 +298,7 @@ export const useHomeStore = create<HomeState>()(
       name: 'apple-homepage-store',
       // Only persist the data slices, not the action functions.
       partialize: (state) => ({
- ...state
+        ...state
       }),
       // hydration 后用 ensureGrid 补齐旧数据中缺失的 grid 坐标，
       // 保证 grid 必选契约在任意持久化数据下都成立。

@@ -61,7 +61,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid:{
       x:0,
       y:0,
-      w:5,
+      w:10,
       h:10
     }
   },
@@ -75,8 +75,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
-      h: 17,
+      w: 12,
+      h: 20,
     },
   },
   {
@@ -89,8 +89,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
-      h: 17,
+      w: 12,
+      h: 15,
     },
   },
   {
@@ -103,8 +103,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
-      h: 17,
+      w: 12,
+      h: 15,
     },
   },
   {
@@ -117,7 +117,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 2,
+      w: 4,
       h: 10,
     },
   },
@@ -130,7 +130,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
+      w: 12,
       h: 12,
     },
     data: {
@@ -156,7 +156,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       x: 0,
       y: 0,
       w: 6,
-      h: 17,
+      h: 15,
     }
   },
   {
@@ -171,7 +171,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 1,
+      w: 2,
       h: 5,
     },
     data: {},
@@ -186,7 +186,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
+      w: 12,
       h: 9,
     },
     data: { shortcuts: [] },
@@ -207,7 +207,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       x: 0,
       y: 0,
       w: 6,
-      h: 14,
+      h: 15,
     },
     data: {},
   },

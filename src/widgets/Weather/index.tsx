@@ -35,7 +35,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onWeatherChange })
   } = useWeatherData(onWeatherChange);
 
   return (
-    <div className="w-full text-slate-800 dark:text-slate-100">
+    <div className="w-full h-full flex flex-col justify-between text-slate-800 dark:text-slate-100">
       <CityHeader
         cities={cities}
         selectedId={selectedId}
@@ -65,7 +65,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ onWeatherChange })
         <WeatherSkeleton />
       ) : (
         weather && (
-          <div className="flex flex-col">
+          <div className="flex flex-col flex-1 justify-between gap-3">
             {error && (
               <p className="text-font-sm text-amber-500 mb-1">{error}</p>
             )}
