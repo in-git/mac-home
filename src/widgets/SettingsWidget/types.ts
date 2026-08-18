@@ -8,8 +8,6 @@ export interface AppearancePanelProps {
   setDarkMode: (v: boolean) => void;
   themeColor: string;
   setThemeColor: (v: string) => void;
-  fontVariant: 'A' | 'B' | 'C';
-  setFontVariant: (v: 'A' | 'B' | 'C') => void;
   cardRadius: CardRadiusTier;
   setCardRadius: (v: CardRadiusTier) => void;
 }
@@ -17,6 +15,8 @@ export interface AppearancePanelProps {
 export interface SystemPanelProps {
   soundEnabled: boolean;
   onToggleSound: () => void;
+  fontVariant: 'A' | 'B' | 'C';
+  setFontVariant: (v: 'A' | 'B' | 'C') => void;
   onExport: () => void;
   onReset: () => void;
   justReset: boolean;

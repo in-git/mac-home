@@ -79,7 +79,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
       {/* 顶栏标题与连接状态 */}
       <div className="flex items-center justify-between shrink-0 mb-1">
         <span className="text-font-sm  text-slate-500 dark:text-slate-400 leading-tight">
-          在线统计
+          同频同仁
         </span>
         <span
           className={`flex items-center gap-1 text-[11px] leading-tight ${
@@ -94,8 +94,7 @@ export function MemberCountWidget(_props: MemberCountWidgetProps) {
 
       {/* 主指标：当前在线（实时，WebSocket），自适应高度居中 */}
       <div className="flex flex-1 flex-col items-center justify-center rounded-[var(--card-radius)] px-2 py-1.5 text-center bg-[color:var(--accent)]/10 min-h-0 mb-1.5">
-        <Users size={16} className="mb-0.5 text-[color:var(--accent)]" />
-        <span className="text-4xl font-bold tabular-nums leading-tight text-[color:var(--accent)]">
+        <span className="text-6xl font-bold tabular-nums leading-tight text-[color:var(--accent)]">
           {online != null ? online.toLocaleString() : '—'}
         </span>
         <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">

@@ -27,9 +27,9 @@ export type CardRadiusTier = 'tiny' | 'small' | 'medium' | 'large';
 /** 卡片圆角：UI 展示名 + 像素值。 */
 export const CARD_RADIUS: Record<CardRadiusTier, { label: string; px: number }> = {
   tiny: { label: '极小', px: 6 },
-  small: { label: '小', px: 12 },
-  medium: { label: '中', px: 18 },
-  large: { label: '大', px: 24 },
+  small: { label: '小', px: 10 },
+  medium: { label: '中', px: 14 },
+  large: { label: '大', px: 18 },
 };
 
 // ############################################################

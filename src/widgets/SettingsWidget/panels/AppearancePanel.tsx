@@ -2,7 +2,6 @@ import { Check } from 'lucide-react';
 import React from 'react';
 import {
   CARD_RADIUS,
-  FONT_VARIANT,
 } from '@/types';
 import { ACCENT_COLORS } from '../constants';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -17,8 +16,6 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
   setDarkMode,
   themeColor,
   setThemeColor,
-  fontVariant,
-  setFontVariant,
   cardRadius,
   setCardRadius,
 }) => {
@@ -72,33 +69,6 @@ export const AppearancePanel: React.FC<AppearancePanelProps> = ({
               );
             })}
           </div>
-        </div>
-      </div>
-
-      {/* 排版与排版尺寸分组 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
-        {/* 字体大小 */}
-        <div className="flex items-center justify-between px-4 py-3">
-          <div>
-            <div className=" text-slate-800 dark:text-slate-200">
-              字体大小
-            </div>
-            <div className="text-xs  mt-0.5">
-              小 {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.sm} / 中{' '}
-              {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.md} / 大{' '}
-              {FONT_VARIANT.find((f) => f.value === fontVariant)!.px.lg} px
-            </div>
-          </div>
-          <SegmentedControl
-            ariaLabel="字体大小"
-            value={fontVariant}
-            onChange={setFontVariant}
-            size='sm'
-            options={FONT_VARIANT.map((f) => ({
-              value: f.value,
-              label: f.label,
-            }))}
-          />
         </div>
 
         {/* 卡片圆角 */}

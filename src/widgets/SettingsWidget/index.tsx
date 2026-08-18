@@ -169,8 +169,6 @@ export const SettingsWidget: React.FC<{
           setDarkMode={setDarkMode}
           themeColor={themeColor}
           setThemeColor={setThemeColor}
-          fontVariant={fontVariant}
-          setFontVariant={setFontVariant}
           cardRadius={cardRadius}
           setCardRadius={setCardRadius}
         />
@@ -180,6 +178,8 @@ export const SettingsWidget: React.FC<{
         <SystemPanel
           soundEnabled={soundEnabled}
           onToggleSound={handleToggleSound}
+          fontVariant={fontVariant}
+          setFontVariant={setFontVariant}
           onExport={handleExport}
           onReset={handleReset}
           justReset={justReset}
