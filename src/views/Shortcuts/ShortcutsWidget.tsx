@@ -183,12 +183,18 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
         disabled={isRefreshing}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 active:scale-95 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50"
       >
-        {isRefreshing ? (
-          <LoadingSpinner size={24} className="text-white" />
-        ) : (
-          <ChevronRight size={24} className="text-white" />
-        )}
+        <ChevronRight size={24} className="text-white" />
       </button>
+
+      {/* 刷新加载遮罩：点击右箭头时在整个容器居中展示 loading */}
+      {isRefreshing && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-xs transition-all">
+          <div className="flex flex-col items-center gap-3 text-white">
+            <LoadingSpinner size={40} />
+            <p className="text-sm font-medium drop-shadow">正在获取站点...</p>
+          </div>
+        </div>
+      )}
 
       {/* 内容层：只在底部文字区域添加深色背景 */}
       <div className="relative h-full flex flex-col justify-end">

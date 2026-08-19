@@ -61,7 +61,7 @@ export const TopBar: React.FC<Props> = ({
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
         <span className="  hidden sm:inline">
-          吴文龙的互联空间
+          吴文龙的游戏空间
         </span>
       </div>
 

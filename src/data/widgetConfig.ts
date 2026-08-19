@@ -42,15 +42,16 @@ export function getWidgetCategory(type: WidgetType): WidgetCategory {
 
 /** 全局默认卡片样式（放大模态框等未单独配置时回退到此）。 */
 export const DEFAULT_CARD_STYLE: CardStyle = {
-  padding: 'p-4',
+  padding: 'p-2',
   glass: true,
-  'backgroundTheme': undefined
+  'backgroundTheme': undefined,
+  background: 'transparent'
 };
 
 
 /** 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
  *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
-export const WIDGET_CONFIG: Array<WidgetItem> = [  
+export const WIDGET_CONFIG: Array<WidgetItem> = [
   {
     id: 'cfg-search',
     type: 'search',
@@ -58,11 +59,11 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     maxInstances: 1,
     isAddable: true,
     data: {},
-    grid:{
-      x:0,
-      y:0,
-      w:10,
-      h:10
+    grid: {
+      x: 0,
+      y: 0,
+      w: 10,
+      h: 10
     }
   },
   {
@@ -138,8 +139,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       size: '3.5rem',
       bold: true,
     },
-    cardStyle:{
-      background:'transparent'
+    cardStyle: {
+      background: 'transparent'
     }
   },
   {
@@ -179,15 +180,19 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   {
     id: 'cfg-shortcuts',
     type: 'shortcuts',
-    title: '快捷导航',
-    maxInstances: Infinity,
+    title: '随机网页',
+    maxInstances: 1,
     isAddable: true,
-
+    cardStyle: {
+      padding: 'p-0',
+      background: 'transparent',
+      backgroundTheme: 'dark'
+    },
     grid: {
       x: 0,
       y: 0,
-      w: 12,
-      h: 9,
+      w: 8,
+      h: 10,
     },
     data: { shortcuts: [] },
   },

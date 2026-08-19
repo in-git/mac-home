@@ -113,11 +113,11 @@ export default function App() {
   // 桌宠定时自主活动（仅在设置开启时运行）。
   usePetAutoActivity(petAutoActivity);
 
-  // SEO：动态同步标题与描述，确保关键词「吴文龙 / 吴文龙的互联空间」一致。
+  // SEO：动态同步标题与描述，确保关键词「吴文龙 / 吴文龙的游戏空间」一致。
   useEffect(() => {
-    document.title = '吴文龙的互联空间 | 吴文龙';
+    document.title = '吴文龙的游戏空间 | 吴文龙';
     const desc =
-      '吴文龙的互联空间——吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽组件、便签、天气、实时任务提醒与动态壁纸。';
+      '吴文龙的游戏空间——吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽组件、便签、天气、实时任务提醒与动态壁纸。';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
