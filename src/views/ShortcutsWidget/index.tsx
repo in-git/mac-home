@@ -1,6 +1,6 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Modal } from '../../components/Modal';
+import { Modal } from '../../components/Modal/Modal';
 import { WebListPicker } from '../WebListPicker';
 import { siteApi, SiteItem } from '../../api/site';
 import { playSound } from '../../utils/sound';

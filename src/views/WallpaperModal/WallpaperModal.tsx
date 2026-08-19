@@ -7,9 +7,9 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import type { WallpaperConfig } from '../../types';
-import { Button } from '../../components/Button';
+import { Button } from '../../components/Button/Button';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
-import { Modal } from '../../components/Modal';
+import { Modal } from '../../components/Modal/Modal';
 import { StaticWallpaperSection } from './static';
 import { GradientWallpaperGrid } from './static/GradientWallpaperGrid';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';

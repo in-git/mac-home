@@ -2,9 +2,9 @@ import { Trash2, Download, Eye, Check } from 'lucide-react';
 import React, { useState } from 'react';
 import { Tooltip } from '@heroui/react';
 import { SiteItem } from '../../api/site';
-import { useToast } from '../../components/Toast';
-import { LazyImage } from '../../components/LazyImage';
-import Button from '../../components/Button';
+import { useToast } from '../../components/Toast/Toast';
+import { LazyImage } from '../../components/LazyImage/LazyImage';
+import Button from '../../components/Button/Button';
 
 interface SiteCardProps {
   item: SiteItem;

@@ -1,6 +1,6 @@
 import { ArrowRight, ExternalLink, Globe, Search } from 'lucide-react';
 import React, { useState } from 'react';
-import { SegmentedControl } from '../../components/SegmentedControl';
+import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl';
 
 export type SearchEngineId = 'google' | 'bing' | 'baidu';
 

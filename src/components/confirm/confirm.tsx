@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { Modal } from '@/components/Modal';
+import { Modal } from '@/components/Modal/Modal';
 import { Button } from '@heroui/react';
 
 export interface ConfirmOptions {

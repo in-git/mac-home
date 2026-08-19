@@ -1,7 +1,7 @@
 import { RefreshCw, Search } from 'lucide-react';
 import React from 'react';
 import { Skeleton } from '@heroui/react';
-import { Button } from '../../components/Button';
+import { Button } from '../../components/Button/Button';
 import { SiteCategory } from '../../api/site';
 
 interface FilterBarProps {

@@ -3,12 +3,12 @@ import {
   createParticles,
   dynamicPresets,
   getWallpaperEffect,
-} from '../data/wallpaperEffects';
-import MoltenMetalWallpaper from '../effects/MoltenMetal';
-import { PlasmaWaveWallpaper } from '../effects/PlasmaWave';
-import { ThreadsWallpaper } from '../effects/Threads';
-import { WallpaperConfig } from '../types';
-import { buildWallpaperFilter } from '../utils/wallpaperFilter';
+} from '../../data/wallpaperEffects';
+import MoltenMetalWallpaper from '../../effects/MoltenMetal';
+import { PlasmaWaveWallpaper } from '../../effects/PlasmaWave';
+import { ThreadsWallpaper } from '../../effects/Threads';
+import { WallpaperConfig } from '../../types';
+import { buildWallpaperFilter } from '../../utils/wallpaperFilter';
 
 interface Props {
   wallpaper: WallpaperConfig;

@@ -8,7 +8,7 @@ import {
   Wifi,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useHomeStore } from '../store/useHomeStore';
+import { useHomeStore } from '../../store/useHomeStore';
 
 interface Props {
   isDarkMode: boolean;

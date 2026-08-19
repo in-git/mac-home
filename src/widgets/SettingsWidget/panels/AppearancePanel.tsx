@@ -5,7 +5,7 @@ import {
   FONT_VARIANT,
 } from '@/types';
 import { ACCENT_COLORS } from '../constants';
-import { SegmentedControl } from '@/components/SegmentedControl';
+import { SegmentedControl } from '@/components/SegmentedControl/SegmentedControl';
 import type { AppearancePanelProps } from '../types';
 
 /**
