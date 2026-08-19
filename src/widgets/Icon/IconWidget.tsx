@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import{ useState } from 'react';
 import { Globe } from 'lucide-react';
 import type { SiteItem } from '../../api/site';
 
@@ -8,9 +8,11 @@ interface IconWidgetProps {
   iconSize?: number;
   /** 站点数据：图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background。 */
   site?: SiteItem;
+  /** 为 true 时不渲染站点名文本（如 1:1 正方形档位）。 */
+  hideLabel?: boolean;
 }
 
-export function IconWidget({ site, iconSize }: IconWidgetProps) {
+export function IconWidget({ site, iconSize, hideLabel = false }: IconWidgetProps) {
   const [imgError, setImgError] = useState(false);
   const label = site?.name || '';
   const hasValidLogo = !!site?.logo && !imgError;
@@ -44,7 +46,7 @@ export function IconWidget({ site, iconSize }: IconWidgetProps) {
         )}
       </div>
 
-      {label && (
+      {label && !hideLabel && (
         <span className="w-full min-w-0 shrink-0 truncate text-center text-white text-sm">
           {label}
         </span>

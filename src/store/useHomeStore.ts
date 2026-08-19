@@ -177,10 +177,12 @@ export const useHomeStore = create<HomeState>()(
           widgets: get().widgets.map((w) => {
             if (w.id !== id) return w;
             const w_cols = typeof newSize === 'number' ? newSize : 4;
-            // 网页类型 (web-app) 特殊适配：2/24 对应 h=5，4/24 对应 h=10
+            // 网页类型 (web-app) 按列数映射到固定宽高比（grid 的 w:h）：
+            // 1 → 1:1（正方形）、2 → 2:5、3 → 3:7、4 → 4:10
+            const WEB_APP_ASPECT: Record<number, number> = { 1: 1, 2: 5, 3: 7, 4: 10 };
             let newH = w.grid?.h ?? 5;
             if (isWebApp(w.type)) {
-              newH = w_cols === 4 ? 10 : 5;
+              newH = WEB_APP_ASPECT[w_cols] ?? 5;
             }
             return {
               ...w,

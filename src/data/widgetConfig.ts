@@ -197,7 +197,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     maxInstances: 1,
     isAddable: true,
     cardStyle: {
-      padding: 'p-0',
+      padding: 'p-4',
       background: 'transparent',
       backgroundTheme: 'dark'
     },
