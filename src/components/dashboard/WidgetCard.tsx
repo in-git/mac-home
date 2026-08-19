@@ -3,7 +3,7 @@ import { getWidgetConfig, DEFAULT_CARD_STYLE } from '../../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WeatherSummary } from '../../widgets/Weather';
 import { renderWidgetContent } from './widgetContent';
-import { isWebGrid } from '../../data/widgetConfig';
+import { isWebApp } from '../../data/widgetConfig';
 
 /** 长按卡片进入编辑布局的按压时长（ms），与右键菜单「布局」功能等价 */
 const LONG_PRESS_MS = 300;
@@ -45,12 +45,12 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onLongPressEdit,
   onUpdateWidget,
 }) => {
-  const isWebGridType = isWebGrid(widget.type);
+  const isWebAppType = isWebApp(widget.type);
   // 纯图标类型：固定像素正方形作用在「内层 content」上（外层已 w-fit 收缩），
   // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
   const isExpanded = widget.id === expandedWidgetId;
-  // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认；web-grid 纯图标类型强制无内边距）
-  const widgetPadding = isWebGridType
+  // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认；web-app 纯图标类型强制无内边距）
+  const widgetPadding = isWebAppType
     ? 'p-0'
     : (getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding);
 
@@ -105,7 +105,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`rgl-item-card h-full p-2 w-full ${isWebGridType ? 'w-fit' : ''}`}
+      className={`rgl-item-card h-full p-2 w-full ${isWebAppType ? 'w-fit' : ''}`}
       onClick={handleCardClick}
     >
       {/* RGL child content wrapper（撑满网格单元） */}
@@ -121,7 +121,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
                 }
               : {}),
           }}
-          className={`widget-card ${isWebGridType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
+          className={`widget-card ${isWebAppType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle border border-dashed border-[color:var(--accent)]/80' : ''}`}
           onPointerDown={handlePointerDown}

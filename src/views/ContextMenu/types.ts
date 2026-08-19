@@ -24,7 +24,7 @@ export interface ContextMenuProps {
   onOpenWallpaper: () => void;
   onOpenAddWidget: () => void;
   onOpenSettings: () => void;
-  /** 是否清屏（web-grid 类组件），用于右键菜单「清屏」勾选态。 */
+  /** 是否清屏（web-app 类组件），用于右键菜单「清屏」勾选态。 */
   showDesktopIcons: boolean;
   /** 切换桌面图标显示/隐藏。 */
   onToggleDesktopIcons: () => void;

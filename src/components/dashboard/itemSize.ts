@@ -1,5 +1,5 @@
 import { WidgetItem, WidgetType } from '../../types';
-import { isWebGrid } from '../../data/widgetConfig';
+import { isWebApp } from '../../data/widgetConfig';
 
 // ############################################################
 // react-grid-layout 辅助参数与工具函数
@@ -15,23 +15,23 @@ export function gridHeightPx(h: number): number {
   return h * RGL_ROW_HEIGHT + (h - 1) * RGL_MARGIN[1];
 }
 
-/** 非 web-grid 组件初始默认占用的列数（半宽）。 */
+/** 非 web-app 组件初始默认占用的列数（半宽）。 */
 export const DEFAULT_GRID_W = 12;
 
-/** web-grid 初始默认像素宽 */
+/** web-app 初始默认像素宽 */
 const DEFAULT_WEB_GRID_PX = 180;
 
 /**
  * 生成初始 react-grid-layout 坐标。
  * - 高度：默认估算行数 h（高度由 grid.h 控制，用户后续拖拽调整）；
- * - 宽度：web-grid 默认列数，其余类型用统一默认列数 DEFAULT_GRID_W。
+ * - 宽度：web-app 默认列数，其余类型用统一默认列数 DEFAULT_GRID_W。
  */
 export function buildInitialGrid(
   type: WidgetType,
   containerWidth?: number,
 ): { x: number; y: number; w: number; h: number } {
   const h = 8;
-  const w = isWebGrid(type)
+  const w = isWebApp(type)
     ? (() => {
         const colWidth = containerWidth
           ? containerWidth / RGL_COLS - RGL_MARGIN[0]

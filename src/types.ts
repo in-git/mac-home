@@ -48,14 +48,14 @@ export type WidgetType =
   | 'clock-lunar'
   | 'shortcuts'
   | 'control-center'
-  | 'web-grid'
+  | 'web-app'
   | 'application'
   | 'member-count';
 
 // 尺寸统一使用分母数字形式
 export type WidgetSize = number
 
-// Behaviour of an icon widget (web-grid / settings). `link` → open iconHref in a new tab;
+// Behaviour of an icon widget (web-app / settings). `link` → open iconHref in a new tab;
 // `action` → invoke the onAction() callback wired up at render time.
 export type IconBehavior = 'link' | 'action';
 
@@ -108,7 +108,7 @@ export interface WidgetItem {
   data: {
     /** 快捷导航等组件的私有数据空间：存储 SiteItem[]。 */
     shortcuts?: SiteItem[];
-    /** 图标型组件（web-grid）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
+    /** 图标型组件（web-app）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
     site?: SiteItem;
     /** 时钟字体自定义（当前用于 clock-lunar 等时钟类组件）。 */
     /** 文本颜色，任意合法 CSS 颜色值，如 '#ff0000'、'rgb(0,0,0)'、'var(--accent)'。缺省则沿用主题样式。 */

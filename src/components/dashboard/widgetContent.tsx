@@ -73,7 +73,7 @@ export const renderWidgetContent = ({
         />
       );
  
-    case 'web-grid': {
+    case 'web-app': {
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
       // 保持 1:1 比例正方形居中展示
       return (

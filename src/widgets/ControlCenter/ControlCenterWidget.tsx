@@ -8,12 +8,25 @@ import { reverseGeocodeCityName } from '../../utils/weatherApi';
 interface Props {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
+  /** 卡片自身的背景模式：'dark' | 'light'；如果不传，则默认跟随当前系统的 isDarkMode */
+  theme?: 'dark' | 'light';
 }
 
 export const ControlCenterWidget: React.FC<Props> = ({
   isDarkMode,
   onToggleDarkMode,
+  theme,
 }) => {
+  // 判断当前卡片自身是否为深色背景（优先取传入的局部 theme，缺省时回退到全局 isDarkMode）
+  const isDarkCard = theme ? theme === 'dark' : isDarkMode;
+
+  // 独立的局部主题样式类名
+  const tilePanelClass = isDarkCard
+    ? 'bg-white/10 text-white border border-white/10 shadow-sm'
+    : 'bg-black/[0.04] text-slate-800 border border-black/5 shadow-xs';
+
+  const subTextClass = isDarkCard ? 'text-white/60' : 'text-slate-500';
+
   const cardRadius = useHomeStore((s) => s.cardRadius);
   const setCardRadius = useHomeStore((s) => s.setCardRadius);
   const screenBrightness = useHomeStore((s) => s.screenBrightness);
@@ -75,13 +88,13 @@ export const ControlCenterWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="h-full flex flex-col justify-between gap-2.5 ">
+    <div className={`h-full flex flex-col justify-between gap-2.5 select-none ${isDarkCard ? 'text-white' : 'text-slate-800'}`}>
       {/* Module grid: 2 columns of equal square-ish tiles */}
       <div className="grid grid-cols-2 gap-2.5">
         {/* Location tile */}
         <button
           onClick={locate}
-          className="glass-panel p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 transition-transform active:scale-[0.98]"
+          className={`${tilePanelClass} p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 transition-transform active:scale-[0.98]`}
         >
           <div
             className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
@@ -89,27 +102,29 @@ export const ControlCenterWidget: React.FC<Props> = ({
                 ? 'bg-red-500 text-white shadow-sm'
                 : locCoords || lastLocation
                   ? 'bg-[#34C759] text-white shadow-sm'
-                  : 'bg-slate-400/30  shadow-sm'
+                  : isDarkCard
+                    ? 'bg-white/20 text-white/80 shadow-sm'
+                    : 'bg-slate-300/60 text-slate-600 shadow-sm'
             }`}
           >
             <MapPin size={15} />
           </div>
           <div className="min-w-0">
             {locating ? (
-              <div className=" text-font-sm leading-tight">
+              <div className="text-font-sm leading-tight">
                 定位中…
               </div>
             ) : locError ? (
               <>
-                <div className=" text-font-sm leading-tight text-red-500">
+                <div className="text-font-sm leading-tight text-red-500">
                   定位失败
                 </div>
-                <div className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate max-w-[70px]">
+                <div className={`text-[10px] ${subTextClass} leading-tight mt-0.5 truncate max-w-[70px]`}>
                   {locError}
                 </div>
               </>
             ) : (
-              <div className=" text-font-sm leading-tight truncate max-w-[80px]">
+              <div className="text-font-sm leading-tight truncate max-w-[80px]">
                 {locCity ?? lastLocation?.city ?? '位置'}
               </div>
             )}
@@ -121,23 +136,25 @@ export const ControlCenterWidget: React.FC<Props> = ({
           onClick={() => {
             onToggleDarkMode();
           }}
-          className={`p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 active:scale-[0.98] ${
+          className={`p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 active:scale-[0.98] transition-colors ${
             isDarkMode
               ? 'bg-slate-800 text-amber-300 border border-slate-700 shadow-md'
-              : 'glass-panel'
+              : tilePanelClass
           }`}
         >
           <div
             className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
               isDarkMode
                 ? 'bg-amber-400/20 text-amber-300'
-                : 'bg-slate-200'
+                : isDarkCard
+                  ? 'bg-white/20 text-white/80'
+                  : 'bg-slate-200 text-slate-700'
             }`}
           >
             {isDarkMode ? <Moon size={15} /> : <Sun size={15} />}
           </div>
           <div className="min-w-0">
-            <div className=" text-font-sm leading-tight">
+            <div className="text-font-sm leading-tight">
               {isDarkMode ? '深色模式' : '浅色模式'}
             </div>
           </div>
@@ -145,14 +162,14 @@ export const ControlCenterWidget: React.FC<Props> = ({
       </div>
 
       {/* Brightness slider */}
-      <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
+      <div className={`${tilePanelClass} p-3 rounded-[var(--card-radius)] flex flex-col justify-center`}>
         <div>
           <div className="flex justify-between items-center text-font-sm mb-1.5">
-            <span className="flex items-center space-x-1 ">
+            <span className="flex items-center space-x-1">
               <Sun size={13} />
               <span>屏幕亮度</span>
             </span>
-            <span className="font-mono text-xs">{screenBrightness}%</span>
+            <span className="font-mono text-xs opacity-80">{screenBrightness}%</span>
           </div>
           <input
             type="range"
@@ -166,16 +183,16 @@ export const ControlCenterWidget: React.FC<Props> = ({
       </div>
 
       {/* Card Radius */}
-      <div className="glass-panel p-3 rounded-[var(--card-radius)] flex flex-col justify-center">
+      <div className={`${tilePanelClass} p-3 rounded-[var(--card-radius)] flex flex-col justify-center`}>
         <div className="flex items-center justify-between mb-1.5">
-          <span className="flex items-center space-x-1.5 text-font-sm ">
+          <span className="flex items-center space-x-1.5 text-font-sm">
             <span className="w-4 h-4 rounded-[var(--card-radius)] bg-[color:var(--accent)]/15 text-[color:var(--accent)] flex items-center justify-center">
               <Sliders size={11} />
             </span>
             <span>卡片圆角</span>
           </span>
         </div>
-        <div className="relative grid grid-cols-4 gap-1 p-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10">
+        <div className={`relative grid grid-cols-4 gap-1 p-1 rounded-[var(--card-radius)] ${isDarkCard ? 'bg-white/10' : 'bg-black/5'}`}>
           {/* 苹果风格滑块高亮：跟随选中项移动 */}
           {(() => {
             const tiers: CardRadiusTier[] = ['tiny', 'small', 'medium', 'large'];
@@ -184,7 +201,9 @@ export const ControlCenterWidget: React.FC<Props> = ({
               <>
                 <span
                   aria-hidden
-                  className="absolute top-1 bottom-1 rounded-[calc(var(--card-radius)-4px)] bg-white dark:bg-slate-700 shadow-sm transition-transform duration-200 ease-out"
+                  className={`absolute top-1 bottom-1 rounded-[calc(var(--card-radius)-4px)] shadow-sm transition-transform duration-200 ease-out ${
+                    isDarkCard ? 'bg-white/20' : 'bg-white shadow-xs'
+                  }`}
                   style={{
                     width: 'calc((100% - 0.75rem) / 4)',
                     transform: `translateX(${activeIndex * 100}%)`,
@@ -197,8 +216,12 @@ export const ControlCenterWidget: React.FC<Props> = ({
                       key={tier}
                       className={`relative z-10 py-1 text-xs font-bold text-center cursor-pointer transition-colors rounded-[calc(var(--card-radius)-4px)] ${
                         active
-                          ? 'text-slate-900 dark:text-white'
-                          : ' hover:text-slate-700 dark:hover:text-slate-300'
+                          ? isDarkCard
+                            ? 'text-white'
+                            : 'text-slate-900'
+                          : isDarkCard
+                            ? 'text-white/60 hover:text-white'
+                            : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       <input

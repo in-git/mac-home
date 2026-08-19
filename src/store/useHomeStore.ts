@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
-import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, isWebGrid } from '../data/widgetConfig';
+import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, isWebApp } from '../data/widgetConfig';
 import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
 import { migrateData } from '../utils/migration';
 import {
@@ -177,9 +177,9 @@ export const useHomeStore = create<HomeState>()(
           widgets: get().widgets.map((w) => {
             if (w.id !== id) return w;
             const w_cols = typeof newSize === 'number' ? newSize : 4;
-            // 网页类型 (web-grid) 特殊适配：2/24 对应 h=5，4/24 对应 h=10
+            // 网页类型 (web-app) 特殊适配：2/24 对应 h=5，4/24 对应 h=10
             let newH = w.grid?.h ?? 5;
-            if (isWebGrid(w.type)) {
+            if (isWebApp(w.type)) {
               newH = w_cols === 4 ? 10 : 5;
             }
             return {

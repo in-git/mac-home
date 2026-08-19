@@ -50,7 +50,7 @@
     },
     {
       "id": "widget-2088059652088283137",
-      "type": "web-grid",
+      "type": "web-app",
       "title": "Windows XP 专业版",
       "maxInstances": null,
       "isAddable": false,
@@ -91,7 +91,7 @@
     },
     {
       "id": "widget-2087069146011250689",
-      "type": "web-grid",
+      "type": "web-app",
       "title": "魔塔24层",
       "maxInstances": null,
       "isAddable": false,
@@ -141,7 +141,7 @@
     },
     {
       "id": "widget-2088028231881736194",
-      "type": "web-grid",
+      "type": "web-app",
       "title": "Windows2000",
       "maxInstances": null,
       "isAddable": false,
@@ -181,7 +181,7 @@
     },
     {
       "id": "widget-2087835971799040001",
-      "type": "web-grid",
+      "type": "web-app",
       "title": "WINDOWS93",
       "maxInstances": null,
       "isAddable": false,

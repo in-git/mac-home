@@ -30,7 +30,7 @@ export type WidgetCategory = 'system' | 'web';
  * 用于「添加组件」模态框的左侧分组。
  */
 export const WIDGET_CATEGORIES: Partial<Record<WidgetType, WidgetCategory>> = {
-  'web-grid': 'web',
+  'web-app': 'web',
 };
 
 /** 获取组件分类，缺省返回 'system'。 */
@@ -161,9 +161,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     }
   },
   {
-    id: 'cfg-web-grid',
-    type: 'web-grid',
-    title: '网页',
+    id: 'cfg-web-app',
+    type: 'web-app',
+    title: '网页应用',
     maxInstances: Infinity,
     isAddable: false,
     cardStyle: {
@@ -233,7 +233,7 @@ export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   'clock-lunar': Moon,
   shortcuts: Compass,
   'control-center': SlidersHorizontal,
-  'web-grid': Globe,
+  'web-app': Globe,
   application: Globe,
   'member-count': UsersRound,
 };
@@ -304,9 +304,9 @@ export function getAddableWidgetsByCategory(category: WidgetCategory) {
   return ADDABLE_WIDGETS.filter((w) => w.category === category);
 }
 
-/** 网页类图标组件（新增网页创建的类型）。 */
-export function isWebGrid(type: WidgetType): boolean {
-  return type === 'web-grid';
+/** 网页应用类图标组件（新增网页创建的类型）。 */
+export function isWebApp(type: WidgetType): boolean {
+  return type === 'web-app';
 }
 
 // ---------------------------------------------------------------------------

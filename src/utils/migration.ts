@@ -19,13 +19,10 @@ export function migrateData<T = Record<string, any>>(
 ): T {
   const defaults = dataJson as Record<string, any>;
 
-  // 如果原始数据非法，或者 version 与当前系统的目标版本号不一致，直接使用完整的 data.json 默认配置清空/重置本地数据
-  if (
-    !rawData ||
-    typeof rawData !== 'object' ||
-    Array.isArray(rawData) ||
-    (rawData as Record<string, any>).version !== currentVersion
-  ) {
+  // 仅当原始数据彻底非法（无数据 / 非对象 / 是数组）时，才回退到 data.json 默认配置。
+  // 注意：即使 version 与当前目标版本号不一致，也不再整体丢弃本地数据，
+  // 而是在下方基于用户现有数据做增量补全与升级，避免用户自定义的卡片背景等配置在刷新后丢失。
+  if (!rawData || typeof rawData !== 'object' || Array.isArray(rawData)) {
     return JSON.parse(JSON.stringify(defaults)) as T;
   }
 
@@ -51,6 +48,11 @@ export function migrateData<T = Record<string, any>>(
     data.widgets = data.widgets.map((w: any) => {
       if (!w || typeof w !== 'object') return w;
       const widget = { ...w };
+
+      // 旧类型重命名：web-grid → web-app（网页应用）
+      if (widget.type === 'web-grid') {
+        widget.type = 'web-app';
+      }
 
       // 自动补齐缺少的 cardStyle
       widget.cardStyle = {

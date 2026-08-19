@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import {
   getAddableWidgetsByCategory,
   getWidgetConfig,
-  isWebGrid,
+  isWebApp,
   WIDGET_ICONS,
 } from '../data/widgetConfig';
 import type { WidgetCategory } from '../data/widgetConfig';
@@ -20,7 +20,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onAddWidget: (type: WidgetType) => void;
-  /** 网页分类中点击「添加」时回调：把站点做成桌面网页组件（web-grid） */
+  /** 网页分类中点击「添加」时回调：把站点做成桌面网页组件（web-app） */
   onAddSite: (item: SiteItem) => void;
   /** 网页分类中点击「删除」时回调：移除对应的桌面图标 */
   onRemoveSite: (item: SiteItem) => void;
@@ -99,9 +99,9 @@ export const AddWidgetModal: React.FC<Props> = ({
 
   const currentWidgets = getAddableWidgetsByCategory(activeCategory);
 
-  // 已添加到桌面的站点（web-grid 类型携带 site 数据），用于网页列表中标记「已新增」
+  // 已添加到桌面的站点（web-app 类型携带 site 数据），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
-    .filter((w) => isWebGrid(w.type) && w.data?.site)
+    .filter((w) => isWebApp(w.type) && w.data?.site)
     .map((w) => w.data.site as SiteItem);
 
   return createPortal(
