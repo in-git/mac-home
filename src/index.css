@@ -291,6 +291,7 @@ button{
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
+  --radius: 0.625rem;
 }
 
 /* ===== 卡片背景文本自适应 =====

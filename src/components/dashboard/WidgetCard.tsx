@@ -46,9 +46,6 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onUpdateWidget,
 }) => {
   const isWebAppType = isWebApp(widget.type);
-  // 字体颜色：组件实例级 data.color（任意合法 CSS 颜色，缺省 undefined 则沿用主题样式）。
-  // 注入到内容根节点，所有组件内容统一继承该字体颜色（与 clock-lunar 的局部逻辑一致，但在通用层统一生效）。
-  const contentColor = widget.data?.color;
   // 纯图标类型：固定像素正方形作用在「内层 content」上（外层已 w-fit 收缩），
   // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
   const isExpanded = widget.id === expandedWidgetId;
@@ -138,7 +135,6 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
               disabled) but the card is still draggable from this area
               because the event passes through to the .widget-card handle. */}
           <div
-            style={contentColor ? { color: contentColor } : undefined}
             className={`flex-1 ${isEditMode ? ' pointer-events-none' : ''}`}
           >
             {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand, onUpdateWidget })}

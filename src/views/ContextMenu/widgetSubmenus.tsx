@@ -31,17 +31,5 @@ export interface WidgetConfigSubmenuProps {
 export const WIDGET_CONFIG_SUBMENUS: Partial<
   Record<WidgetItem['type'], React.FC<WidgetConfigSubmenuProps>>
 > = {
-  // 字体颜色（color）为所有组件通用的个性化配置（字号/加粗对时钟类组件效果更明显）。
-  'sticky-notes': ClockFontSubmenu,
-  weather: ClockFontSubmenu,
-  search: ClockFontSubmenu,
-  clock: ClockFontSubmenu,
-  'clock-mini': ClockFontSubmenu,
   'clock-lunar': ClockFontSubmenu,
-  shortcuts: ClockFontSubmenu,
-  'control-center': ClockFontSubmenu,
-  'web-app': ClockFontSubmenu,
-  'member-count': ClockFontSubmenu,
-  // 「空白占位」组件保留独立的宽高比子菜单
-  blank: AspectSubmenu,
 };
