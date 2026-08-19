@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { runRequestAction, useSiteList } from '../../../agent/request';
 import { Button } from '../../../components/Button/Button';
 import { SiteCard } from './SiteCard';
-import { FilterBar } from './FilterBar';
+import { FilterBar, CHILD_ALL } from './FilterBar';
 import {
   flattenCategories,
   getChildCategories,
@@ -31,6 +31,11 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
 
   // 选择分类：父级或子级均会同步 activeParent，保证第二排始终对应其所属父级
   const handleSelectCategory = (id: string) => {
+    // 子级「全部」标记：表示为当前父级下、但不限定具体子类（仍是选中态，第二排保留）
+    if (id === CHILD_ALL) {
+      setSelectedCat('');
+      return;
+    }
     setSelectedCat(id);
     if (!id) {
       setActiveParent('');
@@ -112,6 +117,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         childCategories={getChildCategories(categories, activeParent)}
         categoryLoading={categoryLoading}
         selectedCat={selectedCat}
+        activeParent={activeParent}
         searchKeyword={searchKeyword}
         loading={loading}
         onSearchChange={setSearchKeyword}

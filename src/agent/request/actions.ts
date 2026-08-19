@@ -78,7 +78,7 @@ export const requestActions: RequestAction[] = [
       },
       sortOrder: {
         type: 'string',
-        description: '排序方向（如 ascend / descend）',
+        description: '排序方向，仅支持大写 ASCEND（升序）/ DESCEND（降序），需与 sortField 同时非空才生效',
         required: false,
       },
     },

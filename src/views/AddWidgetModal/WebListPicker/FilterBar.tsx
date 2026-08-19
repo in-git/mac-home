@@ -4,6 +4,9 @@ import { Skeleton } from '@heroui/react';
 import { Button } from '../../../components/Button/Button';
 import { SiteCategory } from '../../../api/site';
 
+/** 子级「全部」的标记值，与父级「全部」('') 区分，避免两者高亮态互相干扰 */
+export const CHILD_ALL = '__child_all__';
+
 interface FilterBarProps {
   /** 父级（顶层）分类列表，用于第一排 */
   parentCategories: SiteCategory[];
@@ -11,6 +14,8 @@ interface FilterBarProps {
   childCategories: SiteCategory[];
   categoryLoading: boolean;
   selectedCat: string;
+  /** 当前选中的父级；非空表示用户已选定某个父级（用于区分父级「全部」与子级「全部」） */
+  activeParent: string;
   searchKeyword: string;
   loading: boolean;
   onSearchChange: (kw: string) => void;
@@ -50,6 +55,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   childCategories,
   categoryLoading,
   selectedCat,
+  activeParent,
   searchKeyword,
   loading,
   onSearchChange,
@@ -95,7 +101,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       <FilterRow label="分类" loading={categoryLoading}>
         <button
           onClick={() => onSelectCategory('')}
-          className={chipClass(selectedCat === '')}
+          className={chipClass(selectedCat === '' && activeParent === '')}
         >
           全部
         </button>
@@ -113,6 +119,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {/* 第二排：子级分类（仅当前父级存在子级时显示，不会出现第三排） */}
       {!categoryLoading && childCategories.length > 0 && (
         <FilterRow label="子类" loading={false}>
+          <button
+            onClick={() => onSelectCategory(CHILD_ALL)}
+            className={chipClass(selectedCat === '' && activeParent !== '')}
+          >
+            全部
+          </button>
           {childCategories.map((c) => (
             <button
               key={c.id}

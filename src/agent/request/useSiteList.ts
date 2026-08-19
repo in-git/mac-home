@@ -13,6 +13,10 @@ export interface UseSiteListOptions {
   defaultKw?: string;
   /** 是否进入页面时自动加载，默认 true */
   autoFetch?: boolean;
+  /** 排序字段，如 'createTime' */
+  defaultSortField?: string;
+  /** 排序方向，'ascend' | 'descend' */
+  defaultSortOrder?: string;
 }
 
 export function useSiteList(options: UseSiteListOptions = {}) {
@@ -22,6 +26,8 @@ export function useSiteList(options: UseSiteListOptions = {}) {
     defaultCat = '',
     defaultKw = '',
     autoFetch = true,
+    defaultSortField = 'createTime',
+    defaultSortOrder = 'ASCEND',
   } = options;
 
   const [items, setItems] = useState<SiteItem[]>([]);
@@ -41,7 +47,14 @@ export function useSiteList(options: UseSiteListOptions = {}) {
 
   // 首屏/筛选加载：依赖只保留常量，引用保持稳定，避免调用方 effect 因 page 变化反复触发
   const fetchSites = useCallback(
-    async (p = pageRef.current, cat = defaultCat, kw = defaultKw, size = defaultSize) => {
+    async (
+      p = pageRef.current,
+      cat = defaultCat,
+      kw = defaultKw,
+      size = defaultSize,
+      sortField = defaultSortField,
+      sortOrder = defaultSortOrder,
+    ) => {
       setLoading(true);
       setError(null);
       pageRef.current = p;
@@ -52,6 +65,8 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       };
       if (cat) args.categoryId = cat;
       if (kw) args.searchKey = kw;
+      if (sortField) args.sortField = sortField;
+      if (sortOrder) args.sortOrder = sortOrder;
 
       try {
         const res = await runRequestAction('site_get_page', args);
@@ -79,12 +94,18 @@ export function useSiteList(options: UseSiteListOptions = {}) {
         setLoading(false);
       }
     },
-    [defaultCat, defaultKw, defaultSize],
+    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder],
   );
 
   // 触底加载：拉取下一页并**追加**到已有列表（不清空），带并发防重入
   const loadMore = useCallback(
-    async (cat = defaultCat, kw = defaultKw, size = defaultSize) => {
+    async (
+      cat = defaultCat,
+      kw = defaultKw,
+      size = defaultSize,
+      sortField = defaultSortField,
+      sortOrder = defaultSortOrder,
+    ) => {
       if (loadingRef.current) return; // 上一次尚未完成，避免重复加载
       const next = pageRef.current + 1;
       if (next > totalPagesRef.current) return;
@@ -98,6 +119,8 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       };
       if (cat) args.categoryId = cat;
       if (kw) args.searchKey = kw;
+      if (sortField) args.sortField = sortField;
+      if (sortOrder) args.sortOrder = sortOrder;
 
       try {
         const res = await runRequestAction('site_get_page', args);
@@ -127,7 +150,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
         loadingRef.current = false;
       }
     },
-    [defaultCat, defaultKw, defaultSize],
+    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder],
   );
 
   const hasMore = page < totalPages;
