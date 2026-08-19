@@ -45,7 +45,7 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
   padding: 'p-2',
   glass: true,
   'backgroundTheme': undefined,
-  background: 'transparent'
+  background: undefined
 };
 
 

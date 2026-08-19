@@ -1,7 +1,7 @@
 import { Check, ChevronLeft, ChevronRight, Loader2, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../components/Button';
-import { wallpaperApi, WallpaperCategory, WallpaperItem } from '../../api/wallpaper';
+import { Button } from '../../../components/Button';
+import { wallpaperApi, WallpaperCategory, WallpaperItem } from '../../../api/wallpaper';
 import { ImageWallpaperCard, type ImageWallpaperItem } from './ImageWallpaperCard';
 
 interface OnlineWallpaperListProps {

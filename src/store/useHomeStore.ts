@@ -207,8 +207,8 @@ export const useHomeStore = create<HomeState>()(
                 ...w,
                 cardStyle: {
                   ...w.cardStyle,
-                  background: background ?? undefined,
-                  backgroundTheme: backgroundTheme,
+                  background,
+                  backgroundTheme,
                 },
               }
               : w,
@@ -295,9 +295,15 @@ export const useHomeStore = create<HomeState>()(
       }),
       // hydration 后用 ensureGrid 补齐旧数据中缺失的 grid 坐标，
       // 保证 grid 必选契约在任意持久化数据下都成立。
+      // 注意：zustand persist 写入的结构是 { state: {...}, version }，
+      // 需要先解包出真正的 state 再交给 migrateData，否则 migrateData
+      // 会把 data.json 默认值（widgets 等）整体覆盖回本地数据，导致
+      // 卡片背景等自定义配置丢失。
       merge: (persisted, current) => {
-        const migrated = migrateData<Partial<HomeState>>(persisted, current.version);
-        return { ...current, ...migrated, version: current.version };
+        const persistedAny = persisted as Record<string, any>;
+        const realPersisted = persistedAny?.state ?? persistedAny;
+        const migrated = migrateData<Partial<HomeState>>(realPersisted);
+        return { ...current, ...migrated };
       },
     },
   ),

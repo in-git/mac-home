@@ -1,8 +1,8 @@
 import React from 'react';
 import GridLayout, { WidthProvider, type Layout } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
-import { useHomeStore } from '../store/useHomeStore';
-import { WidgetCard } from '../components/dashboard/WidgetCard';
+import { useHomeStore } from '../../store/useHomeStore';
+import { WidgetCard } from '../../components/dashboard/WidgetCard';
 
 const GridLayoutWithWidth = WidthProvider(GridLayout);
 

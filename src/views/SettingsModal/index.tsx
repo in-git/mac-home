@@ -2,8 +2,8 @@ import { Bot, Palette, Settings as SettingsIcon, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 
-import { SettingsWidget } from '../widgets/SettingsWidget';
-import type { SettingsTab } from '../widgets/SettingsWidget/types';
+import { SettingsWidget } from '../../widgets/SettingsWidget';
+import type { SettingsTab } from '../../widgets/SettingsWidget/types';
 
 interface Props {
   isOpen: boolean;

@@ -10,11 +10,11 @@ import {
   getWidgetConfig,
   isWebApp,
   WIDGET_ICONS,
-} from '../data/widgetConfig';
-import type { WidgetCategory } from '../data/widgetConfig';
-import type { SiteItem } from '../api/site';
-import { WebListPicker } from './WebListPicker';
-import { WidgetItem, WidgetType } from '../types';
+} from '../../data/widgetConfig';
+import type { WidgetCategory } from '../../data/widgetConfig';
+import type { SiteItem } from '../../api/site';
+import { WebListPicker } from '../WebListPicker';
+import { WidgetItem, WidgetType } from '../../types';
 
 interface Props {
   isOpen: boolean;

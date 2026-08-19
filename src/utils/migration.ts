@@ -15,7 +15,6 @@ export const CURRENT_DATA_VERSION = 1.2;
  */
 export function migrateData<T = Record<string, any>>(
   rawData: unknown,
-  currentVersion: number = CURRENT_DATA_VERSION,
 ): T {
   const defaults = dataJson as Record<string, any>;
 
@@ -54,11 +53,10 @@ export function migrateData<T = Record<string, any>>(
         widget.type = 'web-app';
       }
 
-      // 自动补齐缺少的 cardStyle
-      widget.cardStyle = {
-        ...DEFAULT_CARD_STYLE,
-        ...(widget.cardStyle || {}),
-      };
+      // 自动补齐缺少的 cardStyle（仅在 cardStyle 不存在时补全默认值）
+      if (!widget.cardStyle) {
+        widget.cardStyle = { ...DEFAULT_CARD_STYLE };
+      }
 
       // 自动补齐缺少的 data 字段
       if (!widget.data || typeof widget.data !== 'object') {

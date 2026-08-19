@@ -1,4 +1,4 @@
-import type { WallpaperConfig } from '../../types';
+import type { WallpaperConfig } from '../../../types';
 import { OnlineWallpaperList } from './OnlineWallpaperList';
 import type { ImageWallpaperItem } from './ImageWallpaperCard';
 

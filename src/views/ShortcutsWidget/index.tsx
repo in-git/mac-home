@@ -1,10 +1,10 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Modal } from '../components/Modal';
-import { WebListPicker } from './WebListPicker';
-import { siteApi, SiteItem } from '../api/site';
-import { playSound } from '../utils/sound';
-import { ShortcutsWidgetCard } from './Shortcuts';
+import { Modal } from '../../components/Modal';
+import { WebListPicker } from '../WebListPicker';
+import { siteApi, SiteItem } from '../../api/site';
+import { playSound } from '../../utils/sound';
+import { ShortcutsWidgetCard } from '../Shortcuts';
 
 interface ShortcutsWidgetProps {
   expanded?: boolean;
@@ -14,8 +14,6 @@ interface ShortcutsWidgetProps {
   /** 写回数据空间的回调（通常经 store 持久化到 localStorage） */
   onUpdateShortcuts?: (list: SiteItem[]) => void;
 }
-
-
 
 export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
@@ -81,8 +79,6 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     const key = item.id || item.link;
     commitShortcuts((prev) => prev.filter((s) => (s.id || s.link) !== key));
   };
-
-
 
   return (
     <>

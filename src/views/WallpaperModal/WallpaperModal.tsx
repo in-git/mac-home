@@ -10,8 +10,8 @@ import type { WallpaperConfig } from '../../types';
 import { Button } from '../../components/Button';
 import { DynamicWallpaperSection } from './DynamicWallpaperSection';
 import { Modal } from '../../components/Modal';
-import { StaticWallpaperSection } from '../StaticWallpaper';
-import { GradientWallpaperGrid } from '../StaticWallpaper/GradientWallpaperGrid';
+import { StaticWallpaperSection } from './static';
+import { GradientWallpaperGrid } from './static/GradientWallpaperGrid';
 import { ThemeCarouselPicker } from './ThemeCarouselPicker';
 
 interface WallpaperModalProps {
