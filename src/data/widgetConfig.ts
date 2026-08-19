@@ -42,7 +42,7 @@ export function getWidgetCategory(type: WidgetType): WidgetCategory {
 
 /** 全局默认卡片样式（放大模态框等未单独配置时回退到此）。 */
 export const DEFAULT_CARD_STYLE: CardStyle = {
-  padding: 'p-2',
+  padding: 'p-4',
   glass: true,
   'backgroundTheme': undefined,
   background: undefined
@@ -58,7 +58,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     title: '网络搜索',
     maxInstances: 1,
     isAddable: true,
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
     grid: {
       x: 0,
       y: 0,
@@ -72,7 +74,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     title: '天气预报',
     maxInstances: 1,
     isAddable: true,
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
     grid: {
       x: 0,
       y: 0,
@@ -86,7 +90,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     title: '便签笔记',
     maxInstances: 1,
     isAddable: true,
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
     grid: {
       x: 0,
       y: 0,
@@ -100,7 +106,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     title: '时钟日历',
     maxInstances: 1,
     isAddable: true,
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
     grid: {
       x: 0,
       y: 0,
@@ -114,7 +122,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     title: '时钟',
     maxInstances: 1,
     isAddable: true,
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
     grid: {
       x: 0,
       y: 0,
@@ -137,7 +147,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     data: {
       color: 'var(--accent)',
       size: '3.5rem',
-      bold: true,
     },
     cardStyle: {
       background: 'transparent'
@@ -149,7 +158,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     title: '控制中心',
     maxInstances: 1,
     isAddable: true,
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
     cardStyle: {
       ...DEFAULT_CARD_STYLE,
     },
@@ -175,7 +186,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       w: 2,
       h: 5,
     },
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
   },
   {
     id: 'cfg-shortcuts',
@@ -214,7 +227,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       w: 6,
       h: 15,
     },
-    data: {},
+    data: {
+      color: 'var(--accent)',
+    },
   },
 ];
 

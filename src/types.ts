@@ -110,13 +110,10 @@ export interface WidgetItem {
     shortcuts?: SiteItem[];
     /** 图标型组件（web-app）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
     site?: SiteItem;
-    /** 时钟字体自定义（当前用于 clock-lunar 等时钟类组件）。 */
-    /** 文本颜色，任意合法 CSS 颜色值，如 '#ff0000'、'rgb(0,0,0)'、'var(--accent)'。缺省则沿用主题样式。 */
+    /** 字体颜色，任意合法 CSS 颜色值，如 '#ff0000'、'rgb(0,0,0)'、'var(--accent)'。所有组件通用，缺省则沿用主题样式。 */
     color?: string;
-    /** 数字时间字号，任意合法 CSS 长度值，如 '2rem'、'28px'。缺省则沿用主题样式。 */
+    /** 数字时间字号（仅农历时钟 clock-lunar 使用），任意合法 CSS 长度值，如 '2rem'、'28px'。缺省则沿用主题样式。 */
     size?: string;
-    /** 是否加粗（仅作用于数字时间），默认 true。 */
-    bold?: boolean;
     /** 空白占位组件私有属性 */
     aspect?: string;
   }

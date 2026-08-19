@@ -34,12 +34,12 @@ export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
 
   const lunarText = getLunarDateText(time);
 
-  // 农历时钟字体自定义：color 作用于顶部时间与下方文字，size 作用于顶部数字时间字号，bold 仅作用于数字时间。
-  const { color, size, bold } = widget?.data ?? {};
+  // 农历时钟字体自定义：color 作用于顶部时间与下方文字，size 作用于顶部数字时间字号。
+  const { color, size } = widget?.data ?? {};
   const timeStyle: React.CSSProperties = {
     color,
     fontSize: size,
-    fontWeight: bold ?? true ? 800 : 400,
+    fontWeight: 800,
   };
   const textColorStyle = color ? { color } : undefined;
 

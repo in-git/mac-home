@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSiteList } from '../../agent/request';
 import type { SiteItem } from '../../api/site';
@@ -54,6 +54,16 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
     autoFetch: true,
   });
 
+  // 用 ref 保存最新的 items 和 total，避免闭包问题
+  const itemsRef = useRef<SiteItem[]>([]);
+  const totalRef = useRef(total);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+  useEffect(() => {
+    totalRef.current = total;
+  }, [total]);
+
   // 直接取第一个站点（每次只请求 1 个）
   const pickRandomSite = () => {
     if (items.length === 0) return null;
@@ -96,15 +106,30 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
       return;
     }
 
-    // 否则随机新站点：total 已由首次请求拿到，current 随机范围 [1, total]
+    // 否则随机新站点：需要重新获取最新的 total
     setIsRefreshing(true);
     const randomPage = total > 0 ? Math.floor(Math.random() * total) + 1 : 1;
     await fetchSites(randomPage, '', '', 1);
+
+    // 直接从 fetchSites 后的 items 中获取（fetchSites 已经是 async 等待完成的）
+    // 需要用 setTimeout 确保状态已更新
     setTimeout(() => {
-      const site = pickRandomSite();
-      if (site) addToHistory(site);
+      // 重新获取最新的 items 和 total
+      const currentItems = itemsRef.current;
+      if (currentItems.length > 0) {
+        const randomSite = currentItems[0];
+        addToHistory(randomSite);
+      } else {
+        // 如果 items 仍然为空，尝试再获取一次
+        fetchSites(Math.floor(Math.random() * (totalRef.current || 10)) + 1, '', '', 1).then(() => {
+          const retryItems = itemsRef.current;
+          if (retryItems.length > 0) {
+            addToHistory(retryItems[0]);
+          }
+        });
+      }
       setIsRefreshing(false);
-    }, 300);
+    }, 100);
   };
 
   // 展开态下锁定页面滚动
@@ -210,7 +235,7 @@ export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
               />
             )}
             <div>
-              <h3 className="text-2xl font-bold text-white drop-shadow-lg">
+              <h3 className="text-xl text-nowrap  truncate w-40 font-bold text-white drop-shadow-lg">
                 {randomSite.name}
               </h3>
                 {/* 描述 */}

@@ -234,23 +234,7 @@ button{
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Geist Variable', sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -270,8 +254,6 @@ button{
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
@@ -289,24 +271,8 @@ button{
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
@@ -324,23 +290,7 @@ button{
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
 }
 
 /* ===== 卡片背景文本自适应 =====
@@ -362,49 +312,6 @@ button{
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
-/* 覆盖卡片内常见文本色类（优先级高于 .dark 的 dark: 变体）。 */
-/* .widget-card.card-theme-light .text-slate-800,
-.widget-card.card-theme-light .text-slate-700,
-.widget-card.card-theme-light .,
-.widget-card.card-theme-light .text-slate-500,
-.widget-card.card-theme-light .text-slate-400,
-.widget-card.card-theme-light .text-slate-300,
-.widget-card.card-theme-light .text-slate-200,
-.widget-card.card-theme-light .text-slate-100,
-.widget-card.card-theme-light .text-slate-50,
-.widget-card.card-theme-light .text-black,
-.widget-card.card-theme-light .text-white,
-.widget-card.card-theme-light .text-gray-800,
-.widget-card.card-theme-light .text-gray-700,
-.widget-card.card-theme-light .text-gray-600,
-.widget-card.card-theme-light .text-gray-500,
-.widget-card.card-theme-light .text-gray-400,
-.widget-card.card-theme-light .text-gray-300,
-.widget-card.card-theme-light .text-gray-200,
-.widget-card.card-theme-light .text-apple-text {
-  color: var(--card-fg);
-} */
-
-.widget-card.card-theme-dark .text-slate-800,
-.widget-card.card-theme-dark .text-slate-700,
-.widget-card.card-theme-dark .text-slate-600,
-.widget-card.card-theme-dark .text-slate-500,
-.widget-card.card-theme-dark .text-slate-400,
-.widget-card.card-theme-dark .text-slate-200,
-.widget-card.card-theme-dark .text-slate-100,
-.widget-card.card-theme-dark .text-slate-50,
-.widget-card.card-theme-dark .text-black,
-.widget-card.card-theme-dark .text-white,
-.widget-card.card-theme-dark .text-gray-800,
-.widget-card.card-theme-dark .text-gray-700,
-.widget-card.card-theme-dark .text-gray-600,
-.widget-card.card-theme-dark .text-gray-500,
-.widget-card.card-theme-dark .text-gray-400,
-.widget-card.card-theme-dark .text-gray-300,
-.widget-card.card-theme-dark .text-gray-200,
-.widget-card.card-theme-dark .text-apple-text {
-  color: var(--card-fg) !important;
-}
 
 /* 半透明/次要文字（如 opacity、muted 变体）统一用 subtle 色，避免叠在背景上突兀。 */
 .widget-card.card-theme-light [class*='text-'][class*='/'],

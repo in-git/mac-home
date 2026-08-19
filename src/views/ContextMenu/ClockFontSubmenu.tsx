@@ -15,7 +15,8 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
   const currentData = targetWidget.data ?? {};
   const currentColor = currentData.color ?? '';
   const currentSize = currentData.size ?? '';
-  const currentBold = currentData.bold ?? true;
+  // 字号仅对农历时钟（clock-lunar）生效。
+  const isClockLunar = targetWidget.type === 'clock-lunar';
 
   const openSubmenu = () => {
     if (leaveTimer.current) {
@@ -32,7 +33,7 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
 
   // 合并写入 data 的局部字段（保留其它字段）。
   const applyFont = (
-    patch: { color?: string; size?: string; bold?: boolean },
+    patch: { color?: string; size?: string },
   ) => {
     onUpdateWidgetData(targetWidget.id, patch);
   };
@@ -94,64 +95,33 @@ export const ClockFontSubmenu: React.FC<WidgetConfigSubmenuProps> = ({
           </div>
        
 
-          {/* 字号 */}
-          <div className="px-1 mb-3 text-font-md   tracking-wide">
-            字号
-          </div>
-          <div className="mb-4 grid grid-cols-3 gap-2.5">
-            {CLOCK_FONT_SIZES.map((s) => (
-              <button
-                key={s.label}
-                onClick={() => {
-                  applyFont({ size: s.value });
-                  setOpen(false);
-                  onClose();
-                }}
-                className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
-                  currentSize === s.value
-                    ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
-                    : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* 是否加粗（作用于数字时间） */}
-          <div className="mt-4 px-1 mb-2 text-font-md   tracking-wide">
-            数字加粗
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              onClick={() => {
-                applyFont({ bold: true });
-                setOpen(false);
-                onClose();
-              }}
-              className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
-                currentBold
-                  ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
-                  : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
-              }`}
-            >
-              加粗
-            </button>
-            <button
-              onClick={() => {
-                applyFont({ bold: false });
-                setOpen(false);
-                onClose();
-              }}
-              className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
-                !currentBold
-                  ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
-                  : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
-              }`}
-            >
-              常规
-            </button>
-          </div>
+          {/* 字号（仅农历时钟生效） */}
+          {isClockLunar && (
+            <>
+              <div className="px-1 mb-3 text-font-md   tracking-wide">
+                字号
+              </div>
+              <div className="mb-4 grid grid-cols-3 gap-2.5">
+                {CLOCK_FONT_SIZES.map((s) => (
+                  <button
+                    key={s.label}
+                    onClick={() => {
+                      applyFont({ size: s.value });
+                      setOpen(false);
+                      onClose();
+                    }}
+                    className={`py-2 rounded-[var(--card-radius)] text-font-md  transition-colors border-2 ${
+                      currentSize === s.value
+                        ? 'border-[color:var(--accent)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]'
+                        : 'border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </SubmenuFlyout>
       )}
     </div>
