@@ -16,11 +16,6 @@ interface FilterBarProps {
   onSearchChange: (kw: string) => void;
   onSelectCategory: (id: string) => void;
   onRefresh: () => void;
-  /** 分页信息与翻页回调 */
-  page?: number;
-  totalPages?: number;
-  onPrevPage?: () => void;
-  onNextPage?: () => void;
 }
 
 const SKELETON_BTN = 'h-7 w-16 rounded-[var(--card-radius)]';
@@ -29,12 +24,10 @@ function FilterRow({
   label,
   loading,
   children,
-  extra,
 }: {
   label: string;
   loading: boolean;
   children: React.ReactNode;
-  extra?: React.ReactNode;
 }) {
   return (
     <div className="flex items-center justify-between gap-2 text-sm">
@@ -48,7 +41,6 @@ function FilterRow({
           children
         )}
       </div>
-      {extra && <div className="shrink-0 ml-auto">{extra}</div>}
     </div>
   );
 }
@@ -63,10 +55,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onSearchChange,
   onSelectCategory,
   onRefresh,
-  page = 1,
-  totalPages = 1,
-  onPrevPage,
-  onNextPage,
 }) => {
   const chipClass = (active: boolean) =>
     `rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
@@ -74,30 +62,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         ? 'bg-[color:var(--accent)]  text-white'
         : 'bg-black/5  hover:bg-black/10 dark:bg-white/10 '
     }`;
-
-  const paginationControl = totalPages > 1 && (
-    <div className="flex items-center gap-1.5 text-xs ">
-      <Button
-        size="sm"
-        variant="secondary"
-        disabled={page <= 1 || loading}
-        onClick={onPrevPage}
-      >
-        上一页
-      </Button>
-      <span className="px-1 text-xs">
-        {page}/{totalPages}
-      </span>
-      <Button
-        size="sm"
-        variant="secondary"
-        disabled={page >= totalPages || loading}
-        onClick={onNextPage}
-      >
-        下一页
-      </Button>
-    </div>
-  );
 
   return (
     <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-3">
@@ -127,8 +91,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </Button>
       </div>
 
-      {/* 第一排：父级分类（顶层）+ 右侧翻页控件 */}
-      <FilterRow label="分类" loading={categoryLoading} extra={paginationControl}>
+      {/* 第一排：父级分类（顶层） */}
+      <FilterRow label="分类" loading={categoryLoading}>
         <button
           onClick={() => onSelectCategory('')}
           className={chipClass(selectedCat === '')}

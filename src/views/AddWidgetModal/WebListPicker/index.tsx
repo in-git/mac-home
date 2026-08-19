@@ -1,7 +1,7 @@
 import { Globe } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
-import { Skeleton } from '@heroui/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { runRequestAction, useSiteList } from '../../../agent/request';
+import { Button } from '../../../components/Button/Button';
 import { SiteCard } from './SiteCard';
 import { FilterBar } from './FilterBar';
 import {
@@ -41,17 +41,16 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   // 搜索防抖后的值，用于实际拉取，避免每次按键都请求
   const [debouncedKw, setDebouncedKw] = useState<string>('');
-  // 动态列数与每页卡片数（列数 × 行数），使首屏恰好铺满容器
-  const [cols, setCols] = useState(5);
-  const [pageSize, setPageSize] = useState(0);
-  const gridRef = useRef<HTMLDivElement>(null);
+  // 固定每页卡片数（初始化加载条数）
+  const PAGE_SIZE = 20;
 
   const {
     items,
     loading,
-    page,
-    totalPages,
+    appendLoading,
+    hasMore,
     fetchSites,
+    loadMore,
   } = useSiteList({ autoFetch: false });
 
   // 首次挂载只加载分类元数据
@@ -71,43 +70,31 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     })();
   }, []);
 
-  // 根据容器尺寸动态计算列数与每页卡片数，并同步网格布局（ResizeObserver 适配窗口/弹窗尺寸变化）
+  // 分类 / 搜索变化时，回到第一页重新拉取
   useEffect(() => {
-    const el = gridRef.current;
-    if (!el) return;
-    const compute = () => {
-      const cs = getComputedStyle(el);
-      const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-      const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-      const availW = el.clientWidth - padX;
-      const availH = el.clientHeight - padY;
-      const gap = 16;
-      const minCard = 180;
-      const nextCols = Math.max(1, Math.floor((availW + gap) / (minCard + gap)));
-      const cardW = (availW - gap * (nextCols - 1)) / nextCols;
-      const cardH = (cardW * 9) / 16 + 64; // 封面 16:9 + 底部信息区
-      const rows = Math.max(1, Math.floor((availH + gap) / (cardH + gap)));
-      const nextSize = Math.min(60, nextCols * rows);
-      setCols(nextCols);
-      setPageSize((prev) => (prev === nextSize ? prev : nextSize));
-    };
-    compute();
-    const ro = new ResizeObserver(compute);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  // 分类 / 搜索 / 每页数量变化时，回到第一页重新拉取（动态分页铺满首屏）
-  useEffect(() => {
-    if (pageSize <= 0) return;
-    fetchSites(1, selectedCat, debouncedKw, pageSize);
-  }, [selectedCat, debouncedKw, pageSize]);
+    fetchSites(1, selectedCat, debouncedKw, PAGE_SIZE);
+  }, [selectedCat, debouncedKw, fetchSites]);
 
   // 搜索关键词 400ms 防抖
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedKw(searchKeyword), 400);
     return () => clearTimeout(timer);
   }, [searchKeyword]);
+
+  // 滚动触底自动加载下一页
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const handleScroll = useCallback(() => {
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const el = scrollRef.current;
+      if (!el || appendLoading || !hasMore) return;
+      if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
+        loadMore(selectedCat, debouncedKw, PAGE_SIZE);
+      }
+    });
+  }, [appendLoading, hasMore, loadMore, selectedCat, debouncedKw]);
 
   // 点击卡片打开站点：优先走调用方回调，缺省时新窗口打开
   const handleOpen = (item: Parameters<typeof SiteCard>[0]['item']) => {
@@ -117,23 +104,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       window.open(item.link, '_blank', 'noreferrer');
     }
   };
-
-  const renderSkeletonGrid = () => (
-    <div
-      className="grid gap-4"
-      style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-    >
-      {Array.from({ length: Math.max(cols * 2, 10) }).map((_, i) => (
-        <div key={i} className="space-y-2.5">
-          <Skeleton className="aspect-[4/3] w-full rounded-[var(--card-radius)]" />
-          <div className="space-y-1.5">
-            <Skeleton className="h-3.5 w-3/4 rounded" />
-            <Skeleton className="h-2.5 w-1/2 rounded" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 
   return (
     <div className="flex flex-col h-full">
@@ -146,42 +116,59 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         loading={loading}
         onSearchChange={setSearchKeyword}
         onSelectCategory={handleSelectCategory}
-        onRefresh={() => fetchSites(page, selectedCat, debouncedKw, pageSize)}
-        page={page}
-        totalPages={totalPages}
-        onPrevPage={() => fetchSites(page - 1, selectedCat, debouncedKw, pageSize)}
-        onNextPage={() => fetchSites(page + 1, selectedCat, debouncedKw, pageSize)}
+        onRefresh={() => fetchSites(1, selectedCat, debouncedKw, PAGE_SIZE)}
       />
 
       {/* Site Grid */}
-      <div ref={gridRef} className="flex-1 overflow-y-auto p-5">
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto p-5"
+      >
         {loading && items.length === 0 ? (
-          renderSkeletonGrid()
-        ) : items.length > 0 ? (
-          <div
-            className="grid gap-4"
-            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-          >
-            {items.map((item) => (
-              <SiteCard
-                key={item.id}
-                item={item}
-                onOpen={handleOpen}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                exists={selected.some(
-                  (s) =>
-                    (item.id && s.id === item.id) ||
-                    (item.link && s.link === item.link) ||
-                    (item.name && s.name === item.name),
-                )}
-              />
-            ))}
+          <div className="flex h-40 items-center justify-center min-h-[320px]">
+            <span className="text-xs text-slate-400">加载中…</span>
           </div>
+        ) : items.length > 0 ? (
+          <>
+            <div className="grid grid-cols-5 gap-4">
+              {items.map((item) => (
+                <SiteCard
+                  key={item.id}
+                  item={item}
+                  onOpen={handleOpen}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  exists={selected.some(
+                    (s) =>
+                      (item.id && s.id === item.id) ||
+                      (item.link && s.link === item.link) ||
+                      (item.name && s.name === item.name),
+                  )}
+                />
+              ))}
+            </div>
+            {/* 底部：有数据显示「加载更多」按钮，无更多显示提示 */}
+            <div className="py-4 flex justify-center">
+              {appendLoading ? (
+                <span className="text-xs text-slate-400">加载中…</span>
+              ) : hasMore ? (
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={() => loadMore(selectedCat, debouncedKw, PAGE_SIZE)}
+                >
+                  加载更多
+                </Button>
+              ) : (
+                <span className="text-xs text-slate-400">没有更多了</span>
+              )}
+            </div>
+          </>
         ) : (
           <div className="flex h-40 flex-col items-center justify-center gap-2 min-h-[320px]">
             <Globe size={36} strokeWidth={1} />
-            <p className="text-base">暂无站点</p>
+            <p className="text-base">没有数据</p>
           </div>
         )}
       </div>

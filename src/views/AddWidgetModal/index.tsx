@@ -114,7 +114,7 @@ export const AddWidgetModal: React.FC<Props> = ({
           {/* 左侧栏 */}
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-52 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
             <div className="hidden sm:block px-2.5 pt-2 pb-3">
-              <h1 className="text-2xl font-semibold dark:text-white">
+              <h1 className="text-font-title dark:text-white">
                 {'添加组件'}
               </h1>
             </div>

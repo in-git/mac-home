@@ -34,6 +34,7 @@ button{
     --font-md: 14px;
     --font-lg: 16px;
     --font-xs: calc(var(--font-sm) - 2px);
+    --font-title: 22px;
 
     --card-radius: 24px;
   }
@@ -202,6 +203,11 @@ button{
   }
   .text-font-xs {
     font-size: var(--font-xs);
+    line-height: 1.3;
+  }
+  .text-font-title {
+    font-size: var(--font-title);
+    font-weight: 600;
     line-height: 1.3;
   }
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SiteItem } from '../../api/site';
 import { runRequestAction } from './index';
 
@@ -26,16 +26,25 @@ export function useSiteList(options: UseSiteListOptions = {}) {
 
   const [items, setItems] = useState<SiteItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [appendLoading, setAppendLoading] = useState(false);
   const [page, setPage] = useState(defaultPage);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  // 用 ref 保存最新分页信息，避免回调闭包滞后导致并发重复加载同一页
+  const pageRef = useRef(page);
+  const totalPagesRef = useRef(totalPages);
+  const loadingRef = useRef(false);
+  pageRef.current = page;
+  totalPagesRef.current = totalPages;
+
+  // 首屏/筛选加载：依赖只保留常量，引用保持稳定，避免调用方 effect 因 page 变化反复触发
   const fetchSites = useCallback(
-    async (p = page, cat = defaultCat, kw = defaultKw, size = defaultSize) => {
+    async (p = pageRef.current, cat = defaultCat, kw = defaultKw, size = defaultSize) => {
       setLoading(true);
       setError(null);
-      setItems([]);
+      pageRef.current = p;
 
       const args: Record<string, unknown> = {
         current: p,
@@ -56,7 +65,9 @@ export function useSiteList(options: UseSiteListOptions = {}) {
           if (Array.isArray(data.records)) {
             setItems(data.records);
             setPage(data.current ?? p);
+            pageRef.current = data.current ?? p;
             setTotalPages(data.pages ?? 1);
+            totalPagesRef.current = data.pages ?? 1;
             setTotal(data.total ?? 0);
           }
         } else {
@@ -68,8 +79,58 @@ export function useSiteList(options: UseSiteListOptions = {}) {
         setLoading(false);
       }
     },
-    [page, defaultCat, defaultKw, defaultSize],
+    [defaultCat, defaultKw, defaultSize],
   );
+
+  // 触底加载：拉取下一页并**追加**到已有列表（不清空），带并发防重入
+  const loadMore = useCallback(
+    async (cat = defaultCat, kw = defaultKw, size = defaultSize) => {
+      if (loadingRef.current) return; // 上一次尚未完成，避免重复加载
+      const next = pageRef.current + 1;
+      if (next > totalPagesRef.current) return;
+      loadingRef.current = true;
+      setAppendLoading(true);
+      setError(null);
+
+      const args: Record<string, unknown> = {
+        current: next,
+        size,
+      };
+      if (cat) args.categoryId = cat;
+      if (kw) args.searchKey = kw;
+
+      try {
+        const res = await runRequestAction('site_get_page', args);
+        if (res.ok && res.data) {
+          const data = res.data as {
+            records?: SiteItem[];
+            current?: number;
+            pages?: number;
+            total?: number;
+          };
+          if (Array.isArray(data.records)) {
+            // 追加而非替换
+            setItems((prev) => [...prev, ...data.records!]);
+            setPage(data.current ?? next);
+            pageRef.current = data.current ?? next;
+            setTotalPages(data.pages ?? 1);
+            totalPagesRef.current = data.pages ?? 1;
+            setTotal(data.total ?? 0);
+          }
+        } else {
+          setError(res.message || '获取站点列表失败');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setAppendLoading(false);
+        loadingRef.current = false;
+      }
+    },
+    [defaultCat, defaultKw, defaultSize],
+  );
+
+  const hasMore = page < totalPages;
 
   useEffect(() => {
     if (autoFetch) {
@@ -80,11 +141,14 @@ export function useSiteList(options: UseSiteListOptions = {}) {
   return {
     items,
     loading,
+    appendLoading,
+    hasMore,
     page,
     totalPages,
     total,
     error,
     fetchSites,
+    loadMore,
     setItems,
     setPage,
   };

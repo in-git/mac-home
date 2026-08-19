@@ -31,7 +31,7 @@ export const WebListWidget: React.FC<WebListWidgetProps> = ({ site }) => {
       try {
         const res = await siteApi.getPage({
           current: 1,
-          size: 30,
+          size: 20,
           sortField: 'orderNum',
           sortOrder: 'ASC',
         });

@@ -27,7 +27,7 @@ export const StaticWallpaperSection: React.FC<StaticWallpaperSectionProps> = ({
     wallpaper.type === 'static' ? wallpaper.id ?? '' : '';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-full">
       <OnlineWallpaperList selectedKey={selectedKey} onSelect={handleSelect} />
     </div>
   );
