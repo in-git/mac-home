@@ -4,7 +4,7 @@ import { Modal } from '../components/Modal';
 import { WebListPicker } from './WebListPicker';
 import { siteApi, SiteItem } from '../api/site';
 import { playSound } from '../utils/sound';
-import { ShortcutsWidgetCard } from '../widgets/Shortcuts';
+import { ShortcutsWidgetCard } from './Shortcuts';
 
 interface ShortcutsWidgetProps {
   expanded?: boolean;
@@ -19,7 +19,6 @@ interface ShortcutsWidgetProps {
 
 export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
   expanded = false,
-  onExpand,
   shortcuts: shortcutsProp,
   onUpdateShortcuts,
 }) => {
@@ -77,37 +76,18 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     playSound.playClick();
   };
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    commitShortcuts((prev) => prev.filter((s) => s.id !== id));
-  };
-
   // 网页列表中选择器的「删除」：从快捷导航中移除对应站点
   const handleRemoveFromPicker = (item: SiteItem) => {
     const key = item.id || item.link;
     commitShortcuts((prev) => prev.filter((s) => (s.id || s.link) !== key));
   };
 
-  // 点击卡片在外部打开，并本地递增访问次数（与「添加」逻辑互不冲突）
-  const handleOpen = (s: SiteItem) => {
-    playSound.playClick();
-    commitShortcuts((prev) =>
-      prev.map((item) =>
-        item.id === s.id ? { ...item, count: (item.count ?? 0) + 1 } : item,
-      ),
-    );
-  };
+
 
   return (
     <>
       <ShortcutsWidgetCard
         expanded={expanded}
-        onExpand={onExpand}
-        shortcuts={shortcuts}
-        onAddClick={() => setShowAdd(true)}
-        onDelete={handleDelete}
-        onOpen={handleOpen}
       />
 
       <Modal

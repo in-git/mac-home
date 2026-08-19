@@ -14,18 +14,7 @@ function getToolMap(): Record<string, AgentTool> {
 }
 
 export { AGENT_TOOLS } from './tools';
-export type {
-  AgentChatMessage,
-  AgentChatOptions,
-  AgentRole,
-  AgentTool,
-  AgentToolCallResult,
-  AgentToolInvocation,
-  AgentToolParam,
-  ModelTask,
-  ParsedModel,
-  ToolTask,
-} from './types';
+
 
 /** 供 AI 获取当前可用的功能清单（function-calling 用） */
 export function listAgentTools(): AgentTool[] {

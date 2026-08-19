@@ -1,0 +1,120 @@
+{
+  "skill": "site-request-actions",
+  "title": "站点数据接口请求",
+  "description": "封装站点模块（siteApi）支持的查询和数据获取行为。外部（如 AI Agent）通过调用对应工具获取站点分页、分类树、身份标签和详情信息。",
+  "prefix": "site_",
+  "actions": [
+    {
+      "name": "site_get_page",
+      "title": "分页查询站点列表",
+      "description": "分页获取站点列表数据，支持搜索词、分类ID、身份ID、推荐筛选、模块和排序条件等。",
+      "parameters": [
+        {
+          "name": "current",
+          "type": "number",
+          "description": "当前页码，从 1 开始，默认 1",
+          "required": false
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "description": "每页条数，默认 10 或 20",
+          "required": false
+        },
+        {
+          "name": "searchKey",
+          "type": "string",
+          "description": "搜索关键字",
+          "required": false
+        },
+        {
+          "name": "categoryId",
+          "type": "string",
+          "description": "分类 ID",
+          "required": false
+        },
+        {
+          "name": "identityId",
+          "type": "string",
+          "description": "身份 ID",
+          "required": false
+        },
+        {
+          "name": "keyword",
+          "type": "string",
+          "description": "关键词过滤",
+          "required": false
+        },
+        {
+          "name": "recommend",
+          "type": "boolean",
+          "description": "是否仅查询推荐站点",
+          "required": false
+        },
+        {
+          "name": "module",
+          "type": "string",
+          "description": "业务模块标识",
+          "required": false
+        },
+        {
+          "name": "sortField",
+          "type": "string",
+          "description": "排序字段",
+          "required": false
+        },
+        {
+          "name": "sortOrder",
+          "type": "string",
+          "description": "排序方向（如 ascend / descend）",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "site_get_category_tree",
+      "title": "获取站点分类树",
+      "description": "获取站点分类树状结构数据，支持按模块筛选。",
+      "parameters": [
+        {
+          "name": "module",
+          "type": "string",
+          "description": "可选的业务模块标识",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "site_get_identity_list",
+      "title": "获取站点身份列表",
+      "description": "获取站点支持的角色/身份标签列表。",
+      "parameters": []
+    },
+    {
+      "name": "site_get_identity_category_tree",
+      "title": "根据身份获取分类树",
+      "description": "根据指定的身份ID（identityId）获取对应的站点分类树结构。",
+      "parameters": [
+        {
+          "name": "identityId",
+          "type": "string",
+          "description": "身份 ID",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "site_get_detail",
+      "title": "获取站点详情",
+      "description": "根据站点ID获取站点的完整详情信息（如名称、描述、链接、分类等）。",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "站点 ID",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

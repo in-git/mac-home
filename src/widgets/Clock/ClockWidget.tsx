@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Clock } from 'lucide-react';
 
 // 精简版时钟小组件：模拟表盘 + 数字时间 + 日期。
 // 区别于 ClockCalendarWidget（时间 & 日历，含月历网格）。

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe } from 'lucide-react';
-import type { SiteItem } from '../api/site';
+import type { SiteItem } from '../../api/site';
 
 interface IconWidgetProps {
   editing?: boolean;
@@ -52,3 +52,5 @@ export function IconWidget({ site, iconSize }: IconWidgetProps) {
     </button>
   );
 }
+
+export default IconWidget;

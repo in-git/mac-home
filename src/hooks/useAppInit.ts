@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { initScheduler } from '../agent/scheduler';
 import { initGlobalSound } from '../utils/sound';
 
 interface UseAppInitParams {
@@ -13,7 +12,6 @@ interface UseAppInitParams {
  */
 export function useAppInit({ onOpenAddWidget }: UseAppInitParams) {
   useEffect(() => {
-    initScheduler();
     const disposeSound = initGlobalSound();
     return () => {
       disposeSound();

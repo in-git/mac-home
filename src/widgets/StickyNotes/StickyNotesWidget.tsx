@@ -10,7 +10,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import React, { useState } from 'react';
-import { NoteColor, StickyNote as StickyNoteType } from '../types';
+import { NoteColor, StickyNote as StickyNoteType } from '../../types';
 
 interface Props {
   notes: StickyNoteType[];
@@ -320,3 +320,5 @@ export const StickyNotesWidget: React.FC<Props> = ({
     </div>
   );
 };
+
+export default StickyNotesWidget;

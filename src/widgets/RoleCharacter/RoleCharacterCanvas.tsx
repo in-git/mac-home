@@ -1,11 +1,11 @@
 import { Application, Sprite } from 'pixi.js';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useHomeStore } from '../store/useHomeStore';
-import { loadRoleTextures } from './role/assets';
-import { RoleControls } from './role/controls';
-import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './role/physics';
-import { DialogState, RoleState, RoleTextures } from './role/types';
+import { useHomeStore } from '../../store/useHomeStore';
+import { loadRoleTextures } from '../role/assets';
+import { RoleControls } from '../role/controls';
+import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from '../role/physics';
+import { DialogState, RoleState, RoleTextures } from '../role/types';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -300,3 +300,5 @@ export const RoleCharacterCanvas: React.FC = () => {
     </div>
   );
 };
+
+export default RoleCharacterCanvas;

@@ -24,8 +24,6 @@ tags:
 | 底色 | 哑光磨砂：`bg-black/5 dark:bg-white/10`，hover `bg-black/10 dark:bg-white/15` |
 | 边框 | 不使用生硬实体描边；聚焦态采用柔光环 `ring-2 ring-[#007AFF]/50` |
 | 主色 | Apple蓝 `#007AFF`，hover加深 `bg-blue-600` |
-| 正文文字 | `text-slate-800 ` |
-| 辅助文字 | `text-slate-400/500` |
 | 文本动态规则 | 禁止硬编码十六进制色值；文本使用语义化Tailwind类；强调文本统一 `text-[color:var(--accent)]` |
 | 字号约束 | 使用语义阶梯 `text-xs`/`text-sm`；**禁止写死像素字号 text-[xxpx]** |
 | 动画约束 | 禁止全局`transition-all`；按钮 `active:scale-95`；弹窗入场 `animate-in fade-in slide-in-from-top-1` |

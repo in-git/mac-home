@@ -1,16 +1,16 @@
 import React from 'react';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WebListWidget } from '../../widgets/WebListWidget';
-import { ClockCalendarWidget } from '../../widgets/ClockCalendarWidget';
-import { ClockWidget } from '../../widgets/ClockWidget';
-import { ClockLunarWidget } from '../../widgets/ClockLunarWidget';
-import { ControlCenterWidget } from '../../widgets/ControlCenterWidget';
-import { IconWidget } from '../../widgets/IconWidget';
-import { SearchWidget } from '../../widgets/SearchWidget';
-import { StickyNotesWidget } from '../../widgets/StickyNotesWidget';
-import { WeatherWidget, WeatherSummary } from '../../widgets/WeatherWidget';
+import { ClockCalendarWidget } from '../../widgets/ClockCalendar/ClockCalendarWidget';
+import { ClockWidget } from '../../widgets/Clock/ClockWidget';
+import { ClockLunarWidget } from '../../widgets/ClockLunar/ClockLunarWidget';
+import { ControlCenterWidget } from '../../widgets/ControlCenter/ControlCenterWidget';
+import { IconWidget } from '../../widgets/Icon/IconWidget';
+import { SearchWidget } from '../../widgets/Search/SearchWidget';
+import { StickyNotesWidget } from '../../widgets/StickyNotes/StickyNotesWidget';
+import { WeatherWidget, WeatherSummary } from '../../widgets/Weather';
 import { ShortcutsWidget } from '@/views/ShortcutsWidget';
-import { MemberCountWidget } from '../../widgets/MemberCountWidget';
+import { MemberCountWidget } from '../../widgets/MemberCount/MemberCountWidget';
 
 interface RenderWidgetContentProps {
   widget: WidgetItem;

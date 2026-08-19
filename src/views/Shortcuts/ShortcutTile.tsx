@@ -1,7 +1,7 @@
 import {  X } from 'lucide-react';
 import React from 'react';
 import { SiteItem } from '../../api/site';
-import { IconWidget } from '../IconWidget';
+import { IconWidget } from '../../widgets/Icon/IconWidget';
 
 interface ShortcutTileProps {
   item: SiteItem;

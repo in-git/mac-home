@@ -1,9 +1,9 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
-import { useHomeStore } from '../store/useHomeStore';
-import { CARD_RADIUS, CardRadiusTier } from '../types';
+import { useHomeStore } from '../../store/useHomeStore';
+import { CARD_RADIUS, CardRadiusTier } from '../../types';
 
-import { reverseGeocodeCityName } from '../utils/weatherApi';
+import { reverseGeocodeCityName } from '../../utils/weatherApi';
 
 interface Props {
   isDarkMode: boolean;
@@ -221,3 +221,5 @@ export const ControlCenterWidget: React.FC<Props> = ({
     </div>
   );
 };
+
+export default ControlCenterWidget;

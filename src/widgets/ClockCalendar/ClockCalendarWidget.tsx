@@ -82,3 +82,5 @@ export const ClockCalendarWidget: React.FC = () => {
     </div>
   );
 };
+
+export default ClockCalendarWidget;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PRESET_DATA } from '../../data/presetData';
-import type { WeatherCondition, WeatherCity } from '../../utils/weatherApi';
+import type {  WeatherCity } from '../../utils/weatherApi';
 import {
   cityIdOf,
   fetchWeather,
@@ -9,6 +9,7 @@ import {
 } from '../../utils/weatherApi';
 import { useHomeStore } from '../../store/useHomeStore';
 import type { WeatherSummary } from './types';
+import { WeatherCondition } from '@/types';
 
 /** 首次加载自动定位标记（只自动尝试一次，避免每次刷新都弹授权） */
 const LOCATION_TRIED_KEY = 'weather-location-tried';
@@ -80,7 +81,12 @@ export function useWeatherData(onWeatherChange?: (s: WeatherSummary) => void) {
         setSearching(true);
         try {
           const results = await searchCity(searchQuery.trim());
-          setSearchResults(results);
+          setSearchResults(
+            results.map((r) => ({
+              ...r,
+              id: String(r.id),
+            }))
+          );
         } catch {
           setSearchResults([]);
         } finally {
@@ -179,7 +185,10 @@ export function useWeatherData(onWeatherChange?: (s: WeatherSummary) => void) {
         // 优先用正向地理编码规范化为标准城市坐标
         const results = await searchCity(cityName);
         if (results.length > 0) {
-          addCity(results[0]);
+          addCity({
+            ...results[0],
+            id: String(results[0].id),
+          });
           return;
         }
       }

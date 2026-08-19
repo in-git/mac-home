@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { getWidgetConfig, DEFAULT_CARD_STYLE } from '../../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
-import { WeatherSummary } from '../../widgets/WeatherWidget';
+import { WeatherSummary } from '../../widgets/Weather';
 import { renderWidgetContent } from './widgetContent';
 import { isWebGrid } from '../../data/widgetConfig';
 

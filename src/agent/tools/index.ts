@@ -1,4 +1,5 @@
 import { petTools } from '../pet';
+import { requestTools } from '../request';
 import type { AgentTool } from '../types';
 
 /**
@@ -7,6 +8,7 @@ import type { AgentTool } from '../types';
  */
 export const AGENT_TOOLS: AgentTool[] = [
   ...petTools,
+  ...requestTools,
 ];
 
 export { generalChatTool } from './generalChat';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Calendar, TrendingUp, Clock, Radio, Users } from 'lucide-react';
-import { onlineCountClient } from '../api/websocket';
-import { visitorApi, type VisitorOverview } from '../api/visitor';
+import { onlineCountClient } from '../../api/websocket';
+import { visitorApi, type VisitorOverview } from '../../api/visitor';
 
 interface MemberCountWidgetProps {
   editing?: boolean;

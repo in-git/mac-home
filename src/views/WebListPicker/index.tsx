@@ -1,7 +1,7 @@
 import { Globe } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Skeleton } from '@heroui/react';
-import { siteApi } from '../../api/site';
+import { runRequestAction, useSiteList } from '../../agent/request';
 import { SiteCard } from './SiteCard';
 import { FilterBar } from './FilterBar';
 import {
@@ -39,46 +39,29 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     }
   };
   const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [items, setItems] = useState<
-    Awaited<ReturnType<typeof siteApi.getPage>>['records']
-  >([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const {
+    items,
+    loading,
+    page,
+    totalPages,
+    fetchSites,
+  } = useSiteList({
+    defaultPage: 1,
+    defaultSize: 12,
+    defaultCat: selectedCat,
+    defaultKw: searchKeyword,
+    autoFetch: true,
+  });
 
-  const fetchSites = useCallback(
-    async (p = 1, cat = selectedCat, kw = searchKeyword) => {
-      setLoading(true);
-      setItems([]);
-      const params: Record<string, unknown> = { current: p, size: 12 };
-      if (cat) params.categoryId = cat;
-      if (kw) params.searchKey = kw;
-      try {
-        const res = await siteApi.getPage(
-          params as Parameters<typeof siteApi.getPage>[0],
-        );
-        if (res && Array.isArray(res.records)) {
-          setItems(res.records);
-          setPage(res.current ?? p);
-          setTotalPages(res.pages ?? 1);
-        }
-      } catch {
-        /* noop */
-      } finally {
-        setLoading(false);
-      }
-    },
-    [selectedCat, searchKeyword],
-  );
-
-  // 首次挂载只加载分类元数据；站点拉取交给下方分类 effect（首次也会执行，cat='' 即全部）
+  // 首次挂载只加载分类元数据
   useEffect(() => {
     (async () => {
       setCategoryLoading(true);
       try {
-        const categoryRes = await siteApi.getCategoryTree();
-        if (Array.isArray(categoryRes))
-          setCategories(flattenCategories(categoryRes));
+        const categoryRes = await runRequestAction('site_get_category_tree');
+        if (categoryRes.ok && Array.isArray(categoryRes.data)) {
+          setCategories(flattenCategories(categoryRes.data));
+        }
       } catch {
         /* noop */
       } finally {
@@ -129,7 +112,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   );
 
   return (
-    <div className="flex flex-col h-full max-h-[75vh]">
+    <div className="flex flex-col h-full">
       <FilterBar
         parentCategories={categories}
         childCategories={getChildCategories(categories, activeParent)}
