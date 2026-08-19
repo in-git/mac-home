@@ -179,6 +179,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     isAddable: false,
     cardStyle: {
       glass: false,
+      padding: 'p-0'
     },
     grid: {
       x: 0,
@@ -197,7 +198,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     maxInstances: 1,
     isAddable: true,
     cardStyle: {
-      padding: 'p-4',
+      padding: 'p-0',
       background: 'transparent',
       backgroundTheme: 'dark'
     },

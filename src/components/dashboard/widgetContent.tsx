@@ -5,7 +5,7 @@ import { ClockCalendarWidget } from '../../widgets/ClockCalendar/ClockCalendarWi
 import { ClockWidget } from '../../widgets/Clock/ClockWidget';
 import { ClockLunarWidget } from '../../widgets/ClockLunar/ClockLunarWidget';
 import { ControlCenterWidget } from '../../widgets/ControlCenter/ControlCenterWidget';
-import { IconWidget } from '../../widgets/Icon/IconWidget';
+import { WebApp } from '../../widgets/WebApp/WebApp';
 import { SearchWidget } from '../../widgets/Search/SearchWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotes/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../../widgets/Weather';
@@ -36,6 +36,7 @@ export const renderWidgetContent = ({
   onWeatherChange,
   onExpand,
   inModal = false,
+  isEditMode = false,
   onUpdateWidget,
 }: RenderWidgetContentProps): React.ReactNode => {
   switch (widget.type) {
@@ -81,7 +82,7 @@ export const renderWidgetContent = ({
       return (
         <div data-icon-grid className="h-full w-full flex items-center justify-center">
           <div className="w-full aspect-square flex items-center justify-center">
-            <IconWidget site={widget.data.site} hideLabel={isSquare} />
+            <WebApp site={widget.data.site} hideLabel={isSquare} editing={isEditMode} />
           </div>
         </div>
       );

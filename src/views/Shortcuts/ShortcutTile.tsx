@@ -1,7 +1,7 @@
 import {  X } from 'lucide-react';
 import React from 'react';
 import { SiteItem } from '../../api/site';
-import { IconWidget } from '../../widgets/Icon/IconWidget';
+import { WebApp } from '../../widgets/WebApp/WebApp';
 
 interface ShortcutTileProps {
   item: SiteItem;
@@ -11,13 +11,13 @@ interface ShortcutTileProps {
 }
 
 /**
- * 单个快捷方式磁贴：复用 IconWidget 渲染图标与标题，叠加删除按钮。
+ * 单个快捷方式磁贴：复用 WebApp 渲染图标与标题，叠加删除按钮。
  */
 export const ShortcutTile: React.FC<ShortcutTileProps> = ({ item, onDelete, iconSize = 64 }) => {
   const itemId = item.id || item.link;
   return (
     <div className="group/shortcut relative h-full w-full flex flex-col items-center">
-      <IconWidget site={item} iconSize={iconSize} />
+      <WebApp site={item} iconSize={iconSize} />
       <button
         onClick={(e) => onDelete(itemId, e)}
         title="删除快捷方式"

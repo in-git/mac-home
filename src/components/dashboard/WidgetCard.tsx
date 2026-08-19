@@ -49,10 +49,8 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   // 纯图标类型：固定像素正方形作用在「内层 content」上（外层已 w-fit 收缩），
   // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
   const isExpanded = widget.id === expandedWidgetId;
-  // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认；web-app 纯图标类型强制无内边距）
-  const widgetPadding = isWebAppType
-    ? 'p-0'
-    : (getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding);
+  // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认）
+  const widgetPadding = getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding;
 
   // 卡片外观配置（毛玻璃），回退到默认
   const cardStyleCfg = getWidgetConfig(widget.type).cardStyle ?? DEFAULT_CARD_STYLE;
@@ -123,7 +121,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
           }}
           className={`widget-card ${isWebAppType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
-          }${isEditMode ? ' edit-wiggle border border-dashed border-[color:var(--accent)]/80' : ''}`}
+          }${isEditMode ? ' edit-wiggle' : ''}`}
           onPointerDown={handlePointerDown}
           onPointerUp={cancelLongPress}
           onPointerLeave={cancelLongPress}

@@ -297,7 +297,19 @@ button{
 /* ===== 卡片背景文本自适应 =====
    当卡片使用自定义背景（亮色/暗色）时，卡片内文本颜色跟随背景明暗，
    而非系统主题。通过 .card-theme-light / .card-theme-dark 作用域覆盖
-   常用 Tailwind 文本类，与 .dark 系统主题完全解耦。 */
+   常用 Tailwind 文本类，与 .dark 系统主题完全解耦。
+   基础 .widget-card 提供默认 --card-fg（跟随系统明暗），card-theme-* 覆盖它。 */
+.widget-card {
+  --card-fg: #1d1d1f;
+  --card-fg-muted: #515154;
+  --card-fg-subtle: #86868b;
+}
+
+.dark .widget-card {
+  --card-fg: #f5f5f7;
+  --card-fg-muted: #d1d1d6;
+  --card-fg-subtle: #a1a1a6;
+}
 
 .widget-card.card-theme-light {
   --card-fg: #1d1d1f;
