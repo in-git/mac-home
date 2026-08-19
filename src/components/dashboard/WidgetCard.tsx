@@ -24,7 +24,7 @@ interface WidgetCardProps {
   onContextMenuWidget?: (e: React.MouseEvent, widgetId: string) => void;
   /** 长按卡片进入编辑布局（与右键「布局」一致）；编辑模式下不触发 */
   onLongPressEdit?: () => void;
-  /** 更新任意 widget 实例字段（如快捷导航的 shortcuts 数据空间）。 */
+  /** 更新任意 widget 实例字段（如随机网页的数据空间）。 */
   onUpdateWidget?: (id: string, patch: Partial<WidgetItem>) => void;
 }
 

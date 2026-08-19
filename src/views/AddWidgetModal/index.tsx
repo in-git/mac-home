@@ -13,7 +13,7 @@ import {
 } from '../../data/widgetConfig';
 import type { WidgetCategory } from '../../data/widgetConfig';
 import type { SiteItem } from '../../api/site';
-import { WebListPicker } from '../WebListPicker';
+import { WebListPicker } from './WebListPicker';
 import { WidgetItem, WidgetType } from '../../types';
 
 interface Props {
@@ -27,22 +27,11 @@ interface Props {
   widgets: WidgetItem[];
 }
 
-/** 界面文案集中配置（遵循 UI 规范：文本抽成变量，便于统一管理与复用） */
-const ADD_WIDGET_TEXT = {
-  title: '添加组件',
-  categorySystem: '系统组件',
-  categoryWeb: '网页',
-  close: '关闭',
-  added: '已添加',
-  addToDesktop: '添加到桌面',
-  removeFromDesktop: '从桌面移除',
-} as const;
-
 /** 侧边栏分类配置 */
 const CATEGORIES: { id: WidgetCategory; label: string; icon: React.ReactNode }[] = [
   {
     id: 'web',
-    label: ADD_WIDGET_TEXT.categoryWeb,
+    label: '网页',
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-emerald-400 to-teal-500 text-white">
         <Globe size={15} />
@@ -51,7 +40,7 @@ const CATEGORIES: { id: WidgetCategory; label: string; icon: React.ReactNode }[]
   },
   {
     id: 'system',
-    label: ADD_WIDGET_TEXT.categorySystem,
+    label: '系统组件',
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-sky-400 to-indigo-500 text-white">
         <Settings size={15} />
@@ -125,8 +114,8 @@ export const AddWidgetModal: React.FC<Props> = ({
           {/* 左侧栏 */}
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-52 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
             <div className="hidden sm:block px-2.5 pt-2 pb-3">
-              <h1 className="text-lg  dark:text-white">
-                {ADD_WIDGET_TEXT.title}
+              <h1 className="text-2xl font-semibold dark:text-white">
+                {'添加组件'}
               </h1>
             </div>
             {CATEGORIES.map((cat) => {
@@ -213,7 +202,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                         </span>
                         {disabled && (
                           <span className="text-xs ">
-                            {ADD_WIDGET_TEXT.added}
+                            {'已添加'}
                           </span>
                         )}
                       </button>

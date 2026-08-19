@@ -192,8 +192,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     },
   },
   {
-    id: 'cfg-shortcuts',
-    type: 'shortcuts',
+    id: 'cfg-random-web',
+    type: 'random-web',
     title: '随机网页',
     maxInstances: 1,
     isAddable: true,
@@ -208,7 +208,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       w: 8,
       h: 10,
     },
-    data: { shortcuts: [] },
+    data: {},
   },
   {
     id: 'cfg-member-count',
@@ -247,7 +247,7 @@ export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
   clock: Clock,
   'clock-mini': AlarmClock,
   'clock-lunar': Moon,
-  shortcuts: Compass,
+  'random-web': Compass,
   'control-center': SlidersHorizontal,
   'web-app': Globe,
   application: Globe,
@@ -256,7 +256,7 @@ export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
 
 /**
  * 兜底配置：用于未在 WIDGET_CONFIG 中注册的组件类型（例如已迁移为独立视图、
- * 不从「添加组件」注册但仍可被渲染/添加的 shortcuts）。保证 getWidgetConfig /
+ * 不从「添加组件」注册但仍可被渲染/添加的随机网页）。保证 getWidgetConfig /
  * canAddWidget 等调用在缺省类型下也能取得合理的 title、sizeOptions、maxInstances。
  */
 const FALLBACK_CONFIG: WidgetItem = {

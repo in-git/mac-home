@@ -152,9 +152,8 @@ export const useHomeStore = create<HomeState>()(
             // 颜色由 index.css 的 --card-fg 变量控制，此处不写死任何颜色值。
             backgroundTheme: 'light',
           },
-          // 类型级提供的私有数据默认值（如快捷导航的空列表）放在 data 下。
+          // 类型级提供的私有数据默认值放在 data 下。
           data: {
-            ...(cfg.data?.shortcuts ? { shortcuts: cfg.data.shortcuts } : {}),
             ...(cfg.data?.site ? { site: cfg.data.site } : {}),
           },
           // 初始网格坐标：查找桌面剩余空间计算出的 x, y

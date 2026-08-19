@@ -51,7 +51,7 @@ export const SpotlightModal: React.FC<Props> = ({
     { name: '打开/添加 便签小组件', type: 'sticky-notes' as WidgetType, icon: StickyNote },
     { name: '打开/添加 时钟与日历', type: 'clock' as WidgetType, icon: Clock },
     { name: '打开/添加 控制中心', type: 'control-center' as WidgetType, icon: Sliders },
-    { name: '打开/添加 快捷导航 Launchpad', type: 'shortcuts' as WidgetType, icon: Compass },
+    { name: '打开/添加 随机网页', type: 'random-web' as WidgetType, icon: Compass },
   ].filter((w) => w.name.toLowerCase().includes(query.toLowerCase()));
 
   return (

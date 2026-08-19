@@ -46,7 +46,7 @@ export type WidgetType =
   | 'clock'
   | 'clock-mini'
   | 'clock-lunar'
-  | 'shortcuts'
+  | 'random-web'
   | 'control-center'
   | 'web-app'
   | 'application'
@@ -106,8 +106,6 @@ export interface WidgetItem {
   grid: { x: number; y: number; w: number; h: number };
   // 私有数据：组件实例级别的自定义数据（快捷导航、图标站点、卡片背景等）集中存放。
   data: {
-    /** 快捷导航等组件的私有数据空间：存储 SiteItem[]。 */
-    shortcuts?: SiteItem[];
     /** 图标型组件（web-app）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
     site?: SiteItem;
     /** 时钟字体自定义（当前用于 clock-lunar 等时钟类组件）。 */

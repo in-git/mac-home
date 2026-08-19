@@ -1,4 +1,4 @@
-import { SiteCategory, SiteIdentity, SiteItem } from '../../api/site';
+import { SiteCategory, SiteIdentity, SiteItem } from '../../../api/site';
 
 export interface WebListPickerProps {
   /** 已选中的站点列表（由父组件持有），用于标记「已新增」并渲染删除入口 */

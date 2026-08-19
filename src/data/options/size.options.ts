@@ -13,7 +13,7 @@ export const SIZE_OPTIONS: Partial<Record<WidgetType, WidgetSize[]>> = {
   'clock-lunar': [12, 16, 20, 24],
   'control-center': [6],
   'web-app': [2,3, 4],
-  shortcuts: [ 6, 8],
+  'random-web': [ 6, 8],
   'member-count': [6, 8],
 };
 

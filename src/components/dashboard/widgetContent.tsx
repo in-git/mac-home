@@ -9,7 +9,7 @@ import { WebApp } from '../../widgets/WebApp/WebApp';
 import { SearchWidget } from '../../widgets/Search/SearchWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotes/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../../widgets/Weather';
-import { ShortcutsWidget } from '@/views/ShortcutsWidget';
+import { RandomWebWidget } from '@/widgets/RandomWebWidget';
 import { MemberCountWidget } from '../../widgets/MemberCount/MemberCountWidget';
 
 interface RenderWidgetContentProps {
@@ -59,18 +59,12 @@ export const renderWidgetContent = ({
           onToggleDarkMode={onToggleDarkMode}
         />
       );
-    case 'shortcuts':
+    case 'random-web':
 
       return (
-        <ShortcutsWidget
+        <RandomWebWidget
           expanded={inModal}
           onExpand={inModal ? undefined : () => onExpand(widget.id)}
-          shortcuts={widget.data.shortcuts}
-          onUpdateShortcuts={
-            onUpdateWidget
-              ? (list) => onUpdateWidget(widget.id, { data: { ...widget.data, shortcuts: list } })
-              : undefined
-          }
         />
       );
  

@@ -1,63 +1,48 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Modal } from '../../components/Modal/Modal';
-import { WebListPicker } from '../WebListPicker';
+import { WebListPicker } from '../../views/AddWidgetModal/WebListPicker';
 import { siteApi, SiteItem } from '../../api/site';
 import { playSound } from '../../utils/sound';
-import { ShortcutsWidgetCard } from '../Shortcuts';
+import { RandomWebWidgetCard } from '../RandomWeb';
 
-interface ShortcutsWidgetProps {
+interface RandomWebWidgetProps {
   expanded?: boolean;
   onExpand?: () => void;
-  /** 来自 widget 实例的持久化数据空间；未提供时回退到预设站点 */
-  shortcuts?: SiteItem[];
-  /** 写回数据空间的回调（通常经 store 持久化到 localStorage） */
-  onUpdateShortcuts?: (list: SiteItem[]) => void;
 }
 
-export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
+export const RandomWebWidget: React.FC<RandomWebWidgetProps> = ({
   expanded = false,
-  shortcuts: shortcutsProp,
-  onUpdateShortcuts,
 }) => {
-  const [shortcuts, setShortcuts] = useState<SiteItem[]>(
-    shortcutsProp ?? [],
-  );
+  // 随机网页列表仅存于组件运行时的临时变量，不写入本地存储（刷新即重置为空）。
+  const [randomweb, setRandomweb] = useState<SiteItem[]>([]);
   const [showAdd, setShowAdd] = useState(false);
 
-  // 数据空间由外部（widget 实例）持有：props 变化时（如新增实例、持久化恢复）同步本地状态
-  useEffect(() => {
-    if (shortcutsProp) setShortcuts(shortcutsProp);
-  }, [shortcutsProp]);
-
-  // 任何写入都同时更新本地状态与 widget 实例的数据空间（store → localStorage）
-  const commitShortcuts = useCallback(
+  // 任何写入只更新组件本地状态（临时变量），不持久化。
+  const commitRandomweb = useCallback(
     (next: SiteItem[] | ((prev: SiteItem[]) => SiteItem[])) => {
-      setShortcuts((prev) => {
-        const resolved =
-          typeof next === 'function' ? (next as (p: SiteItem[]) => SiteItem[])(prev) : next;
-        onUpdateShortcuts?.(resolved);
-        return resolved;
-      });
+      setRandomweb((prev) =>
+        typeof next === 'function' ? (next as (p: SiteItem[]) => SiteItem[])(prev) : next,
+      );
     },
-    [onUpdateShortcuts],
+    [],
   );
 
-  // 从「网页列表」中添加站点到快捷导航
+  // 从「网页列表」中添加站点到随机网页
   const handleAddFromSite = (item: SiteItem) => {
     const url = item.link || '#';
-    // 去重：已存在相同 URL 的快捷项则提示并跳过，避免重复添加
-    if (shortcuts.some((s) => s.link === url)) {
+    // 去重：已存在相同 URL 的站点则提示并跳过，避免重复添加
+    if (randomweb.some((s) => s.link === url)) {
       return;
     }
     // 直接以 SiteItem 结构存储，保留原站点的封面/背景/计数等字段
-    const shortcut: SiteItem = {
+    const randomItem: SiteItem = {
       ...item,
       id: item.id || `sc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     };
     // 再次以函数式更新兜底，防止极速连点导致的竞态重复
-    commitShortcuts((prev) =>
-      prev.some((s) => s.link === url) ? prev : [...prev, shortcut],
+    commitRandomweb((prev) =>
+      prev.some((s) => s.link === url) ? prev : [...prev, randomItem],
     );
     void (async () => {
       try {
@@ -74,15 +59,15 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
     playSound.playClick();
   };
 
-  // 网页列表中选择器的「删除」：从快捷导航中移除对应站点
+  // 网页列表中选择器的「删除」：从随机网页中移除对应站点
   const handleRemoveFromPicker = (item: SiteItem) => {
     const key = item.id || item.link;
-    commitShortcuts((prev) => prev.filter((s) => (s.id || s.link) !== key));
+    commitRandomweb((prev) => prev.filter((s) => (s.id || s.link) !== key));
   };
 
   return (
     <>
-      <ShortcutsWidgetCard
+      <RandomWebWidgetCard
         expanded={expanded}
       />
 
@@ -94,7 +79,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({
         className="site-library-modal w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[60vw] min-h-[80vh] md:min-h-[70vh]"
       >
         <WebListPicker
-          selected={shortcuts}
+          selected={randomweb}
           onAdd={handleAddFromSite}
           onRemove={handleRemoveFromPicker}
           onOpen={handleOpenSite}

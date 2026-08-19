@@ -32,7 +32,7 @@ const LoadingSpinner: React.FC<{ size?: number; className?: string }> = ({
   </svg>
 );
 
-export interface ShortcutsWidgetCardProps {
+export interface RandomWebWidgetCardProps {
   expanded: boolean;
 }
 
@@ -40,7 +40,7 @@ export interface ShortcutsWidgetCardProps {
  * 随机站点发现卡片：
  * 从后端站点库中随机抽取一个站点展示，封面占满容器，左右箭头导航。
  */
-export const ShortcutsWidgetCard: React.FC<ShortcutsWidgetCardProps> = ({
+export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
   expanded,
 }) => {
   const [randomSite, setRandomSite] = useState<SiteItem | null>(null);
