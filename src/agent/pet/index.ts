@@ -7,7 +7,7 @@ import type {
 import { petActions } from './actions';
 import type { PetAction, PetActionResult } from './actions';
 
-export { petActions, EVENT } from './actions';
+export { petActions, EVENT, dispatchPetEvent } from './actions';
 export type { PetAction, PetActionResult } from './actions';
 export {
   ROLE_DIALOG_EVENT,
@@ -46,20 +46,6 @@ export function runPetAction(
     return { ok: false, message: `未知的角色行为：${name}` };
   }
   return action.run(args);
-}
-
-/**
- * 桌宠事件分发助手。
- *
- * 工具层与桌宠组件（RoleCharacterCanvas）通过 window CustomEvent 解耦通信：
- * 工具层只负责分发事件，桌宠组件监听对应事件并驱动 Pixi 渲染/物理循环。
- * 事件名字符串集中在 actions.ts 的 EVENT 常量中定义，作为唯一来源。
- */
-export function dispatchPetEvent(
-  name: string,
-  detail?: Record<string, unknown>,
-): void {
-  window.dispatchEvent(new CustomEvent(name, { detail: detail ?? {} }));
 }
 
 /**

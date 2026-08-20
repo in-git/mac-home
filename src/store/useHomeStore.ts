@@ -66,6 +66,8 @@ interface HomeState {
   lastLocation?: { city: string; lat: number; lon: number } | null;
   // 是否显示桌面图标（清屏功能，false 时隐藏所有组件）
   showDesktopIcons: boolean;
+  // 是否第一次进入网页（持久化：首次访问后由 markVisited 置 false，之后不再为 true）
+  isFirstVisit: boolean;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -107,6 +109,8 @@ interface HomeState {
   ) => void;
   /** 切换是否显示桌面图标（清屏功能）。 */
   setShowDesktopIcons: (value: boolean) => void;
+  /** 标记用户已访问过（把 isFirstVisit 置为 false 并持久化）。 */
+  markVisited: () => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -124,6 +128,8 @@ export const useHomeStore = create<HomeState>()(
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_STATE.aiConfig),
       selectedRoleId: DEFAULT_ROLE_ID,
       showDesktopIcons: true,
+      // 首次访问默认 true；hydration 时若本地已存过（曾访问过）会被覆盖为 false
+      isFirstVisit: true,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -287,6 +293,7 @@ export const useHomeStore = create<HomeState>()(
       setSelectedCityId: (id) => set({ selectedCityId: id }),
       setLastLocation: (lastLocation) => set({ lastLocation }),
       setShowDesktopIcons: (value) => set({ showDesktopIcons: value }),
+      markVisited: () => set({ isFirstVisit: false }),
     }),
     {
       name: 'apple-homepage-store',

@@ -7,12 +7,7 @@ import { RoleControls } from './controls';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './physics';
 import { RoleState, RoleTextures } from './types';
 import { RoleDialog } from './RoleDialog';
-import {
-  EVENT,
-  ROLE_CLICK_DIALOG,
-  dispatchPetDialog,
-  dispatchPetEvent,
-} from '../../agent/pet';
+import { ROLE_CLICK_DIALOG, dispatchPetDialog } from '../../agent/pet';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -91,11 +86,6 @@ export const RoleCharacterCanvas: React.FC = () => {
     Object.entries(roleActionHandlers).forEach(([type, handler]) => {
       window.addEventListener(type, handler);
     });
-
-    // TODO: 测试代码 —— 每 3 秒触发一次庆祝动作，验证完删除
-    const testCelebrateTimer = window.setInterval(() => {
-      dispatchPetEvent(EVENT.celebrate, { count: 2 });
-    }, 3000);
 
     const initPixi = async () => {
       const pixiApp = new Application();
@@ -239,7 +229,6 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     return () => {
       isDestroyed = true;
-      window.clearInterval(testCelebrateTimer);
       Object.entries(roleActionHandlers).forEach(([type, handler]) => {
         window.removeEventListener(type, handler);
       });

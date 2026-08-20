@@ -1,5 +1,5 @@
 import { executeAgentTool, listAgentTools } from '../agent/index';
-import { basePetActions } from '../agent/pet/baseActions';
+import { petActions } from '../agent/pet/actions';
 import petMission from '../agent/pet/mission.json';
 import type {
   AgentChatMessage,
@@ -74,7 +74,7 @@ export class ChatUtils {
 
     // 基础动作清单：剔除 run 等实现细节，只保留动作名/描述/参数，转成纯文本供大模型阅读
     // （pet_perform 是组动作入口本身，不列入清单，避免模型在 actions 数组里嵌套调用它）
-    const baseActionList = basePetActions
+    const baseActionList = petActions
       .filter((action) => action.name !== 'pet_perform')
       .map((action) => {
         const params = Object.entries(action.parameters);
