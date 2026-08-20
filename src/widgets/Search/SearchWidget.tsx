@@ -1,6 +1,9 @@
 import { Check, ChevronDown, Search } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import googleIcon from './assets/google.png';
+import bingIcon from './assets/bing.png';
+import baiduIcon from './assets/baidu.png';
 
 export type SearchEngineId = 'google' | 'bing' | 'baidu';
 
@@ -10,7 +13,6 @@ export interface SearchEngine {
   url: string;
   placeholder: string;
   icon: string;
-  color: string;
 }
 
 export const SEARCH_ENGINES: SearchEngine[] = [
@@ -19,24 +21,21 @@ export const SEARCH_ENGINES: SearchEngine[] = [
     name: 'Google',
     url: 'https://www.google.com/search?q=%s',
     placeholder: '输入搜索内容',
-    icon: 'G',
-    color: 'text-blue-500',
+    icon: googleIcon,
   },
   {
     id: 'bing',
     name: 'Bing',
     url: 'https://www.bing.com/search?q=%s',
     placeholder: '输入搜索内容',
-    icon: 'B',
-    color: 'text-cyan-500',
+    icon: bingIcon,
   },
   {
     id: 'baidu',
     name: '百度',
     url: 'https://www.baidu.com/s?wd=%s',
     placeholder: '输入搜索内容',
-    icon: '百',
-    color: 'text-red-500',
+    icon: baiduIcon,
   },
 ];
 
@@ -107,9 +106,11 @@ export const SearchWidget: React.FC = () => {
               onClick={handleToggleDropdown}
               className="flex items-center gap-1 px-3 h-full text-xs hover:text-[color:var(--accent)] transition-colors active:scale-95"
             >
-              <span className={`text-sm font-bold ${currentEngine.color}`}>
-                {currentEngine.icon}
-              </span>
+              <img
+                src={currentEngine.icon}
+                alt={currentEngine.name}
+                className="w-4 h-4 rounded-full object-contain"
+              />
               <ChevronDown
                 size={14}
                 className={`transition-transform ${showDropdown ? 'rotate-180' : ''}`}
@@ -145,9 +146,11 @@ export const SearchWidget: React.FC = () => {
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <span className={`font-bold ${engine.color}`}>
-                              {engine.icon}
-                            </span>
+                            <img
+                              src={engine.icon}
+                              alt={engine.name}
+                              className="w-4 h-4 rounded-full object-contain"
+                            />
                             <span>{engine.name}</span>
                           </div>
                           {active && (

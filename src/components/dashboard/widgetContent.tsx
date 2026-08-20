@@ -70,13 +70,13 @@ export const renderWidgetContent = ({
     case 'web-app': {
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
       // 保持 1:1 比例正方形居中展示
-      // 4x4（正方形档位）时隐藏站点文本
-      const isSquare =
-        !!widget.grid && widget.grid.w === widget.grid.h && widget.grid.w === 4;
+      // 6x6（正方形档位）时隐藏站点文本
+      const hideLabel =
+        !!widget.grid && widget.grid.w === 6 && widget.grid.h === 6;
       return (
         <div data-icon-grid className="h-full w-full flex items-center justify-center">
           <div className="w-full aspect-square flex items-center justify-center">
-            <WebApp site={widget.data.site} hideLabel={isSquare} editing={isEditMode} />
+            <WebApp site={widget.data.site} hideLabel={hideLabel} editing={isEditMode} />
           </div>
         </div>
       );

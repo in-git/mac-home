@@ -159,7 +159,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       x: 0,
       y: 0,
       w: 20,
-      h: 24,
+      h: 26,
     }
   },
   {

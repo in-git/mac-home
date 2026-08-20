@@ -1,5 +1,6 @@
 import { MapPin, Moon, Sliders, Sun } from 'lucide-react';
 import React, { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useHomeStore } from '../../store/useHomeStore';
 import { CARD_RADIUS, CardRadiusTier } from '../../types';
 
@@ -27,13 +28,23 @@ export const ControlCenterWidget: React.FC<Props> = ({
 
   const subTextClass = isDarkCard ? 'text-white/60' : 'text-slate-500';
 
-  const cardRadius = useHomeStore((s) => s.cardRadius);
-  const setCardRadius = useHomeStore((s) => s.setCardRadius);
-  const screenBrightness = useHomeStore((s) => s.screenBrightness);
-  const setScreenBrightness = useHomeStore((s) => s.setScreenBrightness);
-  // 上一次成功定位的位置（持久化，用于本次进入时回显）
-  const lastLocation = useHomeStore((s) => s.lastLocation);
-  const setLastLocation = useHomeStore((s) => s.setLastLocation);
+  const {
+    cardRadius,
+    setCardRadius,
+    screenBrightness,
+    setScreenBrightness,
+    lastLocation,
+    setLastLocation,
+  } = useHomeStore(
+    useShallow((s) => ({
+      cardRadius: s.cardRadius,
+      setCardRadius: s.setCardRadius,
+      screenBrightness: s.screenBrightness,
+      setScreenBrightness: s.setScreenBrightness,
+      lastLocation: s.lastLocation,
+      setLastLocation: s.setLastLocation,
+    })),
+  );
 
   // 定位状态：idle 未定位 / locating 请求中 / done 成功 / error 失败
   const [locating, setLocating] = useState(false);
@@ -192,11 +203,12 @@ export const ControlCenterWidget: React.FC<Props> = ({
             <span>卡片圆角</span>
           </span>
         </div>
-        <div className={`relative grid grid-cols-4 gap-1 p-1 rounded-[var(--card-radius)] ${isDarkCard ? 'bg-white/10' : 'bg-black/5'}`}>
+        <div className={`relative grid grid-cols-3 gap-1 p-1 rounded-[var(--card-radius)] ${isDarkCard ? 'bg-white/10' : 'bg-black/5'}`}>
           {/* 苹果风格滑块高亮：跟随选中项移动 */}
           {(() => {
-            const tiers: CardRadiusTier[] = ['tiny', 'small', 'medium', 'large'];
-            const activeIndex = tiers.indexOf(cardRadius);
+            const tiers: CardRadiusTier[] = ['small', 'medium', 'large'];
+            // 旧数据可能保存了已移除的 tiny 档，钳制到第一档避免滑块错位
+            const activeIndex = Math.max(0, tiers.indexOf(cardRadius));
             return (
               <>
                 <span
@@ -205,7 +217,7 @@ export const ControlCenterWidget: React.FC<Props> = ({
                     isDarkCard ? 'bg-white/20' : 'bg-white shadow-xs'
                   }`}
                   style={{
-                    width: 'calc((100% - 0.75rem) / 4)',
+                    width: 'calc((100% - 0.5rem) / 3)',
                     transform: `translateX(${activeIndex * 100}%)`,
                   }}
                 />
