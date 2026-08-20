@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
-import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, isWebApp } from '../data/widgetConfig';
+import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widgetConfig';
 import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
 import { migrateData } from '../utils/migration';
 import {
@@ -12,10 +12,10 @@ import {
   StickyNote as StickyNoteType,
   WallpaperConfig,
   WidgetItem,
-  WidgetSize,
   WidgetType,
 } from '../types';
 import { WeatherCity } from '../utils/weatherApi';
+import { type WidgetSizeOption } from '@/data/options/size.options';
 
 // One-time migration from the previous per-key localStorage layout so existing
 // user data is not lost when switching to the single-store persist key.
@@ -69,7 +69,7 @@ interface HomeState {
   setWidgets: (widgets: WidgetItem[]) => void;
   addWidget: (type: WidgetType) => void;
   deleteWidget: (id: string) => void;
-  resizeWidget: (id: string, newSize: WidgetSize) => void;
+  resizeWidget: (id: string, newSize: WidgetSizeOption) => void;
   moveToTopWidget: (id: string) => void;
   /** 局部更新某个 widget 的任意字段（用于图标编辑等）。 */
   updateWidget: (id: string, patch: Partial<WidgetItem>) => void;
@@ -175,18 +175,12 @@ export const useHomeStore = create<HomeState>()(
         set({
           widgets: get().widgets.map((w) => {
             if (w.id !== id) return w;
-            const w_cols = typeof newSize === 'number' ? newSize : 4;
-            // 网页类型 (web-app) 按列数映射到固定宽高比（grid 的 w:h）：
-            // 1 → 1:1（正方形）、2 → 2:5、3 → 3:7、4 → 4:10
-            const WEB_APP_ASPECT: Record<number, number> = { 1: 1, 2: 5, 3: 7, 4: 10 };
-            let newH = w.grid?.h ?? 5;
-            if (isWebApp(w.type)) {
-              newH = WEB_APP_ASPECT[w_cols] ?? 5;
-            }
+            // 档位未配置 h 时仅调整宽度、保留当前高度
+            const newH = newSize.h ?? w.grid?.h ?? 5;
             return {
               ...w,
-              size: newSize,
-              grid: { ...w.grid, w: w_cols, h: newH },
+              size: newSize.w,
+              grid: { ...w.grid, w: newSize.w, h: newH },
             };
           }),
         });

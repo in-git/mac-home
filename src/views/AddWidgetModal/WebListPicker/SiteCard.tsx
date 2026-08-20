@@ -145,9 +145,9 @@ export const SiteCard: React.FC<SiteCardProps> = ({
                   strokeDasharray={75.4}
                   strokeDashoffset={75.4}
                   strokeLinecap="round"
-                  className="text-[color:var(--accent,#3b82f6)] transition-all duration-[2000ms] ease-linear"
+                  className="text-[color:var(--accent,#3b82f6)]"
                   style={{
-                    animation: 'circleProgress 2s linear forwards',
+                    animation: 'circleProgress 1000ms linear forwards',
                   }}
                 />
               </svg>
@@ -194,29 +194,27 @@ export const SiteCard: React.FC<SiteCardProps> = ({
               />
             </>
           ) : (
-            <Tooltip delay={100}>
-              <Tooltip.Trigger>
-                <Button
-                  iconOnly
-                  size="sm"
-                  variant="primary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsInstalling(true);
-                    installTimerRef.current = setTimeout(() => {
-                      setIsInstalling(false);
-                      onAdd(item);
-                      showToast(`已添加「${item.name}」到桌面`, 'success');
-                    }, 2000);
-                  }}
-                  className="absolute inset-0 !h-8 !w-8 rounded-full shadow-md"
-                  icon={<Download size={16} />}
-                />
-              </Tooltip.Trigger>
-              <Tooltip.Content showArrow placement="top" className="text-xs">
-                添加
-              </Tooltip.Content>
-            </Tooltip>
+            <div className="group/btn absolute inset-0">
+              <Button
+                iconOnly
+                size="sm"
+                variant="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsInstalling(true);
+                  installTimerRef.current = setTimeout(() => {
+                    setIsInstalling(false);
+                    onAdd(item);
+                    showToast(`已添加「${item.name}」到桌面`, 'success');
+                  }, 1000);
+                }}
+                className="absolute inset-0 !h-8 !w-8 rounded-full shadow-md"
+                icon={<Download size={16} />}
+              />
+              <span className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover/btn:opacity-100">
+                安装到桌面
+              </span>
+            </div>
           )}
         </div>
       </div>

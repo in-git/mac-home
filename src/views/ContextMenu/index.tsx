@@ -260,28 +260,39 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
               {targetWidget.title}
             </span>
             <span className="text-font-sm px-2 py-0.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10  uppercase">
-              {targetWidget.grid?.w ? `${targetWidget.grid.w}/12` : ''}
+              {targetWidget.grid?.w ? `${targetWidget.grid.w}/36` : ''}
             </span>
           </div>
 
           {/* Widget Size Switching */}
           {(() => {
-            const options = getSizeOptions(targetWidget.type);
-            const sizeList = options.length > 0 ? options : [1, 2, 3, 4, 6, 12];
+            const sizeList = getSizeOptions(targetWidget.type);
             return (
               <>
                 <div className="px-3 py-1.5 text-font-sm ">
-                  调整宽度
+                  调整尺寸
                 </div>
                 <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
                   {sizeList.map((sz) => {
-                    const isCurrent = targetWidget.grid?.w === sz;
-                    const label = `${Math.round(sz * 24) / 24}`;
+                    // 配置了 h 的档位需宽高都匹配才算当前档位
+                    const isCurrent =
+                      targetWidget.grid?.w === sz.w &&
+                      (sz.h === undefined || targetWidget.grid?.h === sz.h);
+                    // 宽高相等时显示原始值（如 6x6），不相等时显示约分后的比例（如 3:2）
+                    const label = sz.h !== undefined 
+                      ? sz.w === sz.h 
+                        ? `${sz.w}x${sz.h}`
+                        : (() => {
+                            const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
+                            const divisor = gcd(sz.w, sz.h);
+                            return `${sz.w / divisor}:${sz.h / divisor}`;
+                          })()
+                      : `${sz.w}`;
                     return (
                       <button
-                        key={sz}
+                        key={`${sz.w}x${sz.h ?? ''}`}
                         onClick={() => {
-                          onResizeWidget(targetWidget.id, sz as any);
+                          onResizeWidget(targetWidget.id, sz);
                           onClose();
                         }}
                         className={`py-1.5 rounded-[var(--card-radius)] text-font-md  transition-colors ${
@@ -303,12 +314,63 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
           {WIDGET_CONTEXT_MENU.map(renderItem)}
 
-          {/* 底部显示当前卡片的高度和宽度参数 (grid: w, h) */}
-          <div className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-1 flex items-center justify-between text-font-sm  ">
-            <span>当前尺寸</span>
-            <span className="font-mono  bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded ">
-              宽(w): {targetWidget.grid?.w ?? '-'} | 高(h): {targetWidget.grid?.h ?? '-'}
-            </span>
+          {/* 底部显示当前卡片的高度和宽度参数 (grid: w, h)，可输入调整 */}
+          <div
+            key={targetWidget.id}
+            className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-2 text-font-sm "
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <span>尺寸调整</span>
+              <span className="font-mono text-font-xs  bg-black/5 dark:bg-white/10 px-1.5 py-0.5 rounded opacity-70">
+                {targetWidget.grid?.w ?? '-'} / {targetWidget.grid?.h ?? '-'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="flex flex-1 items-center gap-1.5">
+                <span className="text-font-xs opacity-70">宽</span>
+                <input
+                  type="number"
+                  min={1}
+                  defaultValue={targetWidget.grid?.w ?? 2}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur();
+                  }}
+                  onBlur={(e) => {
+                    const val = Number(e.currentTarget.value);
+                    if (!Number.isFinite(val) || val < 1) return;
+                    onUpdateWidget(targetWidget.id, {
+                      grid: {
+                        ...targetWidget.grid,
+                        w: val,
+                      },
+                    });
+                  }}
+                  className="w-full min-w-0 px-2 py-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 border border-transparent focus:border-[color:var(--accent)] focus:outline-none text-font-md font-mono"
+                />
+              </label>
+              <label className="flex flex-1 items-center gap-1.5">
+                <span className="text-font-xs opacity-70">高</span>
+                <input
+                  type="number"
+                  min={1}
+                  defaultValue={targetWidget.grid?.h ?? 5}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur();
+                  }}
+                  onBlur={(e) => {
+                    const val = Number(e.currentTarget.value);
+                    if (!Number.isFinite(val) || val < 1) return;
+                    onUpdateWidget(targetWidget.id, {
+                      grid: {
+                        ...targetWidget.grid,
+                        h: val,
+                      },
+                    });
+                  }}
+                  className="w-full min-w-0 px-2 py-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 border border-transparent focus:border-[color:var(--accent)] focus:outline-none text-font-md font-mono"
+                />
+              </label>
+            </div>
           </div>
         </>
       ) : (

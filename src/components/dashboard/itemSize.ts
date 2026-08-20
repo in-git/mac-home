@@ -6,9 +6,9 @@ import { isWebApp } from '../../data/widgetConfig';
 // ############################################################
 
 /** RGL 网格基准参数（与 DashboardGrid 中 GridLayout 保持一致） */
-export const RGL_COLS = 24;
-export const RGL_ROW_HEIGHT = 10;
-export const RGL_MARGIN: [number, number] = [16, 16];
+export const RGL_COLS = 36;
+export const RGL_ROW_HEIGHT = 2;
+export const RGL_MARGIN: [number, number] = [1, 1];
 
 /** RGL 行数 → 卡片像素高度（含行间距），用于卡片内联高度。 */
 export function gridHeightPx(h: number): number {

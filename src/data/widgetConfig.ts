@@ -12,9 +12,9 @@ import {
   UsersRound,
   type LucideIcon,
 } from 'lucide-react';
-import { WidgetType, CardStyle, WidgetItem, WidgetSize } from '../types';
+import { WidgetType, CardStyle, WidgetItem } from '../types';
 import type { MouseEvent } from 'react';
-import { getSizeOptions } from './options/size.options';
+import { getSizeOptions, type WidgetSizeOption } from './options/size.options';
 
 /**
  * Type-level configuration registry for every widget type. This consolidates
@@ -64,9 +64,25 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 10,
-      h: 10
+      w: 42,
+      h: 16
     }
+  },
+  {
+    id: 'cfg-clock',
+    type: 'clock',
+    title: '时钟日历',
+    maxInstances: 1,
+    isAddable: true,
+    data: {
+      color: 'var(--accent)',
+    },
+    grid: {
+      x: 0,
+      y: 0,
+      w: 24,
+      h: 24,
+    },
   },
   {
     id: 'cfg-weather',
@@ -100,22 +116,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       h: 15,
     },
   },
-  {
-    id: 'cfg-clock',
-    type: 'clock',
-    title: '时钟日历',
-    maxInstances: 1,
-    isAddable: true,
-    data: {
-      color: 'var(--accent)',
-    },
-    grid: {
-      x: 0,
-      y: 0,
-      w: 12,
-      h: 15,
-    },
-  },
+
   {
     id: 'cfg-clock-mini',
     type: 'clock-mini',
@@ -128,7 +129,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 4,
+      w: 12,
       h: 10,
     },
   },
@@ -141,8 +142,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 12,
-      h: 12,
+      w: 32,
+      h: 18,
     },
     data: {
       color: 'var(--accent)',
@@ -167,8 +168,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
-      h: 15,
+      w: 20,
+      h: 24,
     }
   },
   {
@@ -184,8 +185,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 2,
-      h: 5,
+      w: 8,
+      h: 8,
     },
     data: {
       color: 'var(--accent)',
@@ -205,8 +206,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 8,
-      h: 10,
+      w: 24,
+      h: 14,
     },
     data: {},
   },
@@ -215,9 +216,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'member-count',
     title: '在线人数',
     maxInstances: 1,
-
     isAddable: true,
-
     cardStyle: {
       padding: 'p-4',
       glass: true,
@@ -225,8 +224,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 6,
-      h: 15,
+      w: 24,
+      h: 24,
     },
     data: {
       color: 'var(--accent)',
@@ -275,7 +274,7 @@ const FALLBACK_CONFIG: WidgetItem = {
 };
 
 /** 解析后的组件配置：模板（含默认 grid）+ 运行时查询的 sizeOptions。 */
-export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSize[] };
+export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSizeOption[] };
 
 /** Resolve the config for a widget type (falls back to a safe default). */
 export function getWidgetConfig(type: WidgetType): ResolvedWidgetConfig {
@@ -325,23 +324,3 @@ export function isWebApp(type: WidgetType): boolean {
   return type === 'web-app';
 }
 
-// ---------------------------------------------------------------------------
-// Instance-level click actions
-//
-// Action callbacks are functions and therefore not serializable to
-// localStorage. Instead of storing them on the widget object, we register them
-// here keyed by the widget `id`. At click time the dashboard looks the handler
-// up via `getWidgetAction(id)`, so behaviour is always restored from code
-// rather than from persisted (function-less) data.
-// ---------------------------------------------------------------------------
-const WIDGET_ACTION_REGISTRY: Record<string, () => void> = {};
-
-/** Register the action callback for a widget id (called once at app startup). */
-export function registerWidgetAction(id: string, fn: () => void): void {
-  WIDGET_ACTION_REGISTRY[id] = fn;
-}
-
-/** Resolve the action callback for a widget id, if any. */
-export function getWidgetAction(id: string): (() => void) | undefined {
-  return WIDGET_ACTION_REGISTRY[id];
-}

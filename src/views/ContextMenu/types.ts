@@ -1,4 +1,5 @@
-import type { WidgetItem, WidgetSize } from '../../types';
+import type { WidgetItem } from '../../types';
+import type { WidgetSizeOption } from '../../data/options/size.options';
 
 export interface ContextMenuPosition {
   x: number;
@@ -11,7 +12,7 @@ export interface ContextMenuProps {
   onClose: () => void;
   widgets: WidgetItem[];
   onDeleteWidget: (id: string) => void;
-  onResizeWidget: (id: string, newSize: WidgetSize) => void;
+  onResizeWidget: (id: string, newSize: WidgetSizeOption) => void;
   onChangeWidgetBackground: (
     id: string,
     background?: string,

@@ -172,7 +172,7 @@ export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
   const coverImage = randomSite.cover || randomSite.screenshot || randomSite.background;
 
   return (
-    <div 
+    <div
       className="relative w-full h-full overflow-hidden rounded-[var(--card-radius)] group cursor-pointer"
       onClick={handleVisit}
     >
@@ -223,31 +223,29 @@ export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
 
       {/* 内容层：只在底部文字区域添加深色背景 */}
       <div className="relative h-full flex flex-col justify-end">
-        {/* 站点信息：带半透明深色背景 */}
-        <div className="space-y-2 p-6 bg-gradient-to-t from-black/80 via-black/60 to-transparent">
+        {/* 站点信息：带半透明深色背景，默认隐藏，鼠标移上去才显示 */}
+        <div className="space-y-2 px-4 py-3 bg-gradient-to-t from-black/80 via-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           {/* Logo + 名称 */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ">
             {randomSite.logo && (
               <img
                 src={randomSite.logo}
                 alt={randomSite.name}
-                className="w-12 h-12 rounded-lg object-cover border-2 border-white/30"
+                className="w-10 h-10 rounded-lg object-cover border-2 border-white/30"
               />
             )}
-            <div>
-              <h3 className="text-xl text-nowrap  truncate w-40 font-bold text-white drop-shadow-lg">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl truncate font-bold text-white drop-shadow-lg">
                 {randomSite.name}
               </h3>
-                {/* 描述 */}
-          {randomSite.des && (
-            <p className="text-sm text-white line-clamp-2 drop-shadow">
-              {randomSite.des}
-            </p>
-          )}
+              {/* 描述 */}
+              {randomSite.des && (
+                <p className="text-sm text-white truncate drop-shadow">
+                  {randomSite.des}
+                </p>
+              )}
             </div>
           </div>
-
-       
         </div>
       </div>
     </div>

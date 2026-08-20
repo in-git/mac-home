@@ -8,7 +8,7 @@ interface WebAppProps {
   iconSize?: number;
   /** 站点数据：图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background。 */
   site?: SiteItem;
-  /** 为 true 时不渲染站点名文本（如 1:1 正方形档位）。 */
+  /** 为 true 时不渲染站点名文本（如正方形档位/特定尺寸档位）。 */
   hideLabel?: boolean;
 }
 
@@ -56,7 +56,7 @@ export function WebApp({ site, iconSize, hideLabel = false, editing = false }: W
         )}
       </div>
 
-      {label && !hideLabel && (
+      {!hideLabel && label && (
         <span className="w-full min-w-0 shrink-0 truncate text-center text-white text-sm">
           {label}
         </span>

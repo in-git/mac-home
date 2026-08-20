@@ -22,17 +22,21 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
   onToggleDarkMode = () => {},
   onWeatherChange,
   onUpdateWidget = () => {},
+  widgets: incomingWidgets,
 }) => {
   const storeWidgets = useHomeStore((state) => state.widgets);
   const setWidgets = useHomeStore((state) => state.setWidgets);
 
-  const layout: Layout[] = storeWidgets.map((widget) => ({
+  // 清屏时 App 会传入空数组以隐藏全部组件；只要显式传入了 widgets（含空数组）就使用它，否则回退 store
+  const widgets = Array.isArray(incomingWidgets) ? incomingWidgets : storeWidgets;
+
+  const layout: Layout[] = widgets.map((widget) => ({
     i: widget.id,
     ...(widget.grid || { x: 0, y: 0, w: 4, h: 4 }),
   }));
 
   const handleLayoutChange = (newLayout: Layout[]) => {
-    const updated = storeWidgets.map((w) => {
+    const updated = widgets.map((w) => {
       const item = newLayout.find((l) => l.i === w.id);
       if (!item) return w;
       return {
@@ -53,14 +57,14 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       <GridLayoutWithWidth
         className="layout"
         layout={layout}
-        cols={24}
-        rowHeight={10}
-        margin={[10, 10]}
+        cols={96}
+        rowHeight={11}
+        margin={[1, 1]}
         isDraggable={isEditMode}
         isResizable={isEditMode}
         onLayoutChange={handleLayoutChange}
       >
-        {storeWidgets.map((widget) => (
+        {widgets.map((widget) => (
           <div key={widget.id}>
             <WidgetCard
               widget={widget}
