@@ -64,6 +64,8 @@ interface HomeState {
   selectedCityId: string;
   // 最近一次成功定位的位置（持久化，控制中心位置模块下次进入时回显）
   lastLocation?: { city: string; lat: number; lon: number } | null;
+  // 是否显示桌面图标（清屏功能，false 时隐藏所有组件）
+  showDesktopIcons: boolean;
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -103,6 +105,8 @@ interface HomeState {
   setLastLocation: (
     loc: { city: string; lat: number; lon: number } | null,
   ) => void;
+  /** 切换是否显示桌面图标（清屏功能）。 */
+  setShowDesktopIcons: (value: boolean) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -119,6 +123,7 @@ export const useHomeStore = create<HomeState>()(
       soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
       aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_STATE.aiConfig),
       selectedRoleId: DEFAULT_ROLE_ID,
+      showDesktopIcons: true,
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -281,6 +286,7 @@ export const useHomeStore = create<HomeState>()(
         })),
       setSelectedCityId: (id) => set({ selectedCityId: id }),
       setLastLocation: (lastLocation) => set({ lastLocation }),
+      setShowDesktopIcons: (value) => set({ showDesktopIcons: value }),
     }),
     {
       name: 'apple-homepage-store',

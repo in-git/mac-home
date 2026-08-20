@@ -32,6 +32,7 @@ const storeActions = {
   updateWallpaper: useHomeStore.getState().updateWallpaper,
   setDarkMode: useHomeStore.getState().setDarkMode,
   setThemeColor: useHomeStore.getState().setThemeColor,
+  setShowDesktopIcons: useHomeStore.getState().setShowDesktopIcons,
 };
 
 export default function App() {
@@ -46,6 +47,7 @@ export default function App() {
     fontVariant,
     cardRadius,
     screenBrightness,
+    showDesktopIcons,
   } = useHomeStore(
     useShallow((s) => ({
       widgets: s.widgets,
@@ -56,6 +58,7 @@ export default function App() {
       fontVariant: s.fontVariant,
       cardRadius: s.cardRadius,
       screenBrightness: s.screenBrightness,
+      showDesktopIcons: s.showDesktopIcons,
     })),
   );
 
@@ -69,6 +72,7 @@ export default function App() {
     resizeWidget,
     updateWidgetBackground,
     updateWidget,
+    setShowDesktopIcons,
   } = storeActions;
   const { updateNotes, updateWallpaper, setDarkMode } =
     storeActions;
@@ -76,7 +80,6 @@ export default function App() {
   const toggleDarkMode = () => setDarkMode(!isDarkMode);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [showDesktopIcons, setShowDesktopIcons] = useState<boolean>(true);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] =
     useState<boolean>(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
@@ -258,7 +261,7 @@ export default function App() {
         onOpenAddWidget={() => setIsAddWidgetModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         showDesktopIcons={showDesktopIcons}
-        onToggleDesktopIcons={() => setShowDesktopIcons((v) => !v)}
+        onToggleDesktopIcons={() => setShowDesktopIcons(!showDesktopIcons)}
       />
 
       {/* Wallpaper Setting Modal */}

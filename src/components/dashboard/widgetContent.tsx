@@ -9,7 +9,7 @@ import { WebApp } from '../../widgets/WebApp/WebApp';
 import { SearchWidget } from '../../widgets/Search/SearchWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotes/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../../widgets/Weather';
-import { RandomWebWidget } from '@/widgets/RandomWebWidget';
+import { RandomWebWidget } from '@/widgets/RandomWeb';
 import { MemberCountWidget } from '../../widgets/MemberCount/MemberCountWidget';
 
 interface RenderWidgetContentProps {

@@ -86,8 +86,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 12,
-      h: 20,
+      w: 40,
+      h: 34,
     },
   },
   {
@@ -102,8 +102,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 12,
-      h: 15,
+      w: 32,
+      h: 24,
     },
   },
 
@@ -119,8 +119,8 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     grid: {
       x: 0,
       y: 0,
-      w: 12,
-      h: 10,
+      w: 16,
+      h: 16,
     },
   },
   {

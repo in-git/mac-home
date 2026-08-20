@@ -22,10 +22,10 @@ export const SIZE_OPTIONS: Partial<Record<WidgetType, WidgetSizeOption[]>> = {
   ],
   search: [ { w: 24, h: 12 },{ w: 30, h: 12 },{ w: 48, h: 12 },{ w: 96, h: 12 } ],
   'member-count': [{ w: 24, h: 60 }],
-  weather: [{ w: 36, h: 34 }, { w: 48, h: 34 }],
-  'sticky-notes': [{ w: 20, h: 24 }, { w: 26, h: 30 }, { w: 32, h: 36 }],
+  weather: [{ w: 40, h: 34 }, { w: 48, h: 34 }],
+  'sticky-notes': [{ w: 20, h: 24 }, { w: 32, h: 24 }, { w: 48, h: 24 }],
   clock: [{ w: 24, h: 24 }, { w: 32, h: 32 }],
-  'clock-mini': [{ w: 12, h: 12 }, { w: 14, h: 14 }, { w: 16, h: 16 }],
+  'clock-mini': [ { w: 16, h: 16 }],
   'clock-lunar': [{ w: 32, h: 18 },{w:64,h:18},{w:96,h:18}],
   'control-center': [{ w: 20, h: 24 }],
   // 随机网页：固定宽高比档位
