@@ -162,7 +162,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             <>
               {/* 已安装：默认绿色对勾；鼠标移到卡片上切换为红色删除按钮 */}
               {onRemove && (
-                <Tooltip delay={100}>
+                <Tooltip>
                   <Tooltip.Trigger>
                     <Button
                       iconOnly
@@ -177,7 +177,11 @@ export const SiteCard: React.FC<SiteCardProps> = ({
                       icon={<Trash2 size={15} />}
                     />
                   </Tooltip.Trigger>
-                  <Tooltip.Content showArrow placement="top" className="text-xs">
+                  <Tooltip.Content 
+                    showArrow 
+                    placement="top" 
+                    className="text-xs bg-black text-white border-black z-[9999]"
+                  >
                     删除
                   </Tooltip.Content>
                 </Tooltip>
@@ -195,25 +199,33 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             </>
           ) : (
             <div className="group/btn absolute inset-0">
-              <Button
-                iconOnly
-                size="sm"
-                variant="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsInstalling(true);
-                  installTimerRef.current = setTimeout(() => {
-                    setIsInstalling(false);
-                    onAdd(item);
-                    showToast(`已添加「${item.name}」到桌面`, 'success');
-                  }, 1000);
-                }}
-                className="absolute inset-0 !h-8 !w-8 rounded-full shadow-md"
-                icon={<Download size={16} />}
-              />
-              <span className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover/btn:opacity-100">
-                安装到桌面
-              </span>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Button
+                    iconOnly
+                    size="sm"
+                    variant="primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsInstalling(true);
+                      installTimerRef.current = setTimeout(() => {
+                        setIsInstalling(false);
+                        onAdd(item);
+                        showToast(`已添加「${item.name}」到桌面`, 'success');
+                      }, 1000);
+                    }}
+                    className="absolute inset-0 !h-8 !w-8 rounded-full shadow-md"
+                    icon={<Download size={16} />}
+                  />
+                </Tooltip.Trigger>
+                <Tooltip.Content 
+                  showArrow 
+                  placement="top" 
+                  className="text-xs bg-black text-white border-black z-[9999]"
+                >
+                  安装到桌面
+                </Tooltip.Content>
+              </Tooltip>
             </div>
           )}
         </div>

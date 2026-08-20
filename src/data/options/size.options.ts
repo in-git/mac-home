@@ -21,7 +21,7 @@ export const SIZE_OPTIONS: Partial<Record<WidgetType, WidgetSizeOption[]>> = {
     { w: 12, h: 12 },
   ],
   search: [ { w: 24, h: 12 },{ w: 30, h: 12 },{ w: 48, h: 12 },{ w: 96, h: 12 } ],
-  'member-count': [{ w: 24, h: 60 }],
+  'member-count': [{ w: 24, h: 24 }],
   weather: [{ w: 40, h: 34 }, { w: 48, h: 34 }],
   'sticky-notes': [{ w: 20, h: 24 }, { w: 32, h: 24 }, { w: 48, h: 24 }],
   clock: [{ w: 24, h: 24 }, { w: 32, h: 32 }],
@@ -29,7 +29,7 @@ export const SIZE_OPTIONS: Partial<Record<WidgetType, WidgetSizeOption[]>> = {
   'clock-lunar': [{ w: 32, h: 18 },{w:64,h:18},{w:96,h:18}],
   'control-center': [{ w: 20, h: 24 }],
   // 随机网页：固定宽高比档位
-  'random-web': [{ w: 24, h: 14 }, { w: 32, h: 18 }],
+  'random-web': [{ w: 24, h: 16 }, { w: 32, h: 16 }],
 };
 
 /** 兜底尺寸列表（基于 36 列系统） */

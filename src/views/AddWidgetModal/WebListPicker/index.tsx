@@ -35,7 +35,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   const handleSelectCategory = (id: string) => {
     // 子级「全部」标记：表示为当前父级下、但不限定具体子类（仍是选中态，第二排保留）
     if (id === CHILD_ALL) {
-      setSelectedCat('');
+      setSelectedCat(CHILD_ALL);
       setQueryCat(activeParent);
       return;
     }
@@ -46,15 +46,15 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       setQueryCat('');
       return;
     }
-    setSelectedCat(id);
     const parentId = findParentId(categories, id);
     setActiveParent(parentId);
     if (parentId === id) {
-      // 点击的是父级：归入该父级下，子类「全部」高亮，按父级拉取
-      setSelectedCat('');
+      // 点击的是父级：归入该父级下，同时高亮父级和子类「全部」，按父级拉取
+      setSelectedCat(CHILD_ALL);
       setQueryCat(id);
     } else {
       // 点击的是子级：按具体子类拉取
+      setSelectedCat(id);
       setQueryCat(id);
     }
   };
@@ -150,11 +150,24 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-5"
+        className="flex-1 overflow-y-auto p-5 relative"
       >
+        {/* Loading 遮罩 */}
+        {loading && items.length > 0 && (
+          <div className="absolute inset-0 bg-[var(--glass-bg)] backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-8 border-2 border-[color:var(--accent)] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs text-slate-400">加载中…</span>
+            </div>
+          </div>
+        )}
+
         {loading && items.length === 0 ? (
           <div className="flex h-40 items-center justify-center min-h-[320px]">
-            <span className="text-xs text-slate-400">加载中…</span>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-8 border-2 border-[color:var(--accent)] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs text-slate-400">加载中…</span>
+            </div>
           </div>
         ) : items.length > 0 ? (
           <>

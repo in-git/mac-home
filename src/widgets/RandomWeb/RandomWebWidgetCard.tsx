@@ -166,11 +166,12 @@ export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
     >
       {/* 背景封面图（占满容器） */}
       <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 "
         style={{
           backgroundImage: coverImage
             ? `url(${coverImage})`
             : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            backgroundSize:'contain'
         }}
       />
 

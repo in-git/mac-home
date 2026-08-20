@@ -4,7 +4,7 @@
   "exportedAt": "2026-08-18T12:25:26.931Z",
   "widgets": [
     {
-      "id": "widget-1787048786721",
+      "id": "widget-1787207685595",
       "type": "search",
       "title": "网络搜索",
       "maxInstances": 1,
@@ -13,68 +13,96 @@
         "padding": "p-4",
         "glass": true,
         "backgroundTheme": "light",
-        "background": "#FFFFFF"
+        "background": "transparent",
+        "disableBackgroundMenu": true
       },
       "data": {},
       "grid": {
         "x": 0,
-        "y": 10,
-        "w": 12,
-        "h": 10
-      },
-      "size": 12
+        "y": 0,
+        "w": 96,
+        "h": 12
+      }
     },
     {
-      "id": "widget-1787049195527",
-      "type": "clock-lunar",
-      "title": "农历时钟",
+      "id": "widget-1787207693502",
+      "type": "clock",
+      "title": "时钟日历",
       "maxInstances": 1,
       "isAddable": true,
       "cardStyle": {
         "padding": "p-4",
         "glass": true,
-        "backgroundTheme": "light",
-        "background": "transparent"
+        "backgroundTheme": "light"
       },
-      "data": {
-        "size": "6rem",
-        "color": "#000000"
-      },
+      "data": {},
       "grid": {
         "x": 0,
-        "y": 0,
+        "y": 12,
         "w": 24,
-        "h": 10
+        "h": 24
       },
       "size": 24
     },
     {
-      "id": "widget-2088059652088283137",
+      "id": "widget-1787207989791",
+      "type": "random-web",
+      "title": "随机网页",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-0",
+        "glass": true,
+        "backgroundTheme": "light",
+        "background": "transparent"
+      },
+      "data": {},
+      "grid": {
+        "x": 33,
+        "y": 12,
+        "w": 24,
+        "h": 16
+      },
+      "size": 24
+    },
+    {
+      "id": "widget-2087485167675154434",
       "type": "web-app",
-      "title": "Windows XP 专业版",
+      "title": "短途旅行",
       "maxInstances": null,
       "isAddable": false,
       "data": {
         "site": {
-          "id": "2088059652088283137",
-          "name": "Windows XP 专业版",
-          "logo": "https://www.mx2d.cn/2026/8/14/2088210335145943042.png",
-          "des": "仿Windows系列之Windows XP",
-          "link": "https://win32.run/",
+          "id": "2087485167675154434",
+          "name": "短途旅行",
+          "logo": "https://www.mx2d.cn/2026/8/16/site_logo_1786815115888.webp",
+          "des": "治愈休闲类游戏，适合风景党，带着一只猫到处走走",
+          "link": "https://alexanderperrin.com.au/paper/shorttrip/",
           "count": 10,
           "visible": true,
           "recommend": false,
-          "background": "transparent",
-          "cover": "https://www.mx2d.cn/2026/8/14/2088210336085467138.png",
+          "background": "#FFFFFF",
+          "cover": "https://www.mx2d.cn/2026/8/16/site_cover_1786815112610.webp",
+          "keyword": "",
           "orderNum": 100,
-          "createTime": "2026-08-14 08:26:30",
+          "screenshot": "",
+          "createTime": "2026-08-12 18:23:42",
           "categoryList": [
             {
-              "id": "2087826731004936194",
+              "id": "2087100719091765249",
               "parentId": "0",
-              "name": "仿Windows合集",
+              "name": "游戏",
               "icon": null,
-              "sort": 2,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241171147259905",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 3,
               "module": null,
               "children": []
             }
@@ -82,12 +110,72 @@
         }
       },
       "grid": {
-        "x": 16,
-        "y": 30,
-        "w": 2,
-        "h": 5
+        "x": 24,
+        "y": 12,
+        "w": 8,
+        "h": 8
       },
-      "size": 2
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 8
+    },
+    {
+      "id": "widget-2087484339572744194",
+      "type": "web-app",
+      "title": "利爪突袭",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2087484339572744194",
+          "name": "利爪突袭",
+          "logo": "https://www.mx2d.cn/2026/8/17/site_logo_1786948974746.webp",
+          "des": "动作类游戏，用一只小猫通关",
+          "link": "https://js13kgames.com/2025/games/clawstrike#play",
+          "count": 12,
+          "visible": true,
+          "recommend": false,
+          "background": "#FFFFFF",
+          "cover": "https://www.mx2d.cn/2026/8/17/site_cover_1786948973895.webp",
+          "keyword": "",
+          "orderNum": 100,
+          "screenshot": "",
+          "createTime": "2026-08-12 18:20:25",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241171147259905",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 24,
+        "y": 20,
+        "w": 8,
+        "h": 8
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 8
     },
     {
       "id": "widget-2087069146011250689",
@@ -99,15 +187,17 @@
         "site": {
           "id": "2087069146011250689",
           "name": "魔塔24层",
-          "logo": "https://www.mx2d.cn/2026/8/17/site_logo_1786951099254.webp",
+          "logo": "https://www.mx2d.cn/2026/8/17/site_logo_1786948905899.webp",
           "des": "h5魔塔，一起救公主去吧！！！",
           "link": "https://h5mota.com/games/24/",
-          "count": 37,
+          "count": 41,
           "visible": true,
           "recommend": false,
-          "background": "#1D1D1F",
-          "cover": "https://www.mx2d.cn/2026/8/17/site_cover_1786951098947.webp",
+          "background": "transparent",
+          "cover": "https://www.mx2d.cn/2026/8/17/site_cover_1786948904760.webp",
+          "keyword": "",
           "orderNum": 100,
+          "screenshot": "",
           "createTime": "2026-08-11 14:50:35",
           "categoryList": [
             {
@@ -120,11 +210,11 @@
               "children": []
             },
             {
-              "id": "2089249885767184385",
+              "id": "2089241171147259905",
               "parentId": "2087100719091765249",
               "name": "小游戏",
               "icon": null,
-              "sort": 11,
+              "sort": 3,
               "module": null,
               "children": []
             }
@@ -132,38 +222,62 @@
         }
       },
       "grid": {
-        "x": 16,
-        "y": 25,
-        "w": 2,
-        "h": 5
+        "x": 24,
+        "y": 28,
+        "w": 8,
+        "h": 8
       },
-      "size": 2
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 8
     },
     {
-      "id": "widget-2088028231881736194",
+      "id": "widget-2089986059442724866",
       "type": "web-app",
-      "title": "Windows2000",
+      "title": "反恐我的世界",
       "maxInstances": null,
       "isAddable": false,
       "data": {
         "site": {
-          "id": "2088028231881736194",
-          "name": "Windows2000",
-          "logo": "https://www.mx2d.cn/2026/8/14/2088210309673934850.png",
-          "des": "仿Windows系列之2000",
-          "link": "http://copy.sh/v86/?profile=windows2000",
-          "count": 6,
+          "id": "2089986059442724866",
+          "name": "反恐我的世界",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787126478126.webp",
+          "des": "我的世界+反恐精英有没有搞头？",
+          "link": "https://voxiom.io/#t8Hiy",
+          "count": 1,
           "visible": true,
           "recommend": false,
-          "background": "transparent",
-          "cover": "https://www.mx2d.cn/2026/8/14/2088210310194028545.png",
-          "orderNum": 100,
-          "createTime": "2026-08-14 06:21:39",
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787126476219.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 16:01:21",
           "categoryList": [
             {
-              "id": "2087826731004936194",
+              "id": "2087100719091765249",
               "parentId": "0",
-              "name": "仿Windows合集",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089238083590062081",
+              "parentId": "2087100719091765249",
+              "name": "我的世界",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241119402131458",
+              "parentId": "2087100719091765249",
+              "name": "射击游戏",
               "icon": null,
               "sort": 2,
               "module": null,
@@ -173,39 +287,64 @@
         }
       },
       "grid": {
-        "x": 12,
-        "y": 25,
-        "w": 2,
-        "h": 5
+        "x": 41,
+        "y": 28,
+        "w": 8,
+        "h": 8
+      },
+      "size": 8,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
       }
     },
     {
-      "id": "widget-2087835971799040001",
+      "id": "widget-2089230162135252994",
       "type": "web-app",
-      "title": "WINDOWS93",
+      "title": "Venge射击",
       "maxInstances": null,
       "isAddable": false,
       "data": {
         "site": {
-          "id": "2087835971799040001",
-          "name": "WINDOWS93",
-          "logo": "https://www.mx2d.cn/2026/8/15/site_logo_1786798973515.webp",
-          "des": "浏览器仿Windows系列之Windows93",
-          "link": "https://windows93.net/",
-          "count": 11,
+          "id": "2089230162135252994",
+          "name": "Venge射击",
+          "logo": "https://www.mx2d.cn/2026/8/17/site_logo_1786946259524.webp",
+          "des": "在线多人射击游戏",
+          "link": "https://venge.io/",
+          "count": 3,
           "visible": true,
           "recommend": false,
-          "background": "transparent",
-          "cover": "https://www.mx2d.cn/2026/8/14/2088210300475826178.png",
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/17/site_cover_1786946258987.webp",
+          "keyword": "",
           "orderNum": 100,
-          "createTime": "2026-08-13 17:37:40",
+          "screenshot": "",
+          "createTime": "2026-08-17 13:57:41",
           "categoryList": [
             {
-              "id": "2087826731004936194",
+              "id": "2087100719091765249",
               "parentId": "0",
-              "name": "仿Windows合集",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241119402131458",
+              "parentId": "2087100719091765249",
+              "name": "射击游戏",
               "icon": null,
               "sort": 2,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
               "module": null,
               "children": []
             }
@@ -213,112 +352,960 @@
         }
       },
       "grid": {
-        "x": 14,
-        "y": 25,
-        "w": 2,
-        "h": 5
+        "x": 32,
+        "y": 28,
+        "w": 8,
+        "h": 8
+      },
+      "size": 8,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
       }
     },
     {
-      "id": "widget-1787054953034",
-      "type": "weather",
-      "title": "天气预报",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
+      "id": "widget-2089222777710739458",
+      "type": "web-app",
+      "title": "MC合成方块",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089222777710739458",
+          "name": "MC合成方块",
+          "logo": "https://www.mx2d.cn/2026/8/18/site_logo_1787017575525.webp",
+          "des": "MC合成方块，合成系列游戏",
+          "link": "https://www.return8090.com/game/h5game.html?gameid=fkgchbyzd",
+          "count": 2,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/18/site_cover_1787017574029.webp",
+          "keyword": "",
+          "orderNum": 100,
+          "screenshot": "",
+          "createTime": "2026-08-17 13:28:21",
+          "categoryList": [
+            {
+              "id": "2089241171147259905",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
       },
-      "data": {},
       "grid": {
-        "x": 0,
-        "y": 20,
-        "w": 12,
-        "h": 20
-      },
-      "size": 12
-    },
-    {
-      "id": "widget-1787054960066",
-      "type": "sticky-notes",
-      "title": "便签笔记",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
-      },
-      "data": {},
-      "grid": {
-        "x": 18,
-        "y": 10,
+        "x": 67,
+        "y": 12,
         "w": 6,
-        "h": 15
+        "h": 6
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
       },
       "size": 6
     },
     {
-      "id": "widget-1787054972669",
-      "type": "control-center",
-      "title": "控制中心",
-      "maxInstances": 1,
-      "isAddable": true,
+      "id": "widget-2089977966986141697",
+      "type": "web-app",
+      "title": "狂风大背头",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089977966986141697",
+          "name": "狂风大背头",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787124548676.webp",
+          "des": "狂风大背头web版",
+          "link": "https://asyncfish.itch.io/powerful-wind-slicked-back-cabbages",
+          "count": 1,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787124548139.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 15:29:12",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241171147259905",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 57,
+        "y": 20,
+        "w": 8,
+        "h": 8
+      },
       "cardStyle": {
         "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
-      },
-      "data": {},
-      "grid": {
-        "x": 12,
-        "y": 10,
-        "w": 6,
-        "h": 15
+        "glass": true
       }
     },
     {
-      "id": "widget-1787055828075",
-      "type": "clock-mini",
-      "title": "时钟",
-      "maxInstances": 1,
-      "isAddable": true,
+      "id": "widget-2089977338020896769",
+      "type": "web-app",
+      "title": "恐怖奶奶",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089977338020896769",
+          "name": "恐怖奶奶",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787124398937.webp",
+          "des": "恐怖奶奶在线版",
+          "link": "https://plix.gg/zh-cn/games/granny-2-original",
+          "count": 1,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787124395740.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 15:26:42",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241171147259905",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 73,
+        "y": 12,
+        "w": 6,
+        "h": 6
+      },
       "cardStyle": {
         "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
+        "glass": true
       },
-      "data": {},
+      "size": 6
+    },
+    {
+      "id": "widget-2089992334721294338",
+      "type": "web-app",
+      "title": "夏日午后",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089992334721294338",
+          "name": "夏日午后",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787127974264.webp",
+          "des": "风景党必玩系列，清新治愈",
+          "link": "https://summer-afternoon.vlucendo.com/",
+          "count": 2,
+          "visible": true,
+          "recommend": false,
+          "background": "#FFFFFF",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787127973263.webp",
+          "keyword": "",
+          "orderNum": 200,
+          "screenshot": "",
+          "createTime": "2026-08-19 16:26:17",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
       "grid": {
-        "x": 12,
+        "x": 67,
+        "y": 18,
+        "w": 6,
+        "h": 6
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2090002728592482306",
+      "type": "web-app",
+      "title": "侠盗飞车",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090002728592482306",
+          "name": "侠盗飞车",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787130452166.webp",
+          "des": "你没看错，侠盗飞车网页版，直接可玩",
+          "link": "https://gtavc.armdev.cn/",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787130451703.webp",
+          "keyword": "",
+          "orderNum": 200,
+          "screenshot": "",
+          "createTime": "2026-08-19 17:07:36",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089991338251132929",
+              "parentId": "2087100719091765249",
+              "name": "端游",
+              "icon": null,
+              "sort": 5,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 57,
+        "y": 12,
+        "w": 8,
+        "h": 8
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
+    },
+    {
+      "id": "widget-2090001564413075457",
+      "type": "web-app",
+      "title": "斯诺克",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090001564413075457",
+          "name": "斯诺克",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787130174628.webp",
+          "des": "几乎完美复刻的桌球游戏",
+          "link": "http://www.heyzxz.me/pcol/",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787130174055.webp",
+          "keyword": "",
+          "orderNum": 200,
+          "screenshot": "",
+          "createTime": "2026-08-19 17:02:58",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 49,
+        "y": 28,
+        "w": 8,
+        "h": 8
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
+    },
+    {
+      "id": "widget-2090011048845910017",
+      "type": "web-app",
+      "title": "魔兽争霸",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090011048845910017",
+          "name": "魔兽争霸",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787132435418.webp",
+          "des": "不是标题党，魔兽争霸网页版",
+          "link": "https://retrogaming.dpdns.org/game.html?id=warcraft3",
+          "count": 2,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787132434771.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 17:40:39",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089991338251132929",
+              "parentId": "2087100719091765249",
+              "name": "端游",
+              "icon": null,
+              "sort": 5,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 73,
+        "y": 18,
+        "w": 12,
+        "h": 12
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 12
+    },
+    {
+      "id": "widget-2090030380850225154",
+      "type": "web-app",
+      "title": "愚蠢的手机模拟器",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090030380850225154",
+          "name": "愚蠢的手机模拟器",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787137044569.webp",
+          "des": "在老式手机上编写一条 160 字符的消息，随后分享一条私密链接，供他人阅读并回复。",
+          "link": "https://fulltalktime.com/",
+          "count": 1,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787137042874.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 18:57:28",
+          "categoryList": [
+            {
+              "id": "2090028846162780162",
+              "parentId": "0",
+              "name": "奇趣合集",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 85,
+        "y": 12,
+        "w": 6,
+        "h": 6
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2090042270611546113",
+      "type": "web-app",
+      "title": "光标营地",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090042270611546113",
+          "name": "光标营地",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787139879011.webp",
+          "des": "进入页面后，你会变成一个鼠标，网页质感不错",
+          "link": "https://neal.fun/cursor-camp/",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787139878221.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 19:44:43",
+          "categoryList": [
+            {
+              "id": "2090028846162780162",
+              "parentId": "0",
+              "name": "奇趣合集",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 57,
+        "y": 28,
+        "w": 8,
+        "h": 8
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
+    },
+    {
+      "id": "widget-2090051082156384257",
+      "type": "web-app",
+      "title": "爱泼斯坦的文件",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090051082156384257",
+          "name": "爱泼斯坦的文件",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787141979784.webp",
+          "des": "面向爱泼斯坦卷宗的文档分析与调查平台",
+          "link": "https://epsteinalysis.com/",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787141974395.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 20:19:44",
+          "categoryList": [
+            {
+              "id": "2090028846162780162",
+              "parentId": "0",
+              "name": "奇趣合集",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 67,
+        "y": 24,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
+    },
+    {
+      "id": "widget-2089223447931158530",
+      "type": "web-app",
+      "title": "3D赫拉克勒斯",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089223447931158530",
+          "name": "3D赫拉克勒斯",
+          "logo": "https://www.mx2d.cn/2026/8/17/site_logo_1786944658766.webp",
+          "des": "3D动作类游戏，画风超棒，手感一流",
+          "link": "https://heraclosgame.com/",
+          "count": 3,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/17/site_cover_1786944654903.webp",
+          "keyword": "",
+          "orderNum": 100,
+          "screenshot": "",
+          "createTime": "2026-08-17 13:31:01",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 79,
+        "y": 12,
+        "w": 6,
+        "h": 6
+      },
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2090012958244085762",
+      "type": "web-app",
+      "title": "红警2",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090012958244085762",
+          "name": "红警2",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787132890956.webp",
+          "des": "真红警2",
+          "link": "https://retrogaming.dpdns.org/game.html?id=red-alert-2",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787132890344.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 17:48:14",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089991338251132929",
+              "parentId": "2087100719091765249",
+              "name": "端游",
+              "icon": null,
+              "sort": 5,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 73,
         "y": 30,
-        "w": 4,
-        "h": 10
-      }
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
     },
     {
-      "id": "widget-1787055838591",
-      "type": "member-count",
-      "title": "在线人数",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light"
+      "id": "widget-2090015171985154050",
+      "type": "web-app",
+      "title": "暗黑破坏神",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090015171985154050",
+          "name": "暗黑破坏神",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787133418703.webp",
+          "des": "无需下载，点击直玩",
+          "link": "https://retrogaming.dpdns.org/game.html?id=Diablo_1",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787133418158.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 17:57:02",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089991338251132929",
+              "parentId": "2087100719091765249",
+              "name": "端游",
+              "icon": null,
+              "sort": 5,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
       },
-      "data": {},
       "grid": {
-        "x": 18,
-        "y": 25,
+        "x": 67,
+        "y": 30,
         "w": 6,
-        "h": 15
-      }
+        "h": 6
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2090045141935595522",
+      "type": "web-app",
+      "title": "今日撸猫",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090045141935595522",
+          "name": "今日撸猫",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787140563615.webp",
+          "des": "你今天也想摸猫吗",
+          "link": "https://petcat.today/",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787140560471.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 19:56:08",
+          "categoryList": [
+            {
+              "id": "2090028846162780162",
+              "parentId": "0",
+              "name": "奇趣合集",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 24,
+        "y": 36,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2089982512760233986",
+      "type": "web-app",
+      "title": "慢路",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089982512760233986",
+          "name": "慢路",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787125632468.webp",
+          "des": "3D开车",
+          "link": "https://slowroads.io/",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787125608222.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 15:47:16",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 85,
+        "y": 30,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2089994211898826754",
+      "type": "web-app",
+      "title": "太空公司",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2089994211898826754",
+          "name": "太空公司",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787128421814.webp",
+          "des": "与进化一样的文字游戏，设定丰富",
+          "link": "https://www.mhhf.com/game-5302/#",
+          "count": 4,
+          "visible": true,
+          "recommend": false,
+          "background": "#FFFFFF",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787143564099.webp",
+          "keyword": "",
+          "orderNum": 200,
+          "screenshot": "",
+          "createTime": "2026-08-19 16:33:45",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089241171147259905",
+              "parentId": "2087100719091765249",
+              "name": "小游戏",
+              "icon": null,
+              "sort": 3,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 85,
+        "y": 24,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2090012275977625602",
+      "type": "web-app",
+      "title": "星际争霸",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090012275977625602",
+          "name": "星际争霸",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787132728287.webp",
+          "des": "星际争霸网页版",
+          "link": "https://retrogaming.dpdns.org/game.html?id=starcraft",
+          "count": 1,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787132727623.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 17:45:32",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089991338251132929",
+              "parentId": "2087100719091765249",
+              "name": "端游",
+              "icon": null,
+              "sort": 5,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 85,
+        "y": 18,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-2090013356359032833",
+      "type": "web-app",
+      "title": "帝国时代2",
+      "maxInstances": null,
+      "isAddable": false,
+      "data": {
+        "site": {
+          "id": "2090013356359032833",
+          "name": "帝国时代2",
+          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787132985847.webp",
+          "des": "如题，帝国时代2",
+          "link": "https://retrogaming.dpdns.org/game.html?id=age_of_empires_2",
+          "count": 0,
+          "visible": true,
+          "recommend": false,
+          "background": "",
+          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787132985105.webp",
+          "keyword": null,
+          "orderNum": 200,
+          "screenshot": null,
+          "createTime": "2026-08-19 17:49:49",
+          "categoryList": [
+            {
+              "id": "2087100719091765249",
+              "parentId": "0",
+              "name": "游戏",
+              "icon": null,
+              "sort": 1,
+              "module": null,
+              "children": []
+            },
+            {
+              "id": "2089982826783580162",
+              "parentId": "2087100719091765249",
+              "name": "3D",
+              "icon": null,
+              "sort": 4,
+              "module": null,
+              "children": []
+            }
+          ]
+        }
+      },
+      "grid": {
+        "x": 79,
+        "y": 30,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
     }
   ],
   "wallpaper": {
-    "type": "gradient",
+    "type": "static",
     "blur": 0,
     "brightness": 115,
     "contrast": 1.05,
@@ -327,24 +1314,26 @@
     "sepia": 0,
     "grayscale": 0,
     "invert": 0,
-    "gradient": "linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%)"
+    "gradient": "linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%)",
+    "imageUrl": "https://www.mx2d.cn/2026/8/16/wallpaper_origin_wp_1769734302673_50w8ta1b_6.webp",
+    "id": "2088884709430009856"
   },
   "notes": [
     {
-      "id": "note-1787052908484",
+      "id": "note-1787207919643",
       "title": "新便签",
-      "content": "1.方向键控制桌宠\n2.右键设置壁纸，新增组件",
+      "content": "在此记录你的新想法与灵感...",
       "color": "yellow",
-      "updatedAt": "20:02",
+      "updatedAt": "14:38",
       "pinned": false
     }
   ],
   "isDarkMode": false,
-  "themeColor": "#B07CD6",
+  "themeColor": "#007AFF",
   "soundEnabled": true,
-  "fontVariant": "A",
+  "fontVariant": "B",
   "cardRadius": "small",
-  "screenBrightness": 62,
+  "screenBrightness": 88,
   "aiConfig": {
     "provider": "local",
     "baseURL": "/api/public/ai/chat",
@@ -399,8 +1388,10 @@
   ],
   "selectedCityId": "city-23.12-113.25",
   "lastLocation": {
-    "city": "",
-    "lat": 0,
-    "lon": 0
-  }
+    "city": "广州",
+    "lat": 23.196539758692033,
+    "lon": 113.56913708640764
+  },
+  "selectedRoleId": "klrx",
+  "showDesktopIcons": true
 }

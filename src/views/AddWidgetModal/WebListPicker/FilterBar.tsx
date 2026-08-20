@@ -109,7 +109,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           <button
             key={c.id}
             onClick={() => onSelectCategory(c.id)}
-            className={chipClass(selectedCat === c.id)}
+            className={chipClass(activeParent === c.id)}
           >
             {c.name}
           </button>
@@ -121,7 +121,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         <FilterRow label="子类" loading={false}>
           <button
             onClick={() => onSelectCategory(CHILD_ALL)}
-            className={chipClass(selectedCat === '' && activeParent !== '')}
+            className={chipClass(selectedCat === CHILD_ALL)}
           >
             全部
           </button>
