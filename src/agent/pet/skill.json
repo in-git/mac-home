@@ -1,115 +1,19 @@
 {
-  "skill": "role-actions",
-  "title": "桌面宠物角色行为",
-  "description": "封装桌面宠物（桌宠）支持的全部行为。外部（如 AI Agent）通过调用对应工具派发 window CustomEvent，由 RoleCharacterCanvas 监听并驱动 Pixi 渲染/物理循环。",
-  "prefix": "pet_",
+  "skill": "pet",
+  "name": "打招呼",
+  "description": "先执行打招呼的行为，再说一句欢迎词",
   "actions": [
     {
-      "name": "pet_speak",
-      "event": "role-dialog-speak",
-      "title": "让桌宠说话",
-      "description": "让桌面宠物说一句话（在其头顶弹出对话气泡，展示约 5 秒）。",
+      "name": "hello",
+      "event": "role-perform",
+      "title": "打招呼",
+      "description": "在用户刚进入页面时，你需要做的",
       "parameters": [
         {
-          "name": "text",
+          "name": "actions",
           "type": "string",
-          "description": "要说的内容",
+          "description": "一组动作的 JSON 数组字符串，格式：[{\"name\":\"pet_celebrate\"},{\"name\":\"pet_speak\",\"args\":{\"text\":\"你好呀～\"}}]。按顺序依次执行。",
           "required": true
-        },
-        {
-          "name": "duration",
-          "type": "number",
-          "description": "气泡展示时长（毫秒），默认 5000",
-          "required": false
-        }
-      ]
-    },
-    {
-      "name": "pet_move",
-      "event": "role-move",
-      "title": "让桌宠移动",
-      "description": "让桌面宠物向左或向右移动一段距离。direction 必填（left 或 right）；可传 distance（像素）或 duration（毫秒），两者都传时以 duration 为准。",
-      "parameters": [
-        {
-          "name": "direction",
-          "type": "string",
-          "description": "移动方向：left 或 right",
-          "enum": ["left", "right"],
-          "required": true
-        },
-        {
-          "name": "distance",
-          "type": "number",
-          "description": "移动距离（像素），默认 200",
-          "required": false
-        },
-        {
-          "name": "duration",
-          "type": "number",
-          "description": "移动持续时间（毫秒），不传时按 distance 估算",
-          "required": false
-        }
-      ]
-    },
-    {
-      "name": "pet_jump",
-      "event": "role-jump",
-      "title": "让桌宠跳跃",
-      "description": "让桌面宠物跳起来，可指定是否二段跳（double）。",
-      "parameters": [
-        {
-          "name": "double",
-          "type": "boolean",
-          "description": "是否二段跳，默认 false",
-          "required": false
-        }
-      ]
-    },
-    
-    {
-      "name": "pet_celebrate",
-      "event": "role-celebrate",
-      "title": "让桌宠庆祝",
-      "description": "让桌面宠物播放庆祝动画（celebration 帧序列），固定连续播放 2 次后回退 idle（按次数，非时长）。",
-      "parameters": [
-        {
-          "name": "count",
-          "type": "number",
-          "description": "庆祝动作播放次数，固定为 2，一般无需修改",
-          "required": false
-        }
-      ]
-    },
-    {
-      "name": "pet_dialog",
-      "event": "role-dialog-open",
-      "title": "弹出桌宠对话框",
-      "description": "让桌宠弹出对话框。支持两种模式：base 基础对话（单条气泡，定时隐藏）或 game 文字游戏式对话（多行逐句推进，支持点击继续与确定/取消按钮）。",
-      "parameters": [
-        {
-          "name": "mode",
-          "type": "string",
-          "description": "对话模式：base（基础对话）或 game（文字游戏式）",
-          "enum": ["base", "game"],
-          "required": true
-        },
-        {
-          "name": "text",
-          "type": "string",
-          "description": "基础对话的文本内容（mode=base 时必填）",
-          "required": false
-        },
-        {
-          "name": "duration",
-          "type": "number",
-          "description": "基础对话展示时长（毫秒），默认 5000",
-          "required": false
-        },
-        {
-          "name": "lines",
-          "type": "string",
-          "description": "文字游戏式对话的台词 JSON 字符串（mode=game 时必填）。格式：[{\"text\":\"内容\"},{\"text\":\"内容\",\"choices\":[{\"label\":\"确定\"},{\"label\":\"取消\"}]}]",
-          "required": false
         }
       ]
     }

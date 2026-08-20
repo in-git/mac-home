@@ -29,6 +29,8 @@ export interface GameDialogConfig {
   lines: DialogLine[];
   /** 角色名前缀（可选） */
   roleName?: string;
+  /** 整段对话总展示时长（毫秒），到点自动关闭；不传则一直等待用户点击 */
+  duration?: number;
 }
 
 /** 基础对话配置 */
@@ -111,4 +113,14 @@ export const GREETING_DIALOG: RoleDialogConfig = {
 export const THANKS_DIALOG: RoleDialogConfig = {
   mode: 'base',
   text: '谢谢你的陪伴～',
+};
+
+/** 点击角色时弹出的欢迎对话（文字游戏式：逐句点击继续，5s 后自动关闭） */
+export const ROLE_CLICK_DIALOG: RoleDialogConfig = {
+  mode: 'game',
+  duration: 5000,
+  lines: [
+    { text: '欢迎来看我，我会告诉你，我知道的' },
+    { text: '这里有很多小游戏可以玩' },
+  ],
 };

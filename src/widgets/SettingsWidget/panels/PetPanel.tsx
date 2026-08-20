@@ -1,6 +1,5 @@
-import { Check, PawPrint, Zap, Send } from 'lucide-react';
+import { PawPrint, Zap, Send } from 'lucide-react';
 import React, { useState } from 'react';
-import { ROLE_SKINS } from '../../../data/roles';
 import { ToggleDot } from '../ToggleDot';
 import { usePetAgent } from '../../../hooks/usePetAgent';
 import type { PetPanelProps } from '../types';
@@ -14,67 +13,12 @@ import type { PetPanelProps } from '../types';
 export const PetPanel: React.FC<PetPanelProps> = ({
   enabled,
   onToggleEnabled,
-  selectedRoleId,
-  onSelectRole,
 }) => {
-  const { send, loading } = usePetAgent();
-  const [input, setInput] = useState('');
 
-  const handleSend = () => {
-    const text = input.trim();
-    if (!text || loading) return;
-    setInput('');
-    void send(text);
-  };
+
 
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
-      {/* 形象选择 */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
-        <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
-          <div className=" ">
-            桌宠形象
-          </div>
-          <div className="text-xs mt-0.5  ">
-            选择桌面上显示的桌宠角色
-          </div>
-        </div>
-        <div className="divide-y divide-black/5 dark:divide-white/10">
-          {ROLE_SKINS.map((skin) => {
-            const active = skin.id === selectedRoleId;
-            return (
-              <button
-                key={skin.id}
-                onClick={() => onSelectRole(skin.id)}
-                className={`flex items-center justify-between w-full px-4 py-3 transition-colors ${
-                  active
-                    ? 'bg-[color:var(--accent)]/10'
-                    : 'hover:bg-black/5 dark:hover:bg-white/10'
-                }`}
-              >
-                <span className="flex items-center space-x-3">
-                  <span
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs  transition-colors ${
-                      active
-                        ? 'bg-[color:var(--accent)] text-white'
-                        : 'bg-black/5 dark:bg-white/10  '
-                    }`}
-                  >
-                    {skin.name.slice(0, 1)}
-                  </span>
-                  <span className=" ">
-                    {skin.name}
-                  </span>
-                </span>
-                {active && (
-                  <Check size={16} className="text-[color:var(--accent)]" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* 自由活动开关 */}
       <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden divide-y divide-black/5 dark:divide-white/10 border border-black/5 dark:border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
@@ -112,37 +56,6 @@ export const PetPanel: React.FC<PetPanelProps> = ({
         </div>
       </div>
 
-      {/* 和桌宠说话：用户一句话，模型决策调用桌宠行为（petTools） */}
-      <div className="bg-black/[0.03] dark:bg-white/[0.06] rounded-[var(--card-radius)] overflow-hidden border border-black/5 dark:border-white/10">
-        <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
-          <div className=" ">
-            和桌宠说话
-          </div>
-          <div className="text-xs mt-0.5  ">
-            输入一句话，由大模型决定让桌宠做什么（说话 / 移动 / 跳跃 / 庆祝）
-          </div>
-        </div>
-        <div className="flex items-center space-x-2 px-4 py-3">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSend();
-            }}
-            placeholder={loading ? '桌宠思考中…' : '例如：跟我说声嗨，然后跳一下'}
-            disabled={loading}
-            className="flex-1 min-w-0 px-3 py-2 text-sm rounded-lg bg-white/70 dark:bg-black/30 border border-black/10 dark:border-white/10 outline-none focus:ring-2 focus:ring-[color:var(--accent)] disabled:opacity-50"
-          />
-          <button
-            onClick={handleSend}
-            disabled={loading || !input.trim()}
-            aria-label="发送给桌宠"
-            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg bg-[color:var(--accent)] text-white disabled:opacity-40 transition-opacity"
-          >
-            <Send size={15} />
-          </button>
-        </div>
-      </div>
 
 
     </div>

@@ -62,6 +62,10 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
       setLineIdx(0);
       setConfig(cfg);
       if (cfg.mode === 'base') {
+        // 基础对话：默认 5s 自动隐藏
+        scheduleHide(cfg.duration);
+      } else if (cfg.duration !== undefined) {
+        // 文字游戏式对话：显式配置 duration 时，整段到点自动关闭
         scheduleHide(cfg.duration);
       }
     },
@@ -199,7 +203,7 @@ const Bubble: React.FC<{
   }
   return (
     <div
-      className="absolute z-40 max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm rounded-[var(--card-radius)] shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap cursor-pointer"
+      className="absolute z-40 pointer-events-auto max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm rounded-[var(--card-radius)] shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap cursor-pointer"
       style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
       onClick={onClick}
     >

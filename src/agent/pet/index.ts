@@ -17,6 +17,7 @@ export {
   IDLE_SPEECH,
   GREETING_DIALOG,
   THANKS_DIALOG,
+  ROLE_CLICK_DIALOG,
 } from './dialog';
 export type {
   RoleDialogConfig,
@@ -62,19 +63,42 @@ export function dispatchPetEvent(
 }
 
 /**
- * 宠物工具列表由 petActions 自动生成：petActions 是行为清单的唯一来源，
- * 每个行为的 name/title/description/parameters 直接映射为对应 AgentTool，
- * 因此 petTools 始终与 skill.json、petActions 三者完全一致，无需重复维护。
+ * 顺序执行一组动作（组动作）。供前端 / 工具层一次性执行多个基础行为。
+ * @param actions 动作数组，每个元素为 { name, args? }
  */
-export const petTools: AgentTool[] = petActions.map((action) => ({
-  name: action.name,
-  title: action.title,
-  description: action.description,
-  parameters: action.parameters as Record<string, AgentToolParam>,
-  run: (args): AgentToolCallResult => {
-    const res = runPetAction(action.name, args);
-    return res.ok
-      ? ok(action.name, res.message)
-      : err(action.name, res.message);
-  },
-}));
+export function performPetActions(
+  actions: Array<{ name: string; args?: Record<string, unknown> }>,
+): PetActionResult {
+  if (actions.length === 0) {
+    return { ok: false, message: '没有需要执行的动作。' };
+  }
+  const results: string[] = [];
+  let allOk = true;
+  for (const item of actions) {
+    const res = runPetAction(item.name, item.args ?? {});
+    if (!res.ok) allOk = false;
+    results.push(res.message);
+  }
+  return { ok: allOk, message: results.join('；') };
+}
+
+/**
+ * 宠物工具列表。
+ * AI 仅暴露组动作入口 pet_perform（通过 actions 数组一次执行一组行为），
+ * 不再暴露单个基础动作工具，避免模型零散地逐个调用、难以形成连贯行为序列。
+ * 基础动作以「可组合元素」的身份出现在 pet_perform 的 description 中。
+ */
+export const petTools: AgentTool[] = petActions
+  .filter((action) => action.name === 'pet_perform')
+  .map((action) => ({
+    name: action.name,
+    title: action.title,
+    description: action.description,
+    parameters: action.parameters as Record<string, AgentToolParam>,
+    run: (args): AgentToolCallResult => {
+      const res = runPetAction(action.name, args);
+      return res.ok
+        ? ok(action.name, res.message)
+        : err(action.name, res.message);
+    },
+  }));

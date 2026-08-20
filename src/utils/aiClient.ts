@@ -69,12 +69,20 @@ export async function askOnce(
     }
 
     const data = await res.json();
-    // 兼容 OpenAI / 各厂商返回结构
-    const content: string =
+    // 兼容多种返回结构：
+    // - OpenAI 标准：data.choices[0].message.content
+    // - Ollama / 本机后端通道：data.message.content（content 可能是 JSON 对象）
+    // - 部分厂商：data.output
+    const content =
         data?.choices?.[0]?.message?.content ??
-        data?.output ?? // 部分厂商（如智谱）字段不同
+        data?.message?.content ??
+        data?.output ??
         '';
-    return content.trim();
+    // content 可能是对象（如 {tasks, continue}）或字符串：统一以字符串返回，
+    // 对象会序列化为 JSON 字符串，供上层 runAgentTurn 的 JSON.parse 解析。
+    return typeof content === 'string'
+        ? content.trim()
+        : JSON.stringify(content);
 }
 
 /**

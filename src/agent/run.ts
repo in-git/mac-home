@@ -2,13 +2,19 @@ import { askOnce } from '../utils/aiClient';
 import type { ChatMessage } from '../utils/aiClient';
 import { ChatUtils } from '../utils/chatUtils';
 import { useHomeStore } from '../store/useHomeStore';
-import type { AgentChatMessage } from './types';
+import type { AgentChatMessage, AgentTool } from './types';
 
 export interface RunAgentOptions {
   /** 系统人设（如桌宠名字/性格）；缺省走 ChatUtils 默认角色设定 */
   systemPrompt?: string;
   /** 最大 ReAct 轮数，防止模型死循环调用工具，默认 6 */
   maxRounds?: number;
+  /**
+   * 限定 AI 可用的工具清单（白名单）。
+   * 传入后，system prompt 只展示这些工具，且工具执行只在该清单内进行，
+   * 即 AI 只能执行传入清单中的行为。缺省为全部 AGENT_TOOLS。
+   */
+  tools?: AgentTool[];
 }
 
 /**
@@ -33,8 +39,27 @@ export async function runAgentTurn(
   userInput: string,
   options: RunAgentOptions = {},
 ): Promise<{ ok: boolean; data?: string; error?: string }> {
-  const { systemPrompt, maxRounds = 6 } = options;
-  const chat = new ChatUtils(); // 默认注入 listAgentTools / executeAgentTool
+  const { systemPrompt, maxRounds = 6, tools } = options;
+  // 指定 tools 时：AI 只能看到并执行该清单内的行为（白名单约束）；
+  // 否则默认注入全部 AGENT_TOOLS（listAgentTools / executeAgentTool）
+  const chat = tools
+    ? new ChatUtils({
+        listTools: () => tools,
+        execTool: async (invocation) => {
+          const tool = tools.find((t) => t.name === invocation?.name);
+          if (!tool) {
+            return {
+              ok: false,
+              tool: invocation?.name ?? '',
+              message: `未知功能：「${invocation?.name ?? 'undefined'}」。可用功能：${tools
+                .map((t) => t.name)
+                .join(', ')}`,
+            };
+          }
+          return await tool.run(invocation?.args ?? {});
+        },
+      })
+    : new ChatUtils(); // 默认注入 listAgentTools / executeAgentTool
   const system = systemPrompt ?? chat.makeSystemPrompt();
   const config = useHomeStore.getState().aiConfig;
 
@@ -58,7 +83,11 @@ export async function runAgentTurn(
       };
     }
 
-    let parsed: { tasks?: Array<{ type: string; content: string }>; continue?: boolean };
+    // 模型可能返回 content 为字符串或对象，故类型放宽容纳两者
+    let parsed: {
+      tasks?: Array<{ type: string; content: string | { name: string; args?: Record<string, unknown> } }>;
+      continue?: boolean;
+    };
     try {
       parsed = JSON.parse(raw);
     } catch {
@@ -77,14 +106,18 @@ export async function runAgentTurn(
     let hasTool = false;
     for (const task of tasks) {
       if (task.type === 'text') {
-        lastReply = task.content.trim();
+        lastReply =
+          typeof task.content === 'string' ? task.content.trim() : JSON.stringify(task.content);
         continue;
       }
-      // type === 'tool'：content 是 {"name","args"} 的 JSON 字符串
+      // type === 'tool'：content 是 {"name","args"}，可能是 JSON 字符串或对象（部分模型直接返回对象）
       hasTool = true;
       let taskObj: { name: string; args?: Record<string, unknown> };
       try {
-        taskObj = JSON.parse(task.content);
+        taskObj =
+          typeof task.content === 'string'
+            ? JSON.parse(task.content)
+            : (task.content as { name: string; args?: Record<string, unknown> });
       } catch {
         lastReply = `工具调用格式错误：${task.content}`;
         continue;

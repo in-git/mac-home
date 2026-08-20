@@ -7,6 +7,7 @@ import { RoleControls } from './controls';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './physics';
 import { RoleState, RoleTextures } from './types';
 import { RoleDialog } from './RoleDialog';
+import { ROLE_CLICK_DIALOG, dispatchPetDialog } from '../../agent/pet';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -17,6 +18,11 @@ export const RoleCharacterCanvas: React.FC = () => {
     x: 0,
     y: 0,
   });
+
+  // 点击角色时弹出欢迎对话（配置见 agent/pet/dialog.ts 的 ROLE_CLICK_DIALOG）
+  const handleRoleClick = () => {
+    dispatchPetDialog(ROLE_CLICK_DIALOG);
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -228,6 +234,19 @@ export const RoleCharacterCanvas: React.FC = () => {
   return (
     <div className="fixed inset-0 pointer-events-none z-[190] overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
+
+      {/* 随角色移动的透明点击热区：仅角色所在小区域可点击，其余全屏不拦截鼠标 */}
+      <button
+        aria-label="与桌宠互动"
+        onClick={handleRoleClick}
+        className="absolute pointer-events-auto z-[191] bg-transparent border-0 p-0 cursor-pointer"
+        style={{
+          left: `${rolePos.x}px`,
+          top: `${rolePos.y}px`,
+          width: `${DEFAULT_PHYSICS_CONFIG.roleWidth}px`,
+          height: `${DEFAULT_PHYSICS_CONFIG.roleHeight}px`,
+        }}
+      />
 
       {/* 随角色移动的对话框（由配置驱动，支持基础对话与文字游戏式对话） */}
       <RoleDialog rolePos={rolePos} />

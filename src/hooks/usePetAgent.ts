@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { runAgentTurn } from '../agent/run';
+import { petTools } from '../agent/pet';
 
 /**
  * 让大模型接管桌宠的 React Hook。
@@ -20,7 +21,7 @@ export function usePetAgent() {
       setError(null);
 
       try {
-        const res = await runAgentTurn([], input);
+        const res = await runAgentTurn([], input, { tools: petTools });
         if (!res.ok) {
           setError(res.error);
           return '';

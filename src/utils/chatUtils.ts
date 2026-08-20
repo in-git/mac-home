@@ -80,12 +80,7 @@ export class ChatUtils {
   "tasks": [
     {
       "type": "tool",
-      "content": {
-        "name": "set_dark_mode",
-        "args": {
-          "enabled": true
-        }
-      }
+      "content": "{\"name\":\"pet_perform\",\"args\":{\"actions\":\"[{\\\"name\\\":\\\"pet_celebrate\\\"},{\\\"name\\\":\\\"pet_speak\\\",\\\"args\\\":{\\\"text\\\":\\\"你好呀～\\\"}}]\"}}"
     },
     {
       "type": "text",
@@ -99,6 +94,8 @@ export class ChatUtils {
 ${toolList}
 你需要处理用户提出的问题，通过调用前端的工具，或者回答文本
 ## 工作规则
+
+- 一次执行一组连贯行为（如先庆祝再说话），不要逐个调用单个动作。
 
 
 
