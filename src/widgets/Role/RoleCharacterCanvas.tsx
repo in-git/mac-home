@@ -2,20 +2,17 @@ import { Application, Sprite } from 'pixi.js';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useHomeStore } from '../../store/useHomeStore';
-import { loadRoleTextures } from '../role/assets';
-import { RoleControls } from '../role/controls';
-import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from '../role/physics';
-import { DialogState, RoleState, RoleTextures } from '../role/types';
+import { loadRoleTextures } from './assets';
+import { RoleControls } from './controls';
+import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './physics';
+import { RoleState, RoleTextures } from './types';
+import { RoleDialog } from './RoleDialog';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const selectedRoleId = useHomeStore((s) => s.selectedRoleId);
 
-  // 对话框状态与角色实时坐标
-  const [dialog, setDialog] = useState<DialogState>({
-    text: '',
-    visible: false,
-  });
+  // 角色实时坐标（供 RoleDialog 气泡跟随定位）
   const [rolePos, setRolePos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
@@ -27,34 +24,10 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     let app: Application | null = null;
     let isDestroyed = false;
-    let hideTimerId: NodeJS.Timeout | null = null;
     let textures: RoleTextures | null = null;
     let lastPosUpdate = 0;
 
     const controls = new RoleControls();
-
-    // 角色行为事件处理器。键名对应 skill.json 中 action.event，
-    // 与 actions.ts 派发的事件保持一致，便于 skill 调用链路对齐。
-    // 通过合成输入注入 ticker 物理循环，与键盘操作互不冲突。
-
-    // 说话：弹对话气泡
-    const onRoleSpeak = (e: Event) => {
-      const customEvent = e as CustomEvent<{ text: string; duration?: number }>;
-      if (customEvent.detail?.text) {
-        setDialog({
-          text: `${textures?.name ?? ''}：${customEvent.detail.text}`,
-          visible: true,
-        });
-
-        if (hideTimerId) clearTimeout(hideTimerId);
-        // 展示指定时长后隐藏，默认 5 秒
-        const duration = Math.max(0, Number(customEvent.detail.duration) || 5000);
-        hideTimerId = setTimeout(() => {
-          if (isDestroyed) return;
-          setDialog((prev) => ({ ...prev, visible: false }));
-        }, duration);
-      }
-    };
 
     // 移动：合成一次方向输入，持续到 until
     let moveCmd: { direction: 'left' | 'right'; until: number } | null = null;
@@ -74,7 +47,6 @@ export const RoleCharacterCanvas: React.FC = () => {
     let jumpPattern: number[] = [];
     const onRoleJump = (e: Event) => {
       const detail = (e as CustomEvent<{ double?: boolean }>).detail ?? {};
-      // 单跳：[按下]；二段跳：[按下, 松开, 再按下]，配合 wasJumpPressed 触发两次起跳
       jumpPattern = detail.double === true ? [1, 0, 1] : [1];
     };
 
@@ -85,10 +57,8 @@ export const RoleCharacterCanvas: React.FC = () => {
     };
 
     // 庆祝：固定连续播放 count 次 celebration 帧序列后回退 idle
-    // 用「剩余次数」驱动，而非时间窗口，确保每次都完整播放一遍
     let celebrateCyclesLeft = 0;
     let celebrateCycleStart = 0;
-    // 每帧步进 6 帧、约 60fps，单帧 ≈ 100ms；一遍时长 = 帧数 * 100ms
     const celebrateFrameMs = 100;
     const onRoleCelebrate = (e: Event) => {
       const detail = (e as CustomEvent<{ count?: number }>).detail ?? {};
@@ -100,10 +70,8 @@ export const RoleCharacterCanvas: React.FC = () => {
       celebrateCycleStart = performance.now();
     };
 
-    // 统一注册所有角色行为事件（键 = skill.json 中的 event）。
-    // 后续新增行为只需在此表中追加一项即可，注册/卸载统一遍历。
+    // 统一注册所有角色行为事件。对话（role-dialog-speak）由 RoleDialog 组件监听渲染。
     const roleActionHandlers: Record<string, (e: Event) => void> = {
-      'role-dialog-speak': onRoleSpeak,
       'role-move': onRoleMove,
       'role-jump': onRoleJump,
       'role-reset': onRoleReset,
@@ -250,7 +218,6 @@ export const RoleCharacterCanvas: React.FC = () => {
       Object.entries(roleActionHandlers).forEach(([type, handler]) => {
         window.removeEventListener(type, handler);
       });
-      if (hideTimerId) clearTimeout(hideTimerId);
       controls.destroy();
       if (app) {
         app.destroy(true, { children: true, texture: false });
@@ -262,41 +229,8 @@ export const RoleCharacterCanvas: React.FC = () => {
     <div className="fixed inset-0 pointer-events-none z-[190] overflow-hidden">
       <div ref={containerRef} className="w-full h-full" />
 
-      {/* 随角色移动的对话框气泡（靠近屏幕边缘时翻转对齐，避免被挤出视口） */}
-      {dialog.visible &&
-        (() => {
-          const centerX = rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2;
-          const winW = typeof window !== 'undefined' ? window.innerWidth : 1280;
-          const half = 140; // 气泡半宽余量，约等于 max-w 的一半
-          let left = centerX;
-          let transform = 'translate(-50%, -100%)';
-          let tail = 'left-1/2 -translate-x-1/2';
-          if (centerX < half) {
-            // 靠近左边缘：气泡向右展开，尾巴靠左
-            transform = 'translate(0, -100%)';
-            tail = 'left-3 -translate-x-1/2';
-          } else if (centerX > winW - half) {
-            // 靠近右边缘：气泡向左展开，尾巴靠右
-            transform = 'translate(-100%, -100%)';
-            tail = 'right-3 translate-x-1/2';
-          }
-          return (
-            <div
-              className="absolute z-40 max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm  rounded-[var(--card-radius)] shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap"
-              style={{
-                left: `${left}px`,
-                top: `${rolePos.y - 12}px`,
-                transform,
-              }}
-            >
-              {dialog.text}
-              {/* 小尾巴：随对齐方向切换位置 */}
-              <div
-                className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/90 dark:border-t-zinc-800/90 ${tail}`}
-              />
-            </div>
-          );
-        })()}
+      {/* 随角色移动的对话框（由配置驱动，支持基础对话与文字游戏式对话） */}
+      <RoleDialog rolePos={rolePos} />
     </div>
   );
 };

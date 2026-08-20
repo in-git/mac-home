@@ -1,4 +1,9 @@
 import { dispatchPetEvent } from './index';
+import {
+  dispatchPetDialog,
+  type GameDialogConfig,
+  type RoleDialogConfig,
+} from './dialog';
 import type { AgentToolParam } from '../types';
 
 export interface PetActionResult {
@@ -16,6 +21,7 @@ export const EVENT = {
   jump: 'role-jump',
   reset: 'role-reset',
   celebrate: 'role-celebrate',
+  dialog: 'role-dialog-open',
 } as const;
 
 /**
@@ -162,6 +168,65 @@ export const petActions: PetAction[] = [
         typeof args.count === 'number' && args.count > 0 ? Math.round(args.count) : 2;
       dispatchPetEvent(EVENT.celebrate, { count });
       return { ok: true, message: `桌宠正在庆祝（连续 ${count} 次）。` };
+    },
+  },
+  {
+    name: 'pet_dialog',
+    event: EVENT.dialog,
+    title: '弹出桌宠对话框',
+    description:
+      '让桌宠弹出对话框。支持两种模式：base 基础对话（单条气泡，定时隐藏）或 game 文字游戏式对话（多行逐句推进，支持点击继续与确定/取消按钮）。',
+    parameters: {
+      mode: {
+        type: 'string' as const,
+        description: '对话模式：base（基础对话）或 game（文字游戏式）',
+        required: true,
+        enum: ['base', 'game'],
+      },
+      text: {
+        type: 'string' as const,
+        description: '基础对话的文本内容（mode=base 时必填）',
+        required: false,
+      },
+      duration: {
+        type: 'number' as const,
+        description: '基础对话展示时长（毫秒），默认 5000',
+        required: false,
+      },
+      lines: {
+        type: 'string' as const,
+        description:
+          '文字游戏式对话的台词 JSON 字符串（mode=game 时必填）。格式：[{"text":"内容"},{"text":"内容","choices":[{"label":"确定"},{"label":"取消"}]}]',
+        required: false,
+      },
+    },
+    run: (args) => {
+      const mode = args.mode === 'game' ? 'game' : 'base';
+      if (mode === 'base') {
+        const text = String(args.text ?? '').trim();
+        if (!text) return { ok: false, message: '基础对话的 text 不能为空。' };
+        const duration =
+          typeof args.duration === 'number' && args.duration > 0
+            ? args.duration
+            : undefined;
+        const config: RoleDialogConfig = { mode: 'base', text, duration };
+        dispatchPetDialog(config);
+        return { ok: true, message: `桌宠已弹出对话框：「${text}」` };
+      }
+      // game 模式：解析 lines JSON
+      let lines: GameDialogConfig['lines'];
+      try {
+        const parsed = JSON.parse(String(args.lines ?? '[]'));
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          return { ok: false, message: '文字游戏式对话的 lines 必须是至少一项的数组。' };
+        }
+        lines = parsed as GameDialogConfig['lines'];
+      } catch {
+        return { ok: false, message: 'lines 必须是合法的 JSON 字符串。' };
+      }
+      const config: RoleDialogConfig = { mode: 'game', lines };
+      dispatchPetDialog(config);
+      return { ok: true, message: `桌宠已弹出文字游戏式对话框（${lines.length} 句）。` };
     },
   },
 ];

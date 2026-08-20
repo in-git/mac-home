@@ -9,6 +9,22 @@ import type { PetAction, PetActionResult } from './actions';
 
 export { petActions, EVENT } from './actions';
 export type { PetAction, PetActionResult } from './actions';
+export {
+  ROLE_DIALOG_EVENT,
+  ROLE_DIALOG_CLOSE_EVENT,
+  dispatchPetDialog,
+  closeRoleDialog,
+  IDLE_SPEECH,
+  GREETING_DIALOG,
+  THANKS_DIALOG,
+} from './dialog';
+export type {
+  RoleDialogConfig,
+  BaseDialogConfig,
+  GameDialogConfig,
+  DialogLine,
+  DialogChoice,
+} from './dialog';
 
 /** 按 name 建立索引，供 skill 调用快速查找 */
 const petActionMap: Record<string, PetAction> = Object.fromEntries(

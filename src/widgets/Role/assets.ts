@@ -30,7 +30,7 @@ const resolveUrl = (config: RoleSkinConfig, fileName: string): string => {
   );
   if (!matchedKey) {
     throw new Error(
-      `[role] 找不到皮肤图片: ${fileName}（目录 ${config.assetDir}）`,
+      `[Role] 找不到皮肤图片: ${fileName}（目录 ${config.assetDir}）`,
     );
   }
   return allSkinImages[matchedKey];

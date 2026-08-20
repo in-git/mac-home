@@ -14,7 +14,7 @@ import { AddWidgetModal } from './views/AddWidgetModal';
 import { SettingsModal } from './views/SettingsModal';
 import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
-import { RoleCharacterCanvas } from './widgets/RoleCharacter/RoleCharacterCanvas';
+import { RoleCharacterCanvas } from './widgets/Role/RoleCharacterCanvas';
 import { visitorApi } from './api/visitor';
 import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
 

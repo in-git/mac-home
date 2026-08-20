@@ -79,6 +79,39 @@
           "required": false
         }
       ]
+    },
+    {
+      "name": "pet_dialog",
+      "event": "role-dialog-open",
+      "title": "弹出桌宠对话框",
+      "description": "让桌宠弹出对话框。支持两种模式：base 基础对话（单条气泡，定时隐藏）或 game 文字游戏式对话（多行逐句推进，支持点击继续与确定/取消按钮）。",
+      "parameters": [
+        {
+          "name": "mode",
+          "type": "string",
+          "description": "对话模式：base（基础对话）或 game（文字游戏式）",
+          "enum": ["base", "game"],
+          "required": true
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "基础对话的文本内容（mode=base 时必填）",
+          "required": false
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "description": "基础对话展示时长（毫秒），默认 5000",
+          "required": false
+        },
+        {
+          "name": "lines",
+          "type": "string",
+          "description": "文字游戏式对话的台词 JSON 字符串（mode=game 时必填）。格式：[{\"text\":\"内容\"},{\"text\":\"内容\",\"choices\":[{\"label\":\"确定\"},{\"label\":\"取消\"}]}]",
+          "required": false
+        }
+      ]
     }
   ]
 }

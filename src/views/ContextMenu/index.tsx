@@ -6,7 +6,7 @@ import {
   DESKTOP_CONTEXT_MENU,
   WIDGET_CONTEXT_MENU,
 } from '../../data/contextMenuConfig';
-import { getSizeOptions } from '../../data/options/size.options';
+import { getSizeOptions, getSizeLabels } from '../../data/options/size.options';
 import { useHomeStore } from '../../store/useHomeStore';
 import { BackgroundSubmenu } from './BackgroundSubmenu';
 import {
@@ -267,19 +267,20 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           {/* Widget Size Switching */}
           {(() => {
             const sizeList = getSizeOptions(targetWidget.type);
+            // 档位按钮显示为 `wxh` 格式（如 6x12）
+            const labels = getSizeLabels(sizeList);
             return (
               <>
                 <div className="px-3 py-1.5 text-font-sm ">
                   调整尺寸
                 </div>
                 <div className="grid grid-cols-4 gap-1.5 px-2 mb-2">
-                  {sizeList.map((sz) => {
+                  {sizeList.map((sz, idx) => {
                     // 配置了 h 的档位需宽高都匹配才算当前档位
                     const isCurrent =
                       targetWidget.grid?.w === sz.w &&
                       (sz.h === undefined || targetWidget.grid?.h === sz.h);
-                    // 显示宽度与 96 的比例（如 32:96）
-                    const label = `${sz.w}`;
+                    const label = labels[idx];
                     return (
                       <button
                         key={`${sz.w}x${sz.h ?? ''}`}

@@ -48,3 +48,10 @@ export function getSizeOptions(type?: WidgetType): WidgetSizeOption[] {
   if (!type) return DEFAULT_SIZE_OPTIONS;
   return SIZE_OPTIONS[type] ?? DEFAULT_SIZE_OPTIONS;
 }
+
+/**
+ * 档位按钮的显示标签：配置了 h 的档位显示为 `wxh`（如 6x12），未配置 h 的仅显示宽度。
+ */
+export function getSizeLabels(options: WidgetSizeOption[]): string[] {
+  return options.map((o) => (o.h !== undefined ? `${o.w}x${o.h}` : `${o.w}`));
+}

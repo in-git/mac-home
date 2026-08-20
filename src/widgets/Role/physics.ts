@@ -83,8 +83,6 @@ export const updateRolePhysics = (
   }
 
   // 动画帧计数累加：
-  // 1. 在空中/跳跃状态时 (!state.isGrounded)，使用降低一档的固定低频率累加 (0.15)
-  // 2. 在地面行走时，降低一档帧速率累加系数 (speed * 0.45)
   if (!state.isGrounded) {
     state.animFrameCounter += 0.15; // 降低一档空中切帧频率 (原 0.25)
   } else {

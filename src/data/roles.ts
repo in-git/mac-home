@@ -1,4 +1,4 @@
-import type { RoleSkinConfig } from '../widgets/role/types';
+import type { RoleSkinConfig } from '../widgets/Role/types';
 
 /**
  * 角色皮肤注册表：新增角色只需在此追加一项，并放入对应资源目录。

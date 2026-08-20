@@ -58,7 +58,7 @@
       },
       "data": {},
       "grid": {
-        "x": 33,
+        "x": 37,
         "y": 12,
         "w": 24,
         "h": 16
@@ -110,7 +110,7 @@
         }
       },
       "grid": {
-        "x": 24,
+        "x": 29,
         "y": 12,
         "w": 8,
         "h": 8
@@ -166,7 +166,7 @@
         }
       },
       "grid": {
-        "x": 24,
+        "x": 29,
         "y": 20,
         "w": 8,
         "h": 8
@@ -222,7 +222,7 @@
         }
       },
       "grid": {
-        "x": 24,
+        "x": 29,
         "y": 28,
         "w": 8,
         "h": 8
@@ -287,7 +287,7 @@
         }
       },
       "grid": {
-        "x": 41,
+        "x": 45,
         "y": 28,
         "w": 8,
         "h": 8
@@ -352,7 +352,7 @@
         }
       },
       "grid": {
-        "x": 32,
+        "x": 37,
         "y": 28,
         "w": 8,
         "h": 8
@@ -399,7 +399,7 @@
         }
       },
       "grid": {
-        "x": 67,
+        "x": 72,
         "y": 12,
         "w": 6,
         "h": 6
@@ -455,7 +455,7 @@
         }
       },
       "grid": {
-        "x": 57,
+        "x": 61,
         "y": 20,
         "w": 8,
         "h": 8
@@ -519,7 +519,7 @@
         }
       },
       "grid": {
-        "x": 73,
+        "x": 78,
         "y": 12,
         "w": 6,
         "h": 6
@@ -575,7 +575,7 @@
         }
       },
       "grid": {
-        "x": 67,
+        "x": 72,
         "y": 18,
         "w": 6,
         "h": 6
@@ -631,7 +631,7 @@
         }
       },
       "grid": {
-        "x": 57,
+        "x": 61,
         "y": 12,
         "w": 8,
         "h": 8
@@ -686,7 +686,7 @@
         }
       },
       "grid": {
-        "x": 49,
+        "x": 53,
         "y": 28,
         "w": 8,
         "h": 8
@@ -741,7 +741,7 @@
         }
       },
       "grid": {
-        "x": 73,
+        "x": 78,
         "y": 18,
         "w": 12,
         "h": 12
@@ -788,7 +788,7 @@
         }
       },
       "grid": {
-        "x": 85,
+        "x": 90,
         "y": 12,
         "w": 6,
         "h": 6
@@ -835,7 +835,7 @@
         }
       },
       "grid": {
-        "x": 57,
+        "x": 61,
         "y": 28,
         "w": 8,
         "h": 8
@@ -881,7 +881,7 @@
         }
       },
       "grid": {
-        "x": 67,
+        "x": 72,
         "y": 24,
         "w": 6,
         "h": 6
@@ -937,7 +937,7 @@
         }
       },
       "grid": {
-        "x": 79,
+        "x": 84,
         "y": 12,
         "w": 6,
         "h": 6
@@ -993,12 +993,16 @@
         }
       },
       "grid": {
-        "x": 73,
+        "x": 78,
         "y": 30,
         "w": 6,
         "h": 6
       },
-      "size": 6
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
     },
     {
       "id": "widget-2090015171985154050",
@@ -1045,55 +1049,16 @@
         }
       },
       "grid": {
-        "x": 67,
+        "x": 72,
         "y": 30,
         "w": 6,
         "h": 6
       },
-      "size": 6
-    },
-    {
-      "id": "widget-2090045141935595522",
-      "type": "web-app",
-      "title": "今日撸猫",
-      "maxInstances": null,
-      "isAddable": false,
-      "data": {
-        "site": {
-          "id": "2090045141935595522",
-          "name": "今日撸猫",
-          "logo": "https://www.mx2d.cn/2026/8/19/site_logo_1787140563615.webp",
-          "des": "你今天也想摸猫吗",
-          "link": "https://petcat.today/",
-          "count": 0,
-          "visible": true,
-          "recommend": false,
-          "background": "",
-          "cover": "https://www.mx2d.cn/2026/8/19/site_cover_1787140560471.webp",
-          "keyword": null,
-          "orderNum": 200,
-          "screenshot": null,
-          "createTime": "2026-08-19 19:56:08",
-          "categoryList": [
-            {
-              "id": "2090028846162780162",
-              "parentId": "0",
-              "name": "奇趣合集",
-              "icon": null,
-              "sort": 3,
-              "module": null,
-              "children": []
-            }
-          ]
-        }
-      },
-      "grid": {
-        "x": 24,
-        "y": 36,
-        "w": 6,
-        "h": 6
-      },
-      "size": 6
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
     },
     {
       "id": "widget-2089982512760233986",
@@ -1140,12 +1105,16 @@
         }
       },
       "grid": {
-        "x": 85,
+        "x": 90,
         "y": 30,
         "w": 6,
         "h": 6
       },
-      "size": 6
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
     },
     {
       "id": "widget-2089994211898826754",
@@ -1192,12 +1161,16 @@
         }
       },
       "grid": {
-        "x": 85,
+        "x": 90,
         "y": 24,
         "w": 6,
         "h": 6
       },
-      "size": 6
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
     },
     {
       "id": "widget-2090012275977625602",
@@ -1244,12 +1217,16 @@
         }
       },
       "grid": {
-        "x": 85,
+        "x": 90,
         "y": 18,
         "w": 6,
         "h": 6
       },
-      "size": 6
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
     },
     {
       "id": "widget-2090013356359032833",
@@ -1296,12 +1273,16 @@
         }
       },
       "grid": {
-        "x": 79,
+        "x": 84,
         "y": 30,
         "w": 6,
         "h": 6
       },
-      "size": 6
+      "size": 6,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true
+      }
     }
   ],
   "wallpaper": {
@@ -1318,16 +1299,7 @@
     "imageUrl": "https://www.mx2d.cn/2026/8/16/wallpaper_origin_wp_1769734302673_50w8ta1b_6.webp",
     "id": "2088884709430009856"
   },
-  "notes": [
-    {
-      "id": "note-1787207919643",
-      "title": "新便签",
-      "content": "在此记录你的新想法与灵感...",
-      "color": "yellow",
-      "updatedAt": "14:38",
-      "pinned": false
-    }
-  ],
+  "notes": [],
   "isDarkMode": false,
   "themeColor": "#007AFF",
   "soundEnabled": true,
@@ -1388,9 +1360,9 @@
   ],
   "selectedCityId": "city-23.12-113.25",
   "lastLocation": {
-    "city": "广州",
-    "lat": 23.196539758692033,
-    "lon": 113.56913708640764
+    "city": "",
+    "lat": 0,
+    "lon": 0
   },
   "selectedRoleId": "klrx",
   "showDesktopIcons": true
