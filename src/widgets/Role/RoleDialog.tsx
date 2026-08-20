@@ -3,21 +3,21 @@ import {
   ROLE_DIALOG_CLOSE_EVENT,
   ROLE_DIALOG_EVENT,
   type DialogChoice,
+  type MenuOption,
   type RoleDialogConfig,
 } from '../../agent/pet/dialog';
 import { DEFAULT_PHYSICS_CONFIG } from './physics';
 import { useHomeStore } from '../../store/useHomeStore';
 import { getRoleSkin } from '../../data/roles';
+import { usePetAgent } from '../../hooks/usePetAgent';
+import avatarUrl from '../../assets/images/avatar.png';
 
 /**
  * 角色对话框组件。
- * 由配置驱动，支持两种模式：
+ * 支持三种模式：
  * - base 基础对话：单条气泡，定时自动隐藏。
- * - game 文字游戏式：多行逐句推进（点击/回车继续），行尾可挂确定/取消等按钮。
- *
- * 监听两类事件：
- * - role-dialog-open：完整配置（两种模式均可）
- * - role-dialog-speak：旧事件兼容，转为 base 基础对话
+ * - game 文字游戏式：AVG 风格，多行逐句推进，支持打字机效果、选择分支。
+ * - menu 菜单式：上方对话 + 下方选项列表，点击后发送给 AI。
  */
 export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   rolePos,
@@ -31,6 +31,8 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   const [lineIdx, setLineIdx] = useState(0);
   // 基础模式自动隐藏计时器
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // AI 对话
+  const { send } = usePetAgent();
 
   const clearHideTimer = useCallback(() => {
     if (hideTimerRef.current) {
@@ -114,19 +116,66 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   // —— 基础对话模式 ——
   if (config.mode === 'base') {
     return (
-      <Bubble rolePos={rolePos}>
+      <Bubble rolePos={rolePos} onClick={close}>
         {prefix}
         {config.text}
       </Bubble>
     );
   }
 
-  // —— 文字游戏模式 ——
+  // —— 菜单式对话模式 ——
+  if (config.mode === 'menu') {
+    const handleOptionClick = async (option: MenuOption) => {
+      console.log('用户选择了选项：', option);
+      
+      // 根据选项构建问题
+      const question = option.label;
+      
+      // 先关闭菜单对话框
+      close();
+      
+      // 发送给大模型并等待回答
+      const reply = await send(`用户问：${question}。请简短回答（1-2句话），并可以做一个相关的动作。`);
+      
+      console.log('AI 回答：', reply);
+    };
+
+    return (
+      <Bubble rolePos={rolePos} className="w-[320px] p-4" onClick={close}>
+        <div className="w-full min-h-[100px] mb-3 bg-white/90 dark:bg-white/90 rounded-xl flex items-center justify-center p-4">
+          <div className="text-center text-sm font-medium text-slate-800 leading-[1.6]">
+            {config.text}
+          </div>
+        </div>
+        <div className="w-full flex flex-col gap-1.5">
+          {config.options.map((option, idx) => (
+            <button
+              key={option.value}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOptionClick(option);
+              }}
+              className="w-full px-3 py-2.5 text-left text-xs rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors border border-black/5 dark:border-white/10 active:scale-[0.98]"
+            >
+              <span className="font-medium text-[color:var(--accent)] mr-1.5">
+                {idx + 1}.
+              </span>
+              <span className="text-slate-800 dark:text-white">{option.label}</span>
+            </button>
+          ))}
+        </div>
+      </Bubble>
+    );
+  }
+
+  // —— 文字游戏模式（AVG 风格）——
+  if (config.mode !== 'game') return null;
+  
   const currentLine = config.lines[lineIdx];
   const isLastLine = lineIdx >= config.lines.length - 1;
 
   const handleLineClick = () => {
-    // 当前行带按钮时，点击空白区域不推进（由按钮决定）
+    // 当前行带按钮时,点击空白区域不推进（由按钮决定）
     if (currentLine?.choices?.length) return;
     advance();
   };
@@ -139,9 +188,18 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
     }
   };
 
-  const handleChoice = (choice: DialogChoice) => {
+  const handleChoice = async (choice: DialogChoice) => {
     if (choice.action === 'close' || choice.closeAfter) {
       close();
+      return;
+    }
+    // 自定义 action（如帮助菜单的 page_intro / gameplay / customize）：把选项内容发送给大模型
+    if (choice.action && choice.action !== 'continue') {
+      close();
+      const reply = await send(
+        `用户问：${choice.label}。请简短回答（1-2句话）`,
+      );
+      console.log('AI 回答：', reply);
       return;
     }
     // action === 'continue' 或未指定：推进到下一行
@@ -152,33 +210,91 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
     }
   };
 
+  // 判断显示模式
+  const displayMode = currentLine?.displayMode || 'normal';
+  const isMonologue = displayMode === 'monologue';
+  const isSystem = displayMode === 'system';
+
+  // AVG 风格对话框：屏幕底部、半透明背景、圆角设计
   return (
-    <Bubble rolePos={rolePos} onClick={handleLineClick}>
-      <div className="w-full">
-        {prefix}
-        {currentLine?.text}
+    <div 
+      className="fixed inset-0 z-50 pointer-events-auto" 
+      onClick={(e) => {
+        // 只有点击遮罩本身（target === currentTarget）才关闭，点击子元素不关闭
+        if (e.target === e.currentTarget) {
+          close();
+        }
+      }}
+    >
+      <div
+        className="absolute inset-x-0 flex justify-center px-4"
+        style={{ bottom: `${DEFAULT_PHYSICS_CONFIG.roleHeight + 24}px` }}
+      >
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLineClick();
+          }}
+          className="w-full max-w-[37rem] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
+        >
+        {/* 左上角头像 + 角色名标签（内心独白和系统消息隐藏角色名，头像保留） */}
+        <div className="flex items-center gap-3 mb-3">
+          <img
+            src={avatarUrl}
+            alt="角色头像"
+            className="w-11 h-11 rounded-full object-cover border border-white/20 shrink-0"
+          />
+          {prefix && !isMonologue && !isSystem && (
+            <div className="inline-block px-3 py-1.5 bg-[#6378ff] rounded-lg text-white text-sm font-bold">
+              {prefix.replace('：', '')}
+            </div>
+          )}
+        </div>
+
+        {/* 对话正文 */}
+        <div
+          className={`text-base leading-[1.7] whitespace-pre-wrap ${
+            isSystem
+              ? 'text-slate-400 text-center'
+              : isMonologue
+                ? 'text-slate-300'
+                : 'text-white'
+          }`}
+        >
+          {currentLine?.text}
+        </div>
+
+        {/* 选择分支 - 系统消息不显示 */}
+        {!isSystem && currentLine?.choices?.length ? (
+          <div className="flex flex-col gap-2 mt-6">
+            {currentLine.choices.map((choice, idx) => (
+              <button
+                key={choice.label}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleChoice(choice);
+                }}
+                className="w-full px-5 py-3 text-left text-sm rounded-xl bg-white/12 hover:bg-[rgba(99,120,255,0.4)] text-white transition-colors duration-200 border border-white/10 active:scale-[0.98]"
+              >
+                <span className="font-medium text-[#6378ff] mr-2">
+                  {idx + 1}.
+                </span>
+                {choice.label}
+              </button>
+            ))}
+          </div>
+        ) : !isSystem ? (
+          /* 继续指示器 - 系统消息不显示 */
+          <div className="flex justify-end items-center mt-2">
+            <div className="text-white/60 text-xs select-none flex items-center gap-1">
+              {isLastLine ? '点击关闭' : '点击继续'}
+              {!isLastLine && <span className="text-base">▸</span>}
+            </div>
+          </div>
+        ) : null}
+        </div>
       </div>
-      {currentLine?.choices?.length ? (
-        <div className="mt-2 flex items-center gap-2 justify-end">
-          {currentLine.choices.map((choice) => (
-            <button
-              key={choice.label}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleChoice(choice);
-              }}
-              className="px-3 py-1 rounded-[var(--card-radius)] text-xs font-medium bg-[color:var(--accent)] text-white hover:opacity-90 transition-opacity"
-            >
-              {choice.label}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <div className="mt-1.5 text-right text-[10px] opacity-60 select-none">
-          {isLastLine ? '点击关闭' : '点击继续 ▸'}
-        </div>
-      )}
-    </Bubble>
+    </div>
   );
 };
 
@@ -187,7 +303,8 @@ const Bubble: React.FC<{
   rolePos: { x: number; y: number };
   onClick?: () => void;
   children?: React.ReactNode;
-}> = ({ rolePos, children, onClick }) => {
+  className?: string;
+}> = ({ rolePos, children, onClick, className = '' }) => {
   const centerX = rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2;
   const winW = typeof window !== 'undefined' ? window.innerWidth : 1280;
   const half = 140;
@@ -202,17 +319,24 @@ const Bubble: React.FC<{
     tail = 'right-3 translate-x-1/2';
   }
   return (
-    <div
-      className="absolute z-40 pointer-events-auto max-w-xs sm:max-w-sm px-3 py-1.5 bg-white/90 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm rounded-[var(--card-radius)] shadow-lg border border-zinc-200/50 dark:border-zinc-700/50 backdrop-blur-sm transition-opacity duration-500 opacity-100 break-words whitespace-pre-wrap cursor-pointer"
-      style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
-      onClick={onClick}
-    >
-      {children}
-      {/* 小尾巴：随对齐方向切换位置 */}
-      <div
-        className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/90 dark:border-t-zinc-800/90 ${tail}`}
+    <>
+      {/* 点击遮罩层关闭对话框 */}
+      <div 
+        className="fixed inset-0 z-[39] pointer-events-auto bg-transparent"
+        onClick={onClick}
       />
-    </div>
+      <div
+        className={`absolute z-40 pointer-events-auto max-w-xs sm:max-w-sm bg-white/95 dark:bg-zinc-800/95 text-slate-800 dark:text-white text-xs sm:text-sm rounded-xl shadow-lg border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
+        style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+        {/* 小尾巴：随对齐方向切换位置 */}
+        <div
+          className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/95 dark:border-t-zinc-800/95 ${tail}`}
+        />
+      </div>
+    </>
   );
 };
 

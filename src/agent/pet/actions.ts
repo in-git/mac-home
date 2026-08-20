@@ -65,12 +65,12 @@ export function dispatchPetEvent(
 const coreBasePetActions: PetAction[] = [
   {
     type: 'base',
-    name: 'pet_speak',
+    name: 'pet_notify',
     event: EVENT.speak,
-    title: '让桌宠说话',
-    description: '让桌面宠物说一句话（在其头顶弹出对话气泡，展示约 5 秒）。',
+    title: '让桌宠通知用户',
+    description: '让桌面宠物向用户传递信息（在其头顶弹出对话气泡，定时自动消失）。',
     parameters: {
-      text: { type: 'string', description: '要说的内容', required: true },
+      text: { type: 'string', description: '要传递的信息内容', required: true },
       duration: {
         type: 'number' as const,
         description: '气泡展示时长（毫秒），默认 5000',
@@ -79,10 +79,51 @@ const coreBasePetActions: PetAction[] = [
     },
     run: (args) => {
       const text = String(args.text ?? '').trim();
-      if (!text) return { ok: false, message: '说话内容不能为空。' };
+      if (!text) return { ok: false, message: '通知内容不能为空。' };
       const duration = Number(args.duration) || undefined;
       dispatchPetEvent(EVENT.speak, { text, duration });
-      return { ok: true, message: `桌宠已说话：「${text}」` };
+      return { ok: true, message: `桌宠已通知用户：「${text}」` };
+    },
+  },
+  {
+    type: 'base',
+    name: 'pet_confirm',
+    event: EVENT.dialog,
+    title: '让桌宠向用户确认信息',
+    description: '让桌面宠物向用户确认某些信息，弹出带确认/取消按钮的对话框。',
+    parameters: {
+      text: { type: 'string', description: '需要确认的信息内容', required: true },
+      confirmLabel: {
+        type: 'string' as const,
+        description: '确认按钮文字，默认"确定"',
+        required: false,
+      },
+      cancelLabel: {
+        type: 'string' as const,
+        description: '取消按钮文字，默认"取消"',
+        required: false,
+      },
+    },
+    run: (args) => {
+      const text = String(args.text ?? '').trim();
+      if (!text) return { ok: false, message: '确认内容不能为空。' };
+      const confirmLabel = String(args.confirmLabel ?? '确定').trim();
+      const cancelLabel = String(args.cancelLabel ?? '取消').trim();
+      
+      const config: RoleDialogConfig = {
+        mode: 'game',
+        lines: [
+          {
+            text,
+            choices: [
+              { label: confirmLabel, action: 'close' },
+              { label: cancelLabel, action: 'close' },
+            ],
+          },
+        ],
+      };
+      dispatchPetDialog(config);
+      return { ok: true, message: `桌宠已向用户确认：「${text}」` };
     },
   },
   {

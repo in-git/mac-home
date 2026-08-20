@@ -12,6 +12,8 @@ export interface DialogLine {
   text: string;
   /** 行尾可选按钮，如「确定」「取消」；不配置则整行可点击继续。 */
   choices?: DialogChoice[];
+  /** 显示模式：normal-普通对话 | monologue-内心独白 | system-系统消息 */
+  displayMode?: 'normal' | 'monologue' | 'system';
 }
 
 /** 对话选择按钮 */
@@ -20,6 +22,13 @@ export interface DialogChoice {
   /** 选中后执行的副作用（可选）；默认由调用方通过事件回调处理。 */
   action?: 'continue' | 'close' | string;
   closeAfter?: boolean;
+}
+
+/** 菜单选项（menu 模式用） */
+export interface MenuOption {
+  label: string;
+  /** 选项的唯一标识，用于回调 */
+  value: string;
 }
 
 /** 文字游戏式对话配置 */
@@ -31,6 +40,13 @@ export interface GameDialogConfig {
   roleName?: string;
   /** 整段对话总展示时长（毫秒），到点自动关闭；不传则一直等待用户点击 */
   duration?: number;
+  /** 打字机效果配置 */
+  typewriter?: {
+    enabled: boolean;
+    speed?: number; // 每个字符间隔（毫秒），默认50
+  };
+  /** 配色方案：anime-二次元柔和版 | dark-悬疑暗黑版 */
+  theme?: 'anime' | 'dark';
 }
 
 /** 基础对话配置 */
@@ -44,8 +60,21 @@ export interface BaseDialogConfig {
   roleName?: string;
 }
 
-/** 统一对话配置（两种模式共用） */
-export type RoleDialogConfig = BaseDialogConfig | GameDialogConfig;
+/** 菜单式对话配置（上方对话信息 + 下方可点击选项列表） */
+export interface MenuDialogConfig {
+  mode: 'menu';
+  /** 上方的对话文本 */
+  text: string;
+  /** 下方的选项列表 */
+  options: MenuOption[];
+  /** 角色名前缀（可选） */
+  roleName?: string;
+  /** 整段对话总展示时长（毫秒），到点自动关闭；不传则一直等待用户点击 */
+  duration?: number;
+}
+
+/** 统一对话配置（三种模式共用） */
+export type RoleDialogConfig = BaseDialogConfig | GameDialogConfig | MenuDialogConfig;
 
 /** 对话框派发事件名（RoleDialog 组件监听此事件渲染） */
 export const ROLE_DIALOG_EVENT = 'role-dialog-open';
@@ -120,7 +149,22 @@ export const ROLE_CLICK_DIALOG: RoleDialogConfig = {
   mode: 'game',
   duration: 5000,
   lines: [
-    { text: '欢迎来看我，我会告诉你，我知道的' },
-    { text: '这里有很多小游戏可以玩' },
+    { text: '你好啊，我是赛琳娅，我是你的小伙伴' },
+    { text: '点我可以看到更多功能' },
+  ],
+};
+
+/** 点击角色时弹出的帮助对话（文字游戏式，与欢迎对话界面统一） */
+export const HELP_MENU_DIALOG: RoleDialogConfig = {
+  mode: 'game',
+  lines: [
+    {
+      text: '我能帮助你吗？',
+      choices: [
+        { label: '这个页面是干什么的', action: 'page_intro' },
+        { label: '有哪些玩法？', action: 'gameplay' },
+        { label: '如何自定义桌宠', action: 'customize' },
+      ],
+    },
   ],
 };

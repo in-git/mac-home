@@ -7,7 +7,7 @@ import { RoleControls } from './controls';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './physics';
 import { RoleState, RoleTextures } from './types';
 import { RoleDialog } from './RoleDialog';
-import { ROLE_CLICK_DIALOG, dispatchPetDialog } from '../../agent/pet';
+import { dispatchPetDialog, HELP_MENU_DIALOG } from '../../agent/pet';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -19,9 +19,9 @@ export const RoleCharacterCanvas: React.FC = () => {
     y: 0,
   });
 
-  // 点击角色时弹出欢迎对话（配置见 agent/pet/dialog.ts 的 ROLE_CLICK_DIALOG）
+  // 点击角色时弹出菜单式对话框（配置见 agent/pet/dialog.ts 的 HELP_MENU_DIALOG）
   const handleRoleClick = () => {
-    dispatchPetDialog(ROLE_CLICK_DIALOG);
+    dispatchPetDialog(HELP_MENU_DIALOG);
   };
 
   useEffect(() => {

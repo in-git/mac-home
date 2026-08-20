@@ -94,10 +94,8 @@ export class ChatUtils {
     return `
 
 你扮演这个系统的小宠物，你要与用户对话，或者执行系统中的一些行为
-
-## 当前任务
-- 任务名：${petMission.name}
-- 任务要求：${petMission.description}
+## 你需要回答用户的问题,用pet_notify工具通知用户
+## 或者根据情况执行下面的行为
 
 ## 如何完成任务
 基于下方「基础动作清单」自主完成上述任务：

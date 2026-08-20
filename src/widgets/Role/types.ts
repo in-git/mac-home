@@ -53,3 +53,12 @@ export interface DialogState {
   text: string;
   visible: boolean;
 }
+
+/** AVG 对话框显示模式 */
+export type DialogDisplayMode = 'normal' | 'monologue' | 'system';
+
+/** 打字机效果配置 */
+export interface TypewriterConfig {
+  enabled: boolean;
+  speed: number; // 每个字符间隔（毫秒）
+}

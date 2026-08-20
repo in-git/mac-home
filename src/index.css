@@ -299,7 +299,9 @@ button{
   --border: oklch(1 0 0 / 10%);
   --radius: 0.625rem;
 }
-
+button{
+  cursor: pointer;
+}
 /* ===== 卡片背景文本自适应 =====
    当卡片使用自定义背景（亮色/暗色）时，卡片内文本颜色跟随背景明暗，
    而非系统主题。通过 .card-theme-light / .card-theme-dark 作用域覆盖

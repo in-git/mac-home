@@ -55,9 +55,6 @@ export const PetPanel: React.FC<PetPanelProps> = ({
           </p>
         </div>
       </div>
-
-
-
     </div>
   );
 };

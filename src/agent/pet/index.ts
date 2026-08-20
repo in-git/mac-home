@@ -15,9 +15,9 @@ export {
   dispatchPetDialog,
   closeRoleDialog,
   IDLE_SPEECH,
-  GREETING_DIALOG,
   THANKS_DIALOG,
   ROLE_CLICK_DIALOG,
+  HELP_MENU_DIALOG,
 } from './dialog';
 export type {
   RoleDialogConfig,
