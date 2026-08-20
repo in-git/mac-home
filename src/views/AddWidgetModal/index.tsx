@@ -6,12 +6,10 @@ import {
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  getAddableWidgetsByCategory,
   getWidgetConfig,
   isWebApp,
-  WIDGET_ICONS,
+  WIDGET_CONFIG,
 } from '../../data/widgetConfig';
-import type { WidgetCategory } from '../../data/widgetConfig';
 import type { SiteItem } from '../../api/site';
 import { WebListPicker } from './WebListPicker';
 import { WidgetItem, WidgetType } from '../../types';
@@ -28,7 +26,7 @@ interface Props {
 }
 
 /** 侧边栏分类配置 */
-const CATEGORIES: { id: WidgetCategory; label: string; icon: React.ReactNode }[] = [
+const CATEGORIES: { id: string; label: string; icon: React.ReactNode }[] = [
   {
     id: 'web',
     label: '网页',
@@ -61,7 +59,7 @@ export const AddWidgetModal: React.FC<Props> = ({
 }) => {
   const [mounted, setMounted] = useState(isOpen);
   const [visible, setVisible] = useState(isOpen);
-  const [activeCategory, setActiveCategory] = useState<WidgetCategory>('web');
+  const [activeCategory, setActiveCategory] = useState<string>('web');
 
   useEffect(() => {
     if (isOpen) {
@@ -86,7 +84,6 @@ export const AddWidgetModal: React.FC<Props> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  const currentWidgets = getAddableWidgetsByCategory(activeCategory);
 
   // 已添加到桌面的站点（web-app 类型携带 site 数据），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
@@ -172,11 +169,10 @@ export const AddWidgetModal: React.FC<Props> = ({
             ) : (
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="grid grid-cols-3 gap-2">
-                  {currentWidgets.map((t) => {
+                  {WIDGET_CONFIG.map((t) => {
                     const count = widgets.filter((w) => w.type === t.type).length;
                     const max = getWidgetConfig(t.type).maxInstances;
                     const disabled = max !== Infinity && count >= max;
-                    const Icon = WIDGET_ICONS[t.type];
                     return (
                       <button
                         key={t.type}
@@ -192,13 +188,8 @@ export const AddWidgetModal: React.FC<Props> = ({
                             : 'hover:bg-black/10 active:scale-95 dark:hover:bg-white/15'
                         }`}
                       >
-                        <span
-                          className="flex h-9 w-9 items-center justify-center rounded-[var(--card-radius)] bg-[color:var(--accent)]/10 text-[color:var(--accent)]"
-                        >
-                          <Icon size={18} strokeWidth={1.75} />
-                        </span>
                         <span className="text-center text-xs  ">
-                          {t.label}
+                          {t.title}
                         </span>
                         {disabled && (
                           <span className="text-xs ">

@@ -13,7 +13,7 @@ export const handleAddSite = (item: SiteItem) => {
   if (widgets.some((w) => isWebApp(w.type) && w.data.site?.link === url)) {
     return;
   }
-  const pos = findFirstAvailablePosition(widgets, 2, 5);
+  const pos = findFirstAvailablePosition(widgets, 6, 6);
   const newWidget: WidgetItem = {
     id: `widget-${item.id || Date.now()}`,
     type: 'web-app',
@@ -26,8 +26,8 @@ export const handleAddSite = (item: SiteItem) => {
     grid: {
       x: pos.x,
       y: pos.y,
-      w: 2,
-      h: 5,
+      w: 6,
+      h: 6,
     },
   };
   setWidgets([...widgets, newWidget]);

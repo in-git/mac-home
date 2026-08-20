@@ -77,6 +77,8 @@ export interface CardStyle {
   background?: string;
   /** 卡片背景主题：light / dark / none，影响卡片内文字与图标的对比度处理。 */
   backgroundTheme?: 'light' | 'dark' | 'none';
+  /** 是否禁用"切换卡片背景"右键菜单项，默认 false（显示菜单项）。 */
+  disableBackgroundMenu?: boolean;
 }
 export interface WidgetItem {
   id: string;

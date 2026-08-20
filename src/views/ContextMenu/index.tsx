@@ -123,7 +123,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         return {
           // Hover (not click) opens the secondary submenu; no onClick action.
           onClick: () => {},
-          visible: !!targetWidget,
+          visible: !!targetWidget && !targetWidget.cardStyle?.disableBackgroundMenu,
         };
       case 'editWidgetConfig':
         return {
@@ -278,16 +278,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
                     const isCurrent =
                       targetWidget.grid?.w === sz.w &&
                       (sz.h === undefined || targetWidget.grid?.h === sz.h);
-                    // 宽高相等时显示原始值（如 6x6），不相等时显示约分后的比例（如 3:2）
-                    const label = sz.h !== undefined 
-                      ? sz.w === sz.h 
-                        ? `${sz.w}x${sz.h}`
-                        : (() => {
-                            const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
-                            const divisor = gcd(sz.w, sz.h);
-                            return `${sz.w / divisor}:${sz.h / divisor}`;
-                          })()
-                      : `${sz.w}`;
+                    // 显示宽度与 96 的比例（如 32:96）
+                    const label = `${sz.w}`;
                     return (
                       <button
                         key={`${sz.w}x${sz.h ?? ''}`}

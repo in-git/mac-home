@@ -1,17 +1,3 @@
-import {
-  AlarmClock,
-  Clock,
-  CloudSun,
-  Compass,
-  Globe,
-  Moon,
-  Search,
-  SlidersHorizontal,
-  Square,
-  StickyNote,
-  UsersRound,
-  type LucideIcon,
-} from 'lucide-react';
 import { WidgetType, CardStyle, WidgetItem } from '../types';
 import type { MouseEvent } from 'react';
 import { getSizeOptions, type WidgetSizeOption } from './options/size.options';
@@ -61,11 +47,15 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     data: {
       color: 'var(--accent)',
     },
+    cardStyle: {
+      disableBackgroundMenu: true,
+      background:'transparent'
+    },
     grid: {
       x: 0,
       y: 0,
-      w: 42,
-      h: 16
+      w: 96,
+      h: 12
     }
   },
   {
@@ -238,65 +228,18 @@ const WIDGET_CONFIG_MAP: Record<string, WidgetItem> = Object.fromEntries(
   WIDGET_CONFIG.map((cfg) => [cfg.type, cfg]),
 );
 
-/** 每个小组件类型对应的细线性图标（遵循 Apple HIG 细线性图标风格），UI 层统一从此处取用。 */
-export const WIDGET_ICONS: Record<WidgetType, LucideIcon> = {
-  search: Search,
-  weather: CloudSun,
-  'sticky-notes': StickyNote,
-  clock: Clock,
-  'clock-mini': AlarmClock,
-  'clock-lunar': Moon,
-  'random-web': Compass,
-  'control-center': SlidersHorizontal,
-  'web-app': Globe,
-  application: Globe,
-  'member-count': UsersRound,
-};
 
-/**
- * 兜底配置：用于未在 WIDGET_CONFIG 中注册的组件类型（例如已迁移为独立视图、
- * 不从「添加组件」注册但仍可被渲染/添加的随机网页）。保证 getWidgetConfig /
- * canAddWidget 等调用在缺省类型下也能取得合理的 title、sizeOptions、maxInstances。
- */
-const FALLBACK_CONFIG: WidgetItem = {
-  id: 'cfg-unknown',
-  type: 'unknown' as WidgetType,
-  title: '组件',
-  maxInstances: Infinity,
-  isAddable: false,
-  grid: {
-    x: 0,
-    y: 0,
-    w: 6,
-    h: 9,
-  },
-  data: {},
-};
 
 /** 解析后的组件配置：模板（含默认 grid）+ 运行时查询的 sizeOptions。 */
 export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSizeOption[] };
 
 /** Resolve the config for a widget type (falls back to a safe default). */
 export function getWidgetConfig(type: WidgetType): ResolvedWidgetConfig {
-  const cfg = WIDGET_CONFIG_MAP[type] ?? FALLBACK_CONFIG;
+  const cfg = WIDGET_CONFIG_MAP[type];
   return { ...cfg, sizeOptions: getSizeOptions(type) };
 }
 
-/**
- * Find a widget type's optional `onClick` by type and execute it with the click
- * event if present. Returns `true` when a handler was executed.
- */
-export function executeWidgetClick(
-  type: WidgetType,
-  event: MouseEvent<HTMLDivElement>,
-): boolean {
-  const cfg = WIDGET_CONFIG_MAP[type];
-  if (cfg?.onClick) {
-    cfg.onClick(event);
-    return true;
-  }
-  return false;
-}
+
 
 /** Whether another instance of `type` may be added given the current count. */
 export function canAddWidget(type: WidgetType, currentCount: number): boolean {
@@ -304,20 +247,8 @@ export function canAddWidget(type: WidgetType, currentCount: number): boolean {
   return max === Infinity || currentCount < max;
 }
 
-/** Types that may be added from the "添加组件" modal. */
-export const ADDABLE_WIDGETS = WIDGET_CONFIG.filter((cfg) => cfg.isAddable).map(
-  (cfg) => ({
-    type: cfg.type,
-    label: cfg.title,
-    // 分类由集中映射决定（缺省为 'system'）。
-    category: getWidgetCategory(cfg.type),
-  }),
-);
 
-/** Get addable widgets filtered by category. */
-export function getAddableWidgetsByCategory(category: WidgetCategory) {
-  return ADDABLE_WIDGETS.filter((w) => w.category === category);
-}
+
 
 /** 网页应用类图标组件（新增网页创建的类型）。 */
 export function isWebApp(type: WidgetType): boolean {
