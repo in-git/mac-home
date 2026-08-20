@@ -96,7 +96,27 @@ export async function runAgentTurn(
       return { ok: true, data: lastReply };
     }
 
-    const tasks = Array.isArray(parsed.tasks) ? parsed.tasks : [];
+    // 兼容嵌套返回形态：{ role: 'assistant', content: { tasks, continue } }
+    // content 可能是对象，也可能是 JSON 字符串
+    if (
+      parsed &&
+      typeof parsed === 'object' &&
+      parsed.tasks === undefined &&
+      (parsed as { content?: unknown }).content !== undefined
+    ) {
+      const inner = (parsed as { content: unknown }).content;
+      if (typeof inner === 'string') {
+        try {
+          parsed = JSON.parse(inner);
+        } catch {
+          parsed = undefined;
+        }
+      } else if (inner && typeof inner === 'object') {
+        parsed = inner as typeof parsed;
+      }
+    }
+
+    const tasks = Array.isArray(parsed?.tasks) ? parsed.tasks : [];
     if (tasks.length === 0) {
       lastReply = raw.trim();
       return { ok: true, data: lastReply };
@@ -129,7 +149,7 @@ export async function runAgentTurn(
       messages.push({ role: 'tool', content: toolMsg.content });
     }
 
-    if (!hasTool || parsed.continue === false) {
+    if (!hasTool || parsed?.continue === false) {
       break;
     }
   }

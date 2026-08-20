@@ -1,4 +1,6 @@
 import { executeAgentTool, listAgentTools } from '../agent/index';
+import { basePetActions } from '../agent/pet/baseActions';
+import petMission from '../agent/pet/mission.json';
 import type {
   AgentChatMessage,
   AgentToolInvocation,
@@ -61,7 +63,7 @@ export class ChatUtils {
     return '';
   }
 
-  /** 构造系统提示：声明可用工具 + ReAct 行为约定 */
+  /** 构造系统提示：任务（mission.json）驱动 + 基础动作清单 + ReAct 行为约定 */
   makeSystemPrompt(): string {
     const toolList = this.listTools()
       .map(
@@ -70,9 +72,38 @@ export class ChatUtils {
       )
       .join('\n');
 
+    // 基础动作清单：剔除 run 等实现细节，只保留动作名/描述/参数，转成纯文本供大模型阅读
+    // （pet_perform 是组动作入口本身，不列入清单，避免模型在 actions 数组里嵌套调用它）
+    const baseActionList = basePetActions
+      .filter((action) => action.name !== 'pet_perform')
+      .map((action) => {
+        const params = Object.entries(action.parameters);
+        const paramText = params.length
+          ? params
+              .map(([key, p]) => {
+                const meta = [p.type, p.required ? '必填' : '可选'];
+                if (p.enum?.length) meta.push(`取值只能是：${p.enum.join(' 或 ')}`);
+                return `  - 参数 ${key}（${meta.join('，')}）：${p.description}`;
+              })
+              .join('\n')
+          : '  - 无参数';
+        return `- ${action.name}：${action.description}\n${paramText}`;
+      })
+      .join('\n');
+
     return `
 
-你是这个系统的小宠物
+你扮演这个系统的小宠物，你要与用户对话，或者执行系统中的一些行为
+
+## 当前任务
+- 任务名：${petMission.name}
+- 任务要求：${petMission.description}
+
+## 如何完成任务
+基于下方「基础动作清单」自主完成上述任务：
+- 用哪些动作、动作的先后顺序、每个动作的参数值（例如要说的具体台词、移动方向、播放次数等），全部由你根据任务要求自行判断生成，参数内容要贴合任务语境。
+- 把选定的一组动作按顺序放入 pet_perform 的 actions 数组，一次性提交整组连贯行为，禁止逐个调用单个动作。
+- 若还需要向用户说明或回应，把要说的话放在 type: 'text' 的任务里。
 
 ### 返回值
 你只能返回标准JSON格式，严格检查，不能以中文开头,必须以{开头}结尾
@@ -93,9 +124,14 @@ export class ChatUtils {
 ## 可用工具
 ${toolList}
 你需要处理用户提出的问题，通过调用前端的工具，或者回答文本
+
+## 基础动作清单（pet_perform 的 actions 数组只能使用以下动作，禁止编造动作名或参数名）
+${baseActionList}
+
 ## 工作规则
 
-- 一次执行一组连贯行为（如先庆祝再说话），不要逐个调用单个动作。
+- 优先完成「当前任务」：根据任务要求自主决策动作组合与传参，一次执行一组连贯行为（如先庆祝再说话），不要逐个调用单个动作。
+- 用户另有提问时，正常回答或调用工具处理。
 
 
 
@@ -104,7 +140,7 @@ ${toolList}
 2. \`type: 'tool'\` 时，\`content\` 必须是一个 JSON 字符串，格式固定为 \`{"name": 工具名, "args": 参数对象}\`。
 3. 其中 \`name\` **只能取「可用工具」列表中真实存在的工具名**，禁止自行编造、拼接或猜测不存在的工具名。
 4. \`args\` 的**键名必须与上面对应工具的「参数」定义完全一致**，只能传该工具声明过的参数，禁止自创新的键值对，参数值须符合其类型（例如枚举值只能取规定范围内的值，不要编造如 \`"C"\` 这样未声明的值）。
-5. 若用户请求所需的工具或参数不在「可用工具」列表中，不要硬造工具，改用 \`type: 'text'\` 如实告诉用户该能力暂不支持。
+5. 若任务或用户请求所需的工具、动作不在「可用工具」与「基础动作清单」中，不要硬造，改用 \`type: 'text'\` 如实说明该能力暂不支持。
 
 
 `;

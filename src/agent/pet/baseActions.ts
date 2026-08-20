@@ -209,8 +209,62 @@ const coreBasePetActions: PetAction[] = [
   },
 ];
 
+/**
+ * 组动作 pet_perform：大模型一次提交一整组基础动作，按顺序执行。
+ * actions 兼容两种形态：
+ *   - JSON 字符串：'[{"name":"pet_celebrate"},{"name":"pet_speak","args":{"text":"你好呀～"}}]'
+ *   - 数组对象：[{ name: 'pet_celebrate' }, { name: 'pet_speak', args: { text: '你好呀～' } }]
+ */
+const petPerformAction: PetAction = {
+  type: 'expression',
+  name: 'pet_perform',
+  event: 'role-perform',
+  title: '执行一组桌宠行为',
+  description:
+    '依次执行一组基础动作。actions 是动作数组（或其 JSON 字符串），元素格式：{"name":"动作名","args":{参数}}，按顺序执行。',
+  parameters: {
+    actions: {
+      type: 'string' as const,
+      description:
+        '一组动作的数组（JSON 字符串或数组），元素为 {name, args?}，name 必须是基础动作清单中的动作名',
+      required: true,
+    },
+  },
+  run: (args) => {
+    let list: unknown = args.actions;
+    if (typeof list === 'string') {
+      try {
+        list = JSON.parse(list);
+      } catch {
+        return { ok: false, message: 'actions 必须是合法的 JSON 数组字符串。' };
+      }
+    }
+    if (!Array.isArray(list) || list.length === 0) {
+      return { ok: false, message: 'actions 必须是至少包含一个动作的数组。' };
+    }
+    const coreMap: Record<string, PetAction> = Object.fromEntries(
+      coreBasePetActions.map((a) => [a.name, a]),
+    );
+    const results: string[] = [];
+    let allOk = true;
+    for (const item of list) {
+      const act = item as { name?: string; args?: Record<string, unknown> };
+      const target = act?.name ? coreMap[act.name] : undefined;
+      if (!target) {
+        allOk = false;
+        results.push(`未知动作：${act?.name ?? 'undefined'}`);
+        continue;
+      }
+      const res = target.run(act.args ?? {});
+      if (!res.ok) allOk = false;
+      results.push(res.message);
+    }
+    return { ok: allOk, message: results.join('；') };
+  },
+};
 
 /** 基础行为注册表（含组动作 pet_perform） */
 export const basePetActions: PetAction[] = [
   ...coreBasePetActions,
+  petPerformAction,
 ];

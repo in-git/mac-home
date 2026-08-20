@@ -1,4 +1,4 @@
-import { Application, Sprite } from 'pixi.js';
+import { Application, Sprite, Texture } from 'pixi.js';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useHomeStore } from '../../store/useHomeStore';
@@ -7,7 +7,12 @@ import { RoleControls } from './controls';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './physics';
 import { RoleState, RoleTextures } from './types';
 import { RoleDialog } from './RoleDialog';
-import { ROLE_CLICK_DIALOG, dispatchPetDialog } from '../../agent/pet';
+import {
+  EVENT,
+  ROLE_CLICK_DIALOG,
+  dispatchPetDialog,
+  dispatchPetEvent,
+} from '../../agent/pet';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -87,6 +92,11 @@ export const RoleCharacterCanvas: React.FC = () => {
       window.addEventListener(type, handler);
     });
 
+    // TODO: 测试代码 —— 每 3 秒触发一次庆祝动作，验证完删除
+    const testCelebrateTimer = window.setInterval(() => {
+      dispatchPetEvent(EVENT.celebrate, { count: 2 });
+    }, 3000);
+
     const initPixi = async () => {
       const pixiApp = new Application();
       await pixiApp.init({
@@ -111,8 +121,14 @@ export const RoleCharacterCanvas: React.FC = () => {
 
       // Create Pixi Sprite（初始纹理取 idle 首帧）
       const sprite = new Sprite(textures.idleFrames[0]);
-      sprite.width = DEFAULT_PHYSICS_CONFIG.roleWidth;
-      sprite.height = DEFAULT_PHYSICS_CONFIG.roleHeight;
+      // 高度固定，宽度按帧图原始宽高比自适应（避免非标准比例帧被拉扁变形）
+      const targetH = DEFAULT_PHYSICS_CONFIG.roleHeight;
+      const applyFrameTexture = (frame: Texture) => {
+        sprite.texture = frame;
+        sprite.height = targetH;
+        sprite.width = (frame.width / frame.height) * targetH;
+      };
+      applyFrameTexture(textures.idleFrames[0]);
 
       // Role initial state
       const state: RoleState = {
@@ -171,8 +187,8 @@ export const RoleCharacterCanvas: React.FC = () => {
           DEFAULT_PHYSICS_CONFIG,
         );
 
-        // Sync Pixi Sprite Position
-        sprite.x = state.x;
+        // Sync Pixi Sprite Position（x 以物理框中心对齐：帧宽度自适应后角色不左右漂移）
+        sprite.x = state.x + (DEFAULT_PHYSICS_CONFIG.roleWidth - sprite.width) / 2;
         sprite.y = state.y;
 
         // 更新 React 状态以同步气泡位置（节流 ~80ms，避免每帧 setState 造成高频重渲染）
@@ -188,31 +204,33 @@ export const RoleCharacterCanvas: React.FC = () => {
           celebrateCyclesLeft > 0
         ) {
           // 庆祝动作优先播放（来自 role.json 的 celebration 帧组）
+          // 帧索引由经过时间驱动：animFrameCounter 在角色静止时会被物理层归零，
+          // 不能用它驱动庆祝动画（否则永远停在第 1 帧）
+          const elapsedMs = performance.now() - celebrateCycleStart;
           const celIndex =
-            Math.floor(state.animFrameCounter / 6) %
+            Math.floor(elapsedMs / celebrateFrameMs) %
             textures.celebrationFrames.length;
-          sprite.texture = textures.celebrationFrames[celIndex];
+          applyFrameTexture(textures.celebrationFrames[celIndex]);
 
           // 当前这一遍播放完整一遍帧序列后，次数 -1；归零回退 idle
           const cycleMs = textures.celebrationFrames.length * celebrateFrameMs;
-          const nowMs = performance.now();
-          if (nowMs - celebrateCycleStart >= cycleMs) {
-            celebrateCycleStart = nowMs;
+          if (elapsedMs >= cycleMs) {
+            celebrateCycleStart = performance.now();
             celebrateCyclesLeft -= 1;
           }
         } else if (state.facingDirection === 'left') {
           const frameIndex =
             Math.floor(state.animFrameCounter / 6) % textures.leftFrames.length;
-          sprite.texture = textures.leftFrames[frameIndex];
+          applyFrameTexture(textures.leftFrames[frameIndex]);
         } else if (state.facingDirection === 'right') {
           const frameIndex =
             Math.floor(state.animFrameCounter / 6) % textures.rightFrames.length;
-          sprite.texture = textures.rightFrames[frameIndex];
+          applyFrameTexture(textures.rightFrames[frameIndex]);
         } else {
           // 静止态循环播放 idle 帧序列（皮肤驱动，其余帧来自 role.json）
           const idleIndex =
             Math.floor(state.animFrameCounter / 6) % textures.idleFrames.length;
-          sprite.texture = textures.idleFrames[idleIndex];
+          applyFrameTexture(textures.idleFrames[idleIndex]);
         }
       });
     };
@@ -221,6 +239,7 @@ export const RoleCharacterCanvas: React.FC = () => {
 
     return () => {
       isDestroyed = true;
+      window.clearInterval(testCelebrateTimer);
       Object.entries(roleActionHandlers).forEach(([type, handler]) => {
         window.removeEventListener(type, handler);
       });

@@ -32,3 +32,10 @@ export interface PetAction {
   /** 执行行为：接收参数对象，派发事件并返回结果 */
   run: (args: Record<string, unknown>) => PetActionResult;
 }
+
+/**
+ * 角色行为注册表（聚合）：基础行为 + 组动作。
+ * 基础行为在 baseActions.ts 追加；组动作 pet_perform 亦在其中。
+ * tools.ts 的 petTools 与 skill.json 会自动与之对齐，无需在多处重复维护。
+ */
+export const petActions: PetAction[] = [...basePetActions];
