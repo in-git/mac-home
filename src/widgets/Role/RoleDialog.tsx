@@ -215,7 +215,16 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   const isMonologue = displayMode === 'monologue';
   const isSystem = displayMode === 'system';
 
-  // AVG 风格对话框：屏幕底部、半透明背景、圆角设计
+  // AVG 风格对话框：跟随角色头部上方，水平以角色中心为锚，贴边时钳制在视口内
+  const centerX = rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2;
+  const winW = typeof window !== 'undefined' ? window.innerWidth : 1280;
+  const panelW = Math.min(592, winW - 32); // 与面板宽度 w-[min(37rem,calc(100vw_-_2rem))] 一致
+  const dialogLeft = Math.max(
+    16 + panelW / 2,
+    Math.min(centerX, winW - 16 - panelW / 2),
+  );
+  const dialogTop = Math.max(16, rolePos.y - 12);
+
   return (
     <div 
       className="fixed inset-0 z-50 pointer-events-auto" 
@@ -227,16 +236,17 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
       }}
     >
       <div
-        className="absolute inset-x-0 flex justify-center px-4"
-        style={{ bottom: `${DEFAULT_PHYSICS_CONFIG.roleHeight + 24}px` }}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleLineClick();
+        }}
+        className="absolute w-[min(37rem,calc(100vw_-_2rem))] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
+        style={{
+          left: `${dialogLeft}px`,
+          top: `${dialogTop}px`,
+          transform: 'translate(-50%, -100%)',
+        }}
       >
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            handleLineClick();
-          }}
-          className="w-full max-w-[37rem] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
-        >
         {/* 左上角头像 + 角色名标签（内心独白和系统消息隐藏角色名，头像保留） */}
         <div className="flex items-center gap-3 mb-3">
           <img
@@ -292,7 +302,6 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
             </div>
           </div>
         ) : null}
-        </div>
       </div>
     </div>
   );
@@ -326,7 +335,7 @@ const Bubble: React.FC<{
         onClick={onClick}
       />
       <div
-        className={`absolute z-40 pointer-events-auto max-w-xs sm:max-w-sm bg-white/95 dark:bg-zinc-800/95 text-slate-800 dark:text-white text-xs sm:text-sm rounded-xl shadow-lg border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
+        className={`fixed z-40 pointer-events-auto max-w-xs sm:max-w-sm bg-white/95 dark:bg-zinc-800/95 text-slate-800 dark:text-white text-xs sm:text-sm rounded-xl shadow-lg border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
         style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
         onClick={(e) => e.stopPropagation()}
       >

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useSiteList } from '../../agent/request';
 import type { SiteItem } from '../../api/site';
@@ -48,28 +48,18 @@ export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { items, loading, fetchSites, total } = useSiteList({
+  const { loading, fetchSites, total } = useSiteList({
     defaultPage: 1,
     defaultSize: 1, // 每次只请求 1 个站点；首次请求同时获取 total 总数
     autoFetch: true,
   });
 
-  // 用 ref 保存最新的 items 和 total，避免闭包问题
-  const itemsRef = useRef<SiteItem[]>([]);
-  const totalRef = useRef(total);
-  useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
-  useEffect(() => {
-    totalRef.current = total;
-  }, [total]);
-
   // 首次加载：先请求第 1 页获取 total 总数，再随机请求 [1, total] 中的某一页，展示随机站点
   useEffect(() => {
     if (loading || randomSite || total <= 0) return;
     const randomPage = Math.floor(Math.random() * total) + 1;
-    fetchSites(randomPage, '', '', 1).then(() => {
-      const site = itemsRef.current[0];
+    fetchSites(randomPage, '', '', 1).then((sites) => {
+      const site = sites?.[0];
       if (site) addToHistory(site);
     });
   }, [loading, total, randomSite, fetchSites]);
@@ -105,19 +95,11 @@ export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
     // 否则随机新站点：需要重新获取最新的 total
     setIsRefreshing(true);
     const randomPage = total > 0 ? Math.floor(Math.random() * total) + 1 : 1;
-    await fetchSites(randomPage, '', '', 1);
-
-    // 直接从 fetchSites 后的 items 中获取（fetchSites 已经是 async 等待完成的）
-    // 需要用 setTimeout 确保状态已更新
-    setTimeout(() => {
-      // 重新获取最新的 items 和 total
-      const currentItems = itemsRef.current;
-      if (currentItems.length > 0) {
-        const randomSite = currentItems[0];
-        addToHistory(randomSite);
-      } 
-      setIsRefreshing(false);
-    }, 100);
+    const sites = await fetchSites(randomPage, '', '', 1);
+    if (sites && sites.length > 0) {
+      addToHistory(sites[0]);
+    }
+    setIsRefreshing(false);
   };
 
   // 展开态下锁定页面滚动

@@ -54,7 +54,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       size = defaultSize,
       sortField = defaultSortField,
       sortOrder = defaultSortOrder,
-    ) => {
+    ): Promise<SiteItem[] | null> => {
       setLoading(true);
       setError(null);
       pageRef.current = p;
@@ -84,6 +84,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
             setTotalPages(data.pages ?? 1);
             totalPagesRef.current = data.pages ?? 1;
             setTotal(data.total ?? 0);
+            return data.records;
           }
         } else {
           setError(res.message || '获取站点列表失败');
@@ -93,6 +94,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       } finally {
         setLoading(false);
       }
+      return null;
     },
     [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder],
   );

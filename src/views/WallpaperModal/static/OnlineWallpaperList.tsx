@@ -178,11 +178,7 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
     [isMine, onSelect],
   );
 
-  // 当前选中的壁纸若不在列表内，则构造占位项前置到列表最前面并高亮
-  const leadingItem: ImageWallpaperItem | null =
-    !isMine && selectedKey && !items.some((it) => it.id === selectedKey)
-      ? { id: selectedKey, name: '当前壁纸', imageUrl: undefined, thumbnailUrl: undefined }
-      : null;
+
 
   return (
     <div className="flex flex-col h-full">
@@ -247,21 +243,13 @@ export const OnlineWallpaperList: React.FC<OnlineWallpaperListProps> = ({
         <div className="flex h-32 items-center justify-center">
           <Loader2 className="animate-spin" size={20} />
         </div>
-      ) : displayItems.length > 0 || leadingItem ? (
+      ) : displayItems.length > 0 ? (
         <div
           ref={scrollRef}
           onScroll={handleScroll}
           className="flex-1 min-h-0 overflow-y-auto"
         >
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {leadingItem && (
-              <ImageWallpaperCard
-                key={leadingItem.id}
-                item={leadingItem}
-                isSelected
-                onSelect={handleSelect}
-              />
-            )}
             {displayItems.map((item) => (
               <ImageWallpaperCard
                 key={item.id}

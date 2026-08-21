@@ -36,6 +36,10 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
   }));
 
   const handleLayoutChange = (newLayout: Layout[]) => {
+    // 清屏（隐藏组件）时传入空数组，react-grid-layout 会回调空布局，
+    // 此时绝不能把空数组回写 store，否则会永久删除全部组件。
+    if (widgets.length === 0) return;
+
     const updated = widgets.map((w) => {
       const item = newLayout.find((l) => l.i === w.id);
       if (!item) return w;
