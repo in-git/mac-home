@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas/DynamicWallpaperCanvas';
@@ -17,6 +17,7 @@ import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/Role/RoleCharacterCanvas';
 import { visitorApi } from './api/visitor';
 import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
+import { THEME_OPTIONS } from './data/options';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -95,6 +96,26 @@ export default function App() {
   // Apply persisted dark mode + theme color + font scale + card radius to the
   // document root via CSS variables.
   useThemeVariables({ isDarkMode, themeColor, fontVariant, cardRadius });
+
+  // 深浅色模式联动桌面主题：切到深色 → 应用「暗色」主题，切到浅色 → 应用「正常」主题。
+  // 首次渲染不触发，仅在 isDarkMode 真正变化时联动，避免覆盖用户已有的自定义主题。
+  const prevDarkModeRef = useRef(isDarkMode);
+  useEffect(() => {
+    if (prevDarkModeRef.current === isDarkMode) return;
+    prevDarkModeRef.current = isDarkMode;
+    // THEME_OPTIONS[1] = 暗色，THEME_OPTIONS[0] = 正常
+    const opt = THEME_OPTIONS[isDarkMode ? 1 : 0];
+    updateWallpaper({
+      blur: opt.blur,
+      brightness: Math.round(opt.brightness * 100),
+      contrast: opt.contrast,
+      saturation: opt.saturation,
+      hue: opt.hue,
+      sepia: opt.sepia,
+      grayscale: opt.grayscale,
+      invert: opt.invert,
+    });
+  }, [isDarkMode, updateWallpaper]);
 
   // One-time app startup: register the add-widget action, restore scheduled
   // agent tasks, and wire up global click sound.

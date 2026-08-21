@@ -23,6 +23,12 @@ export const ROLE_SKINS: RoleSkinConfig[] = [
         'celebration/3.webp',
         'celebration/4.webp',
       ],
+      thinking: [
+        'thinking/1.webp',
+        'thinking/2.webp',
+        'thinking/3.webp',
+        'thinking/4.webp',
+      ],
     },
   },
 ];

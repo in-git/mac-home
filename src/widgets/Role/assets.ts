@@ -61,17 +61,25 @@ export const loadRoleTextures = async (
     ...config.textures.right,
     ...config.textures.idle,
     ...(config.textures.celebration ?? []),
+    ...(config.textures.thinking ?? []),
   ];
   await Promise.all([...new Set(allNames)].map((f) => loadOne(config, f)));
 
-  const [faceGroup, leftFrames, rightFrames, idleFrames, celebrationFrames] =
-    await Promise.all([
-      loadGroup(config, config.textures.face),
-      loadGroup(config, config.textures.left),
-      loadGroup(config, config.textures.right),
-      loadGroup(config, config.textures.idle),
-      loadGroup(config, config.textures.celebration ?? []),
-    ]);
+  const [
+    faceGroup,
+    leftFrames,
+    rightFrames,
+    idleFrames,
+    celebrationFrames,
+    thinkingFrames,
+  ] = await Promise.all([
+    loadGroup(config, config.textures.face),
+    loadGroup(config, config.textures.left),
+    loadGroup(config, config.textures.right),
+    loadGroup(config, config.textures.idle),
+    loadGroup(config, config.textures.celebration ?? []),
+    loadGroup(config, config.textures.thinking ?? []),
+  ]);
 
   // 无正面表情帧时回退到 idle 首帧
   const face = faceGroup.length > 0 ? faceGroup[0] : idleFrames[0];
@@ -83,5 +91,6 @@ export const loadRoleTextures = async (
     rightFrames,
     idleFrames,
     celebrationFrames,
+    thinkingFrames,
   };
 };

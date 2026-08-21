@@ -3,6 +3,7 @@ import type { ChatMessage } from '../utils/aiClient';
 import { ChatUtils } from '../utils/chatUtils';
 import { useHomeStore } from '../store/useHomeStore';
 import type { AgentChatMessage, AgentTool } from './types';
+import { dispatchPetEvent, EVENT } from './pet/actions';
 
 export interface RunAgentOptions {
   /** 系统人设（如桌宠名字/性格）；缺省走 ChatUtils 默认角色设定 */
@@ -38,6 +39,20 @@ export async function runAgentTurn(
   history: AgentChatMessage[],
   userInput: string,
   options: RunAgentOptions = {},
+): Promise<{ ok: boolean; data?: string; error?: string }> {
+  // 模型开始思考：通知桌宠播放思考动画（runAgentTurnInternal 结束时通过 finally 结束）
+  dispatchPetEvent(EVENT.thinkingStart);
+  try {
+    return await runAgentTurnInternal(history, userInput, options);
+  } finally {
+    dispatchPetEvent(EVENT.thinkingEnd);
+  }
+}
+
+async function runAgentTurnInternal(
+  history: AgentChatMessage[],
+  userInput: string,
+  options: RunAgentOptions,
 ): Promise<{ ok: boolean; data?: string; error?: string }> {
   const { systemPrompt, maxRounds = 6, tools } = options;
   // 指定 tools 时：AI 只能看到并执行该清单内的行为（白名单约束）；

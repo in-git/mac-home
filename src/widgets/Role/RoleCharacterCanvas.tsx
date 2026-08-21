@@ -7,7 +7,7 @@ import { RoleControls } from './controls';
 import { DEFAULT_PHYSICS_CONFIG, updateRolePhysics } from './physics';
 import { RoleState, RoleTextures } from './types';
 import { RoleDialog } from './RoleDialog';
-import { dispatchPetDialog, HELP_MENU_DIALOG } from '../../agent/pet';
+import { dispatchPetDialog, HELP_MENU_DIALOG, EVENT } from '../../agent/pet';
 
 export const RoleCharacterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -75,6 +75,20 @@ export const RoleCharacterCanvas: React.FC = () => {
       celebrateCyclesLeft = count;
       celebrateCycleStart = performance.now();
     };
+
+    // 思考：模型思考期间循环播放 thinking 帧，直到收到结束事件
+    let isThinking = false;
+    let thinkingStart = 0;
+    const thinkingFrameMs = 100;
+    const onThinkingStart = () => {
+      isThinking = true;
+      thinkingStart = performance.now();
+    };
+    const onThinkingEnd = () => {
+      isThinking = false;
+    };
+    window.addEventListener(EVENT.thinkingStart, onThinkingStart);
+    window.addEventListener(EVENT.thinkingEnd, onThinkingEnd);
 
     // 统一注册所有角色行为事件。对话（role-dialog-speak）由 RoleDialog 组件监听渲染。
     const roleActionHandlers: Record<string, (e: Event) => void> = {
@@ -216,6 +230,14 @@ export const RoleCharacterCanvas: React.FC = () => {
           const frameIndex =
             Math.floor(state.animFrameCounter / 6) % textures.rightFrames.length;
           applyFrameTexture(textures.rightFrames[frameIndex]);
+        } else if (isThinking && textures.thinkingFrames.length > 0) {
+          // 模型思考中且角色静止：循环播放 thinking 帧，直到收到结束事件；
+          // 左右移动动画优先级更高，思考中按下方向键仍会切到行走动画。
+          const elapsedMs = performance.now() - thinkingStart;
+          const thinkIndex =
+            Math.floor(elapsedMs / thinkingFrameMs) %
+            textures.thinkingFrames.length;
+          applyFrameTexture(textures.thinkingFrames[thinkIndex]);
         } else {
           // 静止态循环播放 idle 帧序列（皮肤驱动，其余帧来自 role.json）
           const idleIndex =
@@ -232,6 +254,8 @@ export const RoleCharacterCanvas: React.FC = () => {
       Object.entries(roleActionHandlers).forEach(([type, handler]) => {
         window.removeEventListener(type, handler);
       });
+      window.removeEventListener(EVENT.thinkingStart, onThinkingStart);
+      window.removeEventListener(EVENT.thinkingEnd, onThinkingEnd);
       controls.destroy();
       if (app) {
         app.destroy(true, { children: true, texture: false });

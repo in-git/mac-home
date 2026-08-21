@@ -27,7 +27,7 @@ export const SIZE_OPTIONS: Partial<Record<WidgetType, WidgetSizeOption[]>> = {
   clock: [{ w: 24, h: 24 }, { w: 32, h: 32 }],
   'clock-mini': [ { w: 16, h: 16 }],
   'clock-lunar': [{ w: 32, h: 18 },{w:64,h:18},{w:96,h:18}],
-  'control-center': [{ w: 20, h: 24 }],
+  'control-center': [{ w: 20, h: 26 }],
   // 随机网页：固定宽高比档位
   'random-web': [{ w: 24, h: 16 }, { w: 32, h: 16 }],
 };

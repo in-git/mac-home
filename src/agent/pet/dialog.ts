@@ -110,33 +110,6 @@ export function closeRoleDialog(): void {
 /* 新增对话只需在此追加一项配置即可复用 RoleDialog 的渲染能力。          */
 /* ------------------------------------------------------------------ */
 
-/** 随机网页的自言自语台词池（基础对话示例） */
-export const IDLE_SPEECH: RoleDialogConfig[] = [
-  { mode: 'base', text: '发呆中…' },
-  { mode: 'base', text: '今天天气不错呀～' },
-  { mode: 'base', text: '要不要来点音乐？' },
-  { mode: 'base', text: '嗯…刚才想到一件事' },
-  { mode: 'base', text: '偷偷打个盹' },
-  { mode: 'base', text: '在等你来找我玩呢' },
-  { mode: 'base', text: '我是你的桌面小伙伴！' },
-  { mode: 'base', text: '好无聊，动一动吧' },
-];
-
-/** 打招呼对话（进入页面时展示，文字游戏式示例：逐句 + 确认/取消） */
-export const GREETING_DIALOG: RoleDialogConfig = {
-  mode: 'game',
-  lines: [
-    { text: '欢迎回来～今天也想我了吗？' },
-    {
-      text: '要不要一起玩个小游戏？',
-      choices: [
-        { label: '确定', action: 'continue' },
-        { label: '取消', action: 'close', closeAfter: true },
-      ],
-    },
-    { text: '好嘞！那我们开始吧！' },
-  ],
-};
 
 /** 问候后的简短反馈（基础对话示例） */
 export const THANKS_DIALOG: RoleDialogConfig = {

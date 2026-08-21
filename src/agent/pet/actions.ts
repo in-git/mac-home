@@ -43,6 +43,8 @@ export const EVENT = {
   reset: 'role-reset',
   celebrate: 'role-celebrate',
   dialog: 'role-dialog-open',
+  thinkingStart: 'role-thinking-start',
+  thinkingEnd: 'role-thinking-end',
 } as const;
 
 /**

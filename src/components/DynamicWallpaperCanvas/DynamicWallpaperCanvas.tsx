@@ -142,9 +142,7 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
         wallpaper.dynamicPreset === 'plasma-wave' ? (
         <PlasmaWaveWallpaper
           className="absolute inset-0"
-          colors={
-            effectiveDarkMode ? ['#A855F7', '#22D3EE'] : ['#C084FC', '#67E8F9']
-          }
+         
         />
       ) : wallpaper.type === 'dynamic' ? (
         <canvas
