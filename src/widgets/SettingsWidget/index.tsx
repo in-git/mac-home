@@ -4,7 +4,6 @@ import { useHomeStore } from '../../store/useHomeStore';
 import { playSound } from '../../utils/sound';
 import { parseImport } from './constants';
 import { CURRENT_DATA_VERSION } from '../../utils/migration';
-import { AIPanel } from './panels/AIPanel';
 import { AppearancePanel } from './panels/AppearancePanel';
 import { PetPanel } from './panels/PetPanel';
 import { SystemPanel } from './panels/SystemPanel';
@@ -30,8 +29,6 @@ export const SettingsWidget: React.FC<{
     widgets,
     notes,
     resetAll,
-    aiConfig,
-    setAiConfig,
     petAutoActivity,
     setPetAutoActivity,
     selectedRoleId,
@@ -87,7 +84,6 @@ export const SettingsWidget: React.FC<{
           if (cfg.cardRadius !== undefined) setCardRadius(cfg.cardRadius);
           if (cfg.screenBrightness !== undefined)
             setScreenBrightness(cfg.screenBrightness);
-          if (cfg.aiConfig !== undefined) setAiConfig(cfg.aiConfig);
           if (cfg.petAutoActivity !== undefined)
             setPetAutoActivity(cfg.petAutoActivity);
           if (cfg.weatherCities !== undefined)
@@ -191,16 +187,13 @@ export const SettingsWidget: React.FC<{
         />
       )}
 
-      {activeTab === 'ai' && (
-        <>
-          <PetPanel
-            enabled={petAutoActivity}
-            onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
-            selectedRoleId={selectedRoleId}
-            onSelectRole={setSelectedRoleId}
-          />
-          <AIPanel config={aiConfig} onChange={setAiConfig} />
-        </>
+      {activeTab === 'system' && (
+        <PetPanel
+          enabled={petAutoActivity}
+          onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
+          selectedRoleId={selectedRoleId}
+          onSelectRole={setSelectedRoleId}
+        />
       )}
     </div>
   );

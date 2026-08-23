@@ -33,12 +33,6 @@ export const CARD_RADIUS: Record<CardRadiusTier, { label: string; px: number }> 
 };
 
 // ############################################################
-// AI 模型对接配置 —— 定义集中在 src/agent/config/aiConfig.ts
-// 此处仅重新导出，业务侧仍可从 '@/types' 引入，无需改动引用点。
-// ############################################################
-export type { AIProvider, AIConfig } from './agent/config/aiConfig';
-export { AI_PROVIDERS, DEFAULT_AI_CONFIG } from './agent/config/aiConfig';
-
 export type WidgetType =
   | 'sticky-notes'
   | 'weather'
@@ -218,8 +212,3 @@ export interface WeatherCondition {
 }
 
 
-
-export interface ToolTask {
-  name: string;
-  args: any;
-}

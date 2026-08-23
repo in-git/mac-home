@@ -80,17 +80,7 @@ export function migrateData<T = Record<string, any>>(
     data.wallpaper = JSON.parse(JSON.stringify(defaults.wallpaper));
   }
 
-  // 5. AI 配置 (aiConfig) 属性深层补全
-  if (data.aiConfig && typeof data.aiConfig === 'object') {
-    data.aiConfig = {
-      ...defaults.aiConfig,
-      ...data.aiConfig,
-    };
-  } else {
-    data.aiConfig = JSON.parse(JSON.stringify(defaults.aiConfig));
-  }
-
-  // 6. 天气城市与定位补全
+  // 5. 天气城市与定位补全
   if (!Array.isArray(data.weatherCities) || data.weatherCities.length === 0) {
     data.weatherCities = JSON.parse(JSON.stringify(defaults.weatherCities));
   }

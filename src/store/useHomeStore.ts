@@ -6,7 +6,6 @@ import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widge
 import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
 import { migrateData } from '../utils/migration';
 import {
-  AIConfig,
   CardRadiusTier,
   FontVariant,
   StickyNote as StickyNoteType,
@@ -51,8 +50,6 @@ interface HomeState {
   cardRadius: CardRadiusTier;
   // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
   screenBrightness: number;
-  // AI 模型对接配置（厂商 / 自定义 BaseURL / KEY / 模型名）
-  aiConfig: AIConfig;
 
   // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
   petAutoActivity: boolean;
@@ -95,7 +92,6 @@ interface HomeState {
   setFontVariant: (variant: FontVariant) => void;
   setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
-  setAiConfig: (patch: Partial<AIConfig>) => void;
   setPetAutoActivity: (value: boolean) => void;
   /** 切换当前桌宠形象（角色皮肤 id）。 */
   setSelectedRoleId: (id: string) => void;
@@ -125,7 +121,6 @@ export const useHomeStore = create<HomeState>()(
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
       notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
       soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
-      aiConfig: readLegacy('apple_homepage_ai_config', DEFAULT_STATE.aiConfig),
       selectedRoleId: DEFAULT_ROLE_ID,
       showDesktopIcons: true,
       // 首次访问默认 true；hydration 时若本地已存过（曾访问过）会被覆盖为 false
@@ -277,9 +272,7 @@ export const useHomeStore = create<HomeState>()(
       setCardRadius: (tier) => set({ cardRadius: tier }),
       setScreenBrightness: (value) =>
         set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
-      setAiConfig: (patch) =>
-        set({ aiConfig: { ...get().aiConfig, ...patch } }),
-  
+
       setPetAutoActivity: (value) => set({ petAutoActivity: value }),
       setSelectedRoleId: (id) => set({ selectedRoleId: id }),
       setWeatherCities: (cities) =>

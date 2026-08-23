@@ -1,22 +1,18 @@
-import { PawPrint, Zap, Send } from 'lucide-react';
-import React, { useState } from 'react';
+import { PawPrint } from 'lucide-react';
+import React from 'react';
 import { ToggleDot } from '../ToggleDot';
-import { usePetAgent } from '../../../hooks/usePetAgent';
 import type { PetPanelProps } from '../types';
 
 /**
  * 宠物设置面板：遵循 macOS System Settings 列表式分组卡片规范。
- * 可配置桌宠是否开启「自由活动」（模型定时驱动移动 / 跳跃 / 问候），
- * 触发间隔在 10~60 秒之间随机，并提示开启后会更频繁消耗模型 Token。
+ * 可配置桌宠是否开启「自由活动」（定时驱动移动 / 跳跃 / 问候，
+ * 触发间隔在 10~60 秒之间随机）。
  * 可在此切换桌宠形象（角色皮肤）。
  */
 export const PetPanel: React.FC<PetPanelProps> = ({
   enabled,
   onToggleEnabled,
 }) => {
-
-
-
   return (
     <div className="px-5 py-6 space-y-6 text-sm">
       {/* 自由活动开关 */}
@@ -37,22 +33,13 @@ export const PetPanel: React.FC<PetPanelProps> = ({
                 自由活动
               </div>
               <div className="text-xs  mt-0.5">
-                模型定时驱动桌宠移动、跳跃或说一句问候
+                定时驱动桌宠移动、跳跃或说一句问候
               </div>
             </div>
           </span>
           <button onClick={onToggleEnabled} aria-label="切换桌宠自由活动">
             <ToggleDot active={enabled} />
           </button>
-        </div>
-
-        {/* Token 消耗提示 */}
-        <div className="flex items-start space-x-2.5 px-4 py-3 bg-amber-500/10 dark:bg-amber-500/15">
-          <Zap size={14} className="text-amber-500 shrink-0 mt-0.5" />
-          <p className="text-xs leading-relaxed text-amber-600 dark:text-amber-400">
-            开启自由活动后，桌宠将每隔 10~60 秒（随机）持续向 AI 模型发起请求，
-            会明显消耗更多 Token，请根据用量预算自行选择是否开启。
-          </p>
         </div>
       </div>
     </div>

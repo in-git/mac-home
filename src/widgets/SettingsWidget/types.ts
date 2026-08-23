@@ -1,7 +1,7 @@
 import type React from 'react';
-import type { AIConfig, CardRadiusTier } from '../../types';
+import type { CardRadiusTier } from '../../types';
 
-export type SettingsTab = 'appearance' | 'system' | 'ai';
+export type SettingsTab = 'appearance' | 'system';
 
 export interface AppearancePanelProps {
   isDarkMode: boolean;
@@ -25,11 +25,6 @@ export interface SystemPanelProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
   justResetSystem: boolean;
   onResetSystem: () => void;
-}
-
-export interface AIPanelProps {
-  config: AIConfig;
-  onChange: (patch: Partial<AIConfig>) => void;
 }
 
 export interface PetPanelProps {

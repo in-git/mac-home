@@ -1,6 +1,5 @@
 import { migrateData } from '../../utils/migration';
 import type {
-  AIConfig,
   CardRadiusTier,
   FontVariant,
   StickyNote,
@@ -24,7 +23,6 @@ export interface ParsedConfig {
   fontVariant?: FontVariant;
   cardRadius?: CardRadiusTier;
   screenBrightness?: number;
-  aiConfig?: AIConfig;
   petAutoActivity?: boolean;
   weatherCities?: WeatherCity[];
   selectedCityId?: string;
@@ -78,7 +76,6 @@ export function parseImport(text: string): ParsedConfig {
     fontVariant: data.fontVariant,
     cardRadius: data.cardRadius,
     screenBrightness: data.screenBrightness,
-    aiConfig: data.aiConfig,
     petAutoActivity: data.petAutoActivity,
     weatherCities: data.weatherCities,
     selectedCityId: data.selectedCityId,

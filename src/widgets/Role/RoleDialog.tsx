@@ -9,7 +9,6 @@ import {
 import { DEFAULT_PHYSICS_CONFIG } from './physics';
 import { useHomeStore } from '../../store/useHomeStore';
 import { getRoleSkin } from '../../data/roles';
-import { usePetAgent } from '../../hooks/usePetAgent';
 import avatarUrl from '../../assets/images/avatar.png';
 
 /**
@@ -31,8 +30,6 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   const [lineIdx, setLineIdx] = useState(0);
   // 基础模式自动隐藏计时器
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // AI 对话
-  const { send } = usePetAgent();
 
   const clearHideTimer = useCallback(() => {
     if (hideTimerRef.current) {
@@ -125,19 +122,10 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
 
   // —— 菜单式对话模式 ——
   if (config.mode === 'menu') {
-    const handleOptionClick = async (option: MenuOption) => {
+    const handleOptionClick = (option: MenuOption) => {
       console.log('用户选择了选项：', option);
-      
-      // 根据选项构建问题
-      const question = option.label;
-      
       // 先关闭菜单对话框
       close();
-      
-      // 发送给大模型并等待回答
-      const reply = await send(`用户问：${question}。请简短回答（1-2句话），并可以做一个相关的动作。`);
-      
-      console.log('AI 回答：', reply);
     };
 
     return (
@@ -188,18 +176,14 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
     }
   };
 
-  const handleChoice = async (choice: DialogChoice) => {
+  const handleChoice = (choice: DialogChoice) => {
     if (choice.action === 'close' || choice.closeAfter) {
       close();
       return;
     }
-    // 自定义 action（如帮助菜单的 page_intro / gameplay / customize）：把选项内容发送给大模型
+    // 自定义 action（如帮助菜单的 page_intro / gameplay / customize）：关闭对话框
     if (choice.action && choice.action !== 'continue') {
       close();
-      const reply = await send(
-        `用户问：${choice.label}。请简短回答（1-2句话）`,
-      );
-      console.log('AI 回答：', reply);
       return;
     }
     // action === 'continue' 或未指定：推进到下一行

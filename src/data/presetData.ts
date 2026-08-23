@@ -1,5 +1,4 @@
 import {
-  AIConfig,
   CardRadiusTier,
   FontVariant,
   WallpaperConfig,
@@ -32,7 +31,6 @@ export const PRESET_DATA = {
     fontVariant: dataJson.fontVariant as FontVariant,
     cardRadius: dataJson.cardRadius as CardRadiusTier,
     screenBrightness: dataJson.screenBrightness,
-    aiConfig: dataJson.aiConfig as AIConfig,
     weatherCities: dataJson.weatherCities as WeatherCity[],
   },
 };

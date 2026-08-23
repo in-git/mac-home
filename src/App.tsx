@@ -7,7 +7,6 @@ import { DashboardGrid } from './views/DashboardGrid';
 import { TopBar } from './components/TopBar/TopBar';
 import { useAppInit } from './hooks/useAppInit';
 import { useGreeting } from './hooks/useGreeting';
-import { usePetAutoActivity } from './hooks/usePetAutoActivity';
 import { useThemeVariables } from './hooks/useThemeVariables';
 import { useHomeStore } from './store/useHomeStore';
 import { AddWidgetModal } from './views/AddWidgetModal';
@@ -62,9 +61,6 @@ export default function App() {
       showDesktopIcons: s.showDesktopIcons,
     })),
   );
-
-  // 桌宠自由活动配置（是否开启），驱动下面的定时器 effect
-  const petAutoActivity = useHomeStore((s) => s.petAutoActivity);
 
   const {
     setWidgets,
@@ -133,9 +129,6 @@ export default function App() {
 
   // 进入页面打招呼（仅触发一次）。
   useGreeting();
-
-  // 桌宠定时自主活动（仅在设置开启时运行）。
-  usePetAutoActivity(petAutoActivity);
 
   // SEO：动态同步标题与描述，确保关键词「吴文龙 / 吴文龙的游戏空间」一致。
   useEffect(() => {

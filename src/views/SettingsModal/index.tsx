@@ -1,4 +1,4 @@
-import { Bot, Palette, Settings as SettingsIcon, X } from 'lucide-react';
+import { Palette, Settings as SettingsIcon, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 
@@ -26,15 +26,6 @@ const TABS: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-slate-400 to-slate-600 text-white">
         <SettingsIcon size={15} />
-      </span>
-    ),
-  },
-  {
-    id: 'ai',
-    label: 'AI 与宠物',
-    icon: (
-      <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-violet-400 to-fuchsia-500 text-white">
-        <Bot size={15} />
       </span>
     ),
   },

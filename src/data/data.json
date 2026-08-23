@@ -1306,12 +1306,6 @@
   "fontVariant": "B",
   "cardRadius": "small",
   "screenBrightness": 88,
-  "aiConfig": {
-    "provider": "local",
-    "baseURL": "/api/public/ai/chat",
-    "apiKey": "",
-    "model": "qwen2.5:3b"
-  },
   "petAutoActivity": false,
   "weatherCities": [
     {
