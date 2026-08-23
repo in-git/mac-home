@@ -8,7 +8,6 @@ export {
   ROLE_DIALOG_CLOSE_EVENT,
   dispatchPetDialog,
   closeRoleDialog,
-  THANKS_DIALOG,
   ROLE_CLICK_DIALOG,
   HELP_MENU_DIALOG,
 } from './dialog';

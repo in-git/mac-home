@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ROLE_DIALOG_CLOSE_EVENT,
   ROLE_DIALOG_EVENT,
+  runChoiceEffect,
   type DialogChoice,
   type MenuOption,
   type RoleDialogConfig,
@@ -177,11 +178,23 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   };
 
   const handleChoice = (choice: DialogChoice) => {
+    // 1) 优先执行声明式效果（气泡对话 / 跳转 / 打开模态框 / 执行功能）
+    if (choice.effect) {
+      // 先关闭当前对话框，再延迟一拍触发副作用：
+      // close() 会 setConfig(null)，与 runChoiceEffect 内 dispatchPetDialog 设置
+      // config 同批执行会互相覆盖，导致气泡对话瞬间消失。
+      close();
+      window.setTimeout(
+        () => runChoiceEffect(choice.effect as NonNullable<DialogChoice['effect']>),
+        0,
+      );
+      return;
+    }
+    // 2) 兼容旧式字符串 action
     if (choice.action === 'close' || choice.closeAfter) {
       close();
       return;
     }
-    // 自定义 action（如帮助菜单的 page_intro / gameplay / customize）：关闭对话框
     if (choice.action && choice.action !== 'continue') {
       close();
       return;

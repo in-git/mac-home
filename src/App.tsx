@@ -11,9 +11,9 @@ import { useThemeVariables } from './hooks/useThemeVariables';
 import { useHomeStore } from './store/useHomeStore';
 import { AddWidgetModal } from './views/AddWidgetModal';
 import { SettingsModal } from './views/SettingsModal';
-import { SpotlightModal } from './views/SpotlightModal';
 import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/Role/RoleCharacterCanvas';
+import { ROLE_DIALOG_ACTION_EVENT } from './agent/pet/dialog';
 import { visitorApi } from './api/visitor';
 import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
 import THEME_OPTIONS from './data/options/filter.options';
@@ -79,7 +79,6 @@ export default function App() {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] =
     useState<boolean>(false);
-  const [isSpotlightOpen, setIsSpotlightOpen] = useState<boolean>(false);
   const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] =
     useState<boolean>(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] =
@@ -129,6 +128,25 @@ export default function App() {
 
   // 进入页面打招呼（仅触发一次）。
   useGreeting();
+
+  // 监听桌宠对话框选项触发的副作用（打开模态框 / 执行功能 / 应用内跳转）
+  useEffect(() => {
+    const onAction = (e: Event) => {
+      const detail = (e as CustomEvent).detail as
+        | { modal?: 'settings' | 'addWidget' | 'wallpaper'; command?: string; url?: string }
+        | undefined;
+      if (!detail) return;
+      if (detail.modal === 'settings') setIsSettingsModalOpen(true);
+      else if (detail.modal === 'addWidget') setIsAddWidgetModalOpen(true);
+      else if (detail.modal === 'wallpaper') setIsWallpaperModalOpen(true);
+      else if (detail.command === 'navigate' && detail.url) {
+        // 应用内路由：当前为单页，这里以滚动到顶部作为示例落地行为
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    window.addEventListener(ROLE_DIALOG_ACTION_EVENT, onAction);
+    return () => window.removeEventListener(ROLE_DIALOG_ACTION_EVENT, onAction);
+  }, []);
 
   // SEO：动态同步标题与描述，确保关键词「吴文龙 / 吴文龙的游戏空间」一致。
   useEffect(() => {
@@ -286,14 +304,6 @@ export default function App() {
         isDarkMode={isDarkMode}
         onUpdateWallpaper={updateWallpaper}
         onToggleDarkMode={toggleDarkMode}
-      />
-
-      {/* Spotlight Search Modal */}
-      <SpotlightModal
-        isOpen={isSpotlightOpen}
-        onClose={() => setIsSpotlightOpen(false)}
-        notes={notes}
-        onAddWidget={addWidget}
       />
 
       {/* Add Widget Modal */}
