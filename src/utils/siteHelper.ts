@@ -13,6 +13,8 @@ export const handleAddSite = (item: SiteItem) => {
   if (widgets.some((w) => isWebApp(w.type) && w.data.site?.link === url)) {
     return;
   }
+  // 网页应用不显示在系统组件中
+  item.showInSystem = false;
   const pos = findFirstAvailablePosition(widgets, 8, 8);
   const newWidget: WidgetItem = {
     id: `widget-${item.id || Date.now()}`,

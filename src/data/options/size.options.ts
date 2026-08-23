@@ -20,6 +20,13 @@ export const SIZE_OPTIONS: Partial<Record<WidgetType, WidgetSizeOption[]>> = {
     { w: 10, h: 10 },
     { w: 12, h: 12 },
   ],
+  // 系统功能：与网页应用一致的正方形档位
+  'system-function': [
+    { w: 6, h: 6 },
+    { w: 8, h: 8 },
+    { w: 10, h: 10 },
+    { w: 12, h: 12 },
+  ],
   search: [ { w: 24, h: 12 },{ w: 30, h: 12 },{ w: 48, h: 12 },{ w: 96, h: 12 } ],
   'member-count': [{ w: 24, h: 24 }],
   weather: [{ w: 40, h: 34 }, { w: 48, h: 34 }],

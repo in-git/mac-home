@@ -307,64 +307,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
           {WIDGET_CONTEXT_MENU.map(renderItem)}
 
-          {/* 底部显示当前卡片的高度和宽度参数 (grid: w, h)，可输入调整 */}
-          <div
-            key={targetWidget.id}
-            className="mt-2 pt-2 border-t border-black/5 dark:border-white/10 px-3 py-2 text-font-sm "
-          >
-            <div className="flex items-center justify-between mb-1.5">
-              <span>尺寸调整</span>
-              <span className="font-mono text-font-xs  bg-black/5 dark:bg-white/10 px-1.5 py-0.5 rounded opacity-70">
-                {targetWidget.grid?.w ?? '-'} / {targetWidget.grid?.h ?? '-'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="flex flex-1 items-center gap-1.5">
-                <span className="text-font-xs opacity-70">宽</span>
-                <input
-                  type="number"
-                  min={1}
-                  defaultValue={targetWidget.grid?.w ?? 2}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') e.currentTarget.blur();
-                  }}
-                  onBlur={(e) => {
-                    const val = Number(e.currentTarget.value);
-                    if (!Number.isFinite(val) || val < 1) return;
-                    onUpdateWidget(targetWidget.id, {
-                      grid: {
-                        ...targetWidget.grid,
-                        w: val,
-                      },
-                    });
-                  }}
-                  className="w-full min-w-0 px-2 py-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 border border-transparent focus:border-[color:var(--accent)] focus:outline-none text-font-md font-mono"
-                />
-              </label>
-              <label className="flex flex-1 items-center gap-1.5">
-                <span className="text-font-xs opacity-70">高</span>
-                <input
-                  type="number"
-                  min={1}
-                  defaultValue={targetWidget.grid?.h ?? 5}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') e.currentTarget.blur();
-                  }}
-                  onBlur={(e) => {
-                    const val = Number(e.currentTarget.value);
-                    if (!Number.isFinite(val) || val < 1) return;
-                    onUpdateWidget(targetWidget.id, {
-                      grid: {
-                        ...targetWidget.grid,
-                        h: val,
-                      },
-                    });
-                  }}
-                  className="w-full min-w-0 px-2 py-1 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 border border-transparent focus:border-[color:var(--accent)] focus:outline-none text-font-md font-mono"
-                />
-              </label>
-            </div>
-          </div>
+      
         </>
       ) : (
         /* Desktop (empty area) right-click */

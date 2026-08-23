@@ -119,7 +119,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
                 }
               : {}),
           }}
-          className={`widget-card ${isWebAppType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
+          className={`widget-card cursor-pointer ${isWebAppType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
           onPointerDown={handlePointerDown}

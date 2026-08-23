@@ -224,7 +224,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 pointer-events-auto" 
+      className="fixed inset-0 z-10 pointer-events-auto" 
       onClick={(e) => {
         // 只有点击遮罩本身（target === currentTarget）才关闭，点击子元素不关闭
         if (e.target === e.currentTarget) {

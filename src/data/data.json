@@ -4,27 +4,6 @@
   "exportedAt": "2026-08-18T12:25:26.931Z",
   "widgets": [
     {
-      "id": "widget-1787207685595",
-      "type": "search",
-      "title": "网络搜索",
-      "maxInstances": 1,
-      "isAddable": true,
-      "cardStyle": {
-        "padding": "p-4",
-        "glass": true,
-        "backgroundTheme": "light",
-        "background": "transparent",
-        "disableBackgroundMenu": true
-      },
-      "data": {},
-      "grid": {
-        "x": 0,
-        "y": 0,
-        "w": 96,
-        "h": 12
-      }
-    },
-    {
       "id": "widget-1787207693502",
       "type": "clock",
       "title": "时钟日历",
@@ -38,7 +17,7 @@
       "data": {},
       "grid": {
         "x": 0,
-        "y": 12,
+        "y": 18,
         "w": 24,
         "h": 24
       },
@@ -59,7 +38,7 @@
       "data": {},
       "grid": {
         "x": 37,
-        "y": 12,
+        "y": 18,
         "w": 24,
         "h": 16
       },
@@ -111,7 +90,7 @@
       },
       "grid": {
         "x": 29,
-        "y": 12,
+        "y": 18,
         "w": 8,
         "h": 8
       },
@@ -167,7 +146,7 @@
       },
       "grid": {
         "x": 29,
-        "y": 20,
+        "y": 26,
         "w": 8,
         "h": 8
       },
@@ -223,7 +202,7 @@
       },
       "grid": {
         "x": 29,
-        "y": 28,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -288,7 +267,7 @@
       },
       "grid": {
         "x": 45,
-        "y": 28,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -353,7 +332,7 @@
       },
       "grid": {
         "x": 37,
-        "y": 28,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -400,7 +379,7 @@
       },
       "grid": {
         "x": 72,
-        "y": 12,
+        "y": 18,
         "w": 6,
         "h": 6
       },
@@ -456,7 +435,7 @@
       },
       "grid": {
         "x": 61,
-        "y": 20,
+        "y": 26,
         "w": 8,
         "h": 8
       },
@@ -520,7 +499,7 @@
       },
       "grid": {
         "x": 78,
-        "y": 12,
+        "y": 18,
         "w": 6,
         "h": 6
       },
@@ -576,7 +555,7 @@
       },
       "grid": {
         "x": 72,
-        "y": 18,
+        "y": 24,
         "w": 6,
         "h": 6
       },
@@ -632,7 +611,7 @@
       },
       "grid": {
         "x": 61,
-        "y": 12,
+        "y": 18,
         "w": 8,
         "h": 8
       },
@@ -687,7 +666,7 @@
       },
       "grid": {
         "x": 53,
-        "y": 28,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -742,7 +721,7 @@
       },
       "grid": {
         "x": 78,
-        "y": 18,
+        "y": 24,
         "w": 12,
         "h": 12
       },
@@ -789,7 +768,7 @@
       },
       "grid": {
         "x": 90,
-        "y": 12,
+        "y": 18,
         "w": 6,
         "h": 6
       },
@@ -836,7 +815,7 @@
       },
       "grid": {
         "x": 61,
-        "y": 28,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -882,7 +861,7 @@
       },
       "grid": {
         "x": 72,
-        "y": 24,
+        "y": 30,
         "w": 6,
         "h": 6
       },
@@ -938,7 +917,7 @@
       },
       "grid": {
         "x": 84,
-        "y": 12,
+        "y": 18,
         "w": 6,
         "h": 6
       },
@@ -994,7 +973,7 @@
       },
       "grid": {
         "x": 78,
-        "y": 30,
+        "y": 36,
         "w": 6,
         "h": 6
       },
@@ -1050,7 +1029,7 @@
       },
       "grid": {
         "x": 72,
-        "y": 30,
+        "y": 36,
         "w": 6,
         "h": 6
       },
@@ -1106,7 +1085,7 @@
       },
       "grid": {
         "x": 90,
-        "y": 30,
+        "y": 36,
         "w": 6,
         "h": 6
       },
@@ -1162,7 +1141,7 @@
       },
       "grid": {
         "x": 90,
-        "y": 24,
+        "y": 30,
         "w": 6,
         "h": 6
       },
@@ -1218,7 +1197,7 @@
       },
       "grid": {
         "x": 90,
-        "y": 18,
+        "y": 24,
         "w": 6,
         "h": 6
       },
@@ -1274,7 +1253,7 @@
       },
       "grid": {
         "x": 84,
-        "y": 30,
+        "y": 36,
         "w": 6,
         "h": 6
       },
@@ -1283,6 +1262,76 @@
         "padding": "p-4",
         "glass": true
       }
+    },
+    {
+      "id": "cfg-system-function",
+      "type": "system-function",
+      "title": "系统设置",
+      "maxInstances": 1,
+      "isAddable": false,
+      "cardStyle": {
+        "glass": false,
+        "padding": "p-0",
+        "background": "white"
+      },
+      "grid": {
+        "x": 0,
+        "y": 42,
+        "w": 6,
+        "h": 6
+      },
+      "data": {
+        "color": "var(--accent)",
+        "icon": {}
+      },
+      "size": 6
+    },
+    {
+      "id": "cfg-system-function-add",
+      "type": "system-function",
+      "title": "添加",
+      "maxInstances": 1,
+      "isAddable": false,
+      "cardStyle": {
+        "glass": false,
+        "padding": "p-0",
+        "background": "white"
+      },
+      "grid": {
+        "x": 8,
+        "y": 42,
+        "w": 6,
+        "h": 6
+      },
+      "data": {
+        "color": "var(--accent)",
+        "icon": {}
+      },
+      "size": 6
+    },
+    {
+      "id": "widget-1787506132193",
+      "type": "clock-lunar",
+      "title": "农历时钟",
+      "maxInstances": 1,
+      "isAddable": true,
+      "cardStyle": {
+        "padding": "p-4",
+        "glass": true,
+        "backgroundTheme": "light",
+        "background": "transparent"
+      },
+      "data": {
+        "size": "6rem",
+        "color": "#FFFFFF"
+      },
+      "grid": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 18
+      },
+      "size": 96
     }
   ],
   "wallpaper": {
@@ -1359,5 +1408,7 @@
     "lon": 0
   },
   "selectedRoleId": "klrx",
-  "showDesktopIcons": true
+  "showDesktopIcons": true,
+  "isFirstVisit": true
+ 
 }

@@ -2,9 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
-import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig } from '../data/widgetConfig';
+import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, SYSTEM_WIDGET_CONFIG } from '../data/widgetConfig';
 import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
-import { migrateData } from '../utils/migration';
 import {
   CardRadiusTier,
   FontVariant,
@@ -29,6 +28,24 @@ function readLegacy<T>(key: string, fallback: T): T {
 
 // 默认配置：首次加载与重置系统统一使用 data.json（见 presetData.DEFAULT_STATE）
 const DEFAULT_STATE = PRESET_DATA.DEFAULT_STATE;
+
+/**
+ * 确保系统内置组件（SYSTEM_WIDGET_CONFIG）已存在于组件列表中：
+ * 仅当某内置组件按其 id 不存在时才追加，已存在则保持原样（保留用户的位置/配置）。
+ * 追加时按当前列表自动寻找空闲位置，避免与已有组件重叠。
+ */
+function ensureSystemWidgets(widgets: WidgetItem[]): WidgetItem[] {
+  const existingIds = new Set(widgets.map((w) => w.id));
+  let next = widgets;
+  for (const sys of SYSTEM_WIDGET_CONFIG) {
+    if (existingIds.has(sys.id)) continue;
+    const targetW = sys.grid?.w ?? 1;
+    const targetH = sys.grid?.h ?? 1;
+    const pos = findFirstAvailablePosition(next, targetW, targetH);
+    next = [...next, ensureGrid({ ...sys, grid: { ...pos, w: targetW, h: targetH } })];
+  }
+  return next;
+}
 
 interface HomeState {
   // Persisted data
@@ -115,8 +132,10 @@ export const useHomeStore = create<HomeState>()(
       // 默认配置（data.json）整体展开，首次启动后由 persist 接管；
       // 下方仅覆盖需要旧版 localStorage 迁移的字段与对话历史。
       ...DEFAULT_STATE,
-      widgets: (readLegacy<WidgetItem[]>('apple_homepage_widgets', DEFAULT_STATE.widgets)).map(
-        (w) => ensureGrid(w),
+      widgets: ensureSystemWidgets(
+        (readLegacy<WidgetItem[]>('apple_homepage_widgets', DEFAULT_STATE.widgets)).map(
+          (w) => ensureGrid(w),
+        ),
       ),
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
       notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
@@ -233,7 +252,6 @@ export const useHomeStore = create<HomeState>()(
       },
 
       resetAll: () => {
-        // 重置系统：整体恢复为 data.json 默认配置
         set(DEFAULT_STATE);
       },
 
@@ -241,8 +259,6 @@ export const useHomeStore = create<HomeState>()(
       updateWallpaper: (cfg) =>
         set(() => {
           const prev = get().wallpaper;
-          // 切换壁纸类型时，隔离三种类型各自的专属字段（dynamicPreset / imageUrl / gradient），
-          // 避免浅合并导致跨类型字段残留，从而误判选中态。公共滤镜字段（blur/brightness 等）保留。
           if (cfg.type && cfg.type !== prev.type) {
             const base = {
               type: cfg.type,
@@ -278,7 +294,6 @@ export const useHomeStore = create<HomeState>()(
       setWeatherCities: (cities) =>
         set((state) => ({
           weatherCities: cities,
-          // 若被删除的城市恰好是当前选中项，则回退到列表中第一个城市
           selectedCityId: cities.some((c) => c.id === state.selectedCityId)
             ? state.selectedCityId
             : cities[0]?.id ?? '',
@@ -290,21 +305,18 @@ export const useHomeStore = create<HomeState>()(
     }),
     {
       name: 'apple-homepage-store',
-      // Only persist the data slices, not the action functions.
       partialize: (state) => ({
         ...state
       }),
-      // hydration 后用 ensureGrid 补齐旧数据中缺失的 grid 坐标，
-      // 保证 grid 必选契约在任意持久化数据下都成立。
-      // 注意：zustand persist 写入的结构是 { state: {...}, version }，
-      // 需要先解包出真正的 state 再交给 migrateData，否则 migrateData
-      // 会把 data.json 默认值（widgets 等）整体覆盖回本地数据，导致
-      // 卡片背景等自定义配置丢失。
+      // 每次从本地存储恢复时，确保系统内置组件（SYSTEM_WIDGET_CONFIG）存在：
+      // 缺失则追加，已存在则保留用户配置。放在 merge 而非 initializer，
+      // 是因为 persist 会用持久化数据整体覆盖 initializer 的结果。
       merge: (persisted, current) => {
         const persistedAny = persisted as Record<string, any>;
         const realPersisted = persistedAny?.state ?? persistedAny;
-        const migrated = migrateData<Partial<HomeState>>(realPersisted);
-        return { ...current, ...migrated };
+        const merged = { ...current, ...realPersisted };
+        merged.widgets = ensureSystemWidgets(merged.widgets ?? []);
+        return merged;
       },
     },
   ),

@@ -43,6 +43,7 @@ export type WidgetType =
   | 'random-web'
   | 'control-center'
   | 'web-app'
+  | 'system-function'
   | 'application'
   | 'member-count';
 
@@ -113,6 +114,8 @@ export interface WidgetItem {
     bold?: boolean;
     /** 空白占位组件私有属性 */
     aspect?: string;
+    /** 系统功能组件私有属性：展示图标（lucide 图标组件引用）。 */
+    icon?: unknown;
   }
 }
 

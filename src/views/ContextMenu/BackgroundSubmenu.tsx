@@ -140,6 +140,8 @@ export const BackgroundSubmenu: React.FC<BackgroundSubmenuProps> = ({
                     className={`h-10 rounded-[var(--card-radius)] border-2 text-xs  transition-all hover:scale-105 hover:shadow-md flex items-center justify-center ${
                       isSelected
                         ? 'border-[color:var(--accent)] ring-2 ring-[color:var(--accent)]/40'
+                        : c.type === 'glass' || c.value === '#FFFFFF'
+                        ? 'border-black/30 dark:border-white/40'
                         : 'border-black/10 dark:border-white/15'
                     }`}
                   >

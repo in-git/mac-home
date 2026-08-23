@@ -38,6 +38,8 @@ export const RandomWebWidget: React.FC<RandomWebWidgetProps> = ({
     // 直接以 SiteItem 结构存储，保留原站点的封面/背景/计数等字段
     const randomItem: SiteItem = {
       ...item,
+      // 随机网页（非网页应用）默认显示在系统组件中
+      showInSystem: true,
       id: item.id || `sc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     };
     // 再次以函数式更新兜底，防止极速连点导致的竞态重复

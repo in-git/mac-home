@@ -1,6 +1,8 @@
 import { WidgetType, CardStyle, WidgetItem } from '../types';
 import type { MouseEvent } from 'react';
+import { Plus, Settings } from 'lucide-react';
 import { getSizeOptions, type WidgetSizeOption } from './options/size.options';
+import { ROLE_DIALOG_ACTION_EVENT } from '../agent/pet/dialog';
 
 /**
  * Type-level configuration registry for every widget type. This consolidates
@@ -34,7 +36,64 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
   background: undefined
 };
 
-
+export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
+  {
+    id: 'cfg-system-function',
+    type: 'system-function',
+    title: '系统设置',
+    maxInstances: 1,
+    isAddable: false,
+    cardStyle: {
+      glass: false,
+      padding: 'p-0',
+      background: 'white'
+    },
+    grid: {
+      x: 0,
+      y: 0,
+      w: 8,
+      h: 8,
+    },
+    data: {
+      color: 'var(--accent)',
+      icon: 'settings',
+    },
+    onClick: () => {
+      // 打开系统设置页面：复用 App 已监听的对话框动作事件
+      window.dispatchEvent(
+        new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'settings' } }),
+      );
+    },
+  },
+  {
+    id: 'cfg-system-function-add',
+    type: 'system-function',
+    title: '添加',
+    maxInstances: 1,
+    isAddable: false,
+    cardStyle: {
+      glass: false,
+      padding: 'p-0',
+      background: 'white'
+    },
+    grid: {
+      x: 0,
+      y: 0,
+      w: 8,
+      h: 8,
+    },
+    data: {
+      color: 'var(--accent)',
+      icon: 'add',
+    },
+    onClick: () => {
+      // 打开「添加组件」弹窗：复用 App 已监听的对话框动作事件
+      window.dispatchEvent(
+        new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'addWidget' } }),
+      );
+    },
+  },
+]
 /** 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
  *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
 export const WIDGET_CONFIG: Array<WidgetItem> = [
@@ -49,7 +108,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     },
     cardStyle: {
       disableBackgroundMenu: true,
-      background:'transparent'
+      background: 'transparent'
     },
     grid: {
       x: 0,
@@ -182,6 +241,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       color: 'var(--accent)',
     },
   },
+
   {
     id: 'cfg-random-web',
     type: 'random-web',
@@ -252,6 +312,6 @@ export function canAddWidget(type: WidgetType, currentCount: number): boolean {
 
 /** 网页应用类图标组件（新增网页创建的类型）。 */
 export function isWebApp(type: WidgetType): boolean {
-  return type === 'web-app';
+  return type === 'web-app' || type === 'system-function';
 }
 

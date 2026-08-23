@@ -1,11 +1,11 @@
 import React from 'react';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
-import { WebListWidget } from '../../widgets/WebListWidget';
 import { ClockCalendarWidget } from '../../widgets/ClockCalendar/ClockCalendarWidget';
 import { ClockWidget } from '../../widgets/Clock/ClockWidget';
 import { ClockLunarWidget } from '../../widgets/ClockLunar/ClockLunarWidget';
 import { ControlCenterWidget } from '../../widgets/ControlCenter/ControlCenterWidget';
 import { WebApp } from '../../widgets/WebApp/WebApp';
+import { SystemFunction } from '../../widgets/SystemFunction/SystemFunction';
 import { SearchWidget } from '../../widgets/Search/SearchWidget';
 import { StickyNotesWidget } from '../../widgets/StickyNotes/StickyNotesWidget';
 import { WeatherWidget, WeatherSummary } from '../../widgets/Weather';
@@ -59,7 +59,6 @@ export const renderWidgetContent = ({
         />
       );
     case 'random-web':
-
       return (
         <RandomWebWidget
           expanded={inModal}
@@ -81,8 +80,16 @@ export const renderWidgetContent = ({
         </div>
       );
     }
-    case 'application': {
-      return <WebListWidget site={widget.data.site} />;
+  
+
+    case 'system-function': {
+      return (
+        <div data-icon-grid className="h-full w-full flex items-center justify-center">
+          <div className="w-full aspect-square flex items-center justify-center">
+            <SystemFunction widget={widget} />
+          </div>
+        </div>
+      );
     }
 
     case 'member-count': {
