@@ -69,6 +69,19 @@ export async function askOnce(
     }
 
     const data = await res.json();
+    // 本地大模型走本机后端通道（/api/public/ai/chat），返回后端统一响应结构
+    // { code, msg, data }（见 utils/request.ts），与其他厂商的 OpenAI 兼容结构
+    // 不同，需先解包：code !== 200 视为业务失败，200 则内容在 data 字段中
+    if (data && typeof data.code === 'number') {
+        if (data.code !== 200) {
+            throw new Error(data.msg || `业务错误 ${data.code}`);
+        }
+        const wrapped = data.data;
+        if (typeof wrapped === 'string') {
+            return wrapped.trim();
+        }
+        return wrapped == null ? '' : JSON.stringify(wrapped);
+    }
     // 兼容多种返回结构：
     // - OpenAI 标准：data.choices[0].message.content
     // - Ollama / 本机后端通道：data.message.content（content 可能是 JSON 对象）

@@ -17,7 +17,7 @@ import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/Role/RoleCharacterCanvas';
 import { visitorApi } from './api/visitor';
 import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
-import { THEME_OPTIONS } from './data/options';
+import THEME_OPTIONS from './data/options/filter.options';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.

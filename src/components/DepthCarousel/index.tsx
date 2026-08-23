@@ -1,4 +1,4 @@
-import { THEME_OPTIONS } from '../../data/options';
+import THEME_OPTIONS from '../../data/options/filter.options';
 import { buildWallpaperFilter } from '../../utils/wallpaperFilter';
 import DepthCarousel from './DepthCarousel';
 

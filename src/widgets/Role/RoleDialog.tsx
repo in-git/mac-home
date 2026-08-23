@@ -218,7 +218,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   // AVG 风格对话框：跟随角色头部上方，水平以角色中心为锚，贴边时钳制在视口内
   const centerX = rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2;
   const winW = typeof window !== 'undefined' ? window.innerWidth : 1280;
-  const panelW = Math.min(592, winW - 32); // 与面板宽度 w-[min(37rem,calc(100vw_-_2rem))] 一致
+  const panelW = Math.min(500, winW - 32); // 与面板宽度 w-[min(500px,calc(100vw_-_2rem))] 一致
   const dialogLeft = Math.max(
     16 + panelW / 2,
     Math.min(centerX, winW - 16 - panelW / 2),
@@ -240,7 +240,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
           e.stopPropagation();
           handleLineClick();
         }}
-        className="absolute w-[min(37rem,calc(100vw_-_2rem))] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
+        className="absolute w-[min(500px,calc(100vw_-_2rem))] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
         style={{
           left: `${dialogLeft}px`,
           top: `${dialogTop}px`,

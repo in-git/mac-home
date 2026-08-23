@@ -122,7 +122,7 @@ export const ROLE_CLICK_DIALOG: RoleDialogConfig = {
   mode: 'game',
   duration: 5000,
   lines: [
-    { text: '你好啊，我是赛琳娅，我是你的小伙伴' },
+    { text: '你好啊，我是柳如烟' },
     { text: '点我可以看到更多功能' },
   ],
 };

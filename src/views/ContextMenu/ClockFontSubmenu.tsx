@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { CLOCK_FONT_COLORS, CLOCK_FONT_SIZES } from '../../data/options';
+import { CLOCK_FONT_COLORS, CLOCK_FONT_SIZES } from '../../data/options/clock.options';
 import type { WidgetConfigSubmenuProps } from './widgetSubmenus';
 import { SubmenuFlyout } from './SubmenuFlyout';
 

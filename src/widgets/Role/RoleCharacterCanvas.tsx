@@ -19,8 +19,16 @@ export const RoleCharacterCanvas: React.FC = () => {
     y: 0,
   });
 
+  // 模型思考中标志（供点击时判断：思考中只提示，不弹帮助菜单）
+  const isThinkingRef = useRef(false);
+
   // 点击角色时弹出菜单式对话框（配置见 agent/pet/dialog.ts 的 HELP_MENU_DIALOG）
   const handleRoleClick = () => {
+    if (isThinkingRef.current) {
+      // 思考中：弹出基础对话提示，避免打断 AI 思考
+      dispatchPetDialog({ mode: 'base', text: '我正在思考，请稍等一下哦～' });
+      return;
+    }
     dispatchPetDialog(HELP_MENU_DIALOG);
   };
 
@@ -82,10 +90,12 @@ export const RoleCharacterCanvas: React.FC = () => {
     const thinkingFrameMs = 100;
     const onThinkingStart = () => {
       isThinking = true;
+      isThinkingRef.current = true;
       thinkingStart = performance.now();
     };
     const onThinkingEnd = () => {
       isThinking = false;
+      isThinkingRef.current = false;
     };
     window.addEventListener(EVENT.thinkingStart, onThinkingStart);
     window.addEventListener(EVENT.thinkingEnd, onThinkingEnd);

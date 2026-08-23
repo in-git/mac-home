@@ -43,7 +43,7 @@ export const AI_PROVIDERS: AIProvider[] = [
         id: 'deepseek',
         label: 'DeepSeek',
         baseURL: 'https://api.deepseek.com/v1/chat/completions',
-        defaultModel: 'deepseek-chat',
+        defaultModel: 'deepseek-v4-flash',
         docs: 'https://platform.deepseek.com/api_keys',
     },
     {

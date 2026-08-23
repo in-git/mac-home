@@ -21,10 +21,10 @@ export const ControlCenterWidget: React.FC<Props> = ({
   // 判断当前卡片自身是否为深色背景（优先取传入的局部 theme，缺省时回退到全局 isDarkMode）
   const isDarkCard = theme ? theme === 'dark' : isDarkMode;
 
-  // 独立的局部主题样式类名
+  // 独立的局部主题样式类名：所有磁贴/按钮的显式背景色（深浅模式切换时随之变化）
   const tilePanelClass = isDarkCard
-    ? 'bg-white/10 text-white border border-white/10 shadow-sm'
-    : 'bg-black/[0.04] text-slate-800 border border-black/5 shadow-xs';
+    ? 'bg-white/15 text-white border border-white/10 shadow-sm'
+    : 'bg-black/5 text-slate-800 border border-black/5 shadow-xs';
 
   const subTextClass = isDarkCard ? 'text-white/60' : 'text-slate-500';
 
@@ -149,14 +149,14 @@ export const ControlCenterWidget: React.FC<Props> = ({
           }}
           className={`p-2.5 rounded-[var(--card-radius)] flex flex-col items-center justify-center text-center gap-1.5 active:scale-[0.98] transition-colors ${
             isDarkMode
-              ? 'bg-slate-800 text-amber-300 border border-slate-700 shadow-md'
+              ? 'bg-amber-400/20 text-amber-300 border border-amber-400/30 shadow-md'
               : tilePanelClass
           }`}
         >
           <div
             className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
               isDarkMode
-                ? 'bg-amber-400/20 text-amber-300'
+                ? 'bg-amber-400/30 text-amber-300'
                 : isDarkCard
                   ? 'bg-white/20 text-white/80'
                   : 'bg-slate-200 text-slate-700'
