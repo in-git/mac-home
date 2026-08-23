@@ -31,6 +31,9 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   const [lineIdx, setLineIdx] = useState(0);
   // 基础模式自动隐藏计时器
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 对话框面板 DOM 引用：用于判断点击是否发生在面板外部（game 面板 / base·menu 气泡）
+  const gamePanelRef = useRef<HTMLDivElement>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
 
   const clearHideTimer = useCallback(() => {
     if (hideTimerRef.current) {
@@ -102,6 +105,22 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   // 清理计时器
   useEffect(() => clearHideTimer, [clearHideTimer]);
 
+  // 点击对话框面板以外的区域即关闭。
+  // 用 window 级 click 监听替代全屏遮罩的 onClick，避免遮罩层拦截点击、挡住其他组件交互；
+  // 面板内部点击因 stopPropagation 不会冒泡到 window，contains 判定再兜底一次。
+  useEffect(() => {
+    if (!config) return;
+    const onWindowClick = (e: MouseEvent) => {
+      const panel =
+        config.mode === 'game' ? gamePanelRef.current : bubbleRef.current;
+      if (!panel?.contains(e.target as Node)) {
+        close();
+      }
+    };
+    window.addEventListener('click', onWindowClick);
+    return () => window.removeEventListener('click', onWindowClick);
+  }, [config, close]);
+
   if (!config) return null;
 
   // 基础对话：默认拼上当前角色名；显式传入 roleName 时优先用传入值
@@ -114,7 +133,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   // —— 基础对话模式 ——
   if (config.mode === 'base') {
     return (
-      <Bubble rolePos={rolePos} onClick={close}>
+      <Bubble rolePos={rolePos} innerRef={bubbleRef}>
         {prefix}
         {config.text}
       </Bubble>
@@ -129,7 +148,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
     };
 
     return (
-      <Bubble rolePos={rolePos} className="w-[320px] p-4" onClick={close}>
+      <Bubble rolePos={rolePos} className="w-[320px] p-4" innerRef={bubbleRef}>
         <div className="w-full min-h-[100px] mb-3 bg-white/90 dark:bg-white/90 rounded-xl flex items-center justify-center p-4">
           <div className="text-center text-sm font-medium text-slate-800 leading-[1.6]">
             {config.text}
@@ -220,27 +239,19 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   const dialogTop = Math.max(16, rolePos.y - 12);
 
   return (
-    <div 
-      className="fixed inset-0 z-10 pointer-events-auto" 
+    <div
+      ref={gamePanelRef}
       onClick={(e) => {
-        // 只有点击遮罩本身（target === currentTarget）才关闭，点击子元素不关闭
-        if (e.target === e.currentTarget) {
-          close();
-        }
+        e.stopPropagation();
+        handleLineClick();
+      }}
+      className="fixed z-[192] pointer-events-auto w-[min(500px,calc(100vw_-_2rem))] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
+      style={{
+        left: `${dialogLeft}px`,
+        top: `${dialogTop}px`,
+        transform: 'translate(-50%, -100%)',
       }}
     >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-          handleLineClick();
-        }}
-        className="absolute w-[min(500px,calc(100vw_-_2rem))] bg-[rgba(20,22,35,0.8)] backdrop-blur-md rounded-[18px] border border-white/20 shadow-2xl px-7 py-6 cursor-pointer transition-opacity duration-300"
-        style={{
-          left: `${dialogLeft}px`,
-          top: `${dialogTop}px`,
-          transform: 'translate(-50%, -100%)',
-        }}
-      >
         {/* 左上角头像 + 角色名标签（内心独白和系统消息隐藏角色名，头像保留） */}
         <div className="flex items-center gap-3 mb-3">
           <img
@@ -296,7 +307,6 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
             </div>
           </div>
         ) : null}
-      </div>
     </div>
   );
 };
@@ -304,10 +314,10 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
 /** 随角色移动的气泡外壳（复用原 RoleCharacterCanvas 的定位/翻转逻辑） */
 const Bubble: React.FC<{
   rolePos: { x: number; y: number };
-  onClick?: () => void;
   children?: React.ReactNode;
   className?: string;
-}> = ({ rolePos, children, onClick, className = '' }) => {
+  innerRef?: React.RefObject<HTMLDivElement | null>;
+}> = ({ rolePos, children, className = '', innerRef }) => {
   const centerX = rolePos.x + DEFAULT_PHYSICS_CONFIG.roleWidth / 2;
   const winW = typeof window !== 'undefined' ? window.innerWidth : 1280;
   const half = 140;
@@ -322,24 +332,18 @@ const Bubble: React.FC<{
     tail = 'right-3 translate-x-1/2';
   }
   return (
-    <>
-      {/* 点击遮罩层关闭对话框 */}
-      <div 
-        className="fixed inset-0 z-[39] pointer-events-auto bg-transparent"
-        onClick={onClick}
-      />
+    <div
+      ref={innerRef}
+      className={`fixed z-[192] pointer-events-auto max-w-xs sm:max-w-sm bg-white/95 dark:bg-zinc-800/95 text-slate-800 dark:text-white text-xs sm:text-sm rounded-xl shadow-lg border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
+      style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {children}
+      {/* 小尾巴：随对齐方向切换位置 */}
       <div
-        className={`fixed z-40 pointer-events-auto max-w-xs sm:max-w-sm bg-white/95 dark:bg-zinc-800/95 text-slate-800 dark:text-white text-xs sm:text-sm rounded-xl shadow-lg border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
-        style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {children}
-        {/* 小尾巴：随对齐方向切换位置 */}
-        <div
-          className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/95 dark:border-t-zinc-800/95 ${tail}`}
-        />
-      </div>
-    </>
+        className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/95 dark:border-t-zinc-800/95 ${tail}`}
+      />
+    </div>
   );
 };
 

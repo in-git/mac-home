@@ -23,7 +23,9 @@ export const RoleCharacterCanvas: React.FC = () => {
   const isThinkingRef = useRef(false);
 
   // 点击角色时弹出菜单式对话框（配置见 agent/pet/dialog.ts 的 HELP_MENU_DIALOG）
-  const handleRoleClick = () => {
+  const handleRoleClick = (e: React.MouseEvent) => {
+    // 阻止冒泡到 window，避免 RoleDialog 的「点击外部关闭」监听把刚弹出的菜单误关
+    e.stopPropagation();
     if (isThinkingRef.current) {
       // 思考中：弹出基础对话提示，避免打断 AI 思考
       dispatchPetDialog({ mode: 'base', text: '我正在思考，请稍等一下哦～' });
