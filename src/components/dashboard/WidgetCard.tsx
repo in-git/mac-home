@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { getWidgetConfig, DEFAULT_CARD_STYLE } from '../../data/widgetConfig';
+import { getWidgetConfig, DEFAULT_CARD_STYLE, SYSTEM_WIDGET_CONFIG } from '../../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WeatherSummary } from '../../widgets/Weather';
 import { renderWidgetContent } from './widgetContent';
@@ -95,6 +95,14 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
     // 长按已触发编辑布局，忽略随后的点击，避免误触组件行为
     if (longPressTriggeredRef.current) {
       longPressTriggeredRef.current = false;
+      return;
+    }
+    // 系统功能磁贴的 onClick 是函数（持久化到本地存储时会丢失），
+    // 故点击直接挂载在 .widget-card 上，并从配置注册表按 id 找回真正的行为。
+    if (widget.type === 'system-function') {
+      const handler =
+        widget.onClick ?? SYSTEM_WIDGET_CONFIG.find((w) => w.id === widget.id)?.onClick;
+      handler?.(e);
       return;
     }
     onClick(e, widget);

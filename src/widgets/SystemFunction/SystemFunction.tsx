@@ -63,14 +63,6 @@ export const SystemFunction: React.FC<SystemFunctionProps> = ({ widget }) => {
     setHover(true);
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // 阻止冒泡，避免触发卡片整体 onClick（如进入编辑/布局逻辑）
-    e.stopPropagation();
-    // onClick 是函数，持久化到本地存储时会丢失，故优先从配置注册表按 id 找回
-    const handler = widget.onClick ?? SYSTEM_WIDGET_CONFIG.find((w) => w.id === widget.id)?.onClick;
-    handler?.(e);
-  };
-
   const tooltip = hover && pos && (
     <div
       role="tooltip"
@@ -92,7 +84,6 @@ export const SystemFunction: React.FC<SystemFunctionProps> = ({ widget }) => {
       <button
         ref={btnRef}
         type="button"
-        onClick={handleClick}
         className="flex h-full w-full flex-col items-center justify-center gap-1 disabled:cursor-default"
       >
         <span className="flex items-center justify-center">

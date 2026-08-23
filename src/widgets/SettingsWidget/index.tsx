@@ -5,7 +5,6 @@ import { playSound } from '../../utils/sound';
 import { parseImport } from './constants';
 import { CURRENT_DATA_VERSION } from '../../utils/migration';
 import { AppearancePanel } from './panels/AppearancePanel';
-import { PetPanel } from './panels/PetPanel';
 import { SystemPanel } from './panels/SystemPanel';
 import type { SettingsTab } from './types';
 
@@ -23,16 +22,11 @@ export const SettingsWidget: React.FC<{
     setFontVariant,
     cardRadius,
     setCardRadius,
-    resetLayout,
     setWidgets,
     updateNotes,
     widgets,
     notes,
     resetAll,
-    petAutoActivity,
-    setPetAutoActivity,
-    selectedRoleId,
-    setSelectedRoleId,
     updateWallpaper,
     setScreenBrightness,
     setWeatherCities,
@@ -42,7 +36,6 @@ export const SettingsWidget: React.FC<{
     useShallow((s) => s),
   );
 
-  const [justReset, setJustReset] = useState(false);
   const [justResetSystem, setJustResetSystem] = useState(false);
   const [importMsg, setImportMsg] = useState<{
     type: 'success' | 'error';
@@ -84,8 +77,6 @@ export const SettingsWidget: React.FC<{
           if (cfg.cardRadius !== undefined) setCardRadius(cfg.cardRadius);
           if (cfg.screenBrightness !== undefined)
             setScreenBrightness(cfg.screenBrightness);
-          if (cfg.petAutoActivity !== undefined)
-            setPetAutoActivity(cfg.petAutoActivity);
           if (cfg.weatherCities !== undefined)
             setWeatherCities(cfg.weatherCities);
           if (cfg.selectedCityId !== undefined)
@@ -121,12 +112,6 @@ export const SettingsWidget: React.FC<{
   const handleToggleSound = () => {
     // Play the confirmation click before muting so the user gets feedback.
     setSoundEnabled(!soundEnabled);
-  };
-
-  const handleReset = () => {
-    resetLayout();
-    setJustReset(true);
-    setTimeout(() => setJustReset(false), 1500);
   };
 
   // 重置系统：恢复全部持久化配置（由确认弹窗触发）
@@ -177,22 +162,11 @@ export const SettingsWidget: React.FC<{
           soundEnabled={soundEnabled}
           onToggleSound={handleToggleSound}
           onExport={handleExport}
-          onReset={handleReset}
-          justReset={justReset}
           importMsg={importMsg}
           onImportFile={handleImportFile}
           fileInputRef={fileInputRef}
           justResetSystem={justResetSystem}
           onResetSystem={handleResetSystem}
-        />
-      )}
-
-      {activeTab === 'system' && (
-        <PetPanel
-          enabled={petAutoActivity}
-          onToggleEnabled={() => setPetAutoActivity(!petAutoActivity)}
-          selectedRoleId={selectedRoleId}
-          onSelectRole={setSelectedRoleId}
         />
       )}
     </div>

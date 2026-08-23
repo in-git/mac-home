@@ -23,7 +23,6 @@ export interface ParsedConfig {
   fontVariant?: FontVariant;
   cardRadius?: CardRadiusTier;
   screenBrightness?: number;
-  petAutoActivity?: boolean;
   weatherCities?: WeatherCity[];
   selectedCityId?: string;
   lastLocation?: { city: string; lat: number; lon: number } | null;
@@ -76,7 +75,6 @@ export function parseImport(text: string): ParsedConfig {
     fontVariant: data.fontVariant,
     cardRadius: data.cardRadius,
     screenBrightness: data.screenBrightness,
-    petAutoActivity: data.petAutoActivity,
     weatherCities: data.weatherCities,
     selectedCityId: data.selectedCityId,
     lastLocation: data.lastLocation,

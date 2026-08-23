@@ -143,17 +143,19 @@ export const RandomWebWidgetCard: React.FC<RandomWebWidgetCardProps> = ({
 
   return (
     <div
-      className="relative w-full h-full overflow-hidden rounded-[var(--card-radius)] group cursor-pointer"
+      className="relative w-full h-full overflow-hidden rounded-[var(--card-radius)]  group cursor-pointer"
       onClick={handleVisit}
     >
       {/* 背景封面图（占满容器） */}
       <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 "
+        className="absolute inset-0 rounded-[var(--card-radius)] overflow-hidden  bg-cover bg-center transition-transform duration-500 group-hover:scale-105 "
         style={{
           backgroundImage: coverImage
             ? `url(${coverImage})`
             : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            backgroundSize:'contain'
+            backgroundSize:'cover',
+            backgroundRepeat:'no-repeat',
+            backgroundPosition:'center'
         }}
       />
 

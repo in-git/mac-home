@@ -1355,7 +1355,6 @@
   "fontVariant": "B",
   "cardRadius": "small",
   "screenBrightness": 88,
-  "petAutoActivity": false,
   "weatherCities": [
     {
       "id": "city-23.13-113.26",

@@ -3,7 +3,7 @@
  * - base 基础对话：单条文本气泡，展示指定时长后自动隐藏（默认 5 秒）。
  * - game 文字游戏式对话：多行逐句推进（点击/回车继续），行尾可挂选择按钮（确定/取消等）。
  *
- * 任何入口（AI 行为、自由活动、UI）只需通过 dispatchPetDialog(config) 派发配置，
+ * 任何入口（AI 行为、UI）只需通过 dispatchPetDialog(config) 派发配置，
  * RoleDialog 组件会据此渲染对应模式，无需关心具体实现。
  */
 

@@ -68,8 +68,6 @@ interface HomeState {
   // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
   screenBrightness: number;
 
-  // 桌宠自由活动开关（模型定时驱动移动/跳跃/问候），开启会消耗更多 token
-  petAutoActivity: boolean;
   // 当前选中的桌宠形象（角色皮肤 id），持久化以便下次进入恢复
   selectedRoleId: string;
   // 天气卡片已添加的城市列表（持久化，跟随主页整体存储）
@@ -109,7 +107,6 @@ interface HomeState {
   setFontVariant: (variant: FontVariant) => void;
   setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
-  setPetAutoActivity: (value: boolean) => void;
   /** 切换当前桌宠形象（角色皮肤 id）。 */
   setSelectedRoleId: (id: string) => void;
   // 天气城市：整体替换列表（增/删/改后调用），并在被删城市为当前选中时回退选中项
@@ -289,7 +286,6 @@ export const useHomeStore = create<HomeState>()(
       setScreenBrightness: (value) =>
         set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
 
-      setPetAutoActivity: (value) => set({ petAutoActivity: value }),
       setSelectedRoleId: (id) => set({ selectedRoleId: id }),
       setWeatherCities: (cities) =>
         set((state) => ({

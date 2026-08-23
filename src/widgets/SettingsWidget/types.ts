@@ -18,18 +18,9 @@ export interface SystemPanelProps {
   soundEnabled: boolean;
   onToggleSound: () => void;
   onExport: () => void;
-  onReset: () => void;
-  justReset: boolean;
   importMsg: { type: 'success' | 'error'; text: string } | null;
   onImportFile: (file: File) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
   justResetSystem: boolean;
   onResetSystem: () => void;
-}
-
-export interface PetPanelProps {
-  enabled: boolean;
-  onToggleEnabled: () => void;
-  selectedRoleId: string;
-  onSelectRole: (id: string) => void;
 }

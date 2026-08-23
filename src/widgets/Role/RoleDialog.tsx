@@ -124,7 +124,6 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   // —— 菜单式对话模式 ——
   if (config.mode === 'menu') {
     const handleOptionClick = (option: MenuOption) => {
-      console.log('用户选择了选项：', option);
       // 先关闭菜单对话框
       close();
     };
@@ -180,9 +179,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   const handleChoice = (choice: DialogChoice) => {
     // 1) 优先执行声明式效果（气泡对话 / 跳转 / 打开模态框 / 执行功能）
     if (choice.effect) {
-      // 先关闭当前对话框，再延迟一拍触发副作用：
-      // close() 会 setConfig(null)，与 runChoiceEffect 内 dispatchPetDialog 设置
-      // config 同批执行会互相覆盖，导致气泡对话瞬间消失。
+   
       close();
       window.setTimeout(
         () => runChoiceEffect(choice.effect as NonNullable<DialogChoice['effect']>),

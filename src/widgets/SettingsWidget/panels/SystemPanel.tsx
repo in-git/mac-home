@@ -2,7 +2,6 @@ import { Button } from '@heroui/react';
 import {
   Download,
   RefreshCw,
-  RotateCcw,
   Upload,
   Volume2,
   VolumeX,
@@ -20,8 +19,6 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
   soundEnabled,
   onToggleSound,
   onExport,
-  onReset,
-  justReset,
   importMsg,
   onImportFile,
   fileInputRef,
@@ -86,33 +83,6 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             className="px-3 py-1.5 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-xs  transition-colors"
           >
             导出
-          </button>
-        </div>
-
-        {/* 恢复默认布局 */}
-        <div className="flex items-center justify-between px-4 py-3">
-          <span className="flex items-center space-x-3">
-            <span className="w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center bg-black/5 dark:bg-white/10 ">
-              <RotateCcw size={15} />
-            </span>
-            <div>
-              <div className=" dark:text-[#F1F5F9]">
-                重置组件布局
-              </div>
-              <div className="text-xs ">
-                恢复为系统预设卡片摆放模式
-              </div>
-            </div>
-          </span>
-          <button
-            onClick={onReset}
-            className={`px-3 py-1.5 rounded-[var(--card-radius)] text-xs  transition-colors ${
-              justReset
-                ? 'bg-[#28C840]/15 text-[#28C840]'
-                : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15'
-            }`}
-          >
-            {justReset ? '已重置' : '重置'}
           </button>
         </div>
 
