@@ -1,6 +1,4 @@
 import { WidgetType, CardStyle, WidgetItem } from '../types';
-import type { MouseEvent } from 'react';
-import { Plus, Settings } from 'lucide-react';
 import { getSizeOptions, type WidgetSizeOption } from './options/size.options';
 import { ROLE_DIALOG_ACTION_EVENT } from '../agent/pet/dialog';
 
@@ -42,7 +40,6 @@ export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'system-function',
     title: '系统设置',
     maxInstances: 1,
-    isAddable: false,
     cardStyle: {
       glass: false,
       padding: 'p-0',
@@ -70,7 +67,6 @@ export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'system-function',
     title: '添加',
     maxInstances: 1,
-    isAddable: false,
     cardStyle: {
       glass: false,
       padding: 'p-0',
@@ -94,7 +90,8 @@ export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
     },
   },
 ]
-/** 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
+/**
+ * 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
  *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
 export const WIDGET_CONFIG: Array<WidgetItem> = [
   {
@@ -102,7 +99,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'search',
     title: '网络搜索',
     maxInstances: 1,
-    isAddable: true,
     data: {
       color: 'var(--accent)',
     },
@@ -122,7 +118,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'clock',
     title: '时钟日历',
     maxInstances: 1,
-    isAddable: true,
     data: {
       color: 'var(--accent)',
     },
@@ -138,7 +133,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'weather',
     title: '天气预报',
     maxInstances: 1,
-    isAddable: true,
     data: {
       color: 'var(--accent)',
     },
@@ -154,7 +148,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'sticky-notes',
     title: '便签笔记',
     maxInstances: 1,
-    isAddable: true,
     data: {
       color: 'var(--accent)',
     },
@@ -171,7 +164,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'clock-mini',
     title: '时钟',
     maxInstances: 1,
-    isAddable: true,
     data: {
       color: 'var(--accent)',
     },
@@ -187,7 +179,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'clock-lunar',
     title: '农历时钟',
     maxInstances: 1,
-    isAddable: true,
     grid: {
       x: 0,
       y: 0,
@@ -207,7 +198,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'control-center',
     title: '控制中心',
     maxInstances: 1,
-    isAddable: true,
     data: {
       color: 'var(--accent)',
     },
@@ -221,33 +211,31 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       h: 26,
     }
   },
-  {
-    id: 'cfg-web-app',
-    type: 'web-app',
-    title: '网页应用',
-    maxInstances: Infinity,
-    isAddable: false,
-    cardStyle: {
-      glass: false,
-      padding: 'p-0'
-    },
-    grid: {
-      x: 0,
-      y: 0,
-      w: 8,
-      h: 8,
-    },
-    data: {
-      color: 'var(--accent)',
-    },
-  },
+  // {
+  //   id: 'cfg-web-app',
+  //   type: 'web-app',
+  //   title: '网页应用',
+  //   maxInstances: Infinity,
+  //   cardStyle: {
+  //     glass: false,
+  //     padding: 'p-0'
+  //   },
+  //   grid: {
+  //     x: 0,
+  //     y: 0,
+  //     w: 8,
+  //     h: 8,
+  //   },
+  //   data: {
+  //     color: 'var(--accent)',
+  //   },
+  // },
 
   {
     id: 'cfg-random-web',
     type: 'random-web',
     title: '随机网页',
     maxInstances: 1,
-    isAddable: true,
     cardStyle: {
       padding: 'p-0',
       background: 'transparent',
@@ -266,7 +254,6 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     type: 'member-count',
     title: '在线人数',
     maxInstances: 1,
-    isAddable: true,
     cardStyle: {
       padding: 'p-4',
       glass: true,
@@ -283,9 +270,9 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
 ];
 
-/** type -> config 的快速查找表（由 WIDGET_CONFIG 派生）。 */
+/** type -> config 的快速查找表（由 WIDGET_CONFIG + SYSTEM_WIDGET_CONFIG 派生）。 */
 const WIDGET_CONFIG_MAP: Record<string, WidgetItem> = Object.fromEntries(
-  WIDGET_CONFIG.map((cfg) => [cfg.type, cfg]),
+  [...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG].map((cfg) => [cfg.id, cfg]),
 );
 
 
@@ -293,13 +280,17 @@ const WIDGET_CONFIG_MAP: Record<string, WidgetItem> = Object.fromEntries(
 /** 解析后的组件配置：模板（含默认 grid）+ 运行时查询的 sizeOptions。 */
 export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSizeOption[] };
 
-/** Resolve the config for a widget type (falls back to a safe default). */
-export function getWidgetConfig(type: WidgetType): ResolvedWidgetConfig {
-  const cfg = WIDGET_CONFIG_MAP[type];
-  return { ...cfg, sizeOptions: getSizeOptions(type) };
+/**
+ * 按 id 解析组件配置（含运行时 sizeOptions）。
+ * 优先用 id 精确匹配（区分同 type 的不同配置，如「系统设置」/「添加」），
+ * 找不到时回退到按 type 查找以兼容旧调用方。
+ */
+export function getWidgetConfig(idOrType: string): ResolvedWidgetConfig {
+  const cfg = WIDGET_CONFIG_MAP[idOrType]
+    ?? WIDGET_CONFIG.find((c) => c.type === idOrType)
+    ?? SYSTEM_WIDGET_CONFIG.find((c) => c.type === idOrType);
+  return { ...(cfg as WidgetItem), sizeOptions: getSizeOptions(cfg?.type as WidgetType) };
 }
-
-
 
 /** Whether another instance of `type` may be added given the current count. */
 export function canAddWidget(type: WidgetType, currentCount: number): boolean {

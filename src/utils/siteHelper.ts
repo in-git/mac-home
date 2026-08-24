@@ -21,7 +21,6 @@ export const handleAddSite = (item: SiteItem) => {
     type: 'web-app',
     title: item.name || '未命名',
     maxInstances: Infinity,
-    isAddable: false,
     data: {
       site: item,
     },
@@ -31,7 +30,14 @@ export const handleAddSite = (item: SiteItem) => {
       w: 8,
       h: 8,
     },
+    cardStyle: {
+      padding: 'p-0',
+      background: 'transparent',
+      glass:false
+    }
   };
+  console.log(newWidget);
+  
   setWidgets([...widgets, newWidget]);
   void (async () => {
     try {

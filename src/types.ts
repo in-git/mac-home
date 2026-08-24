@@ -85,9 +85,6 @@ export interface WidgetItem {
   maxInstances: number;
   /** Size applied to a newly created widget of this type (resize 档位标签；
 
-  /** Whether this type can be added from the "添加组件" modal. */
-  isAddable: boolean;
-
   /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
   onClick?: (event: any) => void;
   /** 封面：组件封面图地址，可选。 */

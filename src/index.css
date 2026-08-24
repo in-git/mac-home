@@ -34,7 +34,7 @@ button{
     --font-md: 14px;
     --font-lg: 16px;
     --font-xs: calc(var(--font-sm) - 2px);
-    --font-title: 22px;
+    --font-title: 18px;
 
     --card-radius: 24px;
   }

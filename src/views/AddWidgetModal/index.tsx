@@ -8,16 +8,21 @@ import { createPortal } from 'react-dom';
 import {
   getWidgetConfig,
   isWebApp,
+  SYSTEM_WIDGET_CONFIG,
   WIDGET_CONFIG,
 } from '../../data/widgetConfig';
 import type { SiteItem } from '../../api/site';
 import { WebListPicker } from './WebListPicker';
-import { WidgetItem, WidgetType } from '../../types';
+import { WidgetItem } from '../../types';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onAddWidget: (type: WidgetType) => void;
+  /**
+   * 点击「添加」某组件时回调，传入该组件在 WIDGET_CONFIG / SYSTEM_WIDGET_CONFIG
+   * 中的配置 id（同 type 多配置时唯一区分，如 system-function）。
+   */
+  onAddWidget: (configId: string) => void;
   /** 网页分类中点击「添加」时回调：把站点做成桌面网页组件（web-app） */
   onAddSite: (item: SiteItem) => void;
   /** 网页分类中点击「删除」时回调：移除对应的桌面图标 */
@@ -169,17 +174,17 @@ export const AddWidgetModal: React.FC<Props> = ({
             ) : (
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="grid grid-cols-3 gap-2">
-                  {WIDGET_CONFIG.map((t) => {
+                  {[...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG].map((t) => {
                     const count = widgets.filter((w) => w.type === t.type).length;
                     const max = getWidgetConfig(t.type).maxInstances;
                     const disabled = max !== Infinity && count >= max;
                     return (
                       <button
-                        key={t.type}
+                        key={t.id}
                         type="button"
                         disabled={disabled}
                         onClick={() => {
-                          onAddWidget(t.type);
+                          onAddWidget(t.id);
                           onClose();
                         }}
                         className={`flex flex-col items-center gap-2 rounded-[var(--card-radius)] bg-black/5 px-3 py-3.5 transition-colors dark:bg-white/10 ${

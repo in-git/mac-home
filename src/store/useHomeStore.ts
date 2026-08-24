@@ -83,7 +83,13 @@ interface HomeState {
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
-  addWidget: (type: WidgetType) => void;
+  /**
+   * 按「组件配置 id」添加一个新实例到桌面。
+   * 改用 id（而非 type）作为入参，是因为同一 type 可能对应多条配置
+   * （如 system-function 同时对应「系统设置」与「添加」两个磁贴），
+   * 只有 id 能唯一区分要创建哪一个。
+   */
+  addWidget: (configId: string) => void;
   deleteWidget: (id: string) => void;
   resizeWidget: (id: string, newSize: WidgetSizeOption) => void;
   moveToTopWidget: (id: string) => void;
@@ -144,8 +150,10 @@ export const useHomeStore = create<HomeState>()(
 
       setWidgets: (widgets) => set({ widgets }),
 
-      addWidget: (type) => {
+      addWidget: (configId) => {
         const { widgets } = get();
+        const cfg = getWidgetConfig(configId);
+        const type = cfg.type;
         const count = widgets.filter((w) => w.type === type).length;
 
         if (!canAddWidget(type, count)) {
@@ -156,7 +164,6 @@ export const useHomeStore = create<HomeState>()(
           return;
         }
 
-        const cfg = getWidgetConfig(type);
         const targetW = cfg.grid?.w ?? 1;
         const targetH = cfg.grid?.h ?? 1;
         const pos = findFirstAvailablePosition(widgets, targetW, targetH);
@@ -166,7 +173,6 @@ export const useHomeStore = create<HomeState>()(
           type,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           maxInstances: cfg.maxInstances,
-          isAddable: cfg.isAddable,
           cardStyle: {
             ...DEFAULT_CARD_STYLE,
             ...cfg.cardStyle,
@@ -177,7 +183,12 @@ export const useHomeStore = create<HomeState>()(
           // 类型级提供的私有数据默认值放在 data 下。
           data: {
             ...(cfg.data?.site ? { site: cfg.data.site } : {}),
+            ...(cfg.data?.icon ? { icon: cfg.data.icon } : {}),
+            ...(cfg.data?.color ? { color: cfg.data.color } : {}),
+            ...(cfg.data?.size ? { size: cfg.data.size } : {}),
           },
+          // 系统功能磁贴需要保留 onClick（打开设置 / 打开添加弹窗）。
+          ...(cfg.onClick ? { onClick: cfg.onClick } : {}),
           // 初始网格坐标：查找桌面剩余空间计算出的 x, y
           grid: {
             x: pos.x,
@@ -311,7 +322,6 @@ export const useHomeStore = create<HomeState>()(
         const persistedAny = persisted as Record<string, any>;
         const realPersisted = persistedAny?.state ?? persistedAny;
         const merged = { ...current, ...realPersisted };
-        merged.widgets = ensureSystemWidgets(merged.widgets ?? []);
         return merged;
       },
     },

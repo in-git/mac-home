@@ -8,7 +8,6 @@
       "type": "clock",
       "title": "时钟日历",
       "maxInstances": 1,
-      "isAddable": true,
       "cardStyle": {
         "padding": "p-4",
         "glass": true,
@@ -28,7 +27,6 @@
       "type": "random-web",
       "title": "随机网页",
       "maxInstances": 1,
-      "isAddable": true,
       "cardStyle": {
         "padding": "p-0",
         "glass": true,
@@ -49,7 +47,6 @@
       "type": "web-app",
       "title": "短途旅行",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2087485167675154434",
@@ -105,7 +102,6 @@
       "type": "web-app",
       "title": "利爪突袭",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2087484339572744194",
@@ -161,7 +157,6 @@
       "type": "web-app",
       "title": "魔塔24层",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2087069146011250689",
@@ -217,7 +212,6 @@
       "type": "web-app",
       "title": "反恐我的世界",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089986059442724866",
@@ -282,7 +276,6 @@
       "type": "web-app",
       "title": "Venge射击",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089230162135252994",
@@ -347,7 +340,6 @@
       "type": "web-app",
       "title": "MC合成方块",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089222777710739458",
@@ -394,7 +386,6 @@
       "type": "web-app",
       "title": "狂风大背头",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089977966986141697",
@@ -449,7 +440,6 @@
       "type": "web-app",
       "title": "恐怖奶奶",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089977338020896769",
@@ -514,7 +504,6 @@
       "type": "web-app",
       "title": "夏日午后",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089992334721294338",
@@ -570,7 +559,6 @@
       "type": "web-app",
       "title": "侠盗飞车",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090002728592482306",
@@ -625,7 +613,6 @@
       "type": "web-app",
       "title": "斯诺克",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090001564413075457",
@@ -680,7 +667,6 @@
       "type": "web-app",
       "title": "魔兽争霸",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090011048845910017",
@@ -736,7 +722,6 @@
       "type": "web-app",
       "title": "愚蠢的手机模拟器",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090030380850225154",
@@ -783,7 +768,6 @@
       "type": "web-app",
       "title": "光标营地",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090042270611546113",
@@ -829,7 +813,6 @@
       "type": "web-app",
       "title": "爱泼斯坦的文件",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090051082156384257",
@@ -876,7 +859,6 @@
       "type": "web-app",
       "title": "3D赫拉克勒斯",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089223447931158530",
@@ -932,7 +914,6 @@
       "type": "web-app",
       "title": "红警2",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090012958244085762",
@@ -988,7 +969,6 @@
       "type": "web-app",
       "title": "暗黑破坏神",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090015171985154050",
@@ -1044,7 +1024,6 @@
       "type": "web-app",
       "title": "慢路",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089982512760233986",
@@ -1100,7 +1079,6 @@
       "type": "web-app",
       "title": "太空公司",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2089994211898826754",
@@ -1156,7 +1134,6 @@
       "type": "web-app",
       "title": "星际争霸",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090012275977625602",
@@ -1212,7 +1189,6 @@
       "type": "web-app",
       "title": "帝国时代2",
       "maxInstances": null,
-      "isAddable": false,
       "data": {
         "site": {
           "id": "2090013356359032833",
@@ -1268,7 +1244,6 @@
       "type": "system-function",
       "title": "系统设置",
       "maxInstances": 1,
-      "isAddable": false,
       "cardStyle": {
         "glass": false,
         "padding": "p-0",
@@ -1291,7 +1266,6 @@
       "type": "system-function",
       "title": "添加",
       "maxInstances": 1,
-      "isAddable": false,
       "cardStyle": {
         "glass": false,
         "padding": "p-0",
@@ -1314,7 +1288,6 @@
       "type": "clock-lunar",
       "title": "农历时钟",
       "maxInstances": 1,
-      "isAddable": true,
       "cardStyle": {
         "padding": "p-4",
         "glass": true,
@@ -1409,5 +1382,4 @@
   "selectedRoleId": "klrx",
   "showDesktopIcons": true,
   "isFirstVisit": true
- 
 }

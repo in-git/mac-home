@@ -51,6 +51,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   const isExpanded = widget.id === expandedWidgetId;
   // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认）
   const widgetPadding = getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding;
+console.log(widgetPadding);
 
   // 卡片外观配置（毛玻璃），回退到默认
   const cardStyleCfg = getWidgetConfig(widget.type).cardStyle ?? DEFAULT_CARD_STYLE;
@@ -111,11 +112,10 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   return (
     <div
       data-widget-id={widget.id}
-      className={`rgl-item-card h-full p-2 w-full ${isWebAppType ? 'w-fit' : ''}`}
+      className={`rgl-item-card h-full p-2 w-full`}
       onClick={handleCardClick}
     >
       {/* RGL child content wrapper（撑满网格单元） */}
-      <div className='h-full'>
         <div
           style={{
             ...(widget.cardStyle?.background
@@ -146,7 +146,6 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
             {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand, onUpdateWidget })}
           </div>
         </div>
-      </div>
     </div>
   );
 };
