@@ -2,7 +2,6 @@ import { Cog, Plus, Settings, type LucideIcon } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { type WidgetItem } from '../../types';
-import { SYSTEM_WIDGET_CONFIG } from '../../data/widgetConfig';
 
 // 将 icon 字符串 key 解析为可渲染的 lucide 组件（避免把组件对象存入本地存储导致反序列化失败）
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -10,13 +9,10 @@ const ICON_MAP: Record<string, LucideIcon> = {
   add: Plus,
 };
 
-// 按组件 id 从配置注册表取图标 key，避免依赖被持久化污染/损坏的 data.icon
-const CONFIG_ICON: Record<string, string | undefined> = Object.fromEntries(
-  SYSTEM_WIDGET_CONFIG.map((w) => [w.id, w.data?.icon as string | undefined]),
-);
+
 
 function resolveIcon(widget: WidgetItem): LucideIcon {
-  const key = (typeof widget.data?.icon === 'string' && widget.data.icon) || CONFIG_ICON[widget.id];
+  const key = (typeof widget.data?.icon === 'string' && widget.data.icon);
   return (key && ICON_MAP[key]) || Cog;
 }
 

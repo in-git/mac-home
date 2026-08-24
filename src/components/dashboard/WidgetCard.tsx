@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { getWidgetConfig, DEFAULT_CARD_STYLE, SYSTEM_WIDGET_CONFIG } from '../../data/widgetConfig';
+import { getWidgetConfig, DEFAULT_CARD_STYLE, WIDGET_CONFIG,  } from '../../data/widgetConfig';
 import { StickyNote as StickyNoteType, WidgetItem } from '../../types';
 import { WeatherSummary } from '../../widgets/Weather';
 import { renderWidgetContent } from './widgetContent';
@@ -107,7 +107,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
          // 编辑布局模式下，卡片点击不触发任何行为（仅允许拖拽 / 右键菜单）
     if (isEditMode) return;
       const handler =
-        widget.onClick ?? SYSTEM_WIDGET_CONFIG.find((w) => w.id === widget.id)?.onClick;
+        widget.onClick ?? WIDGET_CONFIG.find((w) => w.id === widget.id)?.onClick;
       handler?.(e);
       return;
     }
@@ -133,7 +133,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
                 }
               : {}),
           }}
-          className={`${isEditMode ? ' pointer-events-none' : ''} inline-flex widget-card cursor-pointer ${isWebAppType ? '' : isSquare ? 'aspect-[1/1] w-full' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
+          className={`${isEditMode ? ' pointer-events-none' : ''} widget-card cursor-pointer ${isWebAppType ? '' : isSquare ? 'aspect-[1/1] w-full' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
           onPointerDown={handlePointerDown}

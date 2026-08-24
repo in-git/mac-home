@@ -18,7 +18,7 @@
         "x": 0,
         "y": 18,
         "w": 24,
-        "h": 24
+        "h": 25
       },
       "size": 24
     },
@@ -1172,7 +1172,6 @@
           ]
         }
       },
-
       "grid": {
         "x": 90,
         "y": 24,
@@ -1235,7 +1234,7 @@
         "h": 6
       },
       "size": 6,
-    "cardStyle": {
+      "cardStyle": {
         "padding": "p-0",
         "glass": false
       }
@@ -1252,29 +1251,7 @@
       },
       "grid": {
         "x": 0,
-        "y": 42,
-        "w": 6,
-        "h": 6
-      },
-      "data": {
-        "color": "var(--accent)",
-        "icon": {}
-      },
-      "size": 6
-    },
-    {
-      "id": "cfg-system-function-add",
-      "component": "system-function",
-      "title": "添加",
-      "maxInstances": 1,
-      "cardStyle": {
-        "glass": false,
-        "padding": "p-0",
-        "background": "white"
-      },
-      "grid": {
-        "x": 8,
-        "y": 42,
+        "y": 43,
         "w": 6,
         "h": 6
       },
@@ -1306,6 +1283,30 @@
         "h": 18
       },
       "size": 96
+    },
+    {
+      "id": "widget-1787547979093",
+      "component": "system-function",
+      "configId": "cfg-system-function-add",
+      "title": "添加",
+      "maxInstances": 1,
+      "cardStyle": {
+        "padding": "p-0",
+        "glass": false,
+        "backgroundTheme": "light",
+        "background": "white"
+      },
+      "data": {
+        "icon": "add",
+        "color": "var(--accent)"
+      },
+      "grid": {
+        "x": 8,
+        "y": 43,
+        "w": 6,
+        "h": 6
+      },
+      "size": 6
     }
   ],
   "wallpaper": {
@@ -1326,7 +1327,7 @@
   "isDarkMode": false,
   "themeColor": "#007AFF",
   "soundEnabled": true,
-  "showResizeHandle": false,
+  "showResizeHandle": true,
   "fontVariant": "B",
   "cardRadius": "small",
   "screenBrightness": 88,
@@ -1383,5 +1384,7 @@
   },
   "selectedRoleId": "klrx",
   "showDesktopIcons": true,
-  "isFirstVisit": true
+  "isFirstVisit": true,
+  "showDragHandle": false,
+  "petAutoActivity": false
 }

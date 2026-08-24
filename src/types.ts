@@ -67,6 +67,8 @@ export interface WidgetItem {
   id: string;
   /** 组件类型：决定渲染哪个组件、能否添加、尺寸选项等核心逻辑（复用全局 WidgetType 联合类型）。 */
   component: string;
+  /** 创建来源的配置 id（WIDGET_CONFIG 中的 id）：同一 component 存在多个配置（如 system-function「系统设置」/「添加」）时用于精确区分实例归属。可选，兼容旧数据。 */
+  configId?: string;
   /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
   title: string;
   /** 最大安装数量，有些只能安装一次，所以用它限制 */

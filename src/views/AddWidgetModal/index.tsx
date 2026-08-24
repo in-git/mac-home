@@ -6,9 +6,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  getWidgetConfig,
+  countWidgetInstances,
   isWebApp,
-  SYSTEM_WIDGET_CONFIG,
   WIDGET_CONFIG,
 } from '../../data/widgetConfig';
 import type { SiteItem } from '../../api/site';
@@ -174,11 +173,11 @@ export const AddWidgetModal: React.FC<Props> = ({
             ) : (
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="grid grid-cols-3 gap-2">
-                  {[...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG].map((t) => {
-                    // 注意：桌面实例的 id 是运行时生成的（widget-xxx），不能与配置 id 比较，
-                    // 需按 type 统计当前已存在的实例数量
-                    const count = widgets.filter((w) => w.component === t.component).length;
-                    const max = getWidgetConfig(t.id)?.maxInstances ?? Infinity;
+                  {WIDGET_CONFIG.map((t) => {
+                    // 同 component 多配置（如 system-function「系统设置」/「添加」）按配置 id 精确统计，
+                    // 其余组件按 component 统计（兼容旧数据实例 id 为运行时生成的 widget-xxx）
+                    const count = countWidgetInstances(widgets, t);
+                    const max = t.maxInstances ?? Infinity;
                     const disabled = max !== Infinity && count >= max;
                     return (
                       <button

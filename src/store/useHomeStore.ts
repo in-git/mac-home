@@ -2,7 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_ROLE_ID } from '../data/roles';
 import { PRESET_DATA } from '../data/presetData';
-import { canAddWidget, DEFAULT_CARD_STYLE, getWidgetConfig, SYSTEM_WIDGET_CONFIG } from '../data/widgetConfig';
+import {
+  canAddWidget,
+  countWidgetInstances,
+  DEFAULT_CARD_STYLE,
+  findWidgetInstance,
+  getWidgetConfig,
+} from '../data/widgetConfig';
 import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
 import {
   CardRadiusTier,
@@ -28,23 +34,6 @@ function readLegacy<T>(key: string, fallback: T): T {
 // 默认配置：首次加载与重置系统统一使用 data.json（见 presetData.DEFAULT_STATE）
 const DEFAULT_STATE = PRESET_DATA.DEFAULT_STATE;
 
-/**
- * 确保系统内置组件（SYSTEM_WIDGET_CONFIG）已存在于组件列表中：
- * 仅当某内置组件按其 id 不存在时才追加，已存在则保持原样（保留用户的位置/配置）。
- * 追加时按当前列表自动寻找空闲位置，避免与已有组件重叠。
- */
-function ensureSystemWidgets(widgets: WidgetItem[]): WidgetItem[] {
-  const existingIds = new Set(widgets.map((w) => w.id));
-  let next = widgets;
-  for (const sys of SYSTEM_WIDGET_CONFIG) {
-    if (existingIds.has(sys.id)) continue;
-    const targetW = sys.grid?.w ?? 1;
-    const targetH = sys.grid?.h ?? 1;
-    const pos = findFirstAvailablePosition(next, targetW, targetH);
-    next = [...next, ensureGrid({ ...sys, grid: { ...pos, w: targetW, h: targetH } })];
-  }
-  return next;
-}
 
 interface HomeState {
   // Persisted data
@@ -153,12 +142,13 @@ export const useHomeStore = create<HomeState>()(
         const { widgets } = get();
         const cfg = getWidgetConfig(configId);
         const type = cfg.component;
-        const count = widgets.filter((w) => w.component === type).length;
+        // 同 component 多配置（如 system-function）按配置 id 精确统计，避免互相干扰
+        const count = countWidgetInstances(widgets, cfg);
 
         if (!canAddWidget(type, count)) {
           // Already at the cap for this type — bring the existing one to the top
           // instead of adding a duplicate.
-          const existing = widgets.find((w) => w.component === type);
+          const existing = findWidgetInstance(widgets, cfg);
           if (existing) get().moveToTopWidget(existing.id);
           return;
         }
@@ -170,6 +160,8 @@ export const useHomeStore = create<HomeState>()(
         const newWidget: WidgetItem = {
           id: `widget-${Date.now()}`,
           component: type,
+          // 记录创建来源的配置 id：同 component 多配置（如 system-function）时用于精确区分实例归属
+          configId: cfg.id,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           maxInstances: cfg.maxInstances,
           cardStyle: {
@@ -322,16 +314,6 @@ export const useHomeStore = create<HomeState>()(
         const persistedAny = persisted as Record<string, any>;
         const realPersisted = persistedAny?.state ?? persistedAny;
         const merged = { ...current, ...realPersisted };
-        // 字段重命名兼容：type → component（旧版持久化数据迁移）
-        if (Array.isArray(merged.widgets)) {
-          merged.widgets = merged.widgets.map((w: any) => {
-            if (w && typeof w === 'object' && w.type !== undefined && w.component === undefined) {
-              const { type, ...rest } = w;
-              return { ...rest, component: type };
-            }
-            return w;
-          });
-        }
         return merged;
       },
     },

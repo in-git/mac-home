@@ -34,9 +34,7 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
   background: undefined
 };
 
-export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
 
-]
 /**
  * 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
  *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
@@ -279,7 +277,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
  * 找不到时回退到按 component 查找以兼容旧调用方。
  */
 export function getWidgetConfig(id: string): WidgetItem {
-  const all = [...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG];
+  const all = [...WIDGET_CONFIG];
   // 优先按配置 id 精确匹配（区分同 component 的不同配置，如「系统设置」/「添加」），
   // 找不到时回退到按 component 查找以兼容按 component 调用的旧调用方（如 canAddWidget）。
   return all.find(v => v.id === id) ?? all.find(v => v.component === id) ?? all[0];
@@ -289,6 +287,31 @@ export function getWidgetConfig(id: string): WidgetItem {
 export function canAddWidget(type: WidgetType, currentCount: number): boolean {
   const max = getWidgetConfig(type).maxInstances;
   return max === Infinity || currentCount < max;
+}
+
+/**
+ * 某配置与其桌面实例的匹配规则。
+ * 同一 component 存在多个配置（如 system-function：「系统设置」/「添加」）时，
+ * 按配置 id 精确匹配（实例 id = 配置 id，或实例的 configId 字段），避免统计互相干扰；
+ * 其余组件按 component 匹配（兼容旧数据）。
+ */
+export function widgetInstanceMatcher(cfg: WidgetItem): (w: WidgetItem) => boolean {
+  const sharedComponent = WIDGET_CONFIG.some(
+    (c) => c.component === cfg.component && c.id !== cfg.id,
+  );
+  return sharedComponent
+    ? (w) => w.id === cfg.id || w.configId === cfg.id
+    : (w) => w.component === cfg.component;
+}
+
+/** 统计某配置在当前组件列表中的已存在实例数量。 */
+export function countWidgetInstances(widgets: WidgetItem[], cfg: WidgetItem): number {
+  return widgets.filter(widgetInstanceMatcher(cfg)).length;
+}
+
+/** 查找某配置在当前组件列表中已存在的实例（达到上限时置顶用）。 */
+export function findWidgetInstance(widgets: WidgetItem[], cfg: WidgetItem): WidgetItem | undefined {
+  return widgets.find(widgetInstanceMatcher(cfg));
 }
 
 /** 网页应用类图标组件（新增网页创建的类型）。 */
