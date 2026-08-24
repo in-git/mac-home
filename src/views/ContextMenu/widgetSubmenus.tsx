@@ -29,7 +29,7 @@ export interface WidgetConfigSubmenuProps {
 
 /** 按组件类型注册的二级配置子菜单组件。 */
 export const WIDGET_CONFIG_SUBMENUS: Partial<
-  Record<WidgetItem['type'], React.FC<WidgetConfigSubmenuProps>>
+  Record<WidgetItem['component'], React.FC<WidgetConfigSubmenuProps>>
 > = {
   'clock-lunar': ClockFontSubmenu,
 };

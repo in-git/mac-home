@@ -38,7 +38,7 @@ export const renderWidgetContent = ({
   inModal = false,
   isEditMode = false,
 }: RenderWidgetContentProps): React.ReactNode => {
-  switch (widget.type) {
+  switch (widget.component) {
     case 'search':
       return <SearchWidget />;
     case 'sticky-notes':

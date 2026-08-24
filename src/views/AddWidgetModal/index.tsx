@@ -92,7 +92,7 @@ export const AddWidgetModal: React.FC<Props> = ({
 
   // 已添加到桌面的站点（web-app 类型携带 site 数据），用于网页列表中标记「已新增」
   const webSelectedSites = widgets
-    .filter((w) => isWebApp(w.type) && w.data?.site)
+    .filter((w) => isWebApp(w.component) && w.data?.site)
     .map((w) => w.data.site as SiteItem);
 
   return createPortal(
@@ -177,7 +177,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                   {[...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG].map((t) => {
                     // 注意：桌面实例的 id 是运行时生成的（widget-xxx），不能与配置 id 比较，
                     // 需按 type 统计当前已存在的实例数量
-                    const count = widgets.filter((w) => w.type === t.type).length;
+                    const count = widgets.filter((w) => w.component === t.component).length;
                     const max = getWidgetConfig(t.id)?.maxInstances ?? Infinity;
                     const disabled = max !== Infinity && count >= max;
                     return (

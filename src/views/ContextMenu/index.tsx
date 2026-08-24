@@ -130,7 +130,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
           // Hover opens the type-specific secondary submenu; only show when a
           // submenu is registered for this widget type.
           onClick: () => {},
-          visible: !!targetWidget && !!WIDGET_CONFIG_SUBMENUS[targetWidget.type],
+          visible: !!targetWidget && !!WIDGET_CONFIG_SUBMENUS[targetWidget.component],
         };
       case 'removeWidget':
         return {
@@ -168,7 +168,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
     // "个性化" reveals the type-specific secondary config submenu (flyout) on hover.
     if (item.action === 'editWidgetConfig' && targetWidget) {
-      const Submenu = WIDGET_CONFIG_SUBMENUS[targetWidget.type];
+      const Submenu = WIDGET_CONFIG_SUBMENUS[targetWidget.component];
       if (Submenu) {
         const submenuProps: WidgetConfigSubmenuProps = {
           item,
@@ -266,7 +266,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
           {/* Widget Size Switching */}
           {(() => {
-            const sizeList = getSizeOptions(targetWidget.type);
+            const sizeList = getSizeOptions(targetWidget.component);
             // 档位按钮显示为 `wxh` 格式（如 6x12）
             const labels = getSizeLabels(sizeList);
             return (

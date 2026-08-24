@@ -56,7 +56,7 @@ export function parseImport(text: string): ParsedConfig {
       !!w &&
       typeof w === 'object' &&
       typeof (w as WidgetItem).id === 'string' &&
-      typeof (w as WidgetItem).type === 'string',
+      typeof (w as WidgetItem).component === 'string',
   );
   const validNotes = notes.filter(
     (n): n is StickyNote =>

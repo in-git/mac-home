@@ -49,7 +49,7 @@ export function ensureGrid(
 ): WidgetItem {
   const g = (w as { grid?: { x: number; y: number; w: number; h: number } }).grid;
   if (g && typeof g.x === 'number') return w;
-  return { ...w, grid: buildInitialGrid(w.type, containerWidth) };
+  return { ...w, grid: buildInitialGrid(w.component, containerWidth) };
 }
 
 /**

@@ -45,7 +45,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   onLongPressEdit,
   onUpdateWidget,
 }) => {
-  const isWebAppType = isWebApp(widget.type);
+  const isWebAppType = isWebApp(widget.component);
   // 纯图标类型：固定像素正方形作用在「内层 content」上（外层已 w-fit 收缩），
   // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
   const isExpanded = widget.id === expandedWidgetId;
@@ -103,7 +103,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
     }
     // 系统功能磁贴的 onClick 是函数（持久化到本地存储时会丢失），
     // 故点击直接挂载在 .widget-card 上，并从配置注册表按 id 找回真正的行为。
-    if (widget.type === 'system-function') {
+    if (widget.component === 'system-function') {
          // 编辑布局模式下，卡片点击不触发任何行为（仅允许拖拽 / 右键菜单）
     if (isEditMode) return;
       const handler =

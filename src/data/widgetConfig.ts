@@ -43,7 +43,7 @@ export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
 export const WIDGET_CONFIG: Array<WidgetItem> = [
     {
     id: 'cfg-system-function',
-    type: 'system-function',
+    component: 'system-function',
     title: '系统设置',
     maxInstances: 1,
     cardStyle: {
@@ -70,7 +70,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-system-function-add',
-    type: 'system-function',
+    component: 'system-function',
     title: '添加',
     maxInstances: 1,
     cardStyle: {
@@ -97,7 +97,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-search',
-    type: 'search',
+    component: 'search',
     title: '网络搜索',
     maxInstances: 1,
     data: {
@@ -116,7 +116,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-clock',
-    type: 'clock',
+    component: 'clock',
     title: '时钟日历',
     maxInstances: 1,
     data: {
@@ -131,7 +131,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-weather',
-    type: 'weather',
+    component: 'weather',
     title: '天气预报',
     maxInstances: 1,
     data: {
@@ -146,7 +146,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-sticky-notes',
-    type: 'sticky-notes',
+    component: 'sticky-notes',
     title: '便签笔记',
     maxInstances: 1,
     data: {
@@ -162,7 +162,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
 
   {
     id: 'cfg-clock-mini',
-    type: 'clock-mini',
+    component: 'clock-mini',
     title: '时钟',
     maxInstances: 1,
     data: {
@@ -177,7 +177,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-clock-lunar',
-    type: 'clock-lunar',
+    component: 'clock-lunar',
     title: '农历时钟',
     maxInstances: 1,
     grid: {
@@ -196,7 +196,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-control-center',
-    type: 'control-center',
+    component: 'control-center',
     title: '控制中心',
     maxInstances: 1,
     data: {
@@ -214,7 +214,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   // {
   //   id: 'cfg-web-app',
-  //   type: 'web-app',
+  //   component: 'web-app',
   //   title: '网页应用',
   //   maxInstances: Infinity,
   //   cardStyle: {
@@ -234,7 +234,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
 
   {
     id: 'cfg-random-web',
-    type: 'random-web',
+    component: 'random-web',
     title: '随机网页',
     maxInstances: 1,
     cardStyle: {
@@ -252,7 +252,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
   {
     id: 'cfg-member-count',
-    type: 'member-count',
+    component: 'member-count',
     title: '在线人数',
     maxInstances: 1,
     cardStyle: {
@@ -275,14 +275,14 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
 
 /**
  * 按 id 解析组件配置（含运行时 sizeOptions）。
- * 优先用 id 精确匹配（区分同 type 的不同配置，如「系统设置」/「添加」），
- * 找不到时回退到按 type 查找以兼容旧调用方。
+ * 优先用 id 精确匹配（区分同 component 的不同配置，如「系统设置」/「添加」），
+ * 找不到时回退到按 component 查找以兼容旧调用方。
  */
 export function getWidgetConfig(id: string): WidgetItem {
   const all = [...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG];
-  // 优先按配置 id 精确匹配（区分同 type 的不同配置，如「系统设置」/「添加」），
-  // 找不到时回退到按 type 查找以兼容按 type 调用的旧调用方（如 canAddWidget）。
-  return all.find(v => v.id === id) ?? all.find(v => v.type === id) ?? all[0];
+  // 优先按配置 id 精确匹配（区分同 component 的不同配置，如「系统设置」/「添加」），
+  // 找不到时回退到按 component 查找以兼容按 component 调用的旧调用方（如 canAddWidget）。
+  return all.find(v => v.id === id) ?? all.find(v => v.component === id) ?? all[0];
 }
 
 /** Whether another instance of `type` may be added given the current count. */

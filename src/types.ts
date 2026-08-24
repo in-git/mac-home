@@ -66,7 +66,7 @@ export interface CardStyle {
 export interface WidgetItem {
   id: string;
   /** 组件类型：决定渲染哪个组件、能否添加、尺寸选项等核心逻辑（复用全局 WidgetType 联合类型）。 */
-  type: string;
+  component: string;
   /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
   title: string;
   /** 最大安装数量，有些只能安装一次，所以用它限制 */

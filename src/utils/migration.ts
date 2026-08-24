@@ -48,9 +48,15 @@ export function migrateData<T = Record<string, any>>(
       if (!w || typeof w !== 'object') return w;
       const widget = { ...w };
 
+      // 字段重命名兼容：旧版数据字段 type → component
+      if (widget.type !== undefined && widget.component === undefined) {
+        widget.component = widget.type;
+        delete widget.type;
+      }
+
       // 旧类型重命名：web-grid → web-app（网页应用）
-      if (widget.type === 'web-grid') {
-        widget.type = 'web-app';
+      if (widget.component === 'web-grid') {
+        widget.component = 'web-app';
       }
 
       // 自动补齐缺少的 cardStyle（仅在 cardStyle 不存在时补全默认值）

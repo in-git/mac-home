@@ -5,7 +5,7 @@
   "widgets": [
     {
       "id": "widget-1787207693502",
-      "type": "clock",
+      "component": "clock",
       "title": "时钟日历",
       "maxInstances": 1,
       "cardStyle": {
@@ -24,7 +24,7 @@
     },
     {
       "id": "widget-1787207989791",
-      "type": "random-web",
+      "component": "random-web",
       "title": "随机网页",
       "maxInstances": 1,
       "cardStyle": {
@@ -44,7 +44,7 @@
     },
     {
       "id": "widget-2087485167675154434",
-      "type": "web-app",
+      "component": "web-app",
       "title": "短途旅行",
       "maxInstances": null,
       "data": {
@@ -99,7 +99,7 @@
     },
     {
       "id": "widget-2087484339572744194",
-      "type": "web-app",
+      "component": "web-app",
       "title": "利爪突袭",
       "maxInstances": null,
       "data": {
@@ -154,7 +154,7 @@
     },
     {
       "id": "widget-2087069146011250689",
-      "type": "web-app",
+      "component": "web-app",
       "title": "魔塔24层",
       "maxInstances": null,
       "data": {
@@ -209,7 +209,7 @@
     },
     {
       "id": "widget-2089986059442724866",
-      "type": "web-app",
+      "component": "web-app",
       "title": "反恐我的世界",
       "maxInstances": null,
       "data": {
@@ -273,7 +273,7 @@
     },
     {
       "id": "widget-2089230162135252994",
-      "type": "web-app",
+      "component": "web-app",
       "title": "Venge射击",
       "maxInstances": null,
       "data": {
@@ -337,7 +337,7 @@
     },
     {
       "id": "widget-2089222777710739458",
-      "type": "web-app",
+      "component": "web-app",
       "title": "MC合成方块",
       "maxInstances": null,
       "data": {
@@ -383,7 +383,7 @@
     },
     {
       "id": "widget-2089977966986141697",
-      "type": "web-app",
+      "component": "web-app",
       "title": "狂风大背头",
       "maxInstances": null,
       "data": {
@@ -437,7 +437,7 @@
     },
     {
       "id": "widget-2089977338020896769",
-      "type": "web-app",
+      "component": "web-app",
       "title": "恐怖奶奶",
       "maxInstances": null,
       "data": {
@@ -501,7 +501,7 @@
     },
     {
       "id": "widget-2089992334721294338",
-      "type": "web-app",
+      "component": "web-app",
       "title": "夏日午后",
       "maxInstances": null,
       "data": {
@@ -556,7 +556,7 @@
     },
     {
       "id": "widget-2090002728592482306",
-      "type": "web-app",
+      "component": "web-app",
       "title": "侠盗飞车",
       "maxInstances": null,
       "data": {
@@ -610,7 +610,7 @@
     },
     {
       "id": "widget-2090001564413075457",
-      "type": "web-app",
+      "component": "web-app",
       "title": "斯诺克",
       "maxInstances": null,
       "data": {
@@ -664,7 +664,7 @@
     },
     {
       "id": "widget-2090011048845910017",
-      "type": "web-app",
+      "component": "web-app",
       "title": "魔兽争霸",
       "maxInstances": null,
       "data": {
@@ -719,7 +719,7 @@
     },
     {
       "id": "widget-2090030380850225154",
-      "type": "web-app",
+      "component": "web-app",
       "title": "愚蠢的手机模拟器",
       "maxInstances": null,
       "data": {
@@ -765,7 +765,7 @@
     },
     {
       "id": "widget-2090042270611546113",
-      "type": "web-app",
+      "component": "web-app",
       "title": "光标营地",
       "maxInstances": null,
       "data": {
@@ -810,7 +810,7 @@
     },
     {
       "id": "widget-2090051082156384257",
-      "type": "web-app",
+      "component": "web-app",
       "title": "爱泼斯坦的文件",
       "maxInstances": null,
       "data": {
@@ -856,7 +856,7 @@
     },
     {
       "id": "widget-2089223447931158530",
-      "type": "web-app",
+      "component": "web-app",
       "title": "3D赫拉克勒斯",
       "maxInstances": null,
       "data": {
@@ -911,7 +911,7 @@
     },
     {
       "id": "widget-2090012958244085762",
-      "type": "web-app",
+      "component": "web-app",
       "title": "红警2",
       "maxInstances": null,
       "data": {
@@ -966,7 +966,7 @@
     },
     {
       "id": "widget-2090015171985154050",
-      "type": "web-app",
+      "component": "web-app",
       "title": "暗黑破坏神",
       "maxInstances": null,
       "data": {
@@ -1021,7 +1021,7 @@
     },
     {
       "id": "widget-2089982512760233986",
-      "type": "web-app",
+      "component": "web-app",
       "title": "慢路",
       "maxInstances": null,
       "data": {
@@ -1076,7 +1076,7 @@
     },
     {
       "id": "widget-2089994211898826754",
-      "type": "web-app",
+      "component": "web-app",
       "title": "太空公司",
       "maxInstances": null,
       "data": {
@@ -1131,7 +1131,7 @@
     },
     {
       "id": "widget-2090012275977625602",
-      "type": "web-app",
+      "component": "web-app",
       "title": "星际争霸",
       "maxInstances": null,
       "data": {
@@ -1187,7 +1187,7 @@
     },
     {
       "id": "widget-2090013356359032833",
-      "type": "web-app",
+      "component": "web-app",
       "title": "帝国时代2",
       "maxInstances": null,
       "data": {
@@ -1242,7 +1242,7 @@
     },
     {
       "id": "cfg-system-function",
-      "type": "system-function",
+      "component": "system-function",
       "title": "系统设置",
       "maxInstances": 1,
       "cardStyle": {
@@ -1264,7 +1264,7 @@
     },
     {
       "id": "cfg-system-function-add",
-      "type": "system-function",
+      "component": "system-function",
       "title": "添加",
       "maxInstances": 1,
       "cardStyle": {
@@ -1286,7 +1286,7 @@
     },
     {
       "id": "widget-1787506132193",
-      "type": "clock-lunar",
+      "component": "clock-lunar",
       "title": "农历时钟",
       "maxInstances": 1,
       "cardStyle": {

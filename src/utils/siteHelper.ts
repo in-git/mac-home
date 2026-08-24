@@ -10,7 +10,7 @@ import type { WidgetItem } from '../types';
 export const handleAddSite = (item: SiteItem) => {
   const { widgets, setWidgets } = useHomeStore.getState();
   const url = item.link || '#';
-  if (widgets.some((w) => isWebApp(w.type) && w.data.site?.link === url)) {
+  if (widgets.some((w) => isWebApp(w.component) && w.data.site?.link === url)) {
     return;
   }
   // 网页应用不显示在系统组件中
@@ -18,7 +18,7 @@ export const handleAddSite = (item: SiteItem) => {
   const pos = findFirstAvailablePosition(widgets, 8, 8);
   const newWidget: WidgetItem = {
     id: `widget-${item.id || Date.now()}`,
-    type: 'web-app',
+    component: 'web-app',
     title: item.name || '未命名',
     maxInstances: Infinity,
     data: {
@@ -55,7 +55,7 @@ export const handleRemoveSite = (item: SiteItem) => {
   const { widgets, deleteWidget } = useHomeStore.getState();
   const target = widgets.find(
     (w) =>
-      isWebApp(w.type) &&
+      isWebApp(w.component) &&
       ((item.id && w.data.site?.id === item.id) ||
         (item.link && w.data.site?.link === item.link) ||
         (item.name && w.data.site?.name === item.name)),

@@ -152,13 +152,13 @@ export const useHomeStore = create<HomeState>()(
       addWidget: (configId) => {
         const { widgets } = get();
         const cfg = getWidgetConfig(configId);
-        const type = cfg.type;
-        const count = widgets.filter((w) => w.type === type).length;
+        const type = cfg.component;
+        const count = widgets.filter((w) => w.component === type).length;
 
         if (!canAddWidget(type, count)) {
           // Already at the cap for this type — bring the existing one to the top
           // instead of adding a duplicate.
-          const existing = widgets.find((w) => w.type === type);
+          const existing = widgets.find((w) => w.component === type);
           if (existing) get().moveToTopWidget(existing.id);
           return;
         }
@@ -169,7 +169,7 @@ export const useHomeStore = create<HomeState>()(
 
         const newWidget: WidgetItem = {
           id: `widget-${Date.now()}`,
-          type,
+          component: type,
           title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
           maxInstances: cfg.maxInstances,
           cardStyle: {
@@ -322,6 +322,16 @@ export const useHomeStore = create<HomeState>()(
         const persistedAny = persisted as Record<string, any>;
         const realPersisted = persistedAny?.state ?? persistedAny;
         const merged = { ...current, ...realPersisted };
+        // 字段重命名兼容：type → component（旧版持久化数据迁移）
+        if (Array.isArray(merged.widgets)) {
+          merged.widgets = merged.widgets.map((w: any) => {
+            if (w && typeof w === 'object' && w.type !== undefined && w.component === undefined) {
+              const { type, ...rest } = w;
+              return { ...rest, component: type };
+            }
+            return w;
+          });
+        }
         return merged;
       },
     },
