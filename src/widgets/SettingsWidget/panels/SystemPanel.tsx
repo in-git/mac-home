@@ -5,6 +5,7 @@ import {
   Upload,
   Volume2,
   VolumeX,
+  Maximize2,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ToggleDot } from '../ToggleDot';
@@ -18,6 +19,8 @@ import type { SystemPanelProps } from '../types';
 export const SystemPanel: React.FC<SystemPanelProps> = ({
   soundEnabled,
   onToggleSound,
+  showResizeHandle,
+  onToggleResizeHandle,
   onExport,
   importMsg,
   onImportFile,
@@ -57,6 +60,32 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </span>
           <button onClick={onToggleSound} aria-label="切换点击音效">
             <ToggleDot active={soundEnabled} />
+          </button>
+        </div>
+
+        {/* 组件调整大小手柄 */}
+        <div className="flex items-center justify-between px-4 py-3">
+          <span className="flex items-center space-x-3">
+            <span
+              className={`w-7 h-7 rounded-[var(--card-radius)] flex items-center justify-center transition-colors ${
+                showResizeHandle
+                  ? 'bg-[color:var(--accent)] text-white'
+                  : 'bg-black/5 dark:bg-white/10 '
+              }`}
+            >
+              <Maximize2 size={15} />
+            </span>
+            <div>
+              <div>
+                组件调整大小
+              </div>
+              <div className="text-xs ">
+                在组件右下角显示拖拽手柄以调整尺寸
+              </div>
+            </div>
+          </span>
+          <button onClick={onToggleResizeHandle} aria-label="切换组件调整大小手柄">
+            <ToggleDot active={showResizeHandle} />
           </button>
         </div>
       </div>

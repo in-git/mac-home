@@ -17,7 +17,7 @@ export type {
   GameDialogConfig,
   DialogLine,
   DialogChoice,
-} from './dialog';
+} from './types';
 
 /** 按 name 建立索引，供 skill 调用快速查找 */
 const petActionMap: Record<string, PetAction> = Object.fromEntries(

@@ -26,6 +26,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 }) => {
   const storeWidgets = useHomeStore((state) => state.widgets);
   const setWidgets = useHomeStore((state) => state.setWidgets);
+  // 是否显示组件右下角的调整大小手柄（默认关闭，由设置面板控制）
+  const showResizeHandle = useHomeStore((state) => state.showResizeHandle);
 
   // 清屏时 App 会传入空数组以隐藏全部组件；只要显式传入了 widgets（含空数组）就使用它，否则回退 store
   const widgets = Array.isArray(incomingWidgets) ? incomingWidgets : storeWidgets;
@@ -66,6 +68,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
         margin={[1, 1]}
         isDraggable={isEditMode}
         isResizable={isEditMode}
+        resizeHandles={showResizeHandle ? ['nw', 'ne', 'sw', 'se'] : []}
         onLayoutChange={handleLayoutChange}
       >
         {widgets.map((widget) => (

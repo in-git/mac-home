@@ -61,6 +61,8 @@ interface HomeState {
   themeColor: string;
   // 是否开启音效
   soundEnabled: boolean;
+  // 是否显示组件右下角的调整大小手柄（默认关闭，开启后可拖拽调整组件尺寸）
+  showResizeHandle: boolean;
   // 字体方案
   fontVariant: FontVariant;
   // 卡片圆角：small / medium / large
@@ -110,6 +112,7 @@ interface HomeState {
   setDarkMode: (value: boolean) => void;
   setThemeColor: (color: string) => void;
   setSoundEnabled: (value: boolean) => void;
+  setShowResizeHandle: (value: boolean) => void;
   setFontVariant: (variant: FontVariant) => void;
   setCardRadius: (tier: CardRadiusTier) => void;
   setScreenBrightness: (value: number) => void;
@@ -143,6 +146,8 @@ export const useHomeStore = create<HomeState>()(
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
       notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
       soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
+      // 默认不显示 resize 手柄；旧版本本地存储若未存过此字段则取 DEFAULT_STATE 中的 false
+      showResizeHandle: DEFAULT_STATE.showResizeHandle ?? false,
       selectedRoleId: DEFAULT_ROLE_ID,
       showDesktopIcons: true,
       // 首次访问默认 true；hydration 时若本地已存过（曾访问过）会被覆盖为 false
@@ -292,6 +297,7 @@ export const useHomeStore = create<HomeState>()(
       setDarkMode: (value) => set({ isDarkMode: value }),
       setThemeColor: (color) => set({ themeColor: color }),
       setSoundEnabled: (value) => set({ soundEnabled: value }),
+      setShowResizeHandle: (value) => set({ showResizeHandle: value }),
       setFontVariant: (variant) => set({ fontVariant: variant }),
       setCardRadius: (tier) => set({ cardRadius: tier }),
       setScreenBrightness: (value) =>

@@ -1,9 +1,6 @@
 import type { AgentToolParam } from '../types';
-import {
-  dispatchPetDialog,
-  type GameDialogConfig,
-  type RoleDialogConfig,
-} from './dialog';
+import { dispatchPetDialog } from './dialog';
+import type { GameDialogConfig, RoleDialogConfig } from './types';
 
 /** 行为执行结果 */
 export interface PetActionResult {

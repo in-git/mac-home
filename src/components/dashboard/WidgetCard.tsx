@@ -50,11 +50,11 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   // 尺寸切换时内层盒子变化即可驱动 Muuri 重新测量并排布。需要 48 下限保证最小尺寸。
   const isExpanded = widget.id === expandedWidgetId;
   // 卡片内容区内边距由类型配置驱动（cardStyle.padding，回退到默认）
-  const widgetPadding = getWidgetConfig(widget.type).cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding;
-console.log(widgetPadding);
+  const widgetPadding = widget.cardStyle?.padding ?? DEFAULT_CARD_STYLE.padding;
 
   // 卡片外观配置（毛玻璃），回退到默认
-  const cardStyleCfg = getWidgetConfig(widget.type).cardStyle ?? DEFAULT_CARD_STYLE;
+  const cardStyleCfg =widget.cardStyle ?? DEFAULT_CARD_STYLE;
+  
   // 显式指定了 custom background（如 'transparent', '#1a1a1a', 渐变等）时禁用毛玻璃样式
   const hasCustomBg = !!widget.cardStyle?.background;
   const isGlass = !hasCustomBg && (cardStyleCfg.glass ?? true);
@@ -93,6 +93,7 @@ console.log(widgetPadding);
   };
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  
     // 长按已触发编辑布局，忽略随后的点击，避免误触组件行为
     if (longPressTriggeredRef.current) {
       longPressTriggeredRef.current = false;
@@ -101,11 +102,14 @@ console.log(widgetPadding);
     // 系统功能磁贴的 onClick 是函数（持久化到本地存储时会丢失），
     // 故点击直接挂载在 .widget-card 上，并从配置注册表按 id 找回真正的行为。
     if (widget.type === 'system-function') {
+         // 编辑布局模式下，卡片点击不触发任何行为（仅允许拖拽 / 右键菜单）
+    if (isEditMode) return;
       const handler =
         widget.onClick ?? SYSTEM_WIDGET_CONFIG.find((w) => w.id === widget.id)?.onClick;
       handler?.(e);
       return;
     }
+   
     onClick(e, widget);
   };
 

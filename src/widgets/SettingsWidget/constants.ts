@@ -20,6 +20,7 @@ export interface ParsedConfig {
   isDarkMode?: boolean;
   themeColor?: string;
   soundEnabled?: boolean;
+  showResizeHandle?: boolean;
   fontVariant?: FontVariant;
   cardRadius?: CardRadiusTier;
   screenBrightness?: number;
@@ -72,6 +73,7 @@ export function parseImport(text: string): ParsedConfig {
     isDarkMode: data.isDarkMode,
     themeColor: data.themeColor,
     soundEnabled: data.soundEnabled,
+    showResizeHandle: data.showResizeHandle,
     fontVariant: data.fontVariant,
     cardRadius: data.cardRadius,
     screenBrightness: data.screenBrightness,

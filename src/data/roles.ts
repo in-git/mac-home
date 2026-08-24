@@ -9,7 +9,7 @@ import type { RoleSkinConfig } from '../widgets/Role/types';
 export const ROLE_SKINS: RoleSkinConfig[] = [
   {
     id: 'klrx',
-    name: '姬路瑞希',
+    name: '柳如烟',
     author: '',
     assetDir: 'klrx',
     textures: {

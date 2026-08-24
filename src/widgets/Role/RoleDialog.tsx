@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ROLE_DIALOG_CLOSE_EVENT,
   ROLE_DIALOG_EVENT,
-  runChoiceEffect,
-  type DialogChoice,
-  type MenuOption,
-  type RoleDialogConfig,
 } from '../../agent/pet/dialog';
+import type {
+  DialogChoice,
+  MenuOption,
+  RoleDialogConfig,
+} from '../../agent/pet/types';
 import { DEFAULT_PHYSICS_CONFIG } from './physics';
 import { useHomeStore } from '../../store/useHomeStore';
 import { getRoleSkin } from '../../data/roles';
@@ -149,8 +150,8 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
 
     return (
       <Bubble rolePos={rolePos} className="w-[320px] p-4" innerRef={bubbleRef}>
-        <div className="w-full min-h-[100px] mb-3 bg-white/90 dark:bg-white/90 rounded-xl flex items-center justify-center p-4">
-          <div className="text-center text-sm font-medium text-slate-800 leading-[1.6]">
+        <div className="w-full min-h-[100px] mb-3 bg-white/10 rounded-xl flex items-center justify-center p-4">
+          <div className="text-center text-sm font-medium text-white leading-[1.6]">
             {config.text}
           </div>
         </div>
@@ -162,12 +163,12 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
                 e.stopPropagation();
                 handleOptionClick(option);
               }}
-              className="w-full px-3 py-2.5 text-left text-xs rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 transition-colors border border-black/5 dark:border-white/10 active:scale-[0.98]"
+              className="w-full px-3 py-2.5 text-left text-xs rounded-xl bg-white/10 hover:bg-white/15 transition-colors border border-white/10 active:scale-[0.98]"
             >
               <span className="font-medium text-[color:var(--accent)] mr-1.5">
                 {idx + 1}.
               </span>
-              <span className="text-slate-800 dark:text-white">{option.label}</span>
+              <span className="text-white">{option.label}</span>
             </button>
           ))}
         </div>
@@ -196,31 +197,19 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   };
 
   const handleChoice = (choice: DialogChoice) => {
-    // 1) 优先执行声明式效果（气泡对话 / 跳转 / 打开模态框 / 执行功能）
-    if (choice.effect) {
-   
-      close();
-      window.setTimeout(
-        () => runChoiceEffect(choice.effect as NonNullable<DialogChoice['effect']>),
-        0,
-      );
+    // closeAfter 默认 true：选项点击后关闭对话框；显式置 false 时推进到下一行
+    if (choice.closeAfter === false) {
+      advance();
+      // 推进模式下同步执行回调即可（不与 close 竞争 setConfig）
+      choice.onClick?.();
       return;
     }
-    // 2) 兼容旧式字符串 action
-    if (choice.action === 'close' || choice.closeAfter) {
-      close();
-      return;
-    }
-    if (choice.action && choice.action !== 'continue') {
-      close();
-      return;
-    }
-    // action === 'continue' 或未指定：推进到下一行
-    if (isLastLine) {
-      close();
-    } else {
-      setLineIdx((i) => i + 1);
-    }
+    // 默认分支：先关闭当前对话框，再异步执行 onClick 回调。
+    // 必须异步：onClick 内常派发新的 base 气泡（dispatchPetDialog），
+    // 若同步执行会与下面的 close() 的 setConfig(null) 在同一次批处理里竞争，
+    // 导致刚派发的气泡被立即清空（log 执行了但气泡不显示）。
+    close();
+    window.setTimeout(() => choice.onClick?.(), 0);
   };
 
   // 判断显示模式
@@ -334,14 +323,14 @@ const Bubble: React.FC<{
   return (
     <div
       ref={innerRef}
-      className={`fixed z-[192] pointer-events-auto max-w-xs sm:max-w-sm bg-white/95 dark:bg-zinc-800/95 text-slate-800 dark:text-white text-xs sm:text-sm rounded-xl shadow-lg border border-black/10 dark:border-white/10 backdrop-blur-sm transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
+      className={`fixed z-[192] pointer-events-auto max-w-xs sm:max-w-sm bg-[rgba(20,22,35,0.9)] text-white text-xs sm:text-sm rounded-xl shadow-lg border border-white/15 backdrop-blur-md transition-opacity duration-300 opacity-100 break-words whitespace-pre-wrap cursor-pointer p-3 ${className}`}
       style={{ left: `${left}px`, top: `${rolePos.y - 12}px`, transform }}
       onClick={(e) => e.stopPropagation()}
     >
       {children}
       {/* 小尾巴：随对齐方向切换位置 */}
       <div
-        className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white/95 dark:border-t-zinc-800/95 ${tail}`}
+        className={`absolute -bottom-1.5 w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-[rgba(20,22,35,0.9)] ${tail}`}
       />
     </div>
   );

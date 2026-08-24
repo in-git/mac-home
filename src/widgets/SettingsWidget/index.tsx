@@ -18,6 +18,8 @@ export const SettingsWidget: React.FC<{
     setThemeColor,
     soundEnabled,
     setSoundEnabled,
+    showResizeHandle,
+    setShowResizeHandle,
     fontVariant,
     setFontVariant,
     cardRadius,
@@ -73,6 +75,8 @@ export const SettingsWidget: React.FC<{
           if (cfg.isDarkMode !== undefined) setDarkMode(cfg.isDarkMode);
           if (cfg.themeColor !== undefined) setThemeColor(cfg.themeColor);
           if (cfg.soundEnabled !== undefined) setSoundEnabled(cfg.soundEnabled);
+          if (cfg.showResizeHandle !== undefined)
+            setShowResizeHandle(cfg.showResizeHandle);
           if (cfg.fontVariant !== undefined) setFontVariant(cfg.fontVariant);
           if (cfg.cardRadius !== undefined) setCardRadius(cfg.cardRadius);
           if (cfg.screenBrightness !== undefined)
@@ -112,6 +116,11 @@ export const SettingsWidget: React.FC<{
   const handleToggleSound = () => {
     // Play the confirmation click before muting so the user gets feedback.
     setSoundEnabled(!soundEnabled);
+  };
+
+  // 切换是否显示组件右下角的调整大小手柄
+  const handleToggleResizeHandle = () => {
+    setShowResizeHandle(!showResizeHandle);
   };
 
   // 重置系统：恢复全部持久化配置（由确认弹窗触发）
@@ -161,6 +170,8 @@ export const SettingsWidget: React.FC<{
         <SystemPanel
           soundEnabled={soundEnabled}
           onToggleSound={handleToggleSound}
+          showResizeHandle={showResizeHandle}
+          onToggleResizeHandle={handleToggleResizeHandle}
           onExport={handleExport}
           importMsg={importMsg}
           onImportFile={handleImportFile}

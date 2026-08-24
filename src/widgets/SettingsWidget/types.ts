@@ -17,6 +17,8 @@ export interface AppearancePanelProps {
 export interface SystemPanelProps {
   soundEnabled: boolean;
   onToggleSound: () => void;
+  showResizeHandle: boolean;
+  onToggleResizeHandle: () => void;
   onExport: () => void;
   importMsg: { type: 'success' | 'error'; text: string } | null;
   onImportFile: (file: File) => void;

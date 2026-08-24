@@ -149,6 +149,78 @@ button{
   opacity: 1 !important;
 }
 
+/* react-grid-layout 自定义调整大小手柄样式（四角：nw / ne / sw / se）。
+   原生 ::after 用半透明黑色 border 拼成小三角，在深色玻璃卡片上几乎看不见。
+   这里改为：保留框架对 handle 容器的定位（贴在四个角），仅抵消框架对每个
+   方向加的 transform: rotate(...)，再用「直角折角」表达——每个角用一条水平边
+   + 一条竖直边组成该方向的直角线，深浅模式下都清晰可见。 */
+.react-grid-item > .react-resizable-handle::before,
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  border: none;
+  border-radius: 0;
+  background-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+.dark .react-grid-item > .react-resizable-handle::before,
+.dark .react-grid-item > .react-resizable-handle::after {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+/* 通用尺寸：::before 为水平边，::after 为竖直边 */
+.react-grid-item > .react-resizable-handle::before {
+  width: 10px;
+  height: 2px;
+}
+.react-grid-item > .react-resizable-handle::after {
+  width: 2px;
+  height: 10px;
+}
+
+/* 四个斜角：抵消框架的 rotate(180deg/270deg/90deg) */
+.react-grid-item > .react-resizable-handle-nw,
+.react-grid-item > .react-resizable-handle-ne,
+.react-grid-item > .react-resizable-handle-sw,
+.react-grid-item > .react-resizable-handle-se {
+  transform: none !important;
+}
+/* nw 左上角：水平边贴顶、竖直边贴左 */
+.react-grid-item > .react-resizable-handle-nw::before {
+  top: 4px;
+  left: 4px;
+}
+.react-grid-item > .react-resizable-handle-nw::after {
+  top: 4px;
+  left: 4px;
+}
+/* ne 右上角：水平边贴顶、竖直边贴右 */
+.react-grid-item > .react-resizable-handle-ne::before {
+  top: 4px;
+  right: 4px;
+}
+.react-grid-item > .react-resizable-handle-ne::after {
+  top: 4px;
+  right: 4px;
+}
+/* sw 左下角：水平边贴底、竖直边贴左 */
+.react-grid-item > .react-resizable-handle-sw::before {
+  bottom: 4px;
+  left: 4px;
+}
+.react-grid-item > .react-resizable-handle-sw::after {
+  bottom: 4px;
+  left: 4px;
+}
+/* se 右下角：水平边贴底、竖直边贴右 */
+.react-grid-item > .react-resizable-handle-se::before {
+  bottom: 4px;
+  right: 4px;
+}
+.react-grid-item > .react-resizable-handle-se::after {
+  bottom: 4px;
+  right: 4px;
+}
+
 /* During an active drag, drop the backdrop-blur on every card. Recomputing
    the blur filter each frame for 7 glass cards is the main source of drag lag.
    Cards fall back to a solid translucent fill so the UI still looks glassy. */
