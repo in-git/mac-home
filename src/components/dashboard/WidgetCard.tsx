@@ -58,6 +58,8 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
   // 显式指定了 custom background（如 'transparent', '#1a1a1a', 渐变等）时禁用毛玻璃样式
   const hasCustomBg = !!widget.cardStyle?.background;
   const isGlass = !hasCustomBg && (cardStyleCfg.glass ?? true);
+  // 宽高比 1:1 的正方形卡片（如系统功能磁贴）启用 aspect-square
+  const isSquare = widget.grid?.w === widget.grid?.h;
   // 卡片高度彻底以 react-grid-layout 的 grid.h（行数）为准（唯一真相）。
 
 
@@ -131,7 +133,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
                 }
               : {}),
           }}
-          className={`widget-card cursor-pointer ${isWebAppType ? '' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
+          className={`${isEditMode ? ' pointer-events-none' : ''} inline-flex widget-card cursor-pointer ${isWebAppType ? '' : isSquare ? 'aspect-[1/1] w-full' : 'h-full w-full'} ${isGlass ? 'glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.10)]' : ''} rounded-[var(--card-radius)] ${widgetPadding} flex flex-col justify-between group${
             widget.cardStyle?.backgroundTheme ? ` card-theme-${widget.cardStyle.backgroundTheme}` : ''
           }${isEditMode ? ' edit-wiggle' : ''}`}
           onPointerDown={handlePointerDown}
@@ -144,11 +146,9 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
               In edit mode the content is non-interactive (clicks are
               disabled) but the card is still draggable from this area
               because the event passes through to the .widget-card handle. */}
-          <div
-            className={`flex-1 ${isEditMode ? ' pointer-events-none' : ''}`}
-          >
+      
             {isExpanded ? null : renderWidgetContent({ widget, notes, onUpdateNotes, isDarkMode, onToggleDarkMode, isEditMode, onWeatherChange, onExpand, onUpdateWidget })}
-          </div>
+    
         </div>
     </div>
   );

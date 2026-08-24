@@ -65,7 +65,7 @@ export const renderWidgetContent = ({
           onExpand={inModal ? undefined : () => onExpand(widget.id)}
         />
       );
- 
+
     case 'web-app': {
       // 桌面图标可能由「网页列表」添加（携带 site 数据），渲染时优先取 site 的站点信息；
       // 保持 1:1 比例正方形居中展示
@@ -73,23 +73,16 @@ export const renderWidgetContent = ({
       const hideLabel =
         !!widget.grid && widget.grid.w === 6 && widget.grid.h === 6;
       return (
-        <div data-icon-grid className="h-full w-full flex items-center justify-center">
-          <div className="w-full aspect-square flex items-center justify-center">
-            <WebApp site={widget.data.site} hideLabel={hideLabel} editing={isEditMode} />
-          </div>
+        <div data-icon-grid className="h-full w-full flex items-center justify-center aspect-square">
+          <WebApp site={widget.data.site} hideLabel={hideLabel} editing={isEditMode} />
         </div>
       );
     }
-  
+
 
     case 'system-function': {
-      return (
-        <div data-icon-grid className="h-full w-full flex items-center justify-center">
-          <div className="w-full aspect-square flex items-center justify-center">
-            <SystemFunction widget={widget} />
-          </div>
-        </div>
-      );
+      return   <SystemFunction widget={widget} />
+
     }
 
     case 'member-count': {

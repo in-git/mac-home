@@ -10,7 +10,6 @@ import {
   StickyNote as StickyNoteType,
   WallpaperConfig,
   WidgetItem,
-  WidgetType,
 } from '../types';
 import { WeatherCity } from '../utils/weatherApi';
 import { type WidgetSizeOption } from '@/data/options/size.options';
@@ -138,11 +137,6 @@ export const useHomeStore = create<HomeState>()(
       // 默认配置（data.json）整体展开，首次启动后由 persist 接管；
       // 下方仅覆盖需要旧版 localStorage 迁移的字段与对话历史。
       ...DEFAULT_STATE,
-      widgets: ensureSystemWidgets(
-        (readLegacy<WidgetItem[]>('apple_homepage_widgets', DEFAULT_STATE.widgets)).map(
-          (w) => ensureGrid(w),
-        ),
-      ),
       wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
       notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
       soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),

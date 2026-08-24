@@ -6,7 +6,6 @@ import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas/Dyna
 import { DashboardGrid } from './views/DashboardGrid';
 import { TopBar } from './components/TopBar/TopBar';
 import { useAppInit } from './hooks/useAppInit';
-import { useGreeting } from './hooks/useGreeting';
 import { useThemeVariables } from './hooks/useThemeVariables';
 import { useHomeStore } from './store/useHomeStore';
 import { AddWidgetModal } from './views/AddWidgetModal';
@@ -17,6 +16,7 @@ import { ROLE_DIALOG_ACTION_EVENT } from './agent/pet/dialog';
 import { visitorApi } from './api/visitor';
 import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
 import THEME_OPTIONS from './data/options/filter.options';
+import { useGreeting } from './agent/pet/actions';
 
 // Actions are stable function references — read them once outside the render
 // path so they never trigger a re-render or a per-render subscription.
@@ -119,11 +119,7 @@ export default function App() {
 
   // 进入页面上报访客信息（PV/UV/IP 统计），仅触发一次。
   useEffect(() => {
-    visitorApi
-      .report()
-      .catch(() => {
-        /* 上报失败静默，不影响主流程 */
-      });
+    visitorApi.report()
   }, []);
 
   // 进入页面打招呼（仅触发一次）。
@@ -148,19 +144,7 @@ export default function App() {
     return () => window.removeEventListener(ROLE_DIALOG_ACTION_EVENT, onAction);
   }, []);
 
-  // SEO：动态同步标题与描述，确保关键词「吴文龙 / 吴文龙的游戏空间」一致。
-  useEffect(() => {
-    document.title = '吴文龙的游戏空间 | 吴文龙';
-    const desc =
-      '吴文龙的游戏空间——吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽组件、便签、天气、实时任务提醒与动态壁纸。';
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.setAttribute('name', 'description');
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute('content', desc);
-  }, []);
+
 
   // 「清屏」关闭时，隐藏桌面上的所有组件（整个仪表盘），
   // 直接传空数组，确保 Muuri 同步能正确清空所有卡片。

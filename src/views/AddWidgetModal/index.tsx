@@ -175,8 +175,10 @@ export const AddWidgetModal: React.FC<Props> = ({
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="grid grid-cols-3 gap-2">
                   {[...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG].map((t) => {
+                    // 注意：桌面实例的 id 是运行时生成的（widget-xxx），不能与配置 id 比较，
+                    // 需按 type 统计当前已存在的实例数量
                     const count = widgets.filter((w) => w.type === t.type).length;
-                    const max = getWidgetConfig(t.type).maxInstances;
+                    const max = getWidgetConfig(t.id)?.maxInstances ?? Infinity;
                     const disabled = max !== Infinity && count >= max;
                     return (
                       <button

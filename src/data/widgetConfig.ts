@@ -35,7 +35,13 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
 };
 
 export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
-  {
+
+]
+/**
+ * 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
+ *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
+export const WIDGET_CONFIG: Array<WidgetItem> = [
+    {
     id: 'cfg-system-function',
     type: 'system-function',
     title: '系统设置',
@@ -89,11 +95,6 @@ export const SYSTEM_WIDGET_CONFIG: Array<WidgetItem> = [
       );
     },
   },
-]
-/**
- * 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
- *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
-export const WIDGET_CONFIG: Array<WidgetItem> = [
   {
     id: 'cfg-search',
     type: 'search',
@@ -270,26 +271,18 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
   },
 ];
 
-/** type -> config 的快速查找表（由 WIDGET_CONFIG + SYSTEM_WIDGET_CONFIG 派生）。 */
-const WIDGET_CONFIG_MAP: Record<string, WidgetItem> = Object.fromEntries(
-  [...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG].map((cfg) => [cfg.id, cfg]),
-);
 
-
-
-/** 解析后的组件配置：模板（含默认 grid）+ 运行时查询的 sizeOptions。 */
-export type ResolvedWidgetConfig = WidgetItem & { sizeOptions: WidgetSizeOption[] };
 
 /**
  * 按 id 解析组件配置（含运行时 sizeOptions）。
  * 优先用 id 精确匹配（区分同 type 的不同配置，如「系统设置」/「添加」），
  * 找不到时回退到按 type 查找以兼容旧调用方。
  */
-export function getWidgetConfig(idOrType: string): ResolvedWidgetConfig {
-  const cfg = WIDGET_CONFIG_MAP[idOrType]
-    ?? WIDGET_CONFIG.find((c) => c.type === idOrType)
-    ?? SYSTEM_WIDGET_CONFIG.find((c) => c.type === idOrType);
-  return { ...(cfg as WidgetItem), sizeOptions: getSizeOptions(cfg?.type as WidgetType) };
+export function getWidgetConfig(id: string): WidgetItem {
+  const all = [...WIDGET_CONFIG, ...SYSTEM_WIDGET_CONFIG];
+  // 优先按配置 id 精确匹配（区分同 type 的不同配置，如「系统设置」/「添加」），
+  // 找不到时回退到按 type 查找以兼容按 type 调用的旧调用方（如 canAddWidget）。
+  return all.find(v => v.id === id) ?? all.find(v => v.type === id) ?? all[0];
 }
 
 /** Whether another instance of `type` may be added given the current count. */
@@ -298,11 +291,8 @@ export function canAddWidget(type: WidgetType, currentCount: number): boolean {
   return max === Infinity || currentCount < max;
 }
 
-
-
-
 /** 网页应用类图标组件（新增网页创建的类型）。 */
 export function isWebApp(type: WidgetType): boolean {
-  return type === 'web-app' || type === 'system-function';
+  return type === 'web-app';
 }
 

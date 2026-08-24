@@ -33,19 +33,7 @@ export const CARD_RADIUS: Record<CardRadiusTier, { label: string; px: number }> 
 };
 
 // ############################################################
-export type WidgetType =
-  | 'sticky-notes'
-  | 'weather'
-  | 'search'
-  | 'clock'
-  | 'clock-mini'
-  | 'clock-lunar'
-  | 'random-web'
-  | 'control-center'
-  | 'web-app'
-  | 'system-function'
-  | 'application'
-  | 'member-count';
+export type WidgetType =string
 
 // 尺寸统一使用分母数字形式
 export type WidgetSize = number
@@ -78,7 +66,7 @@ export interface CardStyle {
 export interface WidgetItem {
   id: string;
   /** 组件类型：决定渲染哪个组件、能否添加、尺寸选项等核心逻辑（复用全局 WidgetType 联合类型）。 */
-  type: WidgetType;
+  type: string;
   /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
   title: string;
   /** 最大安装数量，有些只能安装一次，所以用它限制 */

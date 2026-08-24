@@ -35,10 +35,7 @@ export function closeRoleDialog(): void {
   window.dispatchEvent(new CustomEvent(ROLE_DIALOG_CLOSE_EVENT));
 }
 
-/* ------------------------------------------------------------------ */
-/* 以下为对话框预设配置：所有对话统一在此声明，供事件入口引用。          */
-/* 新增对话只需在此追加一项配置即可复用 RoleDialog 的渲染能力。          */
-/* ------------------------------------------------------------------ */
+
 
 
 
@@ -80,24 +77,12 @@ export const HELP_MENU_DIALOG: RoleDialogConfig = {
             });
           }
         },
-        {
-          label: '如何自定义桌宠',
-          onClick() {
-            window.dispatchEvent(
-              new CustomEvent(ROLE_DIALOG_ACTION_EVENT, {
-                detail: { modal: 'settings' },
-              }),
-            );
-          }
-        },
+        
       ],
     },
   ],
 };
 
-/* ------------------------------------------------------------------ */
-/* 跨组件副作用派发事件                                                */
-/* ------------------------------------------------------------------ */
 
 /**
  * 选项副作用派发事件名：由配置方在 onClick 中按需派发，App 统一监听后

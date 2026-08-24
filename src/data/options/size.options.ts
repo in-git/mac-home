@@ -51,7 +51,7 @@ const DEFAULT_SIZE_OPTIONS: WidgetSizeOption[] = [
 /**
  * 按组件类型 (type) 查询尺寸档位列表。
  */
-export function getSizeOptions(type?: WidgetType): WidgetSizeOption[] {
+export function getSizeOptions(type?: string): WidgetSizeOption[] {
   if (!type) return DEFAULT_SIZE_OPTIONS;
   return SIZE_OPTIONS[type] ?? DEFAULT_SIZE_OPTIONS;
 }
