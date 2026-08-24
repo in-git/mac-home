@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { ContextMenu, ContextMenuPosition } from './views/ContextMenu';
+import { confirm } from './components/confirm/confirm';
 import { DynamicWallpaperCanvas } from './components/DynamicWallpaperCanvas/DynamicWallpaperCanvas';
 import { DashboardGrid } from './views/DashboardGrid';
 import { TopBar } from './components/TopBar/TopBar';
@@ -15,6 +16,8 @@ import { RoleCharacterCanvas } from './widgets/Role/RoleCharacterCanvas';
 import { ROLE_DIALOG_ACTION_EVENT } from './agent/pet/dialog';
 import { visitorApi } from './api/visitor';
 import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
+import dataJson from './data/data.json';
+import { CURRENT_DATA_VERSION } from './utils/migration';
 import THEME_OPTIONS from './data/options/filter.options';
 import { useGreeting } from './agent/pet/actions';
 
@@ -120,6 +123,56 @@ export default function App() {
   // 进入页面上报访客信息（PV/UV/IP 统计），仅触发一次。
   useEffect(() => {
     visitorApi.report()
+  }, []);
+
+  // 版本一致性检测（诊断用）：对比代码目标版本、默认数据版本与本地持久化数据版本，
+  // 不一致说明本地数据为旧版本，刷新后会走增量迁移/补全逻辑。
+  useEffect(() => {
+    const currentVersion = CURRENT_DATA_VERSION;
+    const defaultVersion = (dataJson as { version?: number }).version;
+
+    let persistedVersion: number | undefined;
+    try {
+      const raw = localStorage.getItem('apple-homepage-store');
+      if (raw) {
+        const parsed = JSON.parse(raw) as { state?: { version?: number } };
+        persistedVersion = parsed.state?.version;
+      }
+    } catch {
+      persistedVersion = undefined;
+    }
+
+    const defaultConsistent = defaultVersion === currentVersion;
+    const persistedConsistent = persistedVersion === currentVersion;
+    console.log(
+      `[版本检测] ${defaultConsistent && persistedConsistent ? '版本一致' : '版本不一致'} ` +
+        `代码目标=${currentVersion}，默认数据(data.json)=${defaultVersion ?? '未知'}，` +
+        `本地持久化=${persistedVersion ?? '无'}`,
+    );
+    if (!defaultConsistent) {
+      console.warn(
+        `[版本检测] 默认数据版本(${defaultVersion ?? '未知'})与代码目标版本(${currentVersion})不一致，请检查 src/data/data.json 的 version 字段。`,
+      );
+    }
+    if (!persistedConsistent) {
+      console.warn(
+        `[版本检测] 本地持久化数据版本(${persistedVersion ?? '无'})与代码目标版本(${currentVersion})不一致，将在下次写入时升级为 ${currentVersion}。`,
+      );
+      // 本地已有旧版本数据（非首次访问）且与当前系统版本不一致时，提示用户重置系统。
+      // 确认后恢复默认配置并持久化，版本号随之对齐为 CURRENT_DATA_VERSION，避免反复提示。
+      if (persistedVersion !== undefined) {
+        confirm({
+          title: '检测到数据版本不一致',
+          body: `本地保存的数据版本（v${persistedVersion}）与当前系统版本（v${currentVersion}）不一致，可能存在兼容性问题。建议重置系统恢复默认配置，此操作不可撤销；也可以选择「继续使用」由系统自动迁移数据。`,
+          confirmText: '重置系统',
+          cancelText: '继续使用',
+          danger: true,
+          onConfirm: () => {
+            useHomeStore.getState().resetAll();
+          },
+        });
+      }
+    }
   }, []);
 
   // 进入页面打招呼（仅触发一次）。

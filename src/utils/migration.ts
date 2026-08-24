@@ -2,8 +2,8 @@ import dataJson from '../data/data.json';
 import { ensureGrid } from '../components/dashboard/itemSize';
 import { DEFAULT_CARD_STYLE } from '../data/widgetConfig';
 
-/** 当前全局数据规范版本号 */
-export const CURRENT_DATA_VERSION = 1.2;
+/** 当前全局数据规范版本号（需与 src/data/data.json 的 version 保持一致） */
+export const CURRENT_DATA_VERSION = 1.4;
 
 /**
  * 核心数据版本迁移与自动修复函数。

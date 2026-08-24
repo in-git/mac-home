@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { AgentToolParam } from '../types';
 import { dispatchPetDialog, ROLE_CLICK_DIALOG } from './dialog';
+import { useHomeStore } from '../../store/useHomeStore';
 
 
 /** 行为执行结果 */
@@ -46,17 +47,16 @@ export const EVENT = {
 } as const;
 
 
-// 进入页面打招呼只触发一次（module 级 flag，StrictMode 双挂载下也只会发起一次）
-let greetingDispatchedRef = false;
-
 /**
- * 进入页面时显示欢迎对话框。
- * 保留 hook 签名以保证调用处（App）无需改动。
+ * 仅在用户首次进入页面时显示欢迎对话框。
+ * 基于 store 持久化的 isFirstVisit 标记：首次访问时打招呼并调用 markVisited 置为 false，
+ * 之后刷新/再次进入页面不再打招呼；StrictMode 双挂载下第二次执行时标记已置 false，不会重复弹出。
  */
 export function useGreeting() {
   useEffect(() => {
-    if (greetingDispatchedRef) return;
-    greetingDispatchedRef = true;
+    const { isFirstVisit, markVisited } = useHomeStore.getState();
+    if (!isFirstVisit) return;
+    markVisited();
 
     // 延迟 500ms 显示，避免页面刚加载时立即弹出
     setTimeout(() => {
