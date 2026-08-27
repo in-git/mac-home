@@ -142,18 +142,8 @@ export default function App() {
       persistedVersion = undefined;
     }
 
-    const defaultConsistent = defaultVersion === currentVersion;
     const persistedConsistent = persistedVersion === currentVersion;
-    console.log(
-      `[版本检测] ${defaultConsistent && persistedConsistent ? '版本一致' : '版本不一致'} ` +
-        `代码目标=${currentVersion}，默认数据(data.json)=${defaultVersion ?? '未知'}，` +
-        `本地持久化=${persistedVersion ?? '无'}`,
-    );
-    if (!defaultConsistent) {
-      console.warn(
-        `[版本检测] 默认数据版本(${defaultVersion ?? '未知'})与代码目标版本(${currentVersion})不一致，请检查 src/data/data.json 的 version 字段。`,
-      );
-    }
+ 
     if (!persistedConsistent) {
       console.warn(
         `[版本检测] 本地持久化数据版本(${persistedVersion ?? '无'})与代码目标版本(${currentVersion})不一致，将在下次写入时升级为 ${currentVersion}。`,

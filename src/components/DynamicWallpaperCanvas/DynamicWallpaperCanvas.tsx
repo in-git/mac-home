@@ -17,9 +17,8 @@ interface Props {
   screenBrightness?: number;
 }
 
-/** 无有效壁纸内容时的兜底渐变背景 */
-const FALLBACK_GRADIENT =
-  'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)';
+/** 无有效壁纸内容时的兜底背景（浅黑色） */
+const FALLBACK_BACKGROUND = '#1a1a1a75';
 
 export const DynamicWallpaperCanvas: React.FC<Props> = ({
   wallpaper,
@@ -151,11 +150,11 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
         />
       ) : wallpaper.type === 'static' && wallpaper.imageUrl ? (
         <>
-          {/* 图片完全加载前显示兜底渐变，避免切换瞬间空白闪烁 */}
+          {/* 图片完全加载前显示兜底背景，避免切换瞬间空白闪烁 */}
           {!staticImgLoaded && (
             <div
               className="absolute inset-0 w-full h-full"
-              style={{ background: FALLBACK_GRADIENT }}
+              style={{ background: FALLBACK_BACKGROUND }}
             />
           )}
           <img
@@ -171,13 +170,13 @@ export const DynamicWallpaperCanvas: React.FC<Props> = ({
       ) : wallpaper.type === 'gradient' ? (
         <div
           className="absolute inset-0 w-full h-full transition-opacity duration-700"
-          style={{ background: wallpaper.gradient || FALLBACK_GRADIENT }}
+          style={{ background: wallpaper.gradient || FALLBACK_BACKGROUND }}
         />
       ) : (
-        /* 数据异常兜底：无有效内容时使用默认渐变 */
+        /* 数据异常兜底：无有效内容时使用默认背景 */
         <div
           className="absolute inset-0 w-full h-full transition-opacity duration-700"
-          style={{ background: FALLBACK_GRADIENT }}
+          style={{ background: FALLBACK_BACKGROUND }}
         />
       )}
 

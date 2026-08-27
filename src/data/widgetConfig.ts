@@ -60,6 +60,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       icon: 'settings',
     },
     onClick: () => {
+      
       // 打开系统设置页面：复用 App 已监听的对话框动作事件
       window.dispatchEvent(
         new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'settings' } }),
@@ -87,6 +88,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
       icon: 'add',
     },
     onClick: () => {
+
       // 打开「添加组件」弹窗：复用 App 已监听的对话框动作事件
       window.dispatchEvent(
         new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'addWidget' } }),

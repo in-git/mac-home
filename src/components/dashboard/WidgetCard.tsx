@@ -106,8 +106,11 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
     if (widget.component === 'system-function') {
          // 编辑布局模式下，卡片点击不触发任何行为（仅允许拖拽 / 右键菜单）
     if (isEditMode) return;
+      // 实例 id 是运行时生成的（widget-<时间戳>），需按创建来源的 configId 找回配置行为；
+      // configId 缺失（旧数据）时回退按 id 匹配。
       const handler =
-        widget.onClick ?? WIDGET_CONFIG.find((w) => w.id === widget.id)?.onClick;
+        widget.onClick ??
+        WIDGET_CONFIG.find((w) => w.id === (widget.configId ?? widget.id))?.onClick;
       handler?.(e);
       return;
     }
