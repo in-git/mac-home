@@ -102,7 +102,7 @@ export const RoleCharacterCanvas: React.FC = () => {
     window.addEventListener(EVENT.thinkingStart, onThinkingStart);
     window.addEventListener(EVENT.thinkingEnd, onThinkingEnd);
 
-    // 统一注册所有角色行为事件。对话（role-dialog-speak）由 RoleDialog 组件监听渲染。
+    // 统一注册所有角色行为事件。对话（role-dialog-speak）由 RoleDialog 应用监听渲染。
     const roleActionHandlers: Record<string, (e: Event) => void> = {
       'role-move': onRoleMove,
       'role-jump': onRoleJump,

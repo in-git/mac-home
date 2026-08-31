@@ -13,7 +13,7 @@ interface SubmenuFlyoutProps {
   children: ReactNode;
   /**
    * 完整样式类名（含 absolute / 定位 / 背景 / 阴影 / 内边距等）。
-   * 组件仅在该 flyout 超出屏幕时通过 inline style 翻转 top↔bottom、left↔right，
+   * 应用仅在该 flyout 超出屏幕时通过 inline style 翻转 top↔bottom、left↔right，
    * 不改动任何外观样式，也不影响一级菜单。
    */
   className: string;

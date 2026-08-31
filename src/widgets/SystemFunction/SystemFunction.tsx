@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { type WidgetItem } from '../../types';
 
-// 将 icon 字符串 key 解析为可渲染的 lucide 组件（避免把组件对象存入本地存储导致反序列化失败）
+// 将 icon 字符串 key 解析为可渲染的 lucide 应用（避免把应用对象存入本地存储导致反序列化失败）
 const ICON_MAP: Record<string, LucideIcon> = {
   settings: Settings,
   add: Plus,
@@ -48,7 +48,7 @@ export const SystemFunction: React.FC<SystemFunctionProps> = ({ widget }) => {
     return () => ro.disconnect();
   }, []);
 
-  // 悬停整个组件时显示 tooltip，定位向上寻找 .widget-card 父容器，挂在其下方
+  // 悬停整个应用时显示 tooltip，定位向上寻找 .widget-card 父容器，挂在其下方
   const handleEnter = () => {
     const el = wrapRef.current;
     if (!el) return;

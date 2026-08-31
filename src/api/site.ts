@@ -30,7 +30,7 @@ export interface SiteItem {
   orderNum?: number;
   screenshot?: string;
   module?: string;
-  /** 是否显示在系统组件中：网页应用（web-app）为 false，其余为 true。 */
+  /** 是否显示在系统应用中：网页应用（web-app）为 false，其余为 true。 */
   showInSystem?: boolean;
   createTime?: string;
   categoryList?: SiteCategory[];

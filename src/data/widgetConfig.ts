@@ -12,14 +12,14 @@ import { ROLE_DIALOG_ACTION_EVENT } from '../agent/pet/dialog';
 export type WidgetCategory = 'system' | 'web';
 
 /**
- * 组件分类映射（集中维护）。未在此声明的组件默认归入 'system' 分类，
- * 用于「添加组件」模态框的左侧分组。
+ * 应用分类映射（集中维护）。未在此声明的应用默认归入 'system' 分类，
+ * 用于「添加应用」模态框的左侧分组。
  */
 export const WIDGET_CATEGORIES: Partial<Record<WidgetType, WidgetCategory>> = {
   'web-app': 'web',
 };
 
-/** 获取组件分类，缺省返回 'system'。 */
+/** 获取应用分类，缺省返回 'system'。 */
 export function getWidgetCategory(type: WidgetType): WidgetCategory {
   return WIDGET_CATEGORIES[type] ?? 'system';
 }
@@ -36,7 +36,7 @@ export const DEFAULT_CARD_STYLE: CardStyle = {
 
 
 /**
- * 组件配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
+ * 应用配置注册表（模板）：位置/大小由 react-grid-layout 的 grid 字段直接驱动，
  *故每个配置项自带默认 grid（x/y/w/h），运行时按此创建实例，用户可拖拽调整并持久化。 */
 export const WIDGET_CONFIG: Array<WidgetItem> = [
     {
@@ -89,7 +89,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     },
     onClick: () => {
 
-      // 打开「添加组件」弹窗：复用 App 已监听的对话框动作事件
+      // 打开「添加应用」弹窗：复用 App 已监听的对话框动作事件
       window.dispatchEvent(
         new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'addWidget' } }),
       );
@@ -274,7 +274,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
 
 
 /**
- * 按 id 解析组件配置（含运行时 sizeOptions）。
+ * 按 id 解析应用配置（含运行时 sizeOptions）。
  * 优先用 id 精确匹配（区分同 component 的不同配置，如「系统设置」/「添加」），
  * 找不到时回退到按 component 查找以兼容旧调用方。
  */
@@ -295,7 +295,7 @@ export function canAddWidget(type: WidgetType, currentCount: number): boolean {
  * 某配置与其桌面实例的匹配规则。
  * 同一 component 存在多个配置（如 system-function：「系统设置」/「添加」）时，
  * 按配置 id 精确匹配（实例 id = 配置 id，或实例的 configId 字段），避免统计互相干扰；
- * 其余组件按 component 匹配（兼容旧数据）。
+ * 其余应用按 component 匹配（兼容旧数据）。
  */
 export function widgetInstanceMatcher(cfg: WidgetItem): (w: WidgetItem) => boolean {
   const sharedComponent = WIDGET_CONFIG.some(
@@ -306,17 +306,17 @@ export function widgetInstanceMatcher(cfg: WidgetItem): (w: WidgetItem) => boole
     : (w) => w.component === cfg.component;
 }
 
-/** 统计某配置在当前组件列表中的已存在实例数量。 */
+/** 统计某配置在当前应用列表中的已存在实例数量。 */
 export function countWidgetInstances(widgets: WidgetItem[], cfg: WidgetItem): number {
   return widgets.filter(widgetInstanceMatcher(cfg)).length;
 }
 
-/** 查找某配置在当前组件列表中已存在的实例（达到上限时置顶用）。 */
+/** 查找某配置在当前应用列表中已存在的实例（达到上限时置顶用）。 */
 export function findWidgetInstance(widgets: WidgetItem[], cfg: WidgetItem): WidgetItem | undefined {
   return widgets.find(widgetInstanceMatcher(cfg));
 }
 
-/** 网页应用类图标组件（新增网页创建的类型）。 */
+/** 网页应用类图标应用（新增网页创建的类型）。 */
 export function isWebApp(type: WidgetType): boolean {
   return type === 'web-app';
 }

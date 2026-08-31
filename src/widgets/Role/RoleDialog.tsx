@@ -14,7 +14,7 @@ import { getRoleSkin } from '../../data/roles';
 import avatarUrl from '../../assets/images/avatar.png';
 
 /**
- * 角色对话框组件。
+ * 角色对话框应用。
  * 支持三种模式：
  * - base 基础对话：单条气泡，定时自动隐藏。
  * - game 文字游戏式：AVG 风格，多行逐句推进，支持打字机效果、选择分支。
@@ -107,7 +107,7 @@ export const RoleDialog: React.FC<{ rolePos: { x: number; y: number } }> = ({
   useEffect(() => clearHideTimer, [clearHideTimer]);
 
   // 点击对话框面板以外的区域即关闭。
-  // 用 window 级 click 监听替代全屏遮罩的 onClick，避免遮罩层拦截点击、挡住其他组件交互；
+  // 用 window 级 click 监听替代全屏遮罩的 onClick，避免遮罩层拦截点击、挡住其他应用交互；
   // 面板内部点击因 stopPropagation 不会冒泡到 window，contains 判定再兜底一次。
   useEffect(() => {
     if (!config) return;

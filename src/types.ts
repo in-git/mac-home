@@ -65,11 +65,11 @@ export interface CardStyle {
 }
 export interface WidgetItem {
   id: string;
-  /** 组件类型：决定渲染哪个组件、能否添加、尺寸选项等核心逻辑（复用全局 WidgetType 联合类型）。 */
+  /** 应用类型：决定渲染哪个应用、能否添加、尺寸选项等核心逻辑（复用全局 WidgetType 联合类型）。 */
   component: string;
   /** 创建来源的配置 id（WIDGET_CONFIG 中的 id）：同一 component 存在多个配置（如 system-function「系统设置」/「添加」）时用于精确区分实例归属。可选，兼容旧数据。 */
   configId?: string;
-  /** 标题 / 标签：组件创建时默认使用，同时用作「添加组件」模态框的展示文案（合并原 title 与 label）。 */
+  /** 标题 / 标签：应用创建时默认使用，同时用作「添加应用」模态框的展示文案（合并原 title 与 label）。 */
   title: string;
   /** 最大安装数量，有些只能安装一次，所以用它限制 */
   maxInstances: number;
@@ -77,9 +77,9 @@ export interface WidgetItem {
 
   /** 点击事件：卡片被点击（非编辑模式）时触发，接收点击事件对象。合并原 onClick 与 onAction（后者统一走事件触发）。可选。 */
   onClick?: (event: any) => void;
-  /** 封面：组件封面图地址，可选。 */
+  /** 封面：应用封面图地址，可选。 */
   cover?: string;
-  /** 是否可删除：为 false 时该类型组件不可被用户删除（默认 true）。 */
+  /** 是否可删除：为 false 时该类型应用不可被用户删除（默认 true）。 */
   deletable?: boolean;
 
   /** 卡片外观样式集合：将卡片相关的视觉属性（内边距、毛玻璃模糊、边框、阴影、圆角）集中于此，便于统一配置。 */
@@ -88,20 +88,20 @@ export interface WidgetItem {
    *  对应 RGL Layout 的 {x,y,w,h}，i 由 id 推导无需存储。
    *  创建/迁移时按「当前元素的宽高」生成初始值，之后由用户拖拽调整并持久化。 */
   grid: { x: number; y: number; w: number; h: number };
-  // 私有数据：组件实例级别的自定义数据（快捷导航、图标站点、卡片背景等）集中存放。
+  // 私有数据：应用实例级别的自定义数据（快捷导航、图标站点、卡片背景等）集中存放。
   data: {
-    /** 图标型组件（web-app）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
+    /** 图标型应用（web-app）携带的站点数据：从「网页列表」添加时存储的单个 SiteItem（图标图片取 site.logo、标签取 site.name、链接取 site.link、背景取 site.background）。 */
     site?: SiteItem;
-    /** 时钟字体自定义（当前用于 clock-lunar 等时钟类组件）。 */
+    /** 时钟字体自定义（当前用于 clock-lunar 等时钟类应用）。 */
     /** 文本颜色，任意合法 CSS 颜色值，如 '#ff0000'、'rgb(0,0,0)'、'var(--accent)'。缺省则沿用主题样式。 */
     color?: string;
     /** 数字时间字号，任意合法 CSS 长度值，如 '2rem'、'28px'。缺省则沿用主题样式。 */
     size?: string;
     /** 是否加粗（仅作用于数字时间），默认 true。 */
     bold?: boolean;
-    /** 空白占位组件私有属性 */
+    /** 空白占位应用私有属性 */
     aspect?: string;
-    /** 系统功能组件私有属性：展示图标（lucide 图标组件引用）。 */
+    /** 系统功能应用私有属性：展示图标（lucide 图标应用引用）。 */
     icon?: unknown;
   }
 }
@@ -109,7 +109,7 @@ export interface WidgetItem {
 
 /**
  * 壁纸类型，三类完全区分：
- *  - `dynamic`  动效壁纸：由组件 / canvas 实现（dynamicPreset 决定具体动效）
+ *  - `dynamic`  动效壁纸：由应用 / canvas 实现（dynamicPreset 决定具体动效）
  *  - `static`   静态壁纸：图片壁纸（imageUrl）
  *  - `gradient` 渐变壁纸：纯 CSS 渐变背景（gradient）
  */

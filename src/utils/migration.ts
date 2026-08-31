@@ -42,7 +42,7 @@ export function migrateData<T = Record<string, any>>(
     // if (dataVersion < 1) { ... }
   }
 
-  // 3. widgets 嵌套小组件格式校验与缺失属性补全
+  // 3. widgets 嵌套小应用格式校验与缺失属性补全
   if (Array.isArray(data.widgets)) {
     data.widgets = data.widgets.map((w: any) => {
       if (!w || typeof w !== 'object') return w;

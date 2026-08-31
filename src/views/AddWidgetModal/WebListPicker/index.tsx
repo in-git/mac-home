@@ -13,9 +13,9 @@ import {
 
 /**
  * 网页列表（WebListPicker）：
- * 通用站点选择器，供多个组件复用（如快捷导航的「站点库」）。
+ * 通用站点选择器，供多个应用复用（如快捷导航的「站点库」）。
  * 内置搜索/分类过滤与站点卡片网格。
- * 选中状态由父组件传入（selected），新增 / 删除等变更事件均交由父组件处理。
+ * 选中状态由父应用传入（selected），新增 / 删除等变更事件均交由父应用处理。
  */
 export const WebListPicker: React.FC<WebListPickerProps> = ({
   selected = [],

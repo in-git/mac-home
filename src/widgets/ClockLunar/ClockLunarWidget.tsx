@@ -3,7 +3,7 @@ import { Moon, CalendarDays } from 'lucide-react';
 import { getLunarDateText } from '../../utils/lunar';
 import { WidgetItem } from '../../types';
 
-// 农历时钟小组件：顶部显示当前时间，下方显示日期、星期与农历日期。
+// 农历时钟小应用：顶部显示当前时间，下方显示日期、星期与农历日期。
 // 支持通过 widget.data 自定义顶部数字时间与下方文字的颜色 / 字号 / 是否加粗。
 export const ClockLunarWidget: React.FC<{ widget?: WidgetItem }> = ({
   widget,

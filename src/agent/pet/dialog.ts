@@ -4,7 +4,7 @@
  * - game 文字游戏式对话：多行逐句推进（点击/回车继续），行尾可挂选择按钮（确定/取消等）。
  *
  * 任何入口（AI 行为、UI）只需通过 dispatchPetDialog(config) 派发配置，
- * RoleDialog 组件会据此渲染对应模式，无需关心具体实现。
+ * RoleDialog 应用会据此渲染对应模式，无需关心具体实现。
  *
  * 类型定义已分离到 ./types，这里 re-export 以保持原有导入路径可用。
  */
@@ -19,7 +19,7 @@ export type {
 } from './types';
 import type { RoleDialogConfig } from './types';
 
-/** 对话框派发事件名（RoleDialog 组件监听此事件渲染） */
+/** 对话框派发事件名（RoleDialog 应用监听此事件渲染） */
 export const ROLE_DIALOG_EVENT = 'role-dialog-open';
 
 /** 对话框关闭事件名（由 RoleDialog 派发，调用方可选监听） */
@@ -86,6 +86,6 @@ export const HELP_MENU_DIALOG: RoleDialogConfig = {
 
 /**
  * 选项副作用派发事件名：由配置方在 onClick 中按需派发，App 统一监听后
- * 处理 modal / navigate / action 等需要跨组件协作的副作用。
+ * 处理 modal / navigate / action 等需要跨应用协作的副作用。
  */
 export const ROLE_DIALOG_ACTION_EVENT = 'role-dialog-action';

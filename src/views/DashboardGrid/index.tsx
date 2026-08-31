@@ -26,10 +26,10 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 }) => {
   const storeWidgets = useHomeStore((state) => state.widgets);
   const setWidgets = useHomeStore((state) => state.setWidgets);
-  // 是否显示组件右下角的调整大小手柄（默认关闭，由设置面板控制）
+  // 是否显示应用右下角的调整大小手柄（默认关闭，由设置面板控制）
   const showResizeHandle = useHomeStore((state) => state.showResizeHandle);
 
-  // 清屏时 App 会传入空数组以隐藏全部组件；只要显式传入了 widgets（含空数组）就使用它，否则回退 store
+  // 清屏时 App 会传入空数组以隐藏全部应用；只要显式传入了 widgets（含空数组）就使用它，否则回退 store
   const widgets = Array.isArray(incomingWidgets) ? incomingWidgets : storeWidgets;
 
   const layout: Layout[] = widgets.map((widget) => ({
@@ -38,8 +38,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
   }));
 
   const handleLayoutChange = (newLayout: Layout[]) => {
-    // 清屏（隐藏组件）时传入空数组，react-grid-layout 会回调空布局，
-    // 此时绝不能把空数组回写 store，否则会永久删除全部组件。
+    // 清屏（隐藏应用）时传入空数组，react-grid-layout 会回调空布局，
+    // 此时绝不能把空数组回写 store，否则会永久删除全部应用。
     if (widgets.length === 0) return;
 
     const updated = widgets.map((w) => {

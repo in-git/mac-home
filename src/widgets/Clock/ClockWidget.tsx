@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// 精简版时钟小组件：模拟表盘 + 数字时间 + 日期。
+// 精简版时钟小应用：模拟表盘 + 数字时间 + 日期。
 // 区别于 ClockCalendarWidget（时间 & 日历，含月历网格）。
 export const ClockWidget: React.FC = () => {
   const [time, setTime] = useState(new Date());

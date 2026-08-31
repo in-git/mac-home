@@ -7,7 +7,7 @@ export interface WidgetSizeOption {
 }
 
 /**
- * 各组件尺寸可选项（以组件类型 WidgetType 为 key）。
+ * 各应用尺寸可选项（以应用类型 WidgetType 为 key）。
  * 值为尺寸档位数组（w x h），按大小升序排列，最多 12 个。
  * 配置了 h 的档位选中后宽高同时应用（如 24x12）；未配置 h 的档位仅调整宽度。
  * 后续拓展：给对应类型的档位补上 h 即可获得固定宽高比。
@@ -49,7 +49,7 @@ const DEFAULT_SIZE_OPTIONS: WidgetSizeOption[] = [
 ];
 
 /**
- * 按组件类型 (type) 查询尺寸档位列表。
+ * 按应用类型 (type) 查询尺寸档位列表。
  */
 export function getSizeOptions(type?: string): WidgetSizeOption[] {
   if (!type) return DEFAULT_SIZE_OPTIONS;

@@ -45,7 +45,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
 
     const menuWidth = el.offsetWidth;
     const menuHeight = el.offsetHeight;
-    // 有目标组件时主菜单右侧可能弹出二级 flyout 子菜单，水平方向额外预留其宽度，
+    // 有目标应用时主菜单右侧可能弹出二级 flyout 子菜单，水平方向额外预留其宽度，
     // 避免子菜单被挤出屏幕；无则仅按主菜单宽度夹紧。
     const submenuReserve = position.targetWidgetId ? 292 : 0;
 

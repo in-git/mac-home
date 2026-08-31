@@ -15,7 +15,7 @@ export function gridHeightPx(h: number): number {
   return h * RGL_ROW_HEIGHT + (h - 1) * RGL_MARGIN[1];
 }
 
-/** 非 web-app 组件初始默认占用的列数（半宽）。 */
+/** 非 web-app 应用初始默认占用的列数（半宽）。 */
 export const DEFAULT_GRID_W = 12;
 
 /** web-app 初始默认像素宽 */
@@ -54,9 +54,9 @@ export function ensureGrid(
 
 /**
  * 寻找网格中可容纳大小为 (w, h) 的首个可用 (x, y) 空闲位置
- * @param existingWidgets 当前已存在的组件列表
- * @param itemWidth 待放置组件的宽度 w
- * @param itemHeight 待放置组件的高度 h
+ * @param existingWidgets 当前已存在的应用列表
+ * @param itemWidth 待放置应用的宽度 w
+ * @param itemHeight 待放置应用的高度 h
  * @param cols 总列数，默认 12
  */
 export function findFirstAvailablePosition(
@@ -65,7 +65,7 @@ export function findFirstAvailablePosition(
   itemHeight: number,
   cols: number = RGL_COLS,
 ): { x: number; y: number } {
-  // 如果没有组件，直接放在 (0, 0)
+  // 如果没有应用，直接放在 (0, 0)
   if (!existingWidgets.length) {
     return { x: 0, y: 0 };
   }

@@ -54,7 +54,7 @@ const UNAUTHORIZED_CODES = [401, 1011007, 1011008];
 
 /**
  * 后端接口路径集中管理（仅 path，baseURL 由 request 统一拼接）。
- * 新增业务接口请在此登记，组件层不要自己拼地址。
+ * 新增业务接口请在此登记，应用层不要自己拼地址。
  */
 export const API_ENDPOINTS = {
   aiChat: '/api/public/ai/chat',

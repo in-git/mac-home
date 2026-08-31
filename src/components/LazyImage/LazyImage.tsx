@@ -28,7 +28,7 @@ const RATIO_CLASS: Record<LazyImageRatio, string> = {
   '1/1': 'aspect-square',
 };
 
-/** 基于 react-lazy-load-image-component 的通用懒加载图片组件。 */
+/** 基于 react-lazy-load-image-component 的通用懒加载图片应用。 */
 export const LazyImage: React.FC<LazyImageProps> = ({
   src,
   alt = '',

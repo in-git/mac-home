@@ -1,6 +1,6 @@
 /**
  * 主题色板（唯一数据源）：设置面板强调色与壁纸/弹窗等场景统一使用的苹果风配色。
- * 抽离到全局 options，避免在各组件内重复硬编码。
+ * 抽离到全局 options，避免在各应用内重复硬编码。
  * 默认主题色为苹果蓝 #007AFF，与 useHomeStore 的 themeColor 默认值一致。
  */
 export const ACCENT_COLORS = [

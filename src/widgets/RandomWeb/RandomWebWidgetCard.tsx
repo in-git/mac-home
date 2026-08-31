@@ -3,7 +3,7 @@ import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useSiteList } from '../../agent/request';
 import type { SiteItem } from '../../api/site';
 
-// 原生 SVG 旋转 Loading 动画组件
+// 原生 SVG 旋转 Loading 动画应用
 const LoadingSpinner: React.FC<{ size?: number; className?: string }> = ({
   size = 32,
   className = '',

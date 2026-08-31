@@ -189,7 +189,7 @@ export default function App() {
 
 
 
-  // 「清屏」关闭时，隐藏桌面上的所有组件（整个仪表盘），
+  // 「清屏」关闭时，隐藏桌面上的所有应用（整个仪表盘），
   // 直接传空数组，确保 Muuri 同步能正确清空所有卡片。
   const dashboardWidgets = showDesktopIcons ? widgets : [];
 

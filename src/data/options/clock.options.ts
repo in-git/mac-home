@@ -1,7 +1,7 @@
 /**
- * 时钟组件「个性化」配置的预设选项。
+ * 时钟应用「个性化」配置的预设选项。
  * 集中在 data/options 下，供 ContextMenu 的 ClockFontSubmenu 读取，
- * 避免把预设列表硬编码在 UI 组件中，便于统一维护与将来扩展。
+ * 避免把预设列表硬编码在 UI 应用中，便于统一维护与将来扩展。
  */
 
 import { ACCENT_COLORS } from './themeColors.options';

@@ -87,7 +87,7 @@ export const SettingsWidget: React.FC<{
             setSelectedCityId(cfg.selectedCityId);
           if (cfg.lastLocation !== undefined) setLastLocation(cfg.lastLocation);
 
-          const parts = [`${w.length} 个组件`, `${n.length} 条便签`];
+          const parts = [`${w.length} 个应用`, `${n.length} 条便签`];
           if (cfg.wallpaper) parts.push('桌面背景');
           if (cfg.themeColor || cfg.isDarkMode !== undefined)
             parts.push('外观设置');
@@ -118,7 +118,7 @@ export const SettingsWidget: React.FC<{
     setSoundEnabled(!soundEnabled);
   };
 
-  // 切换是否显示组件右下角的调整大小手柄
+  // 切换是否显示应用右下角的调整大小手柄
   const handleToggleResizeHandle = () => {
     setShowResizeHandle(!showResizeHandle);
   };
@@ -130,7 +130,7 @@ export const SettingsWidget: React.FC<{
     setTimeout(() => setJustResetSystem(false), 1500);
   };
 
-  // 导出布局：将本地存储的全部持久化数据（组件、壁纸、便签、外观、主题、音效、字体、圆角、
+  // 导出布局：将本地存储的全部持久化数据（应用、壁纸、便签、外观、主题、音效、字体、圆角、
   // 亮度、AI 配置、桌宠、天气城市与定位等）序列化为 JSON 下载。
   const handleExport = () => {
     const s = useHomeStore.getState();

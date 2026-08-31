@@ -70,7 +70,7 @@ export async function reverseGeocodeCityName(
   }
 }
 
-/** WMO 天气代码 → 组件条件类型 */
+/** WMO 天气代码 → 应用条件类型 */
 function mapWeatherCode(code: number): WeatherCondition['condition'] {
   if (code === 0 || code === 1) return 'sunny';
   if (code === 2 || code === 3 || code === 45 || code === 48) return 'cloudy';

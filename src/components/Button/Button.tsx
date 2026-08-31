@@ -42,7 +42,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
     'bg-transparent  hover:bg-black/5  dark:hover:bg-white/10',
 };
 
-/** 基于组件库图标的旋转 spinner。 */
+/** 基于应用库图标的旋转 spinner。 */
 function Spinner({ className = '' }: { className?: string }) {
   return <Loader2 className={`animate-spin ${className}`} aria-hidden="true" />;
 }

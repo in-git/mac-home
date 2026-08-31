@@ -1,6 +1,6 @@
 ---
 name: segmented-control-mini-mode
-overview: 为 SegmentedControl 组件新增 size='mini' 档位，按钮 padding 设为 0，实现迷你模式。
+overview: 为 SegmentedControl 应用新增 size='mini' 档位，按钮 padding 设为 0，实现迷你模式。
 todos:
   - id: add-mini-size
     content: 扩展 SegmentedControl 的 size 类型并新增 mini 样式映射
@@ -14,7 +14,7 @@ todos:
 
 ## User Requirements
 
-为已封装的 `SegmentedControl` 分段选择器组件新增一种"迷你模式"，使其按钮内边距（padding）为 0。
+为已封装的 `SegmentedControl` 分段选择器应用新增一种"迷你模式"，使其按钮内边距（padding）为 0。
 
 ## Product Overview
 
@@ -30,7 +30,7 @@ todos:
 
 - 框架：React + TypeScript（与现有项目一致）
 - 样式：Tailwind CSS（沿用现有 `SIZE_CLASS` 映射模式）
-- 组件：复用已存在的 `src/components/SegmentedControl.tsx`
+- 应用：复用已存在的 `src/components/SegmentedControl.tsx`
 
 ## Implementation Approach
 
@@ -53,7 +53,7 @@ todos:
 
 ## Architecture Design
 
-单一组件内部扩展，不涉及架构调整。数据流：`size` prop → `SIZE_CLASS[size]` 映射 → 按钮 className，新增 `'mini'` 分支即可。
+单一应用内部扩展，不涉及架构调整。数据流：`size` prop → `SIZE_CLASS[size]` 映射 → 按钮 className，新增 `'mini'` 分支即可。
 
 ## Directory Structure
 

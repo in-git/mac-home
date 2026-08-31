@@ -63,7 +63,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
           </button>
         </div>
 
-        {/* 组件调整大小手柄 */}
+        {/* 应用调整大小手柄 */}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="flex items-center space-x-3">
             <span
@@ -77,14 +77,14 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
             </span>
             <div>
               <div>
-                组件调整大小
+                应用调整大小
               </div>
               <div className="text-xs ">
-                在组件右下角显示拖拽手柄以调整尺寸
+                在应用右下角显示拖拽手柄以调整尺寸
               </div>
             </div>
           </span>
-          <button onClick={onToggleResizeHandle} aria-label="切换组件调整大小手柄">
+          <button onClick={onToggleResizeHandle} aria-label="切换应用调整大小手柄">
             <ToggleDot active={showResizeHandle} />
           </button>
         </div>
@@ -103,7 +103,7 @@ export const SystemPanel: React.FC<SystemPanelProps> = ({
                 导出配置文件
               </div>
               <div className="text-xs ">
-                将组件布局与便签导出为 JSON
+                将应用布局与便签导出为 JSON
               </div>
             </div>
           </span>

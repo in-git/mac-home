@@ -1,7 +1,7 @@
 import { SiteCategory, SiteIdentity, SiteItem } from '../../../api/site';
 
 export interface WebListPickerProps {
-  /** 已选中的站点列表（由父组件持有），用于标记「已新增」并渲染删除入口 */
+  /** 已选中的站点列表（由父应用持有），用于标记「已新增」并渲染删除入口 */
   selected: SiteItem[];
   /** 点击「添加」按钮时的回调 */
   onAdd: (item: SiteItem) => void;

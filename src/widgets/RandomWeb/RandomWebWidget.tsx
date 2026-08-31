@@ -14,11 +14,11 @@ interface RandomWebWidgetProps {
 export const RandomWebWidget: React.FC<RandomWebWidgetProps> = ({
   expanded = false,
 }) => {
-  // 随机网页列表仅存于组件运行时的临时变量，不写入本地存储（刷新即重置为空）。
+  // 随机网页列表仅存于应用运行时的临时变量，不写入本地存储（刷新即重置为空）。
   const [randomweb, setRandomweb] = useState<SiteItem[]>([]);
   const [showAdd, setShowAdd] = useState(false);
 
-  // 任何写入只更新组件本地状态（临时变量），不持久化。
+  // 任何写入只更新应用本地状态（临时变量），不持久化。
   const commitRandomweb = useCallback(
     (next: SiteItem[] | ((prev: SiteItem[]) => SiteItem[])) => {
       setRandomweb((prev) =>
@@ -38,7 +38,7 @@ export const RandomWebWidget: React.FC<RandomWebWidgetProps> = ({
     // 直接以 SiteItem 结构存储，保留原站点的封面/背景/计数等字段
     const randomItem: SiteItem = {
       ...item,
-      // 随机网页（非网页应用）默认显示在系统组件中
+      // 随机网页（非网页应用）默认显示在系统应用中
       showInSystem: true,
       id: item.id || `sc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     };

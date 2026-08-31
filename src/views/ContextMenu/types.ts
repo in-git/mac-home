@@ -18,14 +18,14 @@ export interface ContextMenuProps {
     background?: string,
     backgroundTheme?: 'light' | 'dark',
   ) => void;
-  /** 合并写回组件 data 的补丁（由 store.updateWidget 应用），用于二级配置子菜单。 */
+  /** 合并写回应用 data 的补丁（由 store.updateWidget 应用），用于二级配置子菜单。 */
   onUpdateWidget: (id: string, patch: Partial<WidgetItem>) => void;
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onOpenWallpaper: () => void;
   onOpenAddWidget: () => void;
   onOpenSettings: () => void;
-  /** 是否清屏（web-app 类组件），用于右键菜单「清屏」勾选态。 */
+  /** 是否清屏（web-app 类应用），用于右键菜单「清屏」勾选态。 */
   showDesktopIcons: boolean;
   /** 切换桌面图标显示/隐藏。 */
   onToggleDesktopIcons: () => void;

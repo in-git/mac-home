@@ -18,11 +18,11 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   /**
-   * 点击「添加」某组件时回调，传入该组件在 WIDGET_CONFIG / SYSTEM_WIDGET_CONFIG
+   * 点击「添加」某应用时回调，传入该应用在 WIDGET_CONFIG / SYSTEM_WIDGET_CONFIG
    * 中的配置 id（同 type 多配置时唯一区分，如 system-function）。
    */
   onAddWidget: (configId: string) => void;
-  /** 网页分类中点击「添加」时回调：把站点做成桌面网页组件（web-app） */
+  /** 网页分类中点击「添加」时回调：把站点做成桌面网页应用（web-app） */
   onAddSite: (item: SiteItem) => void;
   /** 网页分类中点击「删除」时回调：移除对应的桌面图标 */
   onRemoveSite: (item: SiteItem) => void;
@@ -42,7 +42,7 @@ const CATEGORIES: { id: string; label: string; icon: React.ReactNode }[] = [
   },
   {
     id: 'system',
-    label: '系统组件',
+    label: '系统应用',
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-[var(--card-radius)] bg-gradient-to-br from-sky-400 to-indigo-500 text-white">
         <Settings size={15} />
@@ -116,7 +116,7 @@ export const AddWidgetModal: React.FC<Props> = ({
           <div className="flex sm:flex-col gap-1 p-2 bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-52 shrink-0 overflow-x-auto sm:overflow-y-auto border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
             <div className="hidden sm:block px-2.5 pt-2 pb-3">
               <h1 className="text-font-title dark:text-white">
-                {'添加组件'}
+                {'添加应用'}
               </h1>
             </div>
             {CATEGORIES.map((cat) => {
@@ -161,7 +161,7 @@ export const AddWidgetModal: React.FC<Props> = ({
               </button>
             </div>
 
-            {/* 网页分类：使用公共「网页列表」选择器，添加后生成桌面图标；系统分类沿用组件网格 */}
+            {/* 网页分类：使用公共「网页列表」选择器，添加后生成桌面图标；系统分类沿用应用网格 */}
             {activeCategory === 'web' ? (
               <div className="flex-1 min-h-0 overflow-hidden">
                 <WebListPicker
@@ -175,7 +175,7 @@ export const AddWidgetModal: React.FC<Props> = ({
                 <div className="grid grid-cols-3 gap-2">
                   {WIDGET_CONFIG.map((t) => {
                     // 同 component 多配置（如 system-function「系统设置」/「添加」）按配置 id 精确统计，
-                    // 其余组件按 component 统计（兼容旧数据实例 id 为运行时生成的 widget-xxx）
+                    // 其余应用按 component 统计（兼容旧数据实例 id 为运行时生成的 widget-xxx）
                     const count = countWidgetInstances(widgets, t);
                     const max = t.maxInstances ?? Infinity;
                     const disabled = max !== Infinity && count >= max;

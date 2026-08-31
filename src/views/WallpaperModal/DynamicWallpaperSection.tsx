@@ -90,7 +90,7 @@ const MiniCanvas2D: React.FC<{ presetId: string; isDark: boolean }> = ({
   );
 };
 
-/** 动态效果面板组件：以「亮色 / 深色」Tab 区分预设，点击后应用到桌面 */
+/** 动态效果面板应用：以「亮色 / 深色」Tab 区分预设，点击后应用到桌面 */
 export const DynamicWallpaperSection: React.FC<
   DynamicWallpaperSectionProps
 > = ({ wallpaper, isDarkMode, onUpdateWallpaper, onToggleDarkMode }) => {

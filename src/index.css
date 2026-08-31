@@ -435,7 +435,7 @@ button{
 }
 
 /* 站点库模态框：移除原先「强制白色主题」的覆盖，使其跟随暗色模式。
-   背景、边框、卡片、文字均沿用 .dark .glass-panel 与组件内 dark: 工具类。 */
+   背景、边框、卡片、文字均沿用 .dark .glass-panel 与应用内 dark: 工具类。 */
 
 /* 右键菜单入场过渡（替代原 motion 动画） */
 @keyframes context-menu-in {

@@ -29,7 +29,7 @@ interface WidgetCardProps {
 }
 
 // 单个 widget 的卡片：外层包裹（供 Muuri 测量） + 玻璃面板（内容区）。
-// 卡片整体点击逻辑交由父组件传入的 onClick；组件删除/调整比例等由右键菜单（ContextMenu）提供。
+// 卡片整体点击逻辑交由父应用传入的 onClick；应用删除/调整比例等由右键菜单（ContextMenu）提供。
 export const WidgetCard: React.FC<WidgetCardProps> = ({
   widget,
   isEditMode,
@@ -96,7 +96,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
   
-    // 长按已触发编辑布局，忽略随后的点击，避免误触组件行为
+    // 长按已触发编辑布局，忽略随后的点击，避免误触应用行为
     if (longPressTriggeredRef.current) {
       longPressTriggeredRef.current = false;
       return;
