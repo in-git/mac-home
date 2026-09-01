@@ -49,7 +49,7 @@ interface HomeState {
   themeColor: string;
   // 是否开启音效
   soundEnabled: boolean;
-  // 是否显示应用右下角的调整大小手柄（默认关闭，开启后可拖拽调整应用尺寸）
+  // 是否显示组件右下角的调整大小手柄（默认关闭，开启后可拖拽调整组件尺寸）
   showResizeHandle: boolean;
   // 字体方案
   fontVariant: FontVariant;
@@ -66,7 +66,7 @@ interface HomeState {
   selectedCityId: string;
   // 最近一次成功定位的位置（持久化，控制中心位置模块下次进入时回显）
   lastLocation?: { city: string; lat: number; lon: number } | null;
-  // 是否显示桌面图标（清屏功能，false 时隐藏所有应用）
+  // 是否显示桌面图标（清屏功能，false 时隐藏所有组件）
   showDesktopIcons: boolean;
   // 是否第一次进入网页（持久化：首次访问后由 markVisited 置 false，之后不再为 true）
   isFirstVisit: boolean;
@@ -74,7 +74,8 @@ interface HomeState {
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
   /**
-   * 按「应用配置 id」添加一个新实例到桌面。
+   * 按「组件配置 id」添加一个新实例到桌面。
+   * 
    * 改用 id（而非 type）作为入参，是因为同一 type 可能对应多条配置
    * （如 system-function 同时对应「系统设置」与「添加」两个磁贴），
    * 只有 id 能唯一区分要创建哪一个。
@@ -307,7 +308,7 @@ export const useHomeStore = create<HomeState>()(
       partialize: (state) => ({
         ...state
       }),
-      // 每次从本地存储恢复时，确保系统内置应用（SYSTEM_WIDGET_CONFIG）存在：
+      // 每次从本地存储恢复时，确保系统内置组件（SYSTEM_WIDGET_CONFIG）存在：
       // 缺失则追加，已存在则保留用户配置。放在 merge 而非 initializer，
       // 是因为 persist 会用持久化数据整体覆盖 initializer 的结果。
       merge: (persisted, current) => {
