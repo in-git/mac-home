@@ -118,6 +118,7 @@ export const WIDGET_CONFIG: Array<WidgetItem> = [
     id: 'cfg-clock',
     component: 'clock',
     title: '时钟日历',
+    
     maxInstances: 1,
     data: {
       color: 'var(--accent)',

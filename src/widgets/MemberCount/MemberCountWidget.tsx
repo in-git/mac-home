@@ -19,12 +19,12 @@ const STAT_ITEMS: StatItem[] = [
   {
     label: '月访客',
     icon: Calendar,
-    getValue: (_online, overview) => (overview ? overview.monthUv : null),
+    getValue: (_online, overview) => (overview ? overview.monthPv : null),
   },
   {
     label: '周访客',
     icon: TrendingUp,
-    getValue: (_online, overview) => (overview ? overview.weekUv : null),
+    getValue: (_online, overview) => (overview ? overview.weekPv : null),
   },
   {
     label: '当日访客',

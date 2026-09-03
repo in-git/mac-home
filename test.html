@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>逃离古宅 - 一克游戏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', Courier, monospace; user-select: none; }
+        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+         
+        /* 恐怖氛围特效 */
+        .vignette {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 50%, black 100%);
+            pointer-events: none; z-index: 10;
+            transition: background 0.5s ease;
+        }
+        .static-noise {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2cpIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=');
+            opacity: 0.05; pointer-events: none; z-index: 11; mix-blend-mode: overlay;
+        }
+        .blood-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 60%, rgba(100, 0, 0, 0.8) 100%);
+            opacity: 0; pointer-events: none; z-index: 12; transition: opacity 0.3s;
+        }
+ 
+        /* UI 样式 */
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; box-sizing: border-box; }
+        .hud-text { color: #e0e0e0; text-shadow: 0 0 5px #ff0000; letter-spacing: 1px; }
+        .sanity-bar-container { width: 300px; height: 10px; background: #333; border: 1px solid #555; margin-top: 5px; position: relative; overflow: hidden; }
+        .sanity-bar { height: 100%; background: linear-gradient(90deg, #ff0000, #800000); width: 100%; transition: width 0.2s; box-shadow: 0 0 10px #ff0000; }
+         
+        #crosshair {
+            position: absolute; top: 50%; left: 50%; width: 6px; height: 6px;
+            background: rgba(255, 255, 255, 0.5); border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: difference;
+        }
+ 
+        /* 菜单屏幕 */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 30; pointer-events: auto;
+            transition: opacity 0.5s;
+        }
+        .hidden { opacity: 0; pointer-events: none; }
+        .title-glitch {
+            font-size: 4rem; font-weight: bold; color: #ff0000;
+            text-transform: uppercase; position: relative;
+            animation: glitch 2s infinite;
+        }
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 #00ffea, -2px 0 #ff00c1; }
+            25% { text-shadow: -2px 0 #00ffea, 2px 0 #ff00c1; }
+            50% { text-shadow: 2px 0 #00ffea, -2px 0 #ff00c1; }
+            75% { text-shadow: -2px 0 #00ffea, 2px 0 #ff00c1; }
+            100% { text-shadow: 2px 0 #00ffea, -2px 0 #ff00c1; }
+        }
+        .btn-start {
+            margin-top: 40px; padding: 15px 40px; font-size: 1.5rem;
+            background: transparent; color: #fff; border: 2px solid #ff0000;
+            cursor: pointer; transition: all 0.3s; font-family: inherit;
+        }
+        .btn-start:hover { background: #ff0000; color: #000; box-shadow: 0 0 20px #ff0000; }
+         
+        #interaction-msg {
+            position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
+            color: #ffff00; font-size: 1.2rem; text-shadow: 0 0 5px #000;
+            opacity: 0; transition: opacity 0.3s;
+        }
+         
+        /* 音频控制按钮 */
+        #audio-control {
+            position: absolute; top: 20px; right: 20px; z-index: 40;
+            background: rgba(0,0,0,0.5); border: 1px solid #555; color: #fff;
+            padding: 5px 10px; cursor: pointer; font-family: inherit;
+        }
+        #audio-control:hover { background: #333; border-color: #fff; }
+    </style>
+</head>
+<body>
+ 
+    <div id="game-container"></div>
+     
+    <!-- 视觉特效层 -->
+    <div class="vignette" id="vignette"></div>
+    <div class="static-noise"></div>
+    <div class="blood-overlay" id="blood-overlay"></div>
+    <div id="crosshair"></div>
+ 
+    <!-- UI 层 -->
+    <div id="ui-layer">
+        <div class="flex justify-between items-start w-full">
+            <div>
+                <div class="hud-text text-xl font-bold">SANITY (理智)</div>
+                <div class="sanity-bar-container">
+                    <div id="sanity-bar" class="sanity-bar"></div>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="hud-text text-xl font-bold">KEYS</div>
+                <div id="keys-display" class="text-3xl text-yellow-500 font-bold">0 / 3</div>
+            </div>
+        </div>
+        <div id="interaction-msg">按 E 交互</div>
+        <div class="text-center hud-text text-xs opacity-50 mb-2">
+            WASD 移动 | SHIFT 奔跑 | E 交互 | ESC 暂停
+        </div>
+    </div>
+     
+    <button id="audio-control" onclick="toggleAudio()">🔊 音效: 开</button>
+ 
+    <!-- 开始屏幕 -->
+    <div id="start-screen" class="screen">
+        <h1 class="title-glitch">逃离古宅 一克游戏</h1>
+        <p class="text-gray-400 mt-4 max-w-md text-center leading-relaxed">
+            你被困在了一座被诅咒的古宅中。<br>
+            黑暗中有东西在注视着你。<br>
+            找到3把钥匙，打开大门逃离这里。<br>
+            <span class="text-red-500 text-sm mt-2 block">警告：建议佩戴耳机体验。</span>
+        </p>
+        <button id="start-btn" class="btn-start">进入黑暗</button>
+    </div>
+ 
+    <!-- 死亡屏幕 -->
+    <div id="death-screen" class="screen hidden">
+        <h1 class="text-6xl font-bold text-red-700 mb-4" style="font-family: serif;">YOU DIED</h1>
+        <p id="death-reason" class="text-gray-400 mb-8">黑暗吞噬了你的灵魂...</p>
+        <button onclick="location.reload()" class="btn-start">重试</button>
+    </div>
+ 
+    <!-- 胜利屏幕 -->
+    <div id="win-screen" class="screen hidden">
+        <h1 class="text-6xl font-bold text-green-600 mb-4">ESCAPED</h1>
+        <p class="text-gray-400 mb-8">你成功逃出了古宅！阳光刺痛了双眼。</p>
+        <button onclick="location.reload()" class="btn-start">再玩一次</button>
+    </div>
+ 
+    <script>
+        // --- 音频系统 (Web Audio API) ---
+        let audioCtx;
+        let bgmOscillators = [];
+        let isMuted = false;
+        let heartbeatInterval;
+ 
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+ 
+        // 生成恐怖环境音 (低频 drones)
+        function playAmbientDrone() {
+            if (isMuted || !audioCtx) return;
+             
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+             
+            osc1.type = 'sawtooth';
+            osc1.frequency.value = 50; // 低频
+             
+            osc2.type = 'sine';
+            osc2.frequency.value = 52; // 轻微失谐产生拍频
+             
+            gainNode.gain.value = 0.05;
+             
+            osc1.connect(gainNode);
+            osc2.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+             
+            osc1.start();
+            osc2.start();
+             
+            bgmOscillators.push(osc1, osc2);
+             
+            // 动态变化
+            setInterval(() => {
+                if(isMuted) return;
+                osc1.frequency.rampToValueAtTime(40 + Math.random() * 20, audioCtx.currentTime + 2);
+            }, 3000);
+        }
+ 
+        // 心跳声 (随理智降低加快)
+        function playHeartbeat(rate) {
+            if (isMuted || !audioCtx) return;
+             
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+             
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(60, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+             
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+             
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+             
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+ 
+        // 拾取物品音效
+        function playPickupSound() {
+            if (isMuted || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+ 
+        // 惊吓音效
+        function playJumpscareSound() {
+            if (isMuted || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+ 
+        function toggleAudio() {
+            isMuted = !isMuted;
+            document.getElementById('audio-control').innerText = isMuted ? "🔇 音效: 关" : "🔊 音效: 开";
+            if (isMuted) {
+                bgmOscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
+                bgmOscillators = [];
+                clearInterval(heartbeatInterval);
+            } else {
+                initAudio();
+                playAmbientDrone();
+                startHeartbeatLoop();
+            }
+        }
+ 
+        function startHeartbeatLoop() {
+            if (heartbeatInterval) clearInterval(heartbeatInterval);
+            heartbeatInterval = setInterval(() => {
+                if (STATE.sanity < 50) {
+                    playHeartbeat();
+                    if (STATE.sanity < 20 && Math.random() > 0.5) setTimeout(playHeartbeat, 150); // 双跳
+                }
+            }, STATE.sanity < 30 ? 600 : 1000);
+        }
+ 
+ 
+        // --- 游戏配置 ---
+        const CONFIG = {
+            walkSpeed: 8.0,
+            runSpeed: 14.0,
+            sanityDrainNormal: 0.5, 
+            sanityDrainDanger: 5.0, 
+            enemySpeed: 4.5,
+            enemyAggroRange: 20,
+            enemyKillRange: 2.0,
+        };
+ 
+        const STATE = {
+            isPlaying: false,
+            keysCollected: 0,
+            totalKeys: 3,
+            sanity: 100,
+            isRunning: false,
+            gameOver: false
+        };
+ 
+        // --- Three.js 全局变量 ---
+        let scene, camera, renderer, controls;
+        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+        let velocity = new THREE.Vector3();
+        let direction = new THREE.Vector3();
+        let prevTime = performance.now();
+        let raycaster;
+         
+        let walls = [];
+        let keys = [];
+        let exitDoor = null;
+        let enemy = null;
+        let flashlight, ambientLight;
+        let interactables = [];
+ 
+        // --- 初始化 ---
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x020202);
+            scene.fog = new THREE.FogExp2(0x000000, 0.04); 
+ 
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.y = 1.6;
+ 
+            renderer = new THREE.WebGLRenderer({ antialias: false }); 
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.BasicShadowMap; 
+            document.getElementById('game-container').appendChild(renderer.domElement);
+ 
+            controls = new THREE.PointerLockControls(camera, document.body);
+ 
+            ambientLight = new THREE.AmbientLight(0x111111); 
+            scene.add(ambientLight);
+ 
+            flashlight = new THREE.SpotLight(0xffffee, 1.2, 35, Math.PI / 5, 0.6, 1.5);
+            flashlight.position.set(0.2, -0.2, 0); 
+            flashlight.castShadow = true;
+            flashlight.shadow.mapSize.width = 1024;
+            flashlight.shadow.mapSize.height = 1024;
+            camera.add(flashlight);
+            flashlight.target.position.set(0, 0, -1);
+            camera.add(flashlight.target);
+            scene.add(camera);
+ 
+            raycaster = new THREE.Raycaster();
+ 
+            buildLevel();
+            createEnemy();
+            setupInputs();
+             
+            document.getElementById('start-btn').addEventListener('click', () => {
+                initAudio(); // 用户交互后初始化音频
+                playAmbientDrone();
+                startHeartbeatLoop();
+                controls.lock();
+            });
+ 
+            controls.addEventListener('lock', () => {
+                STATE.isPlaying = true;
+                document.getElementById('start-screen').classList.add('hidden');
+            });
+ 
+            controls.addEventListener('unlock', () => {
+                // Pause logic if needed
+            });
+ 
+            window.addEventListener('resize', onWindowResize);
+             
+            animate();
+        }
+ 
+        // --- 关卡生成 ---
+        function buildLevel() {
+            const mapSize = 5;
+            const levelMap = [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,9,0,0,1,0,0,0,0,0,1,2,0,0,0,0,0,0,0,1],
+                [1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,0,1,1,0,1],
+                [1,0,1,0,0,0,1,2,0,0,0,0,0,0,1,0,1,0,0,1],
+                [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1,1],
+                [1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1],
+                [1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,0,1],
+                [1,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+                [1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1],
+                [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,1],
+                [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
+                [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1],
+                [1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1],
+                [1,0,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1],
+                [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1],
+                [1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1],
+                [1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,3,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ];
+ 
+            const wallGeo = new THREE.BoxGeometry(mapSize, 4, mapSize);
+            const wallMat = new THREE.MeshStandardMaterial({ 
+                color: 0x222222, 
+                roughness: 0.9,
+                metalness: 0.1
+            });
+             
+            const floorGeo = new THREE.PlaneGeometry(100, 100);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.8 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+ 
+            const ceilGeo = new THREE.PlaneGeometry(100, 100);
+            const ceilMat = new THREE.MeshStandardMaterial({ color: 0x050505 });
+            const ceiling = new THREE.Mesh(ceilGeo, ceilMat);
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.position.y = 4;
+            scene.add(ceiling);
+ 
+            for(let z=0; z<levelMap.length; z++) {
+                for(let x=0; x<levelMap[z].length; x++) {
+                    const type = levelMap[z][x];
+                    const posX = (x - levelMap.length/2) * mapSize;
+                    const posZ = (z - levelMap.length/2) * mapSize;
+ 
+                    if (type === 1) {
+                        const wall = new THREE.Mesh(wallGeo, wallMat);
+                        wall.position.set(posX, 2, posZ);
+                        wall.castShadow = true;
+                        wall.receiveShadow = true;
+                        scene.add(wall);
+                        walls.push(new THREE.Box3().setFromObject(wall));
+                    } else if (type === 2) {
+                        createKey(posX, posZ);
+                    } else if (type === 3) {
+                        createExit(posX, posZ);
+                    } else if (type === 9) {
+                        camera.position.set(posX, 1.6, posZ);
+                    }
+                }
+            }
+        }
+ 
+        function createKey(x, z) {
+            const geo = new THREE.DodecahedronGeometry(0.25);
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: 0xffd700, 
+                emissive: 0xaa4400, 
+                emissiveIntensity: 0.8 
+            });
+            const key = new THREE.Mesh(geo, mat);
+            key.position.set(x, 1, z);
+             
+            const light = new THREE.PointLight(0xffaa00, 0.8, 4);
+            key.add(light);
+             
+            scene.add(key);
+            keys.push({ mesh: key, collected: false });
+            interactables.push({ type: 'key', obj: key, range: 2.5 });
+        }
+ 
+        function createExit(x, z) {
+            const geo = new THREE.BoxGeometry(4, 4, 0.2);
+            const mat = new THREE.MeshStandardMaterial({ color: 0x330000 });
+            exitDoor = new THREE.Mesh(geo, mat);
+            exitDoor.position.set(x, 2, z);
+            scene.add(exitDoor);
+            interactables.push({ type: 'door', obj: exitDoor, range: 3 });
+        }
+ 
+        function createEnemy() {
+            const group = new THREE.Group();
+             
+            const bodyGeo = new THREE.CylinderGeometry(0.3, 0.1, 1.8, 8);
+            const bodyMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 0.9;
+            group.add(body);
+ 
+            const headGeo = new THREE.SphereGeometry(0.4, 8, 8);
+            const head = new THREE.Mesh(headGeo, bodyMat);
+            head.position.y = 1.9;
+            head.scale.set(1, 1.2, 0.8);
+            group.add(head);
+ 
+            const eyeGeo = new THREE.SphereGeometry(0.05);
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+            leftEye.position.set(-0.15, 2.0, 0.35);
+            const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+            rightEye.position.set(0.15, 2.0, 0.35);
+            group.add(leftEye);
+            group.add(rightEye);
+ 
+            const light = new THREE.PointLight(0xff0000, 1, 8);
+            light.position.set(0, 2, 0);
+            group.add(light);
+ 
+            group.position.set(25, 0, 25);
+            scene.add(group);
+            enemy = { mesh: group, active: true };
+        }
+ 
+        // --- 输入处理 ---
+        function setupInputs() {
+            document.addEventListener('keydown', (event) => {
+                switch (event.code) {
+                    case 'ArrowUp': case 'KeyW': moveForward = true; break;
+                    case 'ArrowLeft': case 'KeyA': moveLeft = true; break;
+                    case 'ArrowDown': case 'KeyS': moveBackward = true; break;
+                    case 'ArrowRight': case 'KeyD': moveRight = true; break;
+                    case 'ShiftLeft': STATE.isRunning = true; break;
+                    case 'KeyE': tryInteract(); break;
+                }
+            });
+ 
+            document.addEventListener('keyup', (event) => {
+                switch (event.code) {
+                    case 'ArrowUp': case 'KeyW': moveForward = false; break;
+                    case 'ArrowLeft': case 'KeyA': moveLeft = false; break;
+                    case 'ArrowDown': case 'KeyS': moveBackward = false; break;
+                    case 'ArrowRight': case 'KeyD': moveRight = false; break;
+                    case 'ShiftLeft': STATE.isRunning = false; break;
+                }
+            });
+        }
+ 
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+ 
+        // --- 游戏逻辑 ---
+        function tryInteract() {
+            if (!STATE.isPlaying || STATE.gameOver) return;
+ 
+            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+            const meshes = interactables.map(i => i.obj);
+            const intersects = raycaster.intersectObjects(meshes, true); 
+ 
+            if (intersects.length > 0) {
+                const hit = intersects; // Fix: take first intersect
+                if (hit.distance < 3) {
+                    let targetObj = hit.object;
+                    while(targetObj.parent && !interactables.find(i => i.obj === targetObj)) {
+                        targetObj = targetObj.parent;
+                    }
+                     
+                    const item = interactables.find(i => i.obj === targetObj);
+                    if (item) {
+                        if (item.type === 'key') collectKey(item);
+                        else if (item.type === 'door') tryEscape();
+                    }
+                }
+            }
+        }
+ 
+        function collectKey(item) {
+            if (item.collected) return;
+            item.collected = true;
+            scene.remove(item.obj);
+            interactables = interactables.filter(i => i !== item);
+             
+            STATE.keysCollected++;
+            updateHUD();
+            showInteractionMsg(`获得钥匙 (${STATE.keysCollected}/${STATE.totalKeys})`);
+            playPickupSound();
+             
+            if(enemy && enemy.active) {
+                const dir = new THREE.Vector3().subVectors(camera.position, enemy.mesh.position).normalize();
+                enemy.mesh.position.add(dir.multiplyScalar(5));
+            }
+        }
+ 
+        function tryEscape() {
+            if (STATE.keysCollected >= STATE.totalKeys) {
+                endGame(true);
+            } else {
+                showInteractionMsg(`门锁住了。还需要 ${STATE.totalKeys - STATE.keysCollected} 把钥匙。`);
+            }
+        }
+ 
+        function showInteractionMsg(text) {
+            const el = document.getElementById('interaction-msg');
+            el.innerText = text;
+            el.style.opacity = 1;
+            setTimeout(() => { el.style.opacity = 0; }, 2000);
+        }
+ 
+        function updateHUD() {
+            document.getElementById('keys-display').innerText = `${STATE.keysCollected} / ${STATE.totalKeys}`;
+            document.getElementById('sanity-bar').style.width = `${STATE.sanity}%`;
+             
+            const vignette = document.getElementById('vignette');
+            if (STATE.sanity < 40) {
+                vignette.style.background = `radial-gradient(circle, transparent 30%, rgba(50,0,0,0.9) 100%)`;
+                if (Math.random() > 0.9) camera.position.y = 1.6 + (Math.random() - 0.5) * 0.05;
+            } else {
+                vignette.style.background = `radial-gradient(circle, transparent 50%, black 100%)`;
+            }
+        }
+ 
+        function checkCollision(newPos) {
+            const playerBox = new THREE.Box3();
+            playerBox.setFromCenterAndSize(newPos, new THREE.Vector3(0.5, 1.6, 0.5));
+            for (const wallBox of walls) {
+                if (playerBox.intersectsBox(wallBox)) return true;
+            }
+            return false;
+        }
+ 
+        function updateEnemyLogic(delta) {
+            if (!enemy || !enemy.active) return;
+ 
+            const dist = enemy.mesh.position.distanceTo(camera.position);
+             
+            if (dist < CONFIG.enemyAggroRange) {
+                enemy.mesh.lookAt(camera.position.x, 0.9, camera.position.z);
+                 
+                const dir = new THREE.Vector3().subVectors(camera.position, enemy.mesh.position).normalize();
+                dir.y = 0;
+                const moveDist = CONFIG.enemySpeed * delta;
+                const nextPos = enemy.mesh.position.clone().add(dir.multiplyScalar(moveDist));
+                 
+                enemy.mesh.position.copy(nextPos);
+ 
+                if (dist < CONFIG.enemyKillRange) {
+                    playJumpscareSound();
+                    takeDamage(100, "被黑暗实体捕获");
+                }
+ 
+                if (dist < 8) {
+                    STATE.sanity -= CONFIG.sanityDrainDanger * delta;
+                    document.getElementById('blood-overlay').style.opacity = (8 - dist) / 8 * 0.6;
+                } else {
+                    document.getElementById('blood-overlay').style.opacity = 0;
+                }
+            } else {
+                 document.getElementById('blood-overlay').style.opacity = 0;
+            }
+        }
+ 
+        function takeDamage(amount, reason) {
+            STATE.sanity -= amount;
+            if (STATE.sanity <= 0) {
+                STATE.sanity = 0;
+                endGame(false, reason);
+            }
+            updateHUD();
+        }
+ 
+        function endGame(win, reason) {
+            STATE.gameOver = true;
+            STATE.isPlaying = false;
+            controls.unlock();
+             
+            // Stop audio
+            if(heartbeatInterval) clearInterval(heartbeatInterval);
+            bgmOscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
+             
+            document.getElementById('ui-layer').classList.add('hidden');
+            if (win) {
+                document.getElementById('win-screen').classList.remove('hidden');
+            } else {
+                document.getElementById('death-reason').innerText = reason || "理智耗尽";
+                document.getElementById('death-screen').classList.remove('hidden');
+            }
+        }
+ 
+        // --- 主循环 ---
+        function animate() {
+            requestAnimationFrame(animate);
+ 
+            const time = performance.now();
+            const delta = (time - prevTime) / 1000;
+            prevTime = time;
+ 
+            if (STATE.isPlaying && !STATE.gameOver) {
+                velocity.x -= velocity.x * 10.0 * delta;
+                velocity.z -= velocity.z * 10.0 * delta;
+ 
+                direction.z = Number(moveForward) - Number(moveBackward);
+                direction.x = Number(moveRight) - Number(moveLeft);
+                direction.normalize();
+ 
+                const speed = STATE.isRunning ? CONFIG.runSpeed : CONFIG.walkSpeed;
+                if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
+                if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+ 
+                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                forward.y = 0; forward.normalize();
+                const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+                right.y = 0; right.normalize();
+ 
+                const moveVec = new THREE.Vector3();
+                moveVec.add(forward.multiplyScalar(-velocity.z * delta * 0.05));
+                moveVec.add(right.multiplyScalar(velocity.x * delta * 0.05));
+ 
+                const nextPos = camera.position.clone().add(moveVec);
+                nextPos.y = 1.6;
+ 
+                if (!checkCollision(nextPos)) {
+                    controls.moveRight(-velocity.x * delta * 0.05);
+                    controls.moveForward(-velocity.z * delta * 0.05);
+                     if (checkCollision(camera.position)) {
+                         controls.moveForward(velocity.z * delta * 0.05);
+                         controls.moveRight(-velocity.x * delta * 0.05);
+                     }
+                } else {
+                     controls.moveForward(velocity.z * delta * 0.05);
+                     controls.moveRight(-velocity.x * delta * 0.05);
+                }
+ 
+                raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+                const intersects = raycaster.intersectObjects(interactables.map(i => i.obj), true);
+                const msgEl = document.getElementById('interaction-msg');
+                 
+                let canInteract = false;
+                if (intersects.length > 0 && intersects.distance < 3) {
+                    let obj = intersects.object;
+                    while(obj.parent && !interactables.find(i => i.obj === obj)) obj = obj.parent;
+                    const item = interactables.find(i => i.obj === obj);
+                    if (item) {
+                        canInteract = true;
+                        if (item.type === 'key') msgEl.innerText = "按 E 拾取钥匙";
+                        if (item.type === 'door') msgEl.innerText = STATE.keysCollected >= STATE.totalKeys ? "按 E 逃脱" : "需要更多钥匙";
+                    }
+                }
+                msgEl.style.opacity = canInteract ? 1 : 0;
+ 
+                updateEnemyLogic(delta);
+ 
+                STATE.sanity -= CONFIG.sanityDrainNormal * delta;
+                if (STATE.sanity <= 0) takeDamage(0, "在黑暗中迷失自我");
+                updateHUD();
+ 
+                keys.forEach(k => {
+                    if (!k.collected) {
+                        k.mesh.rotation.y += delta * 2;
+                        k.mesh.position.y = 1 + Math.sin(time * 0.005) * 0.1;
+                    }
+                });
+                 
+                if (Math.random() > 0.98) {
+                    flashlight.intensity = 0.5 + Math.random();
+                } else {
+                    flashlight.intensity = 1.2;
+                }
+            }
+ 
+            renderer.render(scene, camera);
+        }
+ 
+        init();
+    </script>
+</body>
+</html>
