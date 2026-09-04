@@ -59,7 +59,6 @@ export const HELP_MENU_DIALOG: RoleDialogConfig = {
         {
           label: '这个页面是干什么的',
           onClick() {
-            
             dispatchPetDialog({
               mode: 'base',
               text: '这是一个专门收录奇奇怪怪的网页的网页～',
@@ -77,7 +76,24 @@ export const HELP_MENU_DIALOG: RoleDialogConfig = {
             });
           }
         },
-        
+        {
+          label: '我需要更多奇怪的网页',
+          onClick() {
+            closeRoleDialog();
+            window.dispatchEvent(
+              new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'addWidget' } }),
+            );
+          }
+        },
+        {
+          label: '我需要设置壁纸',
+          onClick() {
+            closeRoleDialog();
+            window.dispatchEvent(
+              new CustomEvent(ROLE_DIALOG_ACTION_EVENT, { detail: { modal: 'wallpaper' } }),
+            );
+          }
+        }
       ],
     },
   ],

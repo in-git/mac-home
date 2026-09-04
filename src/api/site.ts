@@ -16,23 +16,35 @@ export interface SiteIdentity {
 }
 
 export interface SiteItem {
+  // 数据库的ID
   id?: string;
+  // 应用名称
   name: string;
+  // 网页的logo
   logo?: string;
+  // 应用的描述
   des?: string;
-  link: string;
+  // 应用的链接
+  link?: string;
+  // 应用的点击数量
   count?: number;
-  visible?: boolean;
+  // 是否为推荐
   recommend?: boolean;
+  // 应用的背景颜色
   background?: string;
+  // 应用的封面图片
   cover?: string;
+  // 应用的关键词
   keyword?: string;
+  // 应用的排序号
   orderNum?: number;
-  screenshot?: string;
+  // 应用所属的模块
   module?: string;
   /** 是否显示在系统应用中：网页应用（web-app）为 false，其余为 true。 */
   showInSystem?: boolean;
+  // 应用的创建时间
   createTime?: string;
+  // 应用所属的分类列表
   categoryList?: SiteCategory[];
 }
 

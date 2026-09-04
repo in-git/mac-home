@@ -1,0 +1,830 @@
+{
+  "version": "1.0.0",
+  "systemName": "OriginOS Desktop",
+  "lastUpdated": "2026-09-04T19:24:00Z",
+  "gridConfig": {
+    "cols": 96,
+    "rowHeight": 11,
+    "margin": [
+      1,
+      1
+    ]
+  },
+  "items": [
+    {
+      "id": "item-atomic-clock",
+      "name": "原子通知",
+      "title": "原子通知",
+      "type": "widget-clock",
+      "layout": {
+        "i": "item-atomic-clock",
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 7
+      },
+      "widgetData": {
+        "time": "19:24",
+        "date": "09/4",
+        "dayOfWeek": "周五",
+        "location": "黄埔区",
+        "temperature": "26°C",
+        "tag": "原子通知"
+      }
+    },
+    {
+      "id": "item-entertainment",
+      "name": "影音娱乐",
+      "title": "影音娱乐",
+      "type": "folder-large",
+      "layout": {
+        "i": "item-entertainment",
+        "x": 48,
+        "y": 0,
+        "w": 32,
+        "h": 13
+      },
+      "subApps": [
+        {
+          "id": "douyin",
+          "name": "抖音",
+          "logo": "douyin",
+          "symbol": "♪",
+          "color": "#000000"
+        },
+        {
+          "id": "kuaishou",
+          "name": "快手",
+          "symbol": "◎",
+          "color": "#FF5722"
+        },
+        {
+          "id": "telegram",
+          "name": "电报",
+          "symbol": "✈",
+          "color": "#2AABEE"
+        },
+        {
+          "id": "xhs",
+          "name": "小红书",
+          "symbol": "书",
+          "color": "#FF2442"
+        },
+        {
+          "id": "toutiao",
+          "name": "头条",
+          "symbol": "条",
+          "color": "#F85959"
+        },
+        {
+          "id": "duanju",
+          "name": "免费看短剧",
+          "symbol": "▶",
+          "color": "#FF9800"
+        },
+        {
+          "id": "zhihu",
+          "name": "知乎",
+          "symbol": "知",
+          "color": "#0066FF"
+        },
+        {
+          "id": "baidu",
+          "name": "百度",
+          "symbol": "du",
+          "color": "#2932E1"
+        },
+        {
+          "id": "tools-other",
+          "name": "其他",
+          "symbol": "✣",
+          "color": "#4CAF50"
+        },
+        {
+          "id": "net-music",
+          "name": "网易云",
+          "symbol": "♫",
+          "color": "#E53935"
+        },
+        {
+          "id": "iqiyi",
+          "name": "爱奇艺",
+          "symbol": "爱",
+          "color": "#00C853"
+        }
+      ]
+    },
+    {
+      "id": "item-xiaomi",
+      "name": "小米",
+      "title": "小米",
+      "type": "folder-vertical",
+      "layout": {
+        "i": "item-xiaomi",
+        "x": 80,
+        "y": 0,
+        "w": 16,
+        "h": 13
+      },
+      "subApps": [
+        {
+          "id": "mi-home",
+          "name": "米家",
+          "symbol": "MI",
+          "color": "#00C853"
+        },
+        {
+          "id": "mi-fit",
+          "name": "小米运动",
+          "symbol": "♥",
+          "color": "#FF3D00"
+        },
+        {
+          "id": "mi-earbuds",
+          "name": "耳机",
+          "symbol": "🎧",
+          "color": "#212121"
+        }
+      ]
+    },
+    {
+      "id": "item-tools-large",
+      "name": "工具",
+      "title": "工具",
+      "type": "folder-large",
+      "layout": {
+        "i": "item-tools-large",
+        "x": 0,
+        "y": 7,
+        "w": 48,
+        "h": 13
+      },
+      "subApps": [
+        {
+          "id": "files",
+          "name": "文件",
+          "symbol": "📁",
+          "color": "#FFA000"
+        },
+        {
+          "id": "calc",
+          "name": "计算器",
+          "symbol": "+-",
+          "color": "#424242"
+        },
+        {
+          "id": "themes",
+          "name": "主题",
+          "symbol": "◐",
+          "color": "#7C4DFF"
+        },
+        {
+          "id": "contacts",
+          "name": "联系人",
+          "symbol": "👤",
+          "color": "#00C853"
+        },
+        {
+          "id": "origin-cube",
+          "name": "原子空间",
+          "symbol": "⬡",
+          "color": "#607D8B"
+        },
+        {
+          "id": "compass",
+          "name": "指南针",
+          "symbol": "🧭",
+          "color": "#ECEFF1"
+        },
+        {
+          "id": "game",
+          "name": "游戏",
+          "symbol": "🎮",
+          "color": "#37474F"
+        },
+        {
+          "id": "notes",
+          "name": "便签",
+          "symbol": "📖",
+          "color": "#FFA726"
+        },
+        {
+          "id": "calendar",
+          "name": "日历",
+          "symbol": "4",
+          "color": "#FFFFFF"
+        }
+      ]
+    },
+    {
+      "id": "item-life",
+      "name": "生活",
+      "title": "生活",
+      "type": "folder-large",
+      "layout": {
+        "i": "item-life",
+        "x": 48,
+        "y": 13,
+        "w": 32,
+        "h": 13
+      },
+      "subApps": [
+        {
+          "id": "boss",
+          "name": "BOSS直聘",
+          "symbol": "BOSS",
+          "color": "#00B4B4"
+        },
+        {
+          "id": "bmap",
+          "name": "百度地图",
+          "symbol": "du",
+          "color": "#F44336"
+        },
+        {
+          "id": "didi",
+          "name": "出行",
+          "symbol": "🚗",
+          "color": "#FF7043"
+        },
+        {
+          "id": "papago",
+          "name": "PAPAGO!",
+          "symbol": "📷",
+          "color": "#D32F2F"
+        },
+        {
+          "id": "yadi",
+          "name": "电动车",
+          "symbol": "🛡",
+          "color": "#C62828"
+        },
+        {
+          "id": "gwm",
+          "name": "长城汽车",
+          "symbol": "GWM",
+          "color": "#B71C1C"
+        },
+        {
+          "id": "promo",
+          "name": "暑假大促",
+          "symbol": "🐯",
+          "color": "#E64A19"
+        }
+      ]
+    },
+    {
+      "id": "item-camera",
+      "name": "相机",
+      "title": "相机",
+      "type": "app",
+      "layout": {
+        "i": "item-camera",
+        "x": 80,
+        "y": 13,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "camera",
+      "iconName": "camera",
+      "background": "#374151",
+      "iconColor": "#374151",
+      "des": "系统高清拍摄相机",
+      "showInSystem": true
+    },
+    {
+      "id": "item-shopping",
+      "name": "购物",
+      "title": "购物",
+      "type": "capsule",
+      "layout": {
+        "i": "item-shopping",
+        "x": 0,
+        "y": 20,
+        "w": 48,
+        "h": 7
+      },
+      "subApps": [
+        {
+          "id": "jd",
+          "name": "京东",
+          "symbol": "🐶",
+          "color": "#E53935"
+        },
+        {
+          "id": "tmall",
+          "name": "天猫",
+          "symbol": "🐱",
+          "color": "#000000"
+        },
+        {
+          "id": "taobao",
+          "name": "淘宝",
+          "symbol": "淘",
+          "color": "#FF6E40"
+        },
+        {
+          "id": "meituan",
+          "name": "美团",
+          "symbol": "美",
+          "color": "#FFD600"
+        }
+      ]
+    },
+    {
+      "id": "item-tools-capsule-green",
+      "name": "工具",
+      "title": "工具",
+      "type": "capsule",
+      "layout": {
+        "i": "item-tools-capsule-green",
+        "x": 48,
+        "y": 27,
+        "w": 32,
+        "h": 7
+      },
+      "subApps": [
+        {
+          "id": "cube",
+          "name": "魔方",
+          "symbol": "⬡",
+          "color": "#00BFA5"
+        },
+        {
+          "id": "pill",
+          "name": "健康",
+          "symbol": "💊",
+          "color": "#00E676"
+        },
+        {
+          "id": "infinity",
+          "name": "互联",
+          "symbol": "∞",
+          "color": "#651FFF"
+        }
+      ]
+    },
+    {
+      "id": "item-social",
+      "name": "社交",
+      "title": "社交",
+      "type": "folder-mini",
+      "layout": {
+        "i": "item-social",
+        "x": 80,
+        "y": 20,
+        "w": 16,
+        "h": 7
+      },
+      "subApps": [
+        {
+          "id": "soc-1",
+          "name": "微信",
+          "symbol": "💬",
+          "color": "#07C160"
+        },
+        {
+          "id": "soc-2",
+          "name": "QQ",
+          "symbol": "🐧",
+          "color": "#12B7F5"
+        },
+        {
+          "id": "soc-3",
+          "name": "微博",
+          "symbol": "👁",
+          "color": "#E6162D"
+        },
+        {
+          "id": "soc-4",
+          "name": "知乎",
+          "symbol": "知",
+          "color": "#0066FF"
+        },
+        {
+          "id": "soc-5",
+          "name": "钉钉",
+          "symbol": "⚡",
+          "color": "#007FFF"
+        },
+        {
+          "id": "soc-6",
+          "name": "贴吧",
+          "symbol": "贴",
+          "color": "#3385FF"
+        },
+        {
+          "id": "soc-7",
+          "name": "小红书",
+          "symbol": "书",
+          "color": "#FF2442"
+        },
+        {
+          "id": "soc-8",
+          "name": "电报",
+          "symbol": "✈",
+          "color": "#2AABEE"
+        },
+        {
+          "id": "soc-9",
+          "name": "社群",
+          "symbol": "✦",
+          "color": "#9C27B0"
+        },
+        {
+          "id": "soc-10",
+          "name": "探探",
+          "symbol": "探",
+          "color": "#FF5252"
+        },
+        {
+          "id": "soc-11",
+          "name": "陌陌",
+          "symbol": "陌",
+          "color": "#7C4DFF"
+        }
+      ]
+    },
+    {
+      "id": "item-affairs",
+      "name": "办事",
+      "title": "办事",
+      "type": "capsule",
+      "layout": {
+        "i": "item-affairs",
+        "x": 0,
+        "y": 27,
+        "w": 48,
+        "h": 7
+      },
+      "subApps": [
+        {
+          "id": "id-card",
+          "name": "数字身份",
+          "symbol": "身",
+          "color": "#C62828"
+        },
+        {
+          "id": "gov",
+          "name": "随申办",
+          "symbol": "🌀",
+          "color": "#1565C0"
+        },
+        {
+          "id": "health",
+          "name": "电子医保",
+          "symbol": "🛡",
+          "color": "#0277BD"
+        }
+      ]
+    },
+    {
+      "id": "item-tools-mini",
+      "name": "工具",
+      "title": "工具",
+      "type": "folder-mini",
+      "layout": {
+        "i": "item-tools-mini",
+        "x": 80,
+        "y": 27,
+        "w": 16,
+        "h": 7
+      },
+      "subApps": [
+        {
+          "id": "tool-1",
+          "name": "天气",
+          "symbol": "☀",
+          "color": "#42A5F5"
+        },
+        {
+          "id": "tool-2",
+          "name": "录音",
+          "symbol": "🎙",
+          "color": "#AB47BC"
+        },
+        {
+          "id": "tool-3",
+          "name": "闹钟",
+          "symbol": "⏰",
+          "color": "#26A69A"
+        },
+        {
+          "id": "tool-4",
+          "name": "便签",
+          "symbol": "📝",
+          "color": "#FFA726"
+        },
+        {
+          "id": "tool-5",
+          "name": "设置",
+          "symbol": "⚙",
+          "color": "#78909C"
+        },
+        {
+          "id": "tool-6",
+          "name": "指南",
+          "symbol": "🧭",
+          "color": "#8D6E63"
+        },
+        {
+          "id": "tool-7",
+          "name": "手电",
+          "symbol": "💡",
+          "color": "#FFCA28"
+        },
+        {
+          "id": "tool-8",
+          "name": "备份",
+          "symbol": "☁",
+          "color": "#29B6F6"
+        },
+        {
+          "id": "tool-9",
+          "name": "安全",
+          "symbol": "🔒",
+          "color": "#66BB6A"
+        }
+      ]
+    },
+    {
+      "id": "item-tools-capsule-dev",
+      "name": "工具",
+      "title": "工具",
+      "type": "capsule",
+      "layout": {
+        "i": "item-tools-capsule-dev",
+        "x": 0,
+        "y": 34,
+        "w": 32,
+        "h": 7
+      },
+      "subApps": [
+        {
+          "id": "pan",
+          "name": "网盘",
+          "symbol": "☁",
+          "color": "#0078D7"
+        },
+        {
+          "id": "chrome",
+          "name": "Chrome",
+          "symbol": "🌐",
+          "color": "#EA4335"
+        },
+        {
+          "id": "github",
+          "name": "GitHub",
+          "symbol": "⌥",
+          "color": "#24292E"
+        },
+        {
+          "id": "audio",
+          "name": "音频",
+          "symbol": "〰",
+          "color": "#424242"
+        }
+      ]
+    },
+    {
+      "id": "item-email",
+      "name": "电子邮件",
+      "title": "电子邮件",
+      "type": "app",
+      "layout": {
+        "i": "item-email",
+        "x": 32,
+        "y": 34,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "mail",
+      "iconName": "mail",
+      "background": "#2196F3",
+      "iconColor": "#2196F3",
+      "des": "系统邮件收发客户端",
+      "showInSystem": true
+    },
+    {
+      "id": "item-folder-vivo",
+      "name": "文件夹",
+      "title": "文件夹",
+      "type": "folder-large",
+      "layout": {
+        "i": "item-folder-vivo",
+        "x": 48,
+        "y": 34,
+        "w": 48,
+        "h": 13
+      },
+      "subApps": [
+        {
+          "id": "vivo-origami",
+          "name": "折纸",
+          "symbol": "✦",
+          "color": "#FF4081"
+        },
+        {
+          "id": "vivo-browser",
+          "name": "浏览器",
+          "symbol": "🌐",
+          "color": "#2979FF"
+        },
+        {
+          "id": "vivo-orb",
+          "name": "原子球",
+          "symbol": "🔮",
+          "color": "#7C4DFF"
+        },
+        {
+          "id": "vivo-paint",
+          "name": "美化",
+          "symbol": "🖌",
+          "color": "#FF7043"
+        },
+        {
+          "id": "vivo-wallet",
+          "name": "夏日礼",
+          "symbol": "💳",
+          "color": "#00B0FF"
+        },
+        {
+          "id": "vivo-clock",
+          "name": "时钟",
+          "symbol": "⏱",
+          "color": "#ECEFF1"
+        },
+        {
+          "id": "vivo-ifly",
+          "name": "讯飞",
+          "symbol": "iFLY",
+          "color": "#0091EA"
+        },
+        {
+          "id": "vivo-gallery",
+          "name": "相册",
+          "symbol": "🌄",
+          "color": "#43A047"
+        },
+        {
+          "id": "vivo-play",
+          "name": "应用商店",
+          "symbol": "▶",
+          "color": "#00E676"
+        }
+      ]
+    },
+    {
+      "id": "item-alipay",
+      "name": "支付宝",
+      "title": "支付宝",
+      "type": "app",
+      "layout": {
+        "i": "item-alipay",
+        "x": 0,
+        "y": 40,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "alipay",
+      "iconName": "alipay",
+      "background": "#1677FF",
+      "iconColor": "#1677FF",
+      "des": "数字生活与移动支付平台",
+      "showInSystem": true
+    },
+    {
+      "id": "item-bilibili",
+      "name": "哔哩哔哩",
+      "title": "哔哩哔哩",
+      "type": "app",
+      "layout": {
+        "i": "item-bilibili",
+        "x": 16,
+        "y": 40,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "bilibili",
+      "iconName": "bilibili",
+      "background": "#FB7299",
+      "iconColor": "#FB7299",
+      "des": "年轻人弹幕视频社区",
+      "showInSystem": true
+    },
+    {
+      "id": "item-workbuddy",
+      "name": "WorkBuddy",
+      "title": "WorkBuddy",
+      "type": "app",
+      "layout": {
+        "i": "item-workbuddy",
+        "x": 32,
+        "y": 40,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "workbuddy",
+      "iconName": "workbuddy",
+      "background": "#00C853",
+      "iconColor": "#00C853",
+      "des": "智能办公助手",
+      "showInSystem": true
+    },
+    {
+      "id": "item-qianwen",
+      "name": "千问",
+      "title": "千问",
+      "type": "app",
+      "layout": {
+        "i": "item-qianwen",
+        "x": 0,
+        "y": 47,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "qianwen",
+      "iconName": "qianwen",
+      "background": "#2F54EB",
+      "iconColor": "#2F54EB",
+      "des": "通义千问大模型",
+      "showInSystem": true
+    },
+    {
+      "id": "item-doubao",
+      "name": "豆包",
+      "title": "豆包",
+      "type": "app",
+      "layout": {
+        "i": "item-doubao",
+        "x": 16,
+        "y": 47,
+        "w": 16,
+        "h": 7
+      },
+      "logo": "doubao",
+      "iconName": "doubao",
+      "background": "#FA8C16",
+      "iconColor": "#FA8C16",
+      "des": "字节跳动AI对话助手",
+      "showInSystem": true
+    }
+  ],
+  "dockItems": [
+    {
+      "id": "dock-phone",
+      "name": "电话",
+      "logo": "phone",
+      "iconName": "phone",
+      "background": "#4CAF50",
+      "iconColor": "#4CAF50",
+      "symbol": "📞",
+      "des": "系统通讯",
+      "showInSystem": true
+    },
+    {
+      "id": "dock-wechat",
+      "name": "微信",
+      "logo": "wechat",
+      "iconName": "wechat",
+      "background": "#07C160",
+      "iconColor": "#07C160",
+      "symbol": "💬",
+      "des": "即时通讯",
+      "showInSystem": true
+    },
+    {
+      "id": "dock-qq",
+      "name": "QQ",
+      "logo": "qq",
+      "iconName": "qq",
+      "background": "#12B7F5",
+      "iconColor": "#12B7F5",
+      "symbol": "🐧",
+      "des": "腾讯QQ",
+      "showInSystem": true
+    },
+    {
+      "id": "dock-douyin",
+      "name": "抖音",
+      "logo": "douyin",
+      "iconName": "douyin",
+      "background": "#000000",
+      "iconColor": "#000000",
+      "symbol": "♪",
+      "des": "短视频记录美好生活",
+      "showInSystem": true
+    },
+    {
+      "id": "dock-wps",
+      "name": "WPS",
+      "logo": "wps",
+      "iconName": "wps",
+      "background": "#FF5722",
+      "iconColor": "#FF5722",
+      "symbol": "W",
+      "des": "移动办公套件",
+      "showInSystem": true
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "OriginOS Mobile Launcher",
+  "description": "Mobile-only desktop launcher with draggable grid layout, JSON-driven apps, gray icon placeholders, and long-press edit mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
