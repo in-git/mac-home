@@ -45,8 +45,8 @@ export const FolderCard: React.FC<FolderCardProps> = ({
 
       // 2. JS 获取内部的 icon 大小
       const iconEl = container.querySelector('.folder-subapp-icon') as HTMLElement;
-      let iconW = 32;
-      let iconH = 32;
+      let iconW = 36;
+      let iconH = 36;
 
       if (iconEl) {
         const iconRect = iconEl.getBoundingClientRect();
@@ -56,11 +56,11 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         }
       } else {
         if (item.type === 'folder-mini') {
-          iconW = 10;
-          iconH = 10;
+          iconW = 12;
+          iconH = 12;
         } else if (item.type === 'folder-vertical') {
-          iconW = 36;
-          iconH = 36;
+          iconW = 40;
+          iconH = 40;
         }
       }
 
@@ -136,12 +136,12 @@ export const FolderCard: React.FC<FolderCardProps> = ({
   };
 
   // Render a mini app icon inside folder preview
-  const renderMiniApp = (sub: SubApp, sizeClass = 'w-8 h-8') => {
+  const renderMiniApp = (sub: SubApp, sizeClass = 'w-9 h-9') => {
     if (grayMode) {
       return (
         <div
           key={sub.id}
-          className={`folder-subapp-icon ${sizeClass} rounded-[8px] bg-neutral-700/80 border border-neutral-600/50 flex items-center justify-center text-[10px] font-medium text-neutral-300 shadow-xs select-none shrink-0`}
+          className={`folder-subapp-icon ${sizeClass} rounded-[10px] bg-neutral-700/80 border border-neutral-600/50 flex items-center justify-center text-[11px] font-medium text-neutral-300 shadow-xs select-none shrink-0`}
           title={sub.name}
         >
           {sub.symbol || sub.name.slice(0, 1)}
@@ -154,7 +154,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
       <div
         key={sub.id}
         style={{ backgroundColor: sub.color || '#4b5563' }}
-        className={`folder-subapp-icon ${sizeClass} rounded-[8px] flex items-center justify-center text-[10px] font-bold text-white shadow-xs select-none border border-white/10 shrink-0`}
+        className={`folder-subapp-icon ${sizeClass} rounded-[10px] flex items-center justify-center text-[11px] font-bold text-white shadow-xs select-none border border-white/10 shrink-0`}
         title={sub.name}
       >
         {sub.symbol || sub.name.slice(0, 1)}
@@ -192,7 +192,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
                 <span
                   key={sub.id}
                   style={!grayMode && sub.color ? { backgroundColor: sub.color } : {}}
-                  className={`folder-subapp-icon w-2.5 h-2.5 rounded-[3px] flex items-center justify-center text-[6px] font-bold text-white leading-none shrink-0 ${
+                  className={`folder-subapp-icon w-3 h-3 rounded-[4px] flex items-center justify-center text-[7px] font-bold text-white leading-none shrink-0 ${
                     grayMode ? 'bg-neutral-600' : ''
                   }`}
                 >
@@ -233,7 +233,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
 
           {visibleApps.map((sub) => (
             <div key={sub.id} className="flex flex-col items-center shrink-0">
-              {renderMiniApp(sub, 'w-8 h-8')}
+              {renderMiniApp(sub, 'w-9 h-9')}
             </div>
           ))}
         </div>
@@ -269,7 +269,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
 
             {visibleApps.map((sub) => (
               <div key={sub.id} className="flex flex-col items-center shrink-0">
-                {renderMiniApp(sub, 'w-9 h-9')}
+                {renderMiniApp(sub, 'w-10 h-10')}
               </div>
             ))}
           </div>
@@ -309,7 +309,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         >
           {visibleApps.map((sub) => (
             <div key={sub.id} className="flex flex-col items-center justify-center shrink-0">
-              {renderMiniApp(sub, 'w-8 h-8')}
+              {renderMiniApp(sub, 'w-9 h-9')}
             </div>
           ))}
         </div>

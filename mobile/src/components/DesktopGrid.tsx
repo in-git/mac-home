@@ -38,6 +38,13 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  // In edit mode, resize handles are hidden until the user taps a card to select it
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Clear selection whenever edit mode is exited
+  useEffect(() => {
+    if (!isEditMode) setSelectedId(null);
+  }, [isEditMode]);
 
   // ResizeObserver for dynamic mobile container width
   useEffect(() => {
@@ -62,8 +69,10 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
   };
 
   // Long press handler: empty area -> edit mode; on item -> context menu
+  // Disabled entirely while already in edit mode (dragging/resizing owns the gesture)
   const startLongPress = useCallback(
     (clientX: number, clientY: number, target: EventTarget | null) => {
+      if (isEditMode) return;
       if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = setTimeout(() => {
         const pressedItem = findItemFromTarget(target);
@@ -77,7 +86,7 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
         }
       }, 450);
     },
-    [items, setIsEditMode],
+    [items, setIsEditMode, isEditMode],
   );
 
   const cancelLongPress = useCallback(() => {
@@ -90,6 +99,23 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
 
   // Close context menu
   const closeContextMenu = () => setContextMenu(null);
+
+  // Edit-mode tap selection. On touch devices DraggableCore preventDefaults
+  // touchstart on grid items, which suppresses the click event entirely, so
+  // touch taps are detected in onTouchEnd and mouse clicks in onClick — both
+  // route through this same helper.
+  const handleEditModeTap = (target: EventTarget | null) => {
+    const itemEl = (target as HTMLElement)?.closest?.('.react-grid-item') as HTMLElement | null;
+    const tappedId = itemEl?.getAttribute('data-id');
+    if (tappedId) {
+      // Tap a card: select it so its resize handles appear
+      setSelectedId(tappedId);
+    } else {
+      // Tap empty space: deselect and exit edit mode
+      setSelectedId(null);
+      setIsEditMode(false);
+    }
+  };
 
   // Context menu actions
   const handleOpen = (item: DesktopItem) => {
@@ -162,15 +188,7 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
           return;
         }
         if (isEditMode) {
-          const target = e.target as HTMLElement;
-          if (
-            target === containerRef.current ||
-            target.classList.contains('react-grid-layout') ||
-            target.classList.contains('layout') ||
-            !target.closest('.react-grid-item')
-          ) {
-            setIsEditMode(false);
-          }
+          handleEditModeTap(e.target);
         }
       }}
       onTouchStart={(e) => {
@@ -185,7 +203,15 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
           if (dx > 8 || dy > 8) cancelLongPress();
         }
       }}
-      onTouchEnd={cancelLongPress}
+      onTouchEnd={(e) => {
+        // touchStartPosRef is cleared once the finger moves > 8px, so a
+        // surviving ref on touchend means a tap. Click is suppressed on
+        // draggable items (preventDefault in touchstart), handle it here.
+        if (isEditMode && touchStartPosRef.current) {
+          handleEditModeTap(e.target);
+        }
+        cancelLongPress();
+      }}
       onMouseDown={(e) => startLongPress(e.clientX, e.clientY, e.target)}
       onMouseUp={cancelLongPress}
       onMouseLeave={cancelLongPress}
@@ -193,7 +219,7 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
       <ReactGridLayout
         className={`layout ${isEditMode ? 'edit-mode' : ''}`}
         layout={layout}
-        cols={96}
+        cols={80}
         rowHeight={11}
         width={containerWidth}
         margin={[1, 1]}
@@ -203,8 +229,10 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
         compactType="vertical"
         preventCollision={false}
         resizeHandles={['nw', 'ne', 'sw', 'se']}
-        onDragStop={(currentLayout) => {
+        onDragStop={(currentLayout, _oldItem, newItem) => {
           handleGridLayoutChange(currentLayout);
+          // Keep the dragged card selected so its handles stay available
+          if (isEditMode && newItem?.i) setSelectedId(newItem.i);
         }}
         onResizeStop={(currentLayout) => {
           handleGridLayoutChange(currentLayout);
@@ -217,7 +245,7 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
             data-grid={item.layout}
             className={`transition-shadow ${
               isEditMode ? 'cursor-grab active:cursor-grabbing touch-none' : ''
-            }`}
+            } ${isEditMode && selectedId === item.id ? 'selected-item' : ''}`}
           >
             {item.type === 'widget-clock' ? (
               <AtomicWidget item={item} isEditMode={isEditMode} grayMode={grayMode} />

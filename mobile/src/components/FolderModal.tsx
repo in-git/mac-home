@@ -21,7 +21,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
   const renderModalAppIcon = (sub: SubApp) => {
     if (grayMode) {
       return (
-        <div className="w-[58px] h-[58px] rounded-[18px] bg-neutral-800/90 border border-neutral-700/60 shadow-[0_4px_16px_rgba(0,0,0,0.35)] flex items-center justify-center text-lg font-bold text-neutral-200">
+        <div className="w-[72px] h-[72px] rounded-[22px] bg-neutral-800/90 border border-neutral-700/60 shadow-[0_4px_16px_rgba(0,0,0,0.35)] flex items-center justify-center text-2xl font-bold text-neutral-200">
           {sub.symbol || sub.name.slice(0, 1)}
         </div>
       );
@@ -30,7 +30,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
     return (
       <div
         style={{ backgroundColor: sub.color || '#3b82f6' }}
-        className="w-[58px] h-[58px] rounded-[18px] shadow-lg flex items-center justify-center text-lg font-bold text-white border border-white/15"
+        className="w-[72px] h-[72px] rounded-[22px] shadow-lg flex items-center justify-center text-2xl font-bold text-white border border-white/15"
       >
         {sub.symbol || sub.name.slice(0, 1)}
       </div>
@@ -52,7 +52,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
         </h3>
 
         {/* Sub-apps 3-column Grid */}
-        <div className="grid grid-cols-3 gap-y-5 gap-x-4 w-full justify-items-center py-1">
+        <div className="grid grid-cols-3 gap-y-6 gap-x-3 w-full justify-items-center py-1">
           {subApps.map((sub) => (
             <div
               key={sub.id}
@@ -66,7 +66,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
               }}
             >
               {renderModalAppIcon(sub)}
-              <span className="text-[12px] font-medium text-neutral-200 tracking-tight text-center truncate max-w-[74px] mt-1.5 leading-tight">
+              <span className="text-[13px] font-medium text-neutral-200 tracking-tight text-center truncate max-w-[88px] mt-2 leading-tight">
                 {sub.name}
               </span>
             </div>
