@@ -1,335 +1,51 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DEFAULT_ROLE_ID } from '../data/roles';
-import { PRESET_DATA } from '../data/presetData';
-import {
-  canAddWidget,
-  countWidgetInstances,
-  DEFAULT_CARD_STYLE,
-  findWidgetInstance,
-  getWidgetConfig,
-} from '../data/widgetConfig';
-import { ensureGrid, findFirstAvailablePosition } from '../components/dashboard/itemSize';
-import {
-  CardRadiusTier,
-  FontVariant,
-  StickyNote as StickyNoteType,
-  WallpaperConfig,
-  WidgetItem,
-} from '../types';
-import { WeatherCity } from '../utils/weatherApi';
+import { CardRadiusTier, FontVariant } from '../types';
 import { isSameSite } from '../utils/siteHelper';
 import { SiteItem } from '../api/site';
-import { type WidgetSizeOption } from '@/data/options/size.options';
 
-// One-time migration from the previous per-key localStorage layout so existing
-// user data is not lost when switching to the single-store persist key.
-function readLegacy<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-// 默认配置：首次加载与重置系统统一使用 data.json（见 presetData.DEFAULT_STATE）
-const DEFAULT_STATE = PRESET_DATA.DEFAULT_STATE;
-
-
-interface HomeState {
-  // Persisted data
-  widgets: WidgetItem[];
-  // 当前数据版本号
-  version: number;
-  // 壁纸配置
-  wallpaper: WallpaperConfig;
-  notes: StickyNoteType[];
+/**
+ * 默认配置：首次进入与「重置」统一使用。
+ * 取值沿用重构前 data.json 中的默认外观配置。
+ */
+const DEFAULT_STATE = {
   // 是否开启暗黑模式
-  isDarkMode: boolean;
+  isDarkMode: false,
   // 主题颜色
-  themeColor: string;
-  // 是否开启音效
-  soundEnabled: boolean;
-  // 是否显示组件右下角的调整大小手柄（默认关闭，开启后可拖拽调整组件尺寸）
-  showResizeHandle: boolean;
-  // 字体方案
-  fontVariant: FontVariant;
-  // 卡片圆角：small / medium / large
-  cardRadius: CardRadiusTier;
-  // 屏幕亮度（10-100，100 为原始亮度），作用于整个桌面容器
-  screenBrightness: number;
+  themeColor: '#007AFF',
+  // 字体方案（小 / 中 / 大，见 types.ts FONT_VARIANT）
+  fontVariant: 'B' as FontVariant,
+  // 卡片圆角档位（极小 / 小 / 中 / 大，见 types.ts CARD_RADIUS）
+  cardRadius: 'small' as CardRadiusTier,
+  // 「我的」收藏的网页站点
+  favoriteSites: [] as SiteItem[],
+};
 
-  // 当前选中的桌宠形象（角色皮肤 id），持久化以便下次进入恢复
-  selectedRoleId: string;
-  // 天气卡片已添加的城市列表（持久化，跟随主页整体存储）
-  weatherCities: WeatherCity[];
-  // 当前选中的天气城市 id（持久化，保证下次进入恢复上次的查看/定位城市）
-  selectedCityId: string;
-  // 最近一次成功定位的位置（持久化，控制中心位置模块下次进入时回显）
-  lastLocation?: { city: string; lat: number; lon: number } | null;
-  // 是否显示桌面图标（清屏功能，false 时隐藏所有组件）
-  showDesktopIcons: boolean;
-  // 是否第一次进入网页（持久化：首次访问后由 markVisited 置 false，之后不再为 true）
-  isFirstVisit: boolean;
-  // 「我的」收藏的网页站点（持久化到本地，与桌面图标相互独立）
-  favoriteSites: SiteItem[];
+type PersistedState = typeof DEFAULT_STATE;
 
-  // Widget actions
-  setWidgets: (widgets: WidgetItem[]) => void;
-  /**
-   * 按「组件配置 id」添加一个新实例到桌面。
-   * 
-   * 改用 id（而非 type）作为入参，是因为同一 type 可能对应多条配置
-   * （如 system-function 同时对应「系统设置」与「添加」两个磁贴），
-   * 只有 id 能唯一区分要创建哪一个。
-   */
-  addWidget: (configId: string) => void;
-  deleteWidget: (id: string) => void;
-  resizeWidget: (id: string, newSize: WidgetSizeOption) => void;
-  moveToTopWidget: (id: string) => void;
-  /** 局部更新某个 widget 的任意字段（用于图标编辑等）。 */
-  updateWidget: (id: string, patch: Partial<WidgetItem>) => void;
-  updateWidgetBackground: (
-    id: string,
-    background: string | undefined,
-    backgroundTheme?: 'light' | 'dark',
-  ) => void;
-  resetLayout: () => void;
-  // 重置系统：恢复所有持久化配置（布局、壁纸、便签、外观、主题色、音效、字号、亮度）
-  resetAll: () => void;
-
-  // Notes / Wallpaper / Appearance
-  updateNotes: (notes: StickyNoteType[]) => void;
-  updateWallpaper: (cfg: Partial<WallpaperConfig>) => void;
+interface HomeState extends PersistedState {
   setDarkMode: (value: boolean) => void;
   setThemeColor: (color: string) => void;
-  setSoundEnabled: (value: boolean) => void;
-  setShowResizeHandle: (value: boolean) => void;
   setFontVariant: (variant: FontVariant) => void;
   setCardRadius: (tier: CardRadiusTier) => void;
-  setScreenBrightness: (value: number) => void;
-  /** 切换当前桌宠形象（角色皮肤 id）。 */
-  setSelectedRoleId: (id: string) => void;
-  // 天气城市：整体替换列表（增/删/改后调用），并在被删城市为当前选中时回退选中项
-  setWeatherCities: (cities: WeatherCity[]) => void;
-  // 切换当前选中的天气城市
-  setSelectedCityId: (id: string) => void;
-  /** 写入最近一次成功定位的位置（null 表示清除）。 */
-  setLastLocation: (
-    loc: { city: string; lat: number; lon: number } | null,
-  ) => void;
-  /** 切换是否显示桌面图标（清屏功能）。 */
-  setShowDesktopIcons: (value: boolean) => void;
-  /** 标记用户已访问过（把 isFirstVisit 置为 false 并持久化）。 */
-  markVisited: () => void;
 
-  // 收藏站点（「我的」）
-  /** 整体替换收藏列表 */
-  setFavoriteSites: (sites: SiteItem[]) => void;
-  /** 收藏一个站点（已存在则忽略） */
-  addFavoriteSite: (item: SiteItem) => void;
-  /** 取消收藏一个站点 */
-  removeFavoriteSite: (item: SiteItem) => void;
-  /** 收藏 / 取消收藏切换 */
+  /** 收藏 / 取消收藏切换（「我的」列表与网页列表共用） */
   toggleFavoriteSite: (item: SiteItem) => void;
+
+  /** 重置：恢复收藏与外观为默认配置 */
+  resetAll: () => void;
 }
 
 export const useHomeStore = create<HomeState>()(
   persist(
-    (set, get) => ({
-      // 默认配置（data.json）整体展开，首次启动后由 persist 接管；
-      // 下方仅覆盖需要旧版 localStorage 迁移的字段与对话历史。
+    (set) => ({
       ...DEFAULT_STATE,
-      wallpaper: readLegacy('apple_homepage_wallpaper', DEFAULT_STATE.wallpaper),
-      notes: readLegacy('apple_homepage_notes', DEFAULT_STATE.notes),
-      soundEnabled: readLegacy('apple_homepage_sound_enabled', DEFAULT_STATE.soundEnabled),
-      // 默认不显示 resize 手柄；旧版本本地存储若未存过此字段则取 DEFAULT_STATE 中的 false
-      showResizeHandle: DEFAULT_STATE.showResizeHandle ?? false,
-      selectedRoleId: DEFAULT_ROLE_ID,
-      showDesktopIcons: true,
-      // 首次访问默认 true；hydration 时若本地已存过（曾访问过）会被覆盖为 false
-      isFirstVisit: true,
-      // 收藏站点：本地持久化，默认空（旧数据无该字段时兜底为空数组）
-      favoriteSites: DEFAULT_STATE.favoriteSites ?? [],
 
-      setWidgets: (widgets) => set({ widgets }),
-
-      addWidget: (configId) => {
-        const { widgets } = get();
-        const cfg = getWidgetConfig(configId);
-        const type = cfg.component;
-        // 同 component 多配置（如 system-function）按配置 id 精确统计，避免互相干扰
-        const count = countWidgetInstances(widgets, cfg);
-
-        if (!canAddWidget(type, count)) {
-          // Already at the cap for this type — bring the existing one to the top
-          // instead of adding a duplicate.
-          const existing = findWidgetInstance(widgets, cfg);
-          if (existing) get().moveToTopWidget(existing.id);
-          return;
-        }
-
-        const targetW = cfg.grid?.w ?? 1;
-        const targetH = cfg.grid?.h ?? 1;
-        const pos = findFirstAvailablePosition(widgets, targetW, targetH);
-
-        const newWidget: WidgetItem = {
-          id: `widget-${Date.now()}`,
-          component: type,
-          // 记录创建来源的配置 id：同 component 多配置（如 system-function）时用于精确区分实例归属
-          configId: cfg.id,
-          title: count > 0 ? `${cfg.title} ${count + 1}` : cfg.title,
-          maxInstances: cfg.maxInstances,
-          cardStyle: {
-            ...DEFAULT_CARD_STYLE,
-            ...cfg.cardStyle,
-            // 新建卡片默认与右键「切换卡片背景 → 透明」一致：亮色文本主题（深色前景 #1d1d1f），
-            // 颜色由 index.css 的 --card-fg 变量控制，此处不写死任何颜色值。
-            backgroundTheme: 'light',
-          },
-          // 类型级提供的私有数据默认值放在 data 下。
-          data: {
-            ...(cfg.data?.site ? { site: cfg.data.site } : {}),
-            ...(cfg.data?.icon ? { icon: cfg.data.icon } : {}),
-            ...(cfg.data?.color ? { color: cfg.data.color } : {}),
-            ...(cfg.data?.size ? { size: cfg.data.size } : {}),
-          },
-          // 系统功能磁贴需要保留 onClick（打开设置 / 打开添加弹窗）。
-          ...(cfg.onClick ? { onClick: cfg.onClick } : {}),
-          // 初始网格坐标：查找桌面剩余空间计算出的 x, y
-          grid: {
-            x: pos.x,
-            y: pos.y,
-            w: targetW,
-            h: targetH,
-          },
-        };
-        set({ widgets: [...widgets, newWidget] });
-      },
-
-      deleteWidget: (id) => {
-        set({ widgets: get().widgets.filter((w) => w.id !== id) });
-      },
-
-      resizeWidget: (id, newSize) => {
-        set({
-          widgets: get().widgets.map((w) => {
-            if (w.id !== id) return w;
-            // 档位未配置 h 时仅调整宽度、保留当前高度
-            const newH = newSize.h ?? w.grid?.h ?? 5;
-            return {
-              ...w,
-              size: newSize.w,
-              grid: { ...w.grid, w: newSize.w, h: newH },
-            };
-          }),
-        });
-      },
-
-      moveToTopWidget: (id) => {
-        const { widgets } = get();
-        const target = widgets.find((w) => w.id === id);
-        if (!target) return;
-        const rest = widgets.filter((w) => w.id !== id);
-        set({ widgets: [target, ...rest] });
-      },
-
-      updateWidgetBackground: (id, background, backgroundTheme) => {
-        set({
-          widgets: get().widgets.map((w) =>
-            w.id === id
-              ? {
-                ...w,
-                cardStyle: {
-                  ...w.cardStyle,
-                  background,
-                  backgroundTheme,
-                },
-              }
-              : w,
-          ),
-        });
-      },
-
-      updateWidget: (id, patch) => {
-        set({
-          widgets: get().widgets.map((w) =>
-            w.id === id ? { ...w, ...patch } : w,
-          ),
-        });
-      },
-
-      resetLayout: () => {
-        set({
-          widgets: DEFAULT_STATE.widgets,
-          wallpaper: DEFAULT_STATE.wallpaper,
-        });
-      },
-
-      resetAll: () => {
-        set(DEFAULT_STATE);
-      },
-
-      updateNotes: (notes) => set({ notes }),
-      updateWallpaper: (cfg) =>
-        set(() => {
-          const prev = get().wallpaper;
-          if (cfg.type && cfg.type !== prev.type) {
-            const base = {
-              type: cfg.type,
-              blur: prev.blur,
-              brightness: prev.brightness,
-              contrast: prev.contrast,
-              saturation: prev.saturation,
-              hue: prev.hue,
-              sepia: prev.sepia,
-              grayscale: prev.grayscale,
-              invert: prev.invert,
-            };
-            const typed: Partial<WallpaperConfig> =
-              cfg.type === 'dynamic'
-                ? { dynamicPreset: undefined, imageUrl: undefined, gradient: undefined }
-                : cfg.type === 'static'
-                  ? { dynamicPreset: undefined, imageUrl: undefined, gradient: undefined }
-                  : { dynamicPreset: undefined, imageUrl: undefined, gradient: undefined };
-            return { wallpaper: { ...base, ...typed, ...cfg } as WallpaperConfig };
-          }
-          return { wallpaper: { ...prev, ...cfg } };
-        }),
       setDarkMode: (value) => set({ isDarkMode: value }),
       setThemeColor: (color) => set({ themeColor: color }),
-      setSoundEnabled: (value) => set({ soundEnabled: value }),
-      setShowResizeHandle: (value) => set({ showResizeHandle: value }),
       setFontVariant: (variant) => set({ fontVariant: variant }),
       setCardRadius: (tier) => set({ cardRadius: tier }),
-      setScreenBrightness: (value) =>
-        set({ screenBrightness: Math.max(10, Math.min(100, value)) }),
 
-      setSelectedRoleId: (id) => set({ selectedRoleId: id }),
-      setWeatherCities: (cities) =>
-        set((state) => ({
-          weatherCities: cities,
-          selectedCityId: cities.some((c) => c.id === state.selectedCityId)
-            ? state.selectedCityId
-            : cities[0]?.id ?? '',
-        })),
-      setSelectedCityId: (id) => set({ selectedCityId: id }),
-      setLastLocation: (lastLocation) => set({ lastLocation }),
-      setShowDesktopIcons: (value) => set({ showDesktopIcons: value }),
-      markVisited: () => set({ isFirstVisit: false }),
-
-      setFavoriteSites: (sites) => set({ favoriteSites: sites }),
-      addFavoriteSite: (item) =>
-        set((state) =>
-          state.favoriteSites.some((s) => isSameSite(s, item))
-            ? state
-            : { favoriteSites: [item, ...state.favoriteSites] },
-        ),
-      removeFavoriteSite: (item) =>
-        set((state) => ({
-          favoriteSites: state.favoriteSites.filter((s) => !isSameSite(s, item)),
-        })),
       toggleFavoriteSite: (item) =>
         set((state) =>
           state.favoriteSites.some((s) => isSameSite(s, item))
@@ -340,21 +56,19 @@ export const useHomeStore = create<HomeState>()(
               }
             : { favoriteSites: [item, ...state.favoriteSites] },
         ),
+
+      resetAll: () => set(DEFAULT_STATE),
     }),
     {
       name: 'apple-homepage-store',
+      // 只持久化本模块使用的字段，旧版本遗留的桌面/壁纸等数据不再写入
       partialize: (state) => ({
-        ...state
+        isDarkMode: state.isDarkMode,
+        themeColor: state.themeColor,
+        fontVariant: state.fontVariant,
+        cardRadius: state.cardRadius,
+        favoriteSites: state.favoriteSites,
       }),
-      // 每次从本地存储恢复时，确保系统内置组件（SYSTEM_WIDGET_CONFIG）存在：
-      // 缺失则追加，已存在则保留用户配置。放在 merge 而非 initializer，
-      // 是因为 persist 会用持久化数据整体覆盖 initializer 的结果。
-      merge: (persisted, current) => {
-        const persistedAny = persisted as Record<string, any>;
-        const realPersisted = persistedAny?.state ?? persistedAny;
-        const merged = { ...current, ...realPersisted };
-        return merged;
-      },
     },
   ),
 );
