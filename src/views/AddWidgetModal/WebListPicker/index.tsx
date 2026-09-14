@@ -8,6 +8,7 @@ import {
   flattenCategories,
   getChildCategories,
   findParentId,
+  SITE_GRID_CLASS,
   WebListPickerProps,
 } from './types';
 
@@ -18,10 +19,10 @@ import {
  * 选中状态由父应用传入（selected），新增 / 删除等变更事件均交由父应用处理。
  */
 export const WebListPicker: React.FC<WebListPickerProps> = ({
-  selected = [],
-  onAdd,
-  onRemove,
+  title,
   onOpen,
+  favorites,
+  onToggleFavorite,
 }) => {
   const [categories, setCategories] = useState<ReturnType<typeof flattenCategories>>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
@@ -31,12 +32,17 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   // 实际传给后端拉取的分类 ID：与 selectedCat 解耦，使点击父级时子类「全部」可保持高亮
   const [queryCat, setQueryCat] = useState<string>('');
 
-  // 选择分类：父级或子级均会同步 activeParent，保证第二排始终对应其所属父级
-  const handleSelectCategory = (id: string) => {
+  // 应用分类选择：父级或子级均会同步 activeParent，保证第二排始终对应其所属父级
+  // cats / currentParent 由调用方显式传入，避免异步加载分类后立即选中时读到旧 state
+  const applyCategory = (
+    id: string,
+    cats: ReturnType<typeof flattenCategories>,
+    currentParent: string = activeParent,
+  ) => {
     // 子级「全部」标记：表示为当前父级下、但不限定具体子类（仍是选中态，第二排保留）
     if (id === CHILD_ALL) {
       setSelectedCat(CHILD_ALL);
-      setQueryCat(activeParent);
+      setQueryCat(currentParent);
       return;
     }
     if (!id) {
@@ -46,7 +52,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       setQueryCat('');
       return;
     }
-    const parentId = findParentId(categories, id);
+    const parentId = findParentId(cats, id);
     setActiveParent(parentId);
     if (parentId === id) {
       // 点击的是父级：归入该父级下，同时高亮父级和子类「全部」，按父级拉取
@@ -57,6 +63,11 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       setSelectedCat(id);
       setQueryCat(id);
     }
+  };
+
+  // 选择分类（用户点击）
+  const handleSelectCategory = (id: string) => {
+    applyCategory(id, categories);
   };
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   // 搜索防抖后的值，用于实际拉取，避免每次按键都请求
@@ -73,18 +84,30 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     loadMore,
   } = useSiteList({ autoFetch: false });
 
+  // 分类元数据是否已就绪（用于推迟首次列表拉取，避免先用「全部」查一次再按默认分类重查）
+  const [categoriesReady, setCategoriesReady] = useState(false);
+  // 是否已在首次加载时应用默认分类（只应用一次，后续刷新保留用户当前选择）
+  const defaultAppliedRef = useRef(false);
+
   // 加载分类元数据：刷新时也会调用，重新拉取并把 categoryLoading 置为 true 以显示骨架屏
   const loadCategories = useCallback(async () => {
     setCategoryLoading(true);
     try {
       const categoryRes = await runRequestAction('site_get_category_tree');
       if (categoryRes.ok && Array.isArray(categoryRes.data)) {
-        setCategories(flattenCategories(categoryRes.data));
+        const flat = flattenCategories(categoryRes.data);
+        setCategories(flat);
+        // 默认不查「全部」，而是以第一个大分类作为初始查询条件
+        if (!defaultAppliedRef.current && flat.length > 0) {
+          defaultAppliedRef.current = true;
+          applyCategory(flat[0].id, flat, '');
+        }
       }
     } catch {
       /* noop */
     } finally {
       setCategoryLoading(false);
+      setCategoriesReady(true);
     }
   }, []);
 
@@ -93,10 +116,20 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     loadCategories();
   }, []);
 
-  // 分类 / 搜索变化时，回到第一页重新拉取
+  // 立即搜索（点击搜索按钮 / 回车）：同步防抖值并递增 nonce，
+  // 保证关键词与上次相同时也能重新拉取（两者在同一批次更新，effect 只跑一次）
+  const [searchNonce, setSearchNonce] = useState(0);
+  const handleSearchSubmit = () => {
+    setDebouncedKw(searchKeyword);
+    setSearchNonce((n) => n + 1);
+  };
+
+  // 分类 / 搜索变化时，回到第一页重新拉取（等分类就绪后再拉，保证默认分类生效）
   useEffect(() => {
+    if (!categoriesReady) return;
     fetchSites(1, queryCat, debouncedKw, PAGE_SIZE);
-  }, [queryCat, debouncedKw, fetchSites]);
+    // searchNonce 仅用于触发立即搜索（点击搜索按钮时关键词可能未变）
+  }, [categoriesReady, queryCat, debouncedKw, searchNonce, fetchSites]);
 
   // 搜索关键词 400ms 防抖
   useEffect(() => {
@@ -131,6 +164,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   return (
     <div className="flex flex-col h-full">
       <FilterBar
+        title={title}
         parentCategories={categories}
         childCategories={getChildCategories(categories, activeParent)}
         categoryLoading={categoryLoading}
@@ -139,11 +173,8 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         searchKeyword={searchKeyword}
         loading={loading}
         onSearchChange={setSearchKeyword}
+        onSearchSubmit={handleSearchSubmit}
         onSelectCategory={handleSelectCategory}
-        onRefresh={() => {
-          void loadCategories();
-          void fetchSites(1, queryCat, debouncedKw, PAGE_SIZE);
-        }}
       />
 
       {/* Site Grid */}
@@ -171,20 +202,19 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           </div>
         ) : items.length > 0 ? (
           <>
-            <div className="grid grid-cols-5 gap-4">
+            <div className={SITE_GRID_CLASS}>
               {items.map((item) => (
                 <SiteCard
                   key={item.id}
                   item={item}
                   onOpen={handleOpen}
-                  onAdd={onAdd}
-                  onRemove={onRemove}
-                  exists={selected.some(
+                  favorited={favorites?.some(
                     (s) =>
                       (item.id && s.id === item.id) ||
                       (item.link && s.link === item.link) ||
                       (item.name && s.name === item.name),
                   )}
+                  onToggleFavorite={onToggleFavorite}
                 />
               ))}
             </div>

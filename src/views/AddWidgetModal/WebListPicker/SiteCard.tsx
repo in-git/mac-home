@@ -1,40 +1,27 @@
-import { Trash2, Download, Eye, Check } from 'lucide-react';
+import { Eye, Heart } from 'lucide-react';
 import React, { useState } from 'react';
-import { Tooltip } from '@heroui/react';
 import { SiteItem } from '../../../api/site';
-import { useToast } from '../../../components/Toast/Toast';
 import { LazyImage } from '../../../components/LazyImage/LazyImage';
-import Button from '../../../components/Button/Button';
 
 interface SiteCardProps {
   item: SiteItem;
   onOpen: (item: SiteItem) => void;
-  onAdd: (item: SiteItem) => void;
-  onRemove?: (item: SiteItem) => void;
-  exists: boolean;
+  /** 是否已被收藏（「我的」）；默认 false */
+  favorited?: boolean;
+  /** 切换收藏状态；不传则不展示收藏按钮 */
+  onToggleFavorite?: (item: SiteItem) => void;
 }
 
 export const SiteCard: React.FC<SiteCardProps> = ({
   item,
   onOpen,
-  onAdd,
-  onRemove,
-  exists,
+  favorited = false,
+  onToggleFavorite,
 }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const [isInstalling, setIsInstalling] = useState(false);
-  const installTimerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const { showToast } = useToast();
   const coverSrc = item.cover || item.logo;
   const logoImgRef = React.useRef<HTMLImageElement | null>(null);
-
-  // 清理安装定时器
-  React.useEffect(() => {
-    return () => {
-      if (installTimerRef.current) clearTimeout(installTimerRef.current);
-    };
-  }, []);
 
   // 图片可能来自缓存：已缓存的图片不会触发 onLoad，需主动检查 complete 避免永远空白
   React.useEffect(() => {
@@ -67,6 +54,29 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           >
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
+        )}
+        {/* 右上角收藏按钮：已收藏时常驻显示实心爱心，未收藏时鼠标悬停卡片才显示 */}
+        {onToggleFavorite && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(item);
+            }}
+            title={favorited ? '取消收藏' : '收藏到我的'}
+            aria-label={favorited ? '取消收藏' : '收藏到我的'}
+            aria-pressed={favorited}
+            className={`absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md transition-all hover:bg-black/65 active:scale-90 ${
+              favorited
+                ? 'opacity-100'
+                : 'opacity-0 group-hover:opacity-100 text-white'
+            }`}
+          >
+            <Heart
+              size={15}
+              className={favorited ? 'fill-rose-500 text-rose-500' : ''}
+            />
+          </button>
         )}
         {item.count !== undefined && item.count > 0 && (
           <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px]  leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
@@ -115,119 +125,6 @@ export const SiteCard: React.FC<SiteCardProps> = ({
               </p>
             )}
           </div>
-        </div>
-
-        {/* 右侧：安装/状态操作按钮 */}
-        <div className="relative h-8 w-8 shrink-0">
-          {isInstalling ? (
-            /* 安装中：环形进度条动画 */
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/10 shadow-md"
-            >
-              <svg className="h-6 w-6 -rotate-90" viewBox="0 0 32 32">
-                <circle
-                  cx="16"
-                  cy="16"
-                  r="12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  className="text-black/10 dark:text-white/10"
-                />
-                <circle
-                  cx="16"
-                  cy="16"
-                  r="12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeDasharray={75.4}
-                  strokeDashoffset={75.4}
-                  strokeLinecap="round"
-                  className="text-[color:var(--accent,#3b82f6)]"
-                  style={{
-                    animation: 'circleProgress 1000ms linear forwards',
-                  }}
-                />
-              </svg>
-              <style>{`
-                @keyframes circleProgress {
-                  0% { stroke-dashoffset: 75.4; }
-                  100% { stroke-dashoffset: 0; }
-                }
-              `}</style>
-            </div>
-          ) : exists ? (
-            <>
-              {/* 已安装：默认绿色对勾；鼠标移到卡片上切换为红色删除按钮 */}
-              {onRemove && (
-                <Tooltip>
-                  <Tooltip.Trigger>
-                    <Button
-                      iconOnly
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRemove(item);
-                        showToast(`已从桌面移除「${item.name}」`, 'info');
-                      }}
-                      className="absolute inset-0 z-10 !h-8 !w-8 rounded-full bg-red-500 text-white shadow-md ring-1 ring-white/15 hover:bg-red-600 transition-opacity opacity-0 group-hover:opacity-100"
-                      title="删除"
-                      icon={<Trash2 size={15} />}
-                    />
-                  </Tooltip.Trigger>
-                  <Tooltip.Content 
-                    showArrow 
-                    placement="top" 
-                    className="text-xs bg-black text-white border-black z-[9999]"
-                  >
-                    删除
-                  </Tooltip.Content>
-                </Tooltip>
-              )}
-              <Button
-                iconOnly
-                size="sm"
-                onClick={(e) => e.stopPropagation()}
-                className={`absolute inset-0 !h-8 !w-8 rounded-full bg-green-500 text-white shadow-md ring-1 ring-white/15 transition-opacity ${
-                  onRemove ? 'opacity-100 group-hover:opacity-0' : ''
-                }`}
-                title="已安装"
-                icon={<Check size={16} strokeWidth={3} />}
-              />
-            </>
-          ) : (
-            <div className="group/btn absolute inset-0">
-              <Tooltip>
-                <Tooltip.Trigger>
-                  <Button
-                    iconOnly
-                    size="sm"
-                    variant="primary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsInstalling(true);
-                      installTimerRef.current = setTimeout(() => {
-                        setIsInstalling(false);
-                        onAdd(item);
-                        showToast(`已添加「${item.name}」到桌面`, 'success');
-                      }, 1000);
-                    }}
-                    className="absolute inset-0 !h-8 !w-8 rounded-full shadow-md"
-                    icon={<Download size={16} />}
-                  />
-                </Tooltip.Trigger>
-                <Tooltip.Content 
-                  showArrow 
-                  placement="top" 
-                  className="text-xs bg-black text-white border-black z-[9999]"
-                >
-                  安装到桌面
-                </Tooltip.Content>
-              </Tooltip>
-            </div>
-          )}
         </div>
       </div>
     </div>

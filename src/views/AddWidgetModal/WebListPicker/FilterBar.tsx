@@ -1,13 +1,14 @@
-import { RefreshCw, Search } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import React from 'react';
 import { Skeleton } from '@heroui/react';
-import { Button } from '../../../components/Button/Button';
 import { SiteCategory } from '../../../api/site';
 
 /** 子级「全部」的标记值，与父级「全部」('') 区分，避免两者高亮态互相干扰 */
 export const CHILD_ALL = '__child_all__';
 
 interface FilterBarProps {
+  /** 可选的标题横幅（大字），仅在需要时由调用方传入 */
+  title?: string;
   /** 父级（顶层）分类列表，用于第一排 */
   parentCategories: SiteCategory[];
   /** 当前父级对应的子级列表，用于第二排；为空不渲染第二排 */
@@ -19,8 +20,9 @@ interface FilterBarProps {
   searchKeyword: string;
   loading: boolean;
   onSearchChange: (kw: string) => void;
+  /** 点击搜索按钮 / 回车：立即以当前关键词搜索（跳过防抖等待） */
+  onSearchSubmit: () => void;
   onSelectCategory: (id: string) => void;
-  onRefresh: () => void;
 }
 
 const SKELETON_BTN = 'h-7 w-16 rounded-[var(--card-radius)]';
@@ -51,6 +53,7 @@ function FilterRow({
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
+  title,
   parentCategories,
   childCategories,
   categoryLoading,
@@ -59,8 +62,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   searchKeyword,
   loading,
   onSearchChange,
+  onSearchSubmit,
   onSelectCategory,
-  onRefresh,
 }) => {
   const chipClass = (active: boolean) =>
     `rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
@@ -70,41 +73,44 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     }`;
 
   return (
-    <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-3">
-      <div className="flex items-center gap-2">
-        <div className="flex-1 relative">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 "
-          />
-          <input
-            type="text"
-            value={searchKeyword}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="输入关键词搜索"
-            className="w-full pl-9 pr-3 py-2 rounded-[var(--card-radius)] bg-black/5 dark:bg-white/10 outline-none text-sm focus:ring-2 ring-[color:var(--accent)]/40"
-          />
-        </div>
-        <Button
-          variant="secondary"
-          size="md"
-          icon={<RefreshCw size={14} />}
-          loading={loading}
-          onClick={onRefresh}
-          title="刷新"
+    <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-4">
+      {/* 顶部横幅：调用方传入的大字标题（如「应用市场」），与搜索框一起居中 */}
+      {title && (
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center dark:text-white">
+          {title}
+        </h1>
+      )}
+
+      {/* 搜索框：移动端占满，桌面端 50% 宽，整体居中，胶囊圆角 */}
+      <div className="relative w-full sm:w-1/2 mx-auto">
+        <input
+          type="text"
+          value={searchKeyword}
+          onChange={(e) => onSearchChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onSearchSubmit();
+          }}
+          placeholder="输入关键词搜索"
+          className="w-full pl-5 pr-14 py-3.5 rounded-full bg-black/5 dark:bg-white/10 outline-none text-base focus:ring-2 ring-[color:var(--accent)]/40"
+        />
+        {/* 输入框内右侧搜索按钮：加载中显示 spinner */}
+        <button
+          type="button"
+          onClick={onSearchSubmit}
+          disabled={loading}
+          aria-label="搜索"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--accent)] text-white transition-opacity hover:brightness-110 active:scale-95 disabled:opacity-60"
         >
-          <span className="hidden sm:inline">刷新</span>
-        </Button>
+          {loading ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <Search size={18} />
+          )}
+        </button>
       </div>
 
       {/* 第一排：父级分类（顶层） */}
       <FilterRow label="分类" loading={categoryLoading}>
-        <button
-          onClick={() => onSelectCategory('')}
-          className={chipClass(selectedCat === '' && activeParent === '')}
-        >
-          全部
-        </button>
         {parentCategories.map((c) => (
           <button
             key={c.id}

@@ -80,12 +80,7 @@ export const RandomWebWidget: React.FC<RandomWebWidgetProps> = ({
         icon={<Globe size={16} className="text-[color:var(--accent)]" />}
         className="site-library-modal w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[60vw] min-h-[80vh] md:min-h-[70vh]"
       >
-        <WebListPicker
-          selected={randomweb}
-          onAdd={handleAddFromSite}
-          onRemove={handleRemoveFromPicker}
-          onOpen={handleOpenSite}
-        />
+        <WebListPicker onOpen={handleOpenSite} />
       </Modal>
     </>
   );

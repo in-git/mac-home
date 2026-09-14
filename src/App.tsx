@@ -15,7 +15,6 @@ import { WallpaperModal } from './views/WallpaperModal';
 import { RoleCharacterCanvas } from './widgets/Role/RoleCharacterCanvas';
 import { ROLE_DIALOG_ACTION_EVENT } from './agent/pet/dialog';
 import { visitorApi } from './api/visitor';
-import { handleAddSite, handleRemoveSite } from './utils/siteHelper';
 import dataJson from './data/data.json';
 import { CURRENT_DATA_VERSION } from './utils/migration';
 import THEME_OPTIONS from './data/options/filter.options';
@@ -25,7 +24,6 @@ import { useGreeting } from './agent/pet/actions';
 // path so they never trigger a re-render or a per-render subscription.
 const storeActions = {
   setWidgets: useHomeStore.getState().setWidgets,
-  addWidget: useHomeStore.getState().addWidget,
   deleteWidget: useHomeStore.getState().deleteWidget,
   resizeWidget: useHomeStore.getState().resizeWidget,
   moveToTopWidget: useHomeStore.getState().moveToTopWidget,
@@ -67,7 +65,6 @@ export default function App() {
 
   const {
     setWidgets,
-    addWidget,
     deleteWidget,
     resizeWidget,
     updateWidgetBackground,
@@ -337,10 +334,6 @@ export default function App() {
       <AddWidgetModal
         isOpen={isAddWidgetModalOpen}
         onClose={() => setIsAddWidgetModalOpen(false)}
-        onAddWidget={addWidget}
-        onAddSite={handleAddSite}
-        onRemoveSite={handleRemoveSite}
-        widgets={widgets}
       />
 
       {/* Settings Modal */}

@@ -1,14 +1,21 @@
 import { SiteCategory, SiteIdentity, SiteItem } from '../../../api/site';
 
+/**
+ * 站点卡片网格：网页列表与「我的」收藏共用同一套列宽 / 间距，
+ * 保证两处卡片在不同屏幕宽度下的响应式大小完全一致。
+ */
+export const SITE_GRID_CLASS =
+  'grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]';
+
 export interface WebListPickerProps {
-  /** 已选中的站点列表（由父应用持有），用于标记「已新增」并渲染删除入口 */
-  selected: SiteItem[];
-  /** 点击「添加」按钮时的回调 */
-  onAdd: (item: SiteItem) => void;
-  /** 点击「删除」已选站点时的回调；缺省时已选卡片只显示勾标记 */
-  onRemove?: (item: SiteItem) => void;
+  /** 顶部横幅大字标题（如「应用市场」），不传则不显示 */
+  title?: string;
   /** 点击卡片打开站点时的回调；缺省时在新窗口打开 */
   onOpen?: (item: SiteItem) => void;
+  /** 已收藏的站点列表；传入后用于标记卡片的收藏态 */
+  favorites?: SiteItem[];
+  /** 切换某个站点的收藏状态；不传则不展示收藏按钮 */
+  onToggleFavorite?: (item: SiteItem) => void;
 }
 
 /**

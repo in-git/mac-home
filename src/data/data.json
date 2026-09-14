@@ -1386,5 +1386,6 @@
   "showDesktopIcons": true,
   "isFirstVisit": true,
   "showDragHandle": false,
-  "petAutoActivity": false
+  "petAutoActivity": false,
+  "favoriteSites": []
 }

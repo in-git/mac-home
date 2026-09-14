@@ -5,6 +5,17 @@ import { useHomeStore } from '../store/useHomeStore';
 import type { WidgetItem } from '../types';
 
 /**
+ * 判断两个站点是否为同一个（优先 id，其次 link，最后 name）。
+ * 收藏、桌面图标去重等场景统一使用该判定，避免以不同字段为准导致重复。
+ */
+export function isSameSite(a?: SiteItem | null, b?: SiteItem | null): boolean {
+  if (!a || !b) return false;
+  if (a.id && b.id) return a.id === b.id;
+  if (a.link && b.link) return a.link === b.link;
+  return !!a.name && a.name === b.name;
+}
+
+/**
  * 网页列表：点击「添加」把站点做成桌面图标（web-app 类型，携带 site 数据）
  */
 export const handleAddSite = (item: SiteItem) => {

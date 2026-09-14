@@ -18,6 +18,8 @@ import {
   WidgetItem,
 } from '../types';
 import { WeatherCity } from '../utils/weatherApi';
+import { isSameSite } from '../utils/siteHelper';
+import { SiteItem } from '../api/site';
 import { type WidgetSizeOption } from '@/data/options/size.options';
 
 // One-time migration from the previous per-key localStorage layout so existing
@@ -70,6 +72,8 @@ interface HomeState {
   showDesktopIcons: boolean;
   // 是否第一次进入网页（持久化：首次访问后由 markVisited 置 false，之后不再为 true）
   isFirstVisit: boolean;
+  // 「我的」收藏的网页站点（持久化到本地，与桌面图标相互独立）
+  favoriteSites: SiteItem[];
 
   // Widget actions
   setWidgets: (widgets: WidgetItem[]) => void;
@@ -119,6 +123,16 @@ interface HomeState {
   setShowDesktopIcons: (value: boolean) => void;
   /** 标记用户已访问过（把 isFirstVisit 置为 false 并持久化）。 */
   markVisited: () => void;
+
+  // 收藏站点（「我的」）
+  /** 整体替换收藏列表 */
+  setFavoriteSites: (sites: SiteItem[]) => void;
+  /** 收藏一个站点（已存在则忽略） */
+  addFavoriteSite: (item: SiteItem) => void;
+  /** 取消收藏一个站点 */
+  removeFavoriteSite: (item: SiteItem) => void;
+  /** 收藏 / 取消收藏切换 */
+  toggleFavoriteSite: (item: SiteItem) => void;
 }
 
 export const useHomeStore = create<HomeState>()(
@@ -136,6 +150,8 @@ export const useHomeStore = create<HomeState>()(
       showDesktopIcons: true,
       // 首次访问默认 true；hydration 时若本地已存过（曾访问过）会被覆盖为 false
       isFirstVisit: true,
+      // 收藏站点：本地持久化，默认空（旧数据无该字段时兜底为空数组）
+      favoriteSites: DEFAULT_STATE.favoriteSites ?? [],
 
       setWidgets: (widgets) => set({ widgets }),
 
@@ -302,6 +318,28 @@ export const useHomeStore = create<HomeState>()(
       setLastLocation: (lastLocation) => set({ lastLocation }),
       setShowDesktopIcons: (value) => set({ showDesktopIcons: value }),
       markVisited: () => set({ isFirstVisit: false }),
+
+      setFavoriteSites: (sites) => set({ favoriteSites: sites }),
+      addFavoriteSite: (item) =>
+        set((state) =>
+          state.favoriteSites.some((s) => isSameSite(s, item))
+            ? state
+            : { favoriteSites: [item, ...state.favoriteSites] },
+        ),
+      removeFavoriteSite: (item) =>
+        set((state) => ({
+          favoriteSites: state.favoriteSites.filter((s) => !isSameSite(s, item)),
+        })),
+      toggleFavoriteSite: (item) =>
+        set((state) =>
+          state.favoriteSites.some((s) => isSameSite(s, item))
+            ? {
+                favoriteSites: state.favoriteSites.filter(
+                  (s) => !isSameSite(s, item),
+                ),
+              }
+            : { favoriteSites: [item, ...state.favoriteSites] },
+        ),
     }),
     {
       name: 'apple-homepage-store',
