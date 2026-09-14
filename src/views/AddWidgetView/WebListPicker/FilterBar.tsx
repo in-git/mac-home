@@ -53,7 +53,6 @@ function FilterRow({
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
-  title,
   parentCategories,
   childCategories,
   categoryLoading,
@@ -75,9 +74,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   return (
     <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-4">
       {/* 顶部横幅：调用方传入的大字标题（如「应用市场」），与搜索框一起居中 */}
-      {title && (
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center dark:text-white">
-          {title}
+      { (
+        <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight text-center dark:text-white">
+       游趣
         </h1>
       )}
 

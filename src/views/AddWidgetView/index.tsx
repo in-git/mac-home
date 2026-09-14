@@ -109,7 +109,7 @@ export const AddWidgetView: React.FC = () => {
         ) : (
           <div className="flex-1 min-h-0 overflow-hidden">
             <WebListPicker
-              title="应用市场"
+              title="游趣"
               favorites={favoriteSites}
               onToggleFavorite={handleToggleFavorite}
             />
