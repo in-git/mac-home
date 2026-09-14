@@ -1,7 +1,7 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Modal } from '../../components/Modal/Modal';
-import { WebListPicker } from '../../views/AddWidgetModal/WebListPicker';
+import { WebListPicker } from '../../views/AddWidgetView/WebListPicker';
 import { siteApi, SiteItem } from '../../api/site';
 import { playSound } from '../../utils/sound';
 import { RandomWebWidgetCard } from './RandomWebWidgetCard';

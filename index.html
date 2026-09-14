@@ -79,7 +79,7 @@
       padding: 0 24px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
         'Microsoft YaHei', sans-serif;
-      color: #e6e6e6;
+      color: #666666;
       line-height: 1.8;
     }
 
@@ -108,13 +108,20 @@
         'Microsoft YaHei', sans-serif;
       font-size: 12px;
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.88);
-      background: rgba(0, 0, 0, 0.28);
+      /* 页面为纯色底（无动态壁纸），默认按浅色底的深色文字渲染 */
+      color: rgba(29, 29, 31, 0.78);
+      background: rgba(255, 255, 255, 0.72);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
       /* 容器不吃鼠标事件，避免遮挡桌面底部的可交互区域 */
       pointer-events: none;
+    }
+
+    /* 深色模式下反转为浅色文字 + 半透明黑底 */
+    .dark #site-footer {
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(0, 0, 0, 0.28);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
     }
 
     #site-footer a {
@@ -167,17 +174,7 @@
     </p>
   </noscript>
 
-  <!-- 页面底部备案信息：写在静态 HTML 中，爬虫不执行 JS 也能抓取 -->
-  <footer id="site-footer">
-    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44011202003613" target="_blank" rel="noopener noreferrer"
-      title="粤公网安备44011202003613号">
-      <svg width="13" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path
-          d="M12 1.5 4 4.2v7.1c0 5 3.4 9.6 8 11.2 4.6-1.6 8-6.2 8-11.2V4.2l-8-2.7Zm0 2.2 6 2v5.6c0 3.9-2.5 7.5-6 8.9-3.5-1.4-6-5-6-8.9V5.7l6-2Zm3.3 3.6-4.6 7.6-2.4-2.5-1.5 1.4 3.9 4.1 6-9.2-1.4-1.4Z" />
-      </svg>
-      粤公网安备44011202003613号
-    </a>
-  </footer>
+
 
   <script type="module" src="/src/main.tsx"></script>
 </body>
