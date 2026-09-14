@@ -233,7 +233,7 @@ export const EditModal: React.FC<EditModalProps> = ({
                   onClose();
                 }
               }}
-              className="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 flex items-center gap-1 font-medium transition-colors"
+              className="px-3 py-2 rounded-xl /20 text-rose-400 hover:/30 flex items-center gap-1 font-medium transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
               删除

@@ -291,7 +291,7 @@ button{
     font-size: var(--font-sm) !important;
     line-height: 1.35;
   }
-  .text-sm {
+  .text-md {
     font-size: var(--font-sm) !important;
     line-height: 1.35;
   }

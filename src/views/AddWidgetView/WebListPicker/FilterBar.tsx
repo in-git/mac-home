@@ -18,13 +18,15 @@ interface FilterBarProps {
   activeParent: string;
   searchKeyword: string;
   loading: boolean;
+  /** 是否展示分类行：随列表滚动方向折叠 / 展开 */
+  showCategories: boolean;
   onSearchChange: (kw: string) => void;
   /** 点击搜索按钮 / 回车：立即以当前关键词搜索（跳过防抖等待） */
   onSearchSubmit: () => void;
   onSelectCategory: (id: string) => void;
 }
 
-const SKELETON_BTN = 'h-7 w-16 rounded-[var(--card-radius)]';
+const SKELETON_BTN = 'h-7 w-16 rounded-md';
 
 function FilterRow({
   label,
@@ -36,7 +38,7 @@ function FilterRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 text-sm">
+    <div className="flex items-center justify-between gap-2 text-md">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-slate-400 text-xs mr-1 shrink-0">{label}</span>
         {loading ? (
@@ -59,24 +61,34 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   activeParent,
   searchKeyword,
   loading,
+  showCategories,
   onSearchChange,
   onSearchSubmit,
   onSelectCategory,
 }) => {
   const chipClass = (active: boolean) =>
-    `rounded-[var(--card-radius)] px-3 py-1.5 transition-colors ${
+    `rounded-md px-3 py-1.5 transition-colors ${
       active
-        ? 'bg-[color:var(--accent)]  text-white'
+        ? 'bg-blue-500  text-white'
         : 'bg-black/5  hover:bg-black/10 dark:bg-white/10 '
     }`;
 
+  // 分类折叠时同步进入紧凑态：Logo 与搜索框高度收窄
+  const compact = !showCategories;
+
   return (
-    <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-4">
-      {/* 顶部横幅：站点 Logo */}
+    <div
+      className={`px-5 border-b border-black/5 dark:border-white/10 space-y-4 transition-[padding] duration-300 ease-out ${
+        compact ? 'py-2' : 'py-4'
+      }`}
+    >
+      {/* 顶部横幅：站点 Logo，滚动向下时高度收窄 */}
       <div className="flex justify-center">
         <img
           src={logo}
-          className="h-9 sm:h-24 w-auto object-contain"
+          className={`w-auto object-contain transition-[height] duration-300 ease-out ${
+            compact ? 'h-8 sm:h-12' : 'h-12 sm:h-24'
+          }`}
         />
       </div>
 
@@ -90,7 +102,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             if (e.key === 'Enter') onSearchSubmit();
           }}
           placeholder="输入关键词搜索"
-          className="w-full pl-5 pr-14 py-3.5 rounded-full bg-black/5 dark:bg-white/10 outline-none text-base focus:ring-2 ring-[color:var(--accent)]/40"
+          className={`w-full rounded-full bg-black/5 dark:bg-white/10 outline-none focus:ring-2 ring-[color:var(--accent)]/40 transition-[padding,font-size] duration-300 ease-out ${
+            compact
+              ? 'pl-4 pr-12 py-1.5 text-sm'
+              : 'pl-5 pr-14 py-3.5 text-base'
+          }`}
         />
         {/* 输入框内右侧搜索按钮：加载中显示 spinner */}
         <button
@@ -98,49 +114,66 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           onClick={onSearchSubmit}
           disabled={loading}
           aria-label="搜索"
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--accent)] text-white transition-opacity hover:brightness-110 active:scale-95 disabled:opacity-60"
+          className={`absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-blue-500 text-white transition-[width,height] duration-300 ease-out hover:brightness-110 active:scale-95 disabled:opacity-60 ${
+            compact ? 'h-7 w-7' : 'h-10 w-10'
+          }`}
         >
           {loading ? (
-            <Loader2 size={18} className="animate-spin" />
+            <Loader2 size={compact ? 15 : 18} className="animate-spin" />
           ) : (
-            <Search size={18} />
+            <Search size={compact ? 15 : 18} />
           )}
         </button>
       </div>
 
-      {/* 第一排：父级分类（顶层） */}
-      <FilterRow label="分类" loading={categoryLoading}>
-        {parentCategories.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => onSelectCategory(c.id)}
-            className={chipClass(activeParent === c.id)}
-          >
-            {c.name}
-          </button>
-        ))}
-      </FilterRow>
+      {/* 分类行：向下滚动时折叠（grid-rows 1fr → 0fr 自适应高度），向上滚动时展开 */}
+      <div
+        aria-hidden={!showCategories}
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+          showCategories
+            ? 'grid-rows-[1fr] opacity-100'
+            : 'grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <div className="overflow-hidden min-h-0 space-y-4">
+          {/* 第一排：父级分类（顶层） */}
+          <FilterRow label="分类" loading={categoryLoading}>
+            {parentCategories.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onSelectCategory(c.id)}
+                tabIndex={showCategories ? undefined : -1}
+                className={chipClass(activeParent === c.id)}
+              >
+                {c.name}
+              </button>
+            ))}
+          </FilterRow>
 
-      {/* 第二排：子级分类（仅当前父级存在子级时显示，不会出现第三排） */}
-      {!categoryLoading && childCategories.length > 0 && (
-        <FilterRow label="子类" loading={false}>
-          <button
-            onClick={() => onSelectCategory(CHILD_ALL)}
-            className={chipClass(selectedCat === CHILD_ALL)}
-          >
-            全部
-          </button>
-          {childCategories.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => onSelectCategory(c.id)}
-              className={chipClass(selectedCat === c.id)}
-            >
-              {c.name}
-            </button>
-          ))}
-        </FilterRow>
-      )}
+          {/* 第二排：子级分类（仅当前父级存在子级时显示，不会出现第三排） */}
+          {!categoryLoading && childCategories.length > 0 && (
+            <FilterRow label="子类" loading={false}>
+              <button
+                onClick={() => onSelectCategory(CHILD_ALL)}
+                tabIndex={showCategories ? undefined : -1}
+                className={chipClass(selectedCat === CHILD_ALL)}
+              >
+                全部
+              </button>
+              {childCategories.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => onSelectCategory(c.id)}
+                  tabIndex={showCategories ? undefined : -1}
+                  className={chipClass(selectedCat === c.id)}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </FilterRow>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

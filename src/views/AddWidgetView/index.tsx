@@ -59,6 +59,7 @@ export const AddWidgetView: React.FC = () => {
         <SidebarNav
           activeCategory={activeCategory}
           onSelect={setActiveCategory}
+          showTitle
         />
         {/* 底部备案信息（黑底） */}
         <SidebarFooter />

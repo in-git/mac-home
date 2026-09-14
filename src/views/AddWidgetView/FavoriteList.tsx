@@ -39,8 +39,8 @@ export const FavoriteList: React.FC<FavoriteListProps> = ({
   return (
     <>
       <div className="mb-4 flex items-center gap-2">
-        <h3 className="text-base font-medium dark:text-white">我的收藏</h3>
-        <span className="text-xs text-slate-400">{favorites.length}</span>
+        <h3 className="text-lg sm:text-xl font-bold">我的收藏</h3>
+        <span className="text-md sm:text-xl text-slate-400">({favorites.length})</span>
       </div>
       <div className={SITE_GRID_CLASS}>
         {favorites.map((item, index) => (

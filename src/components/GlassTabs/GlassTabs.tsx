@@ -18,7 +18,7 @@ interface GlassTabsProps {
 /** 各尺寸档位对应的按钮内边距与字号 */
 const SIZE_MAP: Record<NonNullable<GlassTabsProps['size']>, string> = {
   sm: 'px-3 py-1 text-xs',
-  md: 'px-4 py-1.5 text-sm',
+  md: 'px-4 py-1.5 text-md',
   lg: 'px-5 py-2 text-base',
 };
 
@@ -47,7 +47,7 @@ export const GlassTabs: React.FC<GlassTabsProps> = ({
             onClick={() => onChange(item.id)}
             className={`shrink-0 text-nowrap rounded-full ${sizeCls}  duration-300 ${
               isActive
-                ? 'bg-white/60 text-[color:var(--accent)] shadow-md shadow-black/10 backdrop-blur-sm dark:bg-white/20 dark:text-white'
+                ? 'bg-white/60 text-blue-500 shadow-md shadow-black/10 backdrop-blur-sm dark:bg-white/20 dark:text-white'
                 : ' hover:text-slate-800  dark:hover:text-white'
             }`}
           >

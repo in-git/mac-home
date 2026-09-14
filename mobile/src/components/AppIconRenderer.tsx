@@ -136,7 +136,7 @@ export const AppIconRenderer: React.FC<AppIconRendererProps> = ({
               </div>
             </div>
             <div className="w-2.5 h-1 bg-amber-500 rounded-full mt-0.5" />
-            <div className="w-4 h-1.5 bg-rose-500 rounded-full mt-0.5" />
+            <div className="w-4 h-1.5  rounded-full mt-0.5" />
           </div>
         </div>
       );

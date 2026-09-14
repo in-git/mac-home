@@ -23,7 +23,7 @@ export interface ButtonProps
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
   sm: 'h-8 px-3 text-[13px] gap-1.5',
-  md: 'h-9 px-3.5 text-sm gap-1.5',
+  md: 'h-9 px-3.5 text-md gap-1.5',
   lg: 'h-11 px-5 text-[15px] gap-2',
 };
 
@@ -35,7 +35,7 @@ const ICON_ONLY_SIZE: Record<ButtonSize, string> = {
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary:
-    'bg-[color:var(--accent)] text-white hover:brightness-110 active:brightness-95 shadow-sm',
+    'bg-blue-500 text-white hover:brightness-110 active:brightness-95 shadow-sm',
   secondary:
     'bg-black/5 hover:bg-black/10 dark:bg-white/10  dark:hover:bg-white/15',
   ghost:
@@ -74,7 +74,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={[
-        'inline-flex items-center justify-center rounded-[var(--card-radius)] ',
+        'inline-flex items-center justify-center rounded-md ',
         'transition-[transform,background-color,filter,box-shadow] duration-150 select-none',
         'hover:scale-[1.03] active:scale-95',
         'focus-visible:outline-none focus-visible:ring-2 ring-[color:var(--accent)]/50',

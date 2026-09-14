@@ -281,13 +281,13 @@ export const DesktopGrid: React.FC<DesktopGridProps> = ({
           >
             <button
               onClick={() => handleOpen(contextMenu.item)}
-              className="w-full px-4 py-2.5 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
+              className="w-full px-4 py-2.5 text-left text-md text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
             >
               打开
             </button>
             <button
               onClick={() => handleUninstall(contextMenu.item)}
-              className="w-full px-4 py-2.5 text-left text-sm text-rose-400 hover:bg-rose-500/20 flex items-center gap-2 transition-colors border-t border-white/5"
+              className="w-full px-4 py-2.5 text-left text-md text-rose-400 hover:/20 flex items-center gap-2 transition-colors border-t border-white/5"
             >
               卸载
             </button>

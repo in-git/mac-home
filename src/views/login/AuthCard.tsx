@@ -30,7 +30,7 @@ export function AuthCard({
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.96, opacity: 0, y: 8 }}
         transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
-        className="relative flex w-full max-w-[860px] overflow-hidden rounded-[var(--card-radius)] border border-white/60 bg-white/80 shadow-[0_24px_70px_-12px_rgba(0,0,0,0.45)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/80"
+        className="relative flex w-full max-w-[860px] overflow-hidden rounded-md border border-white/60 bg-white/80 shadow-[0_24px_70px_-12px_rgba(0,0,0,0.45)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/80"
       >
         {/* 左侧大图（iPad 风格） */}
         {imageUrl && (
@@ -45,7 +45,7 @@ export function AuthCard({
               <p className="text-xl  text-white drop-shadow">
                 欢迎回来
               </p>
-              <p className="mt-1 text-sm text-white/80">登录以同步你的工作台</p>
+              <p className="mt-1 text-md text-white/80">登录以同步你的工作台</p>
             </div>
           </div>
         )}

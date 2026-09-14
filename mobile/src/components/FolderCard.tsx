@@ -179,7 +179,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             {/* 超出时在文件夹上方显示的全部文件总个数角标 */}
             {isOverflow && !isEditMode && (
               <span
-                className="absolute -top-1.5 -right-1.5 z-20 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border border-white/80 shadow-md pointer-events-none"
+                className="absolute -top-1.5 -right-1.5 z-20 min-w-[18px] h-[18px] px-1 rounded-full  text-white text-md font-bold flex items-center justify-center border border-white/80 shadow-md pointer-events-none"
                 title={`共 ${totalCount} 个应用`}
               >
                 {totalCount}
@@ -224,7 +224,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
           {/* 超出时在文件夹上方显示的全部文件总个数角标 */}
           {isOverflow && !isEditMode && (
             <span
-              className="absolute -top-1.5 -right-1.5 z-20 min-w-[20px] h-5 px-1.5 rounded-full bg-rose-500 text-white text-[10.5px] font-bold flex items-center justify-center border-2 border-neutral-900/80 shadow-md pointer-events-none"
+              className="absolute -top-1.5 -right-1.5 z-20 min-w-[20px] h-5 px-1.5 rounded-full  text-white text-[10.5px] font-bold flex items-center justify-center border-2 border-neutral-900/80 shadow-md pointer-events-none"
               title={`共 ${totalCount} 个应用`}
             >
               {totalCount}
@@ -260,7 +260,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             {/* 超出时在文件夹上方显示的全部文件总个数角标 */}
             {isOverflow && !isEditMode && (
               <span
-                className="absolute -top-1.5 -right-1.5 z-20 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border border-white/80 shadow-md pointer-events-none"
+                className="absolute -top-1.5 -right-1.5 z-20 min-w-[18px] h-[18px] px-1 rounded-full  text-white text-md font-bold flex items-center justify-center border border-white/80 shadow-md pointer-events-none"
                 title={`共 ${totalCount} 个应用`}
               >
                 {totalCount}
@@ -296,7 +296,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         {/* 超出时在文件夹上方显示的全部文件总个数角标 */}
         {isOverflow && !isEditMode && (
           <span
-            className="absolute -top-1.5 -right-1.5 z-20 min-w-[20px] h-5 px-1.5 rounded-full bg-rose-500 text-white text-[10.5px] font-bold flex items-center justify-center border-2 border-neutral-900/80 shadow-md pointer-events-none"
+            className="absolute -top-1.5 -right-1.5 z-20 min-w-[20px] h-5 px-1.5 rounded-full  text-white text-[10.5px] font-bold flex items-center justify-center border-2 border-neutral-900/80 shadow-md pointer-events-none"
             title={`共 ${totalCount} 个应用`}
           >
             {totalCount}

@@ -3,6 +3,27 @@ import React, { useState } from 'react';
 import { SiteItem } from '../../../api/site';
 import { LazyImage } from '../../../components/LazyImage/LazyImage';
 
+/** 新站点判定天数：发布时间在该天数内则打上 NEW 角标 */
+const NEW_DAYS = 3;
+const NEW_WINDOW_MS = NEW_DAYS * 24 * 60 * 60 * 1000;
+
+/**
+ * 发布时间是否在「新」窗口内。
+ * 兼容后端常见的 'YYYY-MM-DD HH:mm:ss'（Safari 无法解析空格分隔，替换为 T）。
+ */
+function isNewSite(createTime?: string): boolean {
+  if (!createTime) return false;
+  const normalized = createTime.trim().replace(' ', 'T');
+  // 无时区信息时按本地时间解析（与后端展示口径一致）
+  const time = Date.parse(
+    /[Zz]$|[+-]\d{2}:?\d{2}$/.test(normalized)
+      ? normalized
+      : `${normalized}${normalized.length > 10 ? '' : 'T00:00:00'}`,
+  );
+  if (Number.isNaN(time)) return false;
+  return Date.now() - time < NEW_WINDOW_MS;
+}
+
 interface SiteCardProps {
   item: SiteItem;
   onOpen: (item: SiteItem) => void;
@@ -30,7 +51,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   return (
     <div
       onClick={() => onOpen(item)}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--card-radius)] border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40 bg-white dark:bg-white/5 cursor-pointer"
+      className="group relative flex flex-col overflow-hidden rounded-md border border-black/10 dark:border-white/10 hover:border-[color:var(--accent)] hover:ring-2 hover:ring-[color:var(--accent)]/40 bg-white dark:bg-white/5 cursor-pointer"
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         {coverSrc ? (
@@ -55,7 +76,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
-        {/* 右上角收藏按钮：已收藏时常驻显示实心爱心，未收藏时鼠标悬停卡片才显示 */}
+        {/* 右上角收藏按钮：移动端（无 hover）常驻显示；桌面端仅悬停时显示；已收藏则始终显示 */}
         {onToggleFavorite && (
           <button
             type="button"
@@ -69,7 +90,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             className={`absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md transition-all hover:bg-black/65 active:scale-90 ${
               favorited
                 ? 'opacity-100'
-                : 'opacity-0 group-hover:opacity-100 text-white'
+                : 'opacity-0 max-sm:opacity-100 group-hover:opacity-100 text-white'
             }`}
           >
             <Heart
@@ -88,7 +109,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
 
       <div className="relative p-2.5 flex items-center gap-3 text-left">
         {/* 左侧：Logo + 标题与描述 */}
-        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {item.logo && !imgError ? (
             <img
               ref={logoImgRef}
@@ -104,7 +125,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             />
           ) : (
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-md font-bold text-white"
               style={{
                 background:
                   item.background ||
@@ -115,12 +136,20 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             </div>
           )}
 
-          <div className="flex flex-col flex-1 min-w-0 justify-center">
-            <p className="truncate text-sm  ">
-              {item.name}
-            </p>
+          {/* 文本区：宽度随内容自适应（w-fit），最长不超过可用宽度（max-w-full 后截断） */}
+          <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
+            {/* 标题行：宽度与标题内容一致，NEW 角标紧跟其后 */}
+            <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
+              <p className="truncate text-xl">{item.name}</p>
+              {/* NEW 角标：发布时间在 3 天内 */}
+              {isNewSite(item.createTime) && (
+                <span className="shrink-0 rounded-full  px-1.5 py-px text-md font-semibold uppercase leading-tight tracking-wide text-white shadow-sm">
+                  New
+                </span>
+              )}
+            </div>
             {item.des && (
-              <p className="truncate text-xs   mt-0.5">
+              <p className="truncate text-md mt-1 max-w-full text-gray-500">
                 {item.des}
               </p>
             )}

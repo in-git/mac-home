@@ -154,7 +154,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
                     onReset();
                   }
                 }}
-                className="px-2.5 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 flex items-center gap-1 font-medium transition-colors"
+                className="px-2.5 py-1.5 rounded-lg /20 text-rose-300 hover:/30 flex items-center gap-1 font-medium transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 重置预设
@@ -203,7 +203,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
           /* API Integration Docs Tab */
           <div className="flex-1 overflow-auto max-h-[380px] text-xs text-neutral-300 space-y-3 pr-1">
             <div className="p-3 rounded-xl bg-neutral-800/80 border border-neutral-700">
-              <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold mb-1">
+              <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-md font-bold mb-1">
                 GET /api/desktop/apps
               </span>
               <p className="text-neutral-400 text-[11px]">
@@ -212,7 +212,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
             </div>
 
             <div className="p-3 rounded-xl bg-neutral-800/80 border border-neutral-700">
-              <span className="inline-block px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-mono text-[10px] font-bold mb-1">
+              <span className="inline-block px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-mono text-md font-bold mb-1">
                 PUT /api/desktop/apps
               </span>
               <p className="text-neutral-400 text-[11px]">
@@ -224,7 +224,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
               <span className="text-[11px] font-bold text-neutral-400 block mb-1">
                 前端调用示例 (Fetch):
               </span>
-              <pre className="text-[10px] font-mono text-cyan-300 overflow-x-auto">
+              <pre className="text-md font-mono text-cyan-300 overflow-x-auto">
 {`// 1. 获取桌面配置
 const res = await fetch('/api/desktop/apps');
 const config = await res.json();

@@ -136,15 +136,40 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     return () => clearTimeout(timer);
   }, [searchKeyword]);
 
-  // 滚动触底自动加载下一页
+  // 滚动触底自动加载下一页 + 按滚动方向折叠 / 展开分类行
   const scrollRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
+  const lastScrollTopRef = useRef(0);
+  const [showCategories, setShowCategories] = useState(true);
+
+  /**
+   * 方向判定阈值（非对称）：
+   * - 恢复（向上）阈值小：只要有轻微上滑就立刻恢复原样，避免「滚上去了但没还原」
+   * - 收起（向下）阈值大：需要明确的向下意图才折叠，避免惯性滚动抖动误触发
+   */
+  const RESTORE_DELTA = 2;
+  const COLLAPSE_DELTA = 10;
+
   const handleScroll = useCallback(() => {
     if (rafRef.current) return;
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = null;
       const el = scrollRef.current;
-      if (!el || appendLoading || !hasMore) return;
+      if (!el) return;
+
+      // 方向判定：顶部区域始终展开；向下滚隐藏，向上滚恢复
+      const top = el.scrollTop;
+      const delta = top - lastScrollTopRef.current;
+      if (top <= 8) {
+        setShowCategories(true);
+      } else if (delta < -RESTORE_DELTA) {
+        setShowCategories(true);
+      } else if (delta > COLLAPSE_DELTA) {
+        setShowCategories(false);
+      }
+      lastScrollTopRef.current = top;
+
+      if (appendLoading || !hasMore) return;
       if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
         loadMore(queryCat, debouncedKw, PAGE_SIZE);
       }
@@ -170,6 +195,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         activeParent={activeParent}
         searchKeyword={searchKeyword}
         loading={loading}
+        showCategories={showCategories}
         onSearchChange={setSearchKeyword}
         onSearchSubmit={handleSearchSubmit}
         onSelectCategory={handleSelectCategory}

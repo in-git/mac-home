@@ -26,7 +26,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({ time = '19:24' }) => {
       </div>
 
       {/* Right side: Network speed, Dual 4G, WiFi, Battery */}
-      <div className="flex items-center gap-1.5 text-[10px] text-white/90">
+      <div className="flex items-center gap-1.5 text-md text-white/90">
         {/* Activity / sensor icon */}
         <Activity className="w-3 h-3 text-white/80" />
 

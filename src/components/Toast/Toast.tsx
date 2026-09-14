@@ -52,7 +52,7 @@ function removeToast(id: number) {
 
 function ToastCard({ item }: { item: ToastItem }) {
   return (
-    <div className="flex items-center gap-2 px-3.5 py-2 rounded-[var(--card-radius)] bg-white/90 dark:bg-[#2C2C2E]/90 backdrop-blur shadow-lg ring-1 ring-black/5 dark:ring-white/10 text-sm  pointer-events-auto animate-[toastIn_0.2s_ease-out]">
+    <div className="flex items-center gap-2 px-3.5 py-2 rounded-md bg-white/90 dark:bg-[#2C2C2E]/90 backdrop-blur shadow-lg ring-1 ring-black/5 dark:ring-white/10 text-md  pointer-events-auto animate-[toastIn_0.2s_ease-out]">
       {ICONS[item.type]}
       <div className="flex flex-col">
         <span>{item.message}</span>
@@ -68,7 +68,7 @@ function ToastCard({ item }: { item: ToastItem }) {
             item.action?.onClick();
             removeToast(item.id);
           }}
-          className="ml-1 rounded-[var(--card-radius)] px-2 py-1 text-xs  text-[color:var(--accent)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="ml-1 rounded-md px-2 py-1 text-xs  text-blue-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         >
           {item.action.label}
         </button>
