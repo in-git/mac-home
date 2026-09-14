@@ -1,60 +1,185 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <title>吴文龙的游戏空间 | 吴文龙的个性化桌面主页</title>
-    <meta
-      name="description"
-      content="吴文龙的游戏空间——吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽应用、便签、天气、实时任务提醒与动态壁纸，呈现吴文龙的数字生活与工作空间。"
-    />
-    <meta
-      name="keywords"
-      content="吴文龙,吴文龙的游戏空间,吴文龙主页,吴文龙桌面,互联空间,个性化主页,桌面应用"
-    />
-    <meta name="author" content="吴文龙" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://wuwelong.example.com/" />
 
-    <!-- Open Graph / 社交分享 -->
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="zh_CN" />
-    <meta property="og:title" content="吴文龙的游戏空间 | 吴文龙" />
-    <meta
-      property="og:description"
-      content="吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽应用、便签、天气、实时任务提醒与动态壁纸。"
-    />
-    <meta property="og:url" content="https://wuwelong.example.com/" />
-    <meta property="og:site_name" content="吴文龙的游戏空间" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="吴文龙的游戏空间 | 吴文龙" />
-    <meta
-      name="twitter:description"
-      content="吴文龙打造的 macOS 风格个性化桌面主页，集成可拖拽应用、便签、天气与动态壁纸。"
-    />
+  <!-- ── 核心 SEO：标题 / 描述（Bing 最看重 title + description） ── -->
+  <title>吴文龙的个人主页 | 游戏空间 · 互联空间</title>
+  <meta name="description"
+    content="吴文龙的个人主页——吴文龙自建的桌面式导航空间，汇集游戏空间、互联空间、便签、天气与实时任务提醒，支持应用自由拖拽与动态壁纸，一站式呈现吴文龙的数字生活与工作空间。" />
+  <meta name="keywords" content="吴文龙,吴文龙个人主页,吴文龙的游戏空间,吴文龙互联空间,个性化主页" />
+  <meta name="author" content="吴文龙" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href="https://mx2d.cn/" />
 
-    <!-- 结构化数据：让搜索引擎更清晰识别作者与站点 -->
-    <script type="application/ld+json">
+  <!-- 语言与地区标注：帮助 Bing 判断受众 -->
+  <link rel="alternate" hreflang="zh-CN" href="https://mx2d.cn/" />
+  <link rel="alternate" hreflang="x-default" href="https://mx2d.cn/" />
+
+  <!-- Open Graph：Bing / 微信 / QQ 等抓取摘要的通用协议（国内站点同样生效） -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="吴文龙的个人主页" />
+  <meta property="og:title" content="吴文龙的个人主页 | 游戏空间 · 互联空间" />
+  <meta property="og:description" content="吴文龙自建的桌面式导航空间，汇集游戏空间、互联空间、便签、天气与实时任务提醒，支持应用自由拖拽与动态壁纸。" />
+  <meta property="og:url" content="https://mx2d.cn/" />
+  <meta property="og:image" content="https://mx2d.cn/preview.jpg" />
+  <meta property="og:image:secure_url" content="https://mx2d.cn/preview.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="2552" />
+  <meta property="og:image:height" content="1308" />
+  <meta property="og:image:alt" content="吴文龙的个人主页 —— 桌面式导航空间预览" />
+
+  <!-- 结构化数据：让 Bing 明确识别「吴文龙」这个人与该站点的归属关系 -->
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "吴文龙的互联空间",
-        "alternateName": "吴文龙",
-        "url": "https://mx2d.com/",
-        "author": {
-          "@type": "Person",
-          "name": "吴文龙"
-        },
-        "description": "吴文龙的个人博客，集成可拖拽应用、便签、天气、实时任务提醒与动态壁纸，呈现吴文龙的数字生活与工作空间。"
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mx2d.cn/#person",
+            "name": "吴文龙",
+            "url": "https://mx2d.cn/",
+            "description": "吴文龙，个人主页「吴文龙的个人主页」的作者，站点集成桌面式导航、游戏空间、互联空间与日常效率小组件。"
+          },
+        ]
       }
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ad13db5a3b15fc99916fd766fcdba695";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
 
+  <style>
+    /* 仅供屏幕阅读器与搜索引擎读取的标题：页面为桌面式 UI，无可见标题位 */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* JS 未执行时的首屏兜底内容，React 挂载后由应用界面接管 */
+    #boot-fallback {
+      max-width: 720px;
+      margin: 12vh auto;
+      padding: 0 24px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+        'Microsoft YaHei', sans-serif;
+      color: #e6e6e6;
+      line-height: 1.8;
+    }
+
+    #boot-fallback a {
+      color: #7aa2f7;
+    }
+
+    #boot-fallback ul {
+      padding-left: 20px;
+    }
+
+    /* 底部备案信息：固定在视口底部（桌面 UI 为 h-screen，普通文档流会被挤出首屏） */
+    #site-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px 14px;
+      padding: 5px 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+        'Microsoft YaHei', sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+      /* 容器不吃鼠标事件，避免遮挡桌面底部的可交互区域 */
+      pointer-events: none;
+    }
+
+    #site-footer a {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    #site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    #site-footer svg {
+      flex: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 全站唯一 h1：不随 React 渲染而消失，确保 Bing 渲染 JS 后仍能抓到主标题 -->
+  <header class="sr-only">
+    <h1>吴文龙的个人主页 · 游戏空间与互联空间</h1>
+    <p>
+      吴文龙的个人主页，是吴文龙自建的桌面式个人空间，包含游戏空间、互联空间、便签、天气、实时任务提醒与动态壁纸。
+    </p>
+  </header>
+
+  <div id="root">
+    <!-- 首屏静态兜底：无 JS 环境（含部分爬虫）下依然有可读内容 -->
+    <main id="boot-fallback">
+      <h2>吴文龙的个人主页</h2>
+      <p>
+        这里是由吴文龙搭建的个人桌面空间，把常用站点与日常工具整合在一起：
+      </p>
+      <ul>
+        <li>游戏空间：吴文龙收藏与整理的游戏入口</li>
+        <li>互联空间：吴文龙常用的网站与在线服务导航</li>
+        <li>便签、天气、实时任务提醒与动态壁纸等桌面小组件</li>
+      </ul>
+      <p>页面正在加载，若长时间无响应，请检查浏览器是否已启用 JavaScript。</p>
+    </main>
+  </div>
+
+  <noscript>
+    <p style="padding: 16px; font-family: sans-serif">
+      吴文龙的个人主页需要启用 JavaScript 才能完整体验，当前展示的是静态内容。
+    </p>
+  </noscript>
+
+  <!-- 页面底部备案信息：写在静态 HTML 中，爬虫不执行 JS 也能抓取 -->
+  <footer id="site-footer">
+    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44011202003613" target="_blank" rel="noopener noreferrer"
+      title="粤公网安备44011202003613号">
+      <svg width="13" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path
+          d="M12 1.5 4 4.2v7.1c0 5 3.4 9.6 8 11.2 4.6-1.6 8-6.2 8-11.2V4.2l-8-2.7Zm0 2.2 6 2v5.6c0 3.9-2.5 7.5-6 8.9-3.5-1.4-6-5-6-8.9V5.7l6-2Zm3.3 3.6-4.6 7.6-2.4-2.5-1.5 1.4 3.9 4.1 6-9.2-1.4-1.4Z" />
+      </svg>
+      粤公网安备44011202003613号
+    </a>
+  </footer>
+
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
