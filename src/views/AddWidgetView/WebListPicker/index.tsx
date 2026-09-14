@@ -19,7 +19,6 @@ import {
  * 选中状态由父应用传入（selected），新增 / 删除等变更事件均交由父应用处理。
  */
 export const WebListPicker: React.FC<WebListPickerProps> = ({
-  title,
   onOpen,
   favorites,
   onToggleFavorite,
@@ -164,7 +163,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   return (
     <div className="flex flex-col h-full">
       <FilterBar
-        title={title}
         parentCategories={categories}
         childCategories={getChildCategories(categories, activeParent)}
         categoryLoading={categoryLoading}

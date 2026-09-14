@@ -32,6 +32,17 @@ export const CARD_RADIUS: Record<CardRadiusTier, { label: string; px: number }> 
   large: { label: '大', px: 18 },
 };
 
+/**
+ * 外观默认值：不持久化、也不提供修改入口，仅用于写入 CSS 变量
+ * （见 hooks/useThemeVariables.ts）。
+ */
+export const DEFAULT_APPEARANCE = {
+  isDarkMode: false,
+  themeColor: '#007AFF',
+  fontVariant: 'B' as FontVariant,
+  cardRadius: 'small' as CardRadiusTier,
+};
+
 // ############################################################
 export type WidgetType =string
 

@@ -1,14 +1,13 @@
 import { Loader2, Search } from 'lucide-react';
 import React from 'react';
 import { Skeleton } from '@heroui/react';
-import { SiteCategory } from '../../../api/site';
+import { SiteCategory } from '@/api/site';
+import logo from '@/assets/logo.webp';
 
 /** 子级「全部」的标记值，与父级「全部」('') 区分，避免两者高亮态互相干扰 */
 export const CHILD_ALL = '__child_all__';
 
 interface FilterBarProps {
-  /** 可选的标题横幅（大字），仅在需要时由调用方传入 */
-  title?: string;
   /** 父级（顶层）分类列表，用于第一排 */
   parentCategories: SiteCategory[];
   /** 当前父级对应的子级列表，用于第二排；为空不渲染第二排 */
@@ -73,12 +72,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <div className="px-5 py-4 border-b border-black/5 dark:border-white/10 space-y-4">
-      {/* 顶部横幅：调用方传入的大字标题（如「应用市场」），与搜索框一起居中 */}
-      { (
-        <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight text-center dark:text-white">
-       游趣
-        </h1>
-      )}
+      {/* 顶部横幅：站点 Logo */}
+      <div className="flex justify-center">
+        <img
+          src={logo}
+          className="h-9 sm:h-24 w-auto object-contain"
+        />
+      </div>
 
       {/* 搜索框：移动端占满，桌面端 50% 宽，整体居中，胶囊圆角 */}
       <div className="relative w-full sm:w-1/2 mx-auto">

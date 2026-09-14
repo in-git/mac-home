@@ -2,10 +2,10 @@ import { ShieldCheck } from 'lucide-react';
 import React from 'react';
 
 /**
- * 左侧栏底部备案信息（黑底）：仅桌面端展示（移动端侧栏为横向条，隐藏）。
+ * 侧边栏底部备案信息（黑底）：桌面侧栏与移动端抽屉共用。
  */
 export const SidebarFooter: React.FC = () => (
-  <div className="hidden sm:block shrink-0 bg-black px-3 py-3">
+  <div className="shrink-0 bg-black px-3 py-3">
     <a
       href="https://beian.mps.gov.cn/#/query/webSearch?code=44011202003613"
       target="_blank"

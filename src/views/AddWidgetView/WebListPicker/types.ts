@@ -9,8 +9,6 @@ export const SITE_GRID_CLASS =
   'grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
 
 export interface WebListPickerProps {
-  /** 顶部横幅大字标题（如「应用市场」），不传则不显示 */
-  title?: string;
   /** 点击卡片打开站点时的回调；缺省时在新窗口打开 */
   onOpen?: (item: SiteItem) => void;
   /** 已收藏的站点列表；传入后用于标记卡片的收藏态 */
