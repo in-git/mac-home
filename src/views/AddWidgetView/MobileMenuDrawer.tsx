@@ -98,7 +98,9 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
           }}
         />
 
-        <SidebarFooter />
+        <div className="mt-auto">
+          <SidebarFooter />
+        </div>
       </div>
     </div>,
     document.body,

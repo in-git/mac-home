@@ -157,6 +157,8 @@ class OnlineCountClient {
   private manualClose = false;
   private handlers = new Set<OnlineCountHandler>();
   private _connected = false;
+  /** 订阅方引用计数：归零时才真正断开，避免某个组件卸载影响其它订阅者 */
+  private refCount = 0;
 
   get connected(): boolean {
     return this._connected;
@@ -249,6 +251,25 @@ class OnlineCountClient {
     this.handlers.add(handler);
     return () => {
       this.handlers.delete(handler);
+    };
+  }
+
+  /**
+   * 增加一次订阅引用：首次调用时建立连接。
+   * 返回 release 函数，订阅方卸载时调用；引用归零后自动断开。
+   * 用引用计数是为了避免多订阅者场景下，某个组件卸载把共享连接关掉。
+   */
+  acquire(): () => void {
+    this.refCount += 1;
+    // 重新 acquire 时解除上一次 disconnect 留下的关闭标记
+    this.manualClose = false;
+    this.connect();
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      this.refCount = Math.max(0, this.refCount - 1);
+      if (this.refCount === 0) this.disconnect();
     };
   }
 

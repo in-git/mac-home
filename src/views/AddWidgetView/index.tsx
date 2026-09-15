@@ -92,8 +92,10 @@ export const AddWidgetView: React.FC = () => {
           onSelect={setActiveCategory}
           showTitle
         />
-        {/* 底部备案信息（黑底） */}
-        <SidebarFooter />
+        {/* 底部：访客统计 + 备案信息 */}
+        <div className="mt-auto">
+          <SidebarFooter />
+        </div>
       </div>
 
       {/* 移动端菜单抽屉（全屏，从左向右滑入） */}

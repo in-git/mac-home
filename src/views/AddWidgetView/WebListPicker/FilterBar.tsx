@@ -1,7 +1,6 @@
 import { Loader2, Search } from 'lucide-react';
 import React, { useState } from 'react';
 import { SiteCategory } from '@/api/site';
-import logo from '@/assets/logo.webp';
 import CategoryRow from './CategoryRow';
 
 /** 子级「全部」的标记值，与父级「全部」('') 区分，避免两者高亮态互相干扰 */
@@ -52,16 +51,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         compact ? 'py-2' : 'py-4'
       }`}
     >
-      {/* 顶部横幅：站点 Logo，滚动向下时高度收窄 */}
-      <div className="flex justify-center">
-        <img
-          src={logo}
-          className={`w-auto object-contain transition-[height] duration-300 ease-out ${
-            compact ? 'h-8 sm:h-12' : 'h-12 sm:h-24'
-          }`}
-        />
-      </div>
-
       {/* 搜索框：移动端占满，桌面端 50% 宽，整体居中，胶囊圆角 */}
       <div className="relative w-full sm:w-1/2 mx-auto">
         <input
