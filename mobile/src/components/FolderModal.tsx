@@ -66,7 +66,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
               }}
             >
               {renderModalAppIcon(sub)}
-              <span className="text-[13px] font-medium text-neutral-200 tracking-tight text-center truncate max-w-[88px] mt-2 leading-tight">
+              <span className=" font-medium text-neutral-200 tracking-tight text-center truncate max-w-[88px] mt-2 leading-tight">
                 {sub.name}
               </span>
             </div>

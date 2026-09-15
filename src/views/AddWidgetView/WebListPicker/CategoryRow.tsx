@@ -144,7 +144,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 
   return (
     <div className="flex items-center gap-2 text-md">
-      <span className="mr-1 shrink-0 text-xs text-slate-400">{label}</span>
+      <span className="mr-1 shrink-0  text-slate-400">{label}</span>
 
       {/* 不换行容器：超出横向裁剪，由右侧下拉补充 */}
       <div ref={scrollRef} className="min-w-0 flex-1 overflow-hidden">

@@ -85,7 +85,7 @@ export const AppIconRenderer: React.FC<AppIconRendererProps> = ({
       case '哔哩哔哩':
         return (
           <div className="flex flex-col items-center">
-            <span className="text-[12px] font-bold text-neutral-200 tracking-tighter leading-none">
+            <span className=" font-bold text-neutral-200 tracking-tighter leading-none">
               bili
             </span>
             <div className="w-4 h-[2px] bg-neutral-400 rounded-full mt-0.5" />
@@ -93,7 +93,7 @@ export const AppIconRenderer: React.FC<AppIconRendererProps> = ({
         );
       default:
         return (
-          <span className="text-[16px] font-bold text-neutral-300 select-none">
+          <span className=" font-bold text-neutral-300 select-none">
             {symbol || displayName.slice(0, 1)}
           </span>
         );
@@ -196,7 +196,7 @@ export const AppIconRenderer: React.FC<AppIconRendererProps> = ({
     case '哔哩哔哩':
       return (
         <div className="w-full h-full rounded-[16px] bg-[#FB7299] flex flex-col items-center justify-center shadow-md p-1">
-          <span className="text-[12px] font-black text-white tracking-tight leading-none">
+          <span className=" font-black text-white tracking-tight leading-none">
             bilibili
           </span>
           <div className="flex gap-1.5 mt-1">
@@ -250,7 +250,7 @@ export const AppIconRenderer: React.FC<AppIconRendererProps> = ({
           style={{ backgroundColor: bgColor }}
           className="w-full h-full rounded-[16px] flex items-center justify-center shadow-md"
         >
-          <span className="text-[17px] font-bold text-white select-none">
+          <span className=" font-bold text-white select-none">
             {symbol || displayName.slice(0, 1)}
           </span>
         </div>

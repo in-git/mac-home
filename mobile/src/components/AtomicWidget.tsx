@@ -49,14 +49,14 @@ export const AtomicWidget: React.FC<AtomicWidgetProps> = ({
         </div>
 
         {/* Right: Dynamic Date & Weekday (Location removed as requested) */}
-        <div className="flex flex-col items-end justify-center text-[11px] leading-tight text-white/90">
+        <div className="flex flex-col items-end justify-center  leading-tight text-white/90">
           <span className="text-white/85 font-medium">{dateStr}</span>
           <span className="text-rose-400 font-semibold text-[10.5px] mt-0.5">{weekdayStr}</span>
         </div>
       </div>
 
       {/* Widget Label */}
-      <span className="text-[11px] font-medium text-white/90 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] text-center mt-1 shrink-0">
+      <span className=" font-medium text-white/90 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] text-center mt-1 shrink-0">
         {item.title}
       </span>
     </div>

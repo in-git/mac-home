@@ -57,7 +57,7 @@ function ToastCard({ item }: { item: ToastItem }) {
       <div className="flex flex-col">
         <span>{item.message}</span>
         {item.description && (
-          <span className="text-xs  ">
+          <span className="  ">
             {item.description}
           </span>
         )}
@@ -68,7 +68,7 @@ function ToastCard({ item }: { item: ToastItem }) {
             item.action?.onClick();
             removeToast(item.id);
           }}
-          className="ml-1 rounded-md px-2 py-1 text-xs  text-blue-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="ml-1 rounded-md px-2 py-1   text-blue-500 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         >
           {item.action.label}
         </button>

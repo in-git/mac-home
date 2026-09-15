@@ -26,8 +26,6 @@ const CATEGORIES: { id: string; label: string; icon: React.ReactNode }[] = [
 interface SidebarNavProps {
   activeCategory: string;
   onSelect: (id: string) => void;
-  /** 是否显示顶部「游趣」标题（移动端抽屉自带标题栏，无需重复） */
-  showTitle?: boolean;
 }
 
 /**
@@ -37,14 +35,9 @@ interface SidebarNavProps {
 export const SidebarNav: React.FC<SidebarNavProps> = ({
   activeCategory,
   onSelect,
-  showTitle = false,
 }) => (
   <div className="flex flex-col gap-1 p-2 flex-1 min-h-0 overflow-y-auto">
-    {showTitle && (
-      <div className="px-2.5 pt-2 pb-3">
-        <h1 className="text-font-title dark:text-white">游趣</h1>
-      </div>
-    )}
+  
     {CATEGORIES.map((cat) => {
       const active = activeCategory === cat.id;
       return (

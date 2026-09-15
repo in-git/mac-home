@@ -89,10 +89,10 @@ export const StatRow: React.FC<{ item: StatItem }> = ({ item }) => {
           </span>
         )}
       </span>
-      <span className="flex-1 truncate text-[11px] text-[#86868B] dark:text-[#98989D]">
+      <span className="flex-1 truncate  text-[#86868B] dark:text-[#98989D]">
         {item.label}
       </span>
-      <span className="shrink-0 text-[11px] font-semibold tabular-nums text-[#1D1D1F] dark:text-white">
+      <span className="shrink-0  font-semibold tabular-nums text-[#1D1D1F] dark:text-white">
         {item.value}
       </span>
     </div>

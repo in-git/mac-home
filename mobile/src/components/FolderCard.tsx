@@ -141,7 +141,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
       return (
         <div
           key={sub.id}
-          className={`folder-subapp-icon ${sizeClass} rounded-[10px] bg-neutral-700/80 border border-neutral-600/50 flex items-center justify-center text-[11px] font-medium text-neutral-300 shadow-xs select-none shrink-0`}
+          className={`folder-subapp-icon ${sizeClass} rounded-[10px] bg-neutral-700/80 border border-neutral-600/50 flex items-center justify-center  font-medium text-neutral-300 shadow-xs select-none shrink-0`}
           title={sub.name}
         >
           {sub.symbol || sub.name.slice(0, 1)}
@@ -154,7 +154,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
       <div
         key={sub.id}
         style={{ backgroundColor: sub.color || '#4b5563' }}
-        className={`folder-subapp-icon ${sizeClass} rounded-[10px] flex items-center justify-center text-[11px] font-bold text-white shadow-xs select-none border border-white/10 shrink-0`}
+        className={`folder-subapp-icon ${sizeClass} rounded-[10px] flex items-center justify-center  font-bold text-white shadow-xs select-none border border-white/10 shrink-0`}
         title={sub.name}
       >
         {sub.symbol || sub.name.slice(0, 1)}
@@ -203,7 +203,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
           </div>
         </div>
 
-        <span className="text-[11px] font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center truncate w-full mt-1 leading-tight shrink-0">
+        <span className=" font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center truncate w-full mt-1 leading-tight shrink-0">
           {item.name || item.title}
         </span>
       </div>
@@ -238,7 +238,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
           ))}
         </div>
 
-        <span className="text-[11px] font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center mt-1 leading-tight shrink-0">
+        <span className=" font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center mt-1 leading-tight shrink-0">
           {item.name || item.title}
         </span>
       </div>
@@ -275,7 +275,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
           </div>
         </div>
 
-        <span className="text-[11px] font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center mt-1 leading-tight shrink-0">
+        <span className=" font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center mt-1 leading-tight shrink-0">
           {item.name || item.title}
         </span>
       </div>
@@ -315,7 +315,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         </div>
       </div>
 
-      <span className="text-[11px] font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center mt-1 leading-tight shrink-0">
+      <span className=" font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center mt-1 leading-tight shrink-0">
         {item.name || item.title}
       </span>
     </div>

@@ -213,7 +213,7 @@ export default function App() {
 
         {/* Floating Toast Notification */}
         {toastMessage && (
-          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-1.5 rounded-full bg-neutral-900/90 text-white text-xs font-medium backdrop-blur-md border border-white/15 shadow-xl pointer-events-none animate-fade-in flex items-center gap-1.5">
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-1.5 rounded-full bg-neutral-900/90 text-white  font-medium backdrop-blur-md border border-white/15 shadow-xl pointer-events-none animate-fade-in flex items-center gap-1.5">
             <span>{toastMessage}</span>
           </div>
         )}

@@ -22,7 +22,7 @@ export interface ButtonProps
 }
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-[13px] gap-1.5',
+  sm: 'h-8 px-3  gap-1.5',
   md: 'h-9 px-3.5 text-md gap-1.5',
   lg: 'h-11 px-5 text-[15px] gap-2',
 };

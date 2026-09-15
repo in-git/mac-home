@@ -1,6 +1,7 @@
 import { Heart } from 'lucide-react';
 import React from 'react';
 import { SiteItem } from '../../api/site';
+import { openSite } from '../../utils/siteHelper';
 import { SiteCard } from './WebListPicker/SiteCard';
 import { SITE_GRID_CLASS } from './WebListPicker/constants';
 
@@ -19,9 +20,9 @@ export const FavoriteList: React.FC<FavoriteListProps> = ({
   favorites,
   onToggleFavorite,
 }) => {
-  // 点击卡片打开站点
+  // 点击卡片：上报点击量并打开站点
   const handleOpen = (item: SiteItem) => {
-    if (item.link) window.open(item.link, '_blank', 'noreferrer');
+    openSite(item);
   };
 
   if (favorites.length === 0) {
@@ -29,7 +30,7 @@ export const FavoriteList: React.FC<FavoriteListProps> = ({
       <div className="flex flex-col items-center justify-center gap-2 py-24">
         <Heart size={36} strokeWidth={1} />
         <p className="text-base">还没有收藏的网页</p>
-        <p className="text-xs text-slate-400">
+        <p className=" text-slate-400">
           在「网页」中把鼠标移到卡片上，点击右上角爱心即可收藏
         </p>
       </div>
@@ -38,9 +39,8 @@ export const FavoriteList: React.FC<FavoriteListProps> = ({
 
   return (
     <>
-      <div className="mb-4 flex items-center gap-2">
-        <h3 className="text-lg sm:text-xl font-bold">我的收藏</h3>
-        <span className="text-md sm:text-xl text-slate-400">({favorites.length})</span>
+      <div className="mb-4 xl:text-2xl text-lg  font-bold">
+        我的收藏
       </div>
       <div className={SITE_GRID_CLASS}>
         {favorites.map((item, index) => (

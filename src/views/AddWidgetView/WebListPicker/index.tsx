@@ -2,6 +2,7 @@ import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { runRequestAction, useSiteList } from '@/agent/request';
 import { Button } from '@/components/Button/Button';
+import { openSite } from '@/utils/siteHelper';
 import { SiteCard } from './SiteCard';
 import { FilterBar, CHILD_ALL } from './FilterBar';
 import { WebListPickerProps } from './types';
@@ -176,13 +177,9 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     handleLoadMore();
   }, [handleDirectionScroll, handleLoadMore]);
 
-  // 点击卡片打开站点：优先走调用方回调，缺省时新窗口打开
+  // 点击卡片：上报点击量后打开站点（优先走调用方回调，缺省时新窗口打开）
   const handleOpen = (item: Parameters<typeof SiteCard>[0]['item']) => {
-    if (onOpen) {
-      onOpen(item);
-    } else if (item.link) {
-      window.open(item.link, '_blank', 'noreferrer');
-    }
+    openSite(item, onOpen);
   };
 
   return (
@@ -212,7 +209,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           <div className="absolute inset-0 bg-[var(--glass-bg)] backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="flex flex-col items-center gap-2">
               <div className="w-8 h-8 border-2 border-[color:var(--accent)] border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-slate-400">加载中…</span>
+              <span className=" text-slate-400">加载中…</span>
             </div>
           </div>
         )}
@@ -221,7 +218,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           <div className="flex h-40 items-center justify-center min-h-[320px]">
             <div className="flex flex-col items-center gap-2">
               <div className="w-8 h-8 border-2 border-[color:var(--accent)] border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-slate-400">加载中…</span>
+              <span className=" text-slate-400">加载中…</span>
             </div>
           </div>
         ) : items.length > 0 ? (
@@ -245,7 +242,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
             {/* 底部：有数据显示「加载更多」按钮，无更多显示提示 */}
             <div className="py-4 flex justify-center">
               {appendLoading ? (
-                <span className="text-xs text-slate-400">加载中…</span>
+                <span className=" text-slate-400">加载中…</span>
               ) : hasMore ? (
                 <Button
                   variant="secondary"
@@ -255,7 +252,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
                   加载更多
                 </Button>
               ) : (
-                <span className="text-xs text-slate-400">没有更多了</span>
+                <span className=" text-slate-400">没有更多了</span>
               )}
             </div>
           </>

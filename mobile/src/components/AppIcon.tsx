@@ -47,7 +47,7 @@ export const AppIcon: React.FC<AppIconProps> = ({
       </div>
 
       {/* App Title / Name */}
-      <span className="text-[11px] font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center truncate w-full mt-1 leading-tight shrink-0">
+      <span className=" font-medium text-white/95 tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] text-center truncate w-full mt-1 leading-tight shrink-0">
         {displayName}
       </span>
     </div>

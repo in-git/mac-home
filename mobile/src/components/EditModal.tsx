@@ -87,7 +87,7 @@ export const EditModal: React.FC<EditModalProps> = ({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 text-xs max-h-[70vh] overflow-y-auto pr-1">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3  max-h-[70vh] overflow-y-auto pr-1">
           {/* App Name */}
           <div>
             <label className="block text-neutral-400 font-medium mb-1">

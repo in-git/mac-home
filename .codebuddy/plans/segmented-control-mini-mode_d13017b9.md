@@ -23,7 +23,7 @@ todos:
 ## Core Features
 
 - 扩展 `SegmentedControl` 的 `size` 属性类型，新增 `'mini'` 选项
-- 新增 mini 档位的样式映射：字号保持 `text-xs`，`px-0 py-0`
+- 新增 mini 档位的样式映射：字号保持 ``，`px-0 py-0`
 - 现有调用方（`size="sm"` 等）不受影响，无需改动
 
 ## Tech Stack
@@ -39,7 +39,7 @@ todos:
 关键决策：
 
 - 复用 `size` 参数而非新增 `mini` prop，符合最小改动与一致性原则，调用方心智模型统一。
-- mini 仅将 padding 设 0（`px-0 py-0`），保留 `text-xs` 保证文字可读性与高亮块内文字居中。
+- mini 仅将 padding 设 0（`px-0 py-0`），保留 `` 保证文字可读性与高亮块内文字居中。
 - 容器 `p-0.5` 与高亮块 `calc(100/n% - 0.25rem)` 偏移逻辑保持不变，mini 模式下容器仍有 0.5 间距形成外框，高亮滑动动画无需调整。
 
 性能与可靠性：纯样式枚举扩展，无运行时开销、无引入新依赖，不触发额外渲染。
@@ -60,5 +60,5 @@ todos:
 ```
 src/
 └── components/
-    └── SegmentedControl.tsx  # [MODIFY] 扩展 size 类型为 'sm' | 'md' | 'mini'；在 SIZE_CLASS 新增 mini: 'text-xs px-0 py-0'；按钮渲染逻辑复用 SIZE_CLASS[size] 无需改动
+    └── SegmentedControl.tsx  # [MODIFY] 扩展 size 类型为 'sm' | 'md' | 'mini'；在 SIZE_CLASS 新增 mini: ' px-0 py-0'；按钮渲染逻辑复用 SIZE_CLASS[size] 无需改动
 ```

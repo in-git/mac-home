@@ -90,7 +90,7 @@ export const AddWidgetView: React.FC = () => {
         <SidebarNav
           activeCategory={activeCategory}
           onSelect={setActiveCategory}
-          showTitle
+          
         />
         {/* 底部：访客统计 + 备案信息 */}
         <div className="mt-auto">

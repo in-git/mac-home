@@ -93,7 +93,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
         <div className="flex gap-2 mb-3">
           <button
             onClick={() => setTab('json')}
-            className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+            className={`flex-1 py-1.5 px-3 rounded-xl  font-semibold flex items-center justify-center gap-1.5 transition-colors ${
               tab === 'json' ? 'bg-blue-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'
             }`}
           >
@@ -102,7 +102,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
           </button>
           <button
             onClick={() => setTab('api')}
-            className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+            className={`flex-1 py-1.5 px-3 rounded-xl  font-semibold flex items-center justify-center gap-1.5 transition-colors ${
               tab === 'api' ? 'bg-blue-600 text-white' : 'bg-neutral-800 text-neutral-400 hover:text-white'
             }`}
           >
@@ -115,7 +115,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
         {tab === 'json' ? (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Action Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2 ">
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleCopy}
@@ -164,7 +164,7 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
             {/* Import area drawer */}
             {showImportArea && (
               <div className="p-3 mb-2 rounded-xl bg-neutral-800/90 border border-neutral-700 flex flex-col gap-2 animate-fade-in">
-                <span className="text-xs text-neutral-300 font-medium">
+                <span className=" text-neutral-300 font-medium">
                   粘贴后端返回的 DesktopConfig JSON:
                 </span>
                 <textarea
@@ -172,21 +172,21 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
                   onChange={(e) => setImportText(e.target.value)}
                   placeholder='{"version":"1.0.0","items":[...]}'
                   rows={4}
-                  className="w-full p-2 text-xs font-mono bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-200 focus:outline-none focus:border-blue-500"
+                  className="w-full p-2  font-mono bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-200 focus:outline-none focus:border-blue-500"
                 />
                 {importError && (
-                  <span className="text-[11px] text-rose-400 font-medium">{importError}</span>
+                  <span className=" text-rose-400 font-medium">{importError}</span>
                 )}
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setShowImportArea(false)}
-                    className="px-3 py-1 rounded-lg bg-neutral-700 text-xs text-neutral-300"
+                    className="px-3 py-1 rounded-lg bg-neutral-700  text-neutral-300"
                   >
                     取消
                   </button>
                   <button
                     onClick={handleImportSubmit}
-                    className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs text-white font-medium"
+                    className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500  text-white font-medium"
                   >
                     应用导入
                   </button>
@@ -195,18 +195,18 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
             )}
 
             {/* JSON Code Viewer */}
-            <div className="flex-1 overflow-auto rounded-xl bg-neutral-950 p-3 border border-neutral-800 text-[11px] font-mono text-emerald-400 max-h-[380px]">
+            <div className="flex-1 overflow-auto rounded-xl bg-neutral-950 p-3 border border-neutral-800  font-mono text-emerald-400 max-h-[380px]">
               <pre className="whitespace-pre-wrap">{jsonString}</pre>
             </div>
           </div>
         ) : (
           /* API Integration Docs Tab */
-          <div className="flex-1 overflow-auto max-h-[380px] text-xs text-neutral-300 space-y-3 pr-1">
+          <div className="flex-1 overflow-auto max-h-[380px]  text-neutral-300 space-y-3 pr-1">
             <div className="p-3 rounded-xl bg-neutral-800/80 border border-neutral-700">
               <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-md font-bold mb-1">
                 GET /api/desktop/apps
               </span>
-              <p className="text-neutral-400 text-[11px]">
+              <p className="text-neutral-400 ">
                 获取当前用户的桌面布局配置，包含栅格位置 (x, y, w, h)、应用信息与文件夹子应用。
               </p>
             </div>
@@ -215,13 +215,13 @@ export const JsonDrawer: React.FC<JsonDrawerProps> = ({
               <span className="inline-block px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-mono text-md font-bold mb-1">
                 PUT /api/desktop/apps
               </span>
-              <p className="text-neutral-400 text-[11px]">
+              <p className="text-neutral-400 ">
                 当用户拖拽调整、新增或编辑 APP 时调用，保存最新的完整 JSON 树。
               </p>
             </div>
 
             <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800">
-              <span className="text-[11px] font-bold text-neutral-400 block mb-1">
+              <span className=" font-bold text-neutral-400 block mb-1">
                 前端调用示例 (Fetch):
               </span>
               <pre className="text-md font-mono text-cyan-300 overflow-x-auto">

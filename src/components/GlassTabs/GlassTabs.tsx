@@ -17,7 +17,7 @@ interface GlassTabsProps {
 
 /** 各尺寸档位对应的按钮内边距与字号 */
 const SIZE_MAP: Record<NonNullable<GlassTabsProps['size']>, string> = {
-  sm: 'px-3 py-1 text-xs',
+  sm: 'px-3 py-1 ',
   md: 'px-4 py-1.5 text-md',
   lg: 'px-5 py-2 text-base',
 };

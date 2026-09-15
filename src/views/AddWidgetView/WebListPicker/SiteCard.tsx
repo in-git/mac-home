@@ -43,6 +43,8 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   const [imgError, setImgError] = useState(false);
   const coverSrc = item.cover || item.logo;
   const logoImgRef = React.useRef<HTMLImageElement | null>(null);
+  // 是否为新站点（发布时间在 3 天内）
+  const showNew = isNewSite(item.createTime);
 
   // 图片可能来自缓存：已缓存的图片不会触发 onLoad，需主动检查 complete 避免永远空白
   React.useEffect(() => {
@@ -100,7 +102,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           </button>
         )}
         {item.count !== undefined && item.count > 0 && (
-          <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white text-[13px]  leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
+          <span className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white   leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
             <Eye size={13} className="opacity-90" />
             {item.count > 999 ? '999+' : item.count}
           </span>
@@ -138,16 +140,18 @@ export const SiteCard: React.FC<SiteCardProps> = ({
 
           {/* 文本区：宽度随内容自适应（w-fit），最长不超过可用宽度（max-w-full 后截断） */}
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-            {/* 标题行：宽度与标题内容一致，NEW 角标紧跟其后 */}
-            <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
-              <p className="truncate text-xl">{item.name}</p>
-              {/* NEW 角标：发布时间在 3 天内 */}
-              {isNewSite(item.createTime) && (
-                <span className="shrink-0 rounded-full  px-1.5 py-px text-md font-semibold uppercase leading-tight tracking-wide text-white shadow-sm">
+            {/* 标题行：非新站点直接渲染标题，不产生角标相关的任何节点 */}
+            {showNew ? (
+              <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
+                <p className="truncate text-xl">{item.name}</p>
+                {/* NEW 角标：发布时间在 3 天内 */}
+                <span className="shrink-0 rounded-full px-1.5 py-px text-md font-semibold uppercase leading-tight tracking-wide text-white shadow-sm">
                   New
                 </span>
-              )}
-            </div>
+              </div>
+            ) : (
+              <p className="truncate text-xl max-w-full">{item.name}</p>
+            )}
             {item.des && (
               <p className="truncate text-md mt-1 max-w-full text-gray-500">
                 {item.des}

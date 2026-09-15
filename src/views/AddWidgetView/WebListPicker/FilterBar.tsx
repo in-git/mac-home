@@ -65,7 +65,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="输入关键词搜索"
           className={`w-full rounded-full bg-black/5 dark:bg-white/10 outline-none focus:ring-2 ring-[color:var(--accent)]/40 transition-[padding,font-size] duration-300 ease-out ${
             compact
-              ? 'pl-4 pr-12 py-1.5 text-sm'
+              ? 'pl-4 pr-12 py-1.5 '
               : 'pl-5 pr-14 py-3.5 text-base'
           }`}
         />

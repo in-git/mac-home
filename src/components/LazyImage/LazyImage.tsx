@@ -55,7 +55,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
       )}
     >
       {error ? (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-xs text-slate-400">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-1  text-slate-400">
           <ImageOff className="h-5 w-5" />
           加载失败
         </div>

@@ -25,7 +25,7 @@ tags:
 - 底色：哑光磨砂 `bg-black/5 dark:bg-white/10`，hover `bg-black/10 dark:bg-white/15`。
 - 边框：不用生硬实体描边；聚焦用柔光环 `ring-2 ring-[var(--accent)]/50`。
 - 主色：`var(--accent)`（Apple 蓝），hover `var(--accent-hover)`。
-- 字号：仅用 `text-xs` / `text-md`，禁止 `text-[xxpx]`。
+- 字号：仅用 `` / `text-md`，禁止 `text-[xxpx]`。
 - 动画：禁止 `transition-all`；按钮 `active:scale-95`；弹窗 `animate-in fade-in slide-in-from-top-1`。
 
 ## 控件状态
@@ -40,7 +40,7 @@ tags:
 - 主色用 `var(--accent)` / `var(--accent-hover)`，禁止写死 `#007AFF`。
 - 哑光底色 `bg-black/5 dark:bg-white/10`，hover `bg-black/10 dark:bg-white/15`。
 - 聚焦 `ring-2 ring-[color:var(--accent)]/50`，不用生硬 `border`。
-- 字号只用 `text-xs` / `text-md`，禁止写死像素。
+- 字号只用 `` / `text-md`，禁止写死像素。
 - 动画只用局部过渡（`active:scale-95`、入场 `animate-in ...`），禁止 `transition-all`。
 
 ## 使用守则

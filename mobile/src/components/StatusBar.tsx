@@ -7,10 +7,10 @@ interface StatusBarProps {
 
 export const StatusBar: React.FC<StatusBarProps> = ({ time = '19:24' }) => {
   return (
-    <div className="w-full pt-2 pb-1.5 px-4 flex items-center justify-between text-white text-[11px] font-medium select-none z-30 tracking-tight">
+    <div className="w-full pt-2 pb-1.5 px-4 flex items-center justify-between text-white  font-medium select-none z-30 tracking-tight">
       {/* Left side: Time and notification icons */}
       <div className="flex items-center gap-1.5">
-        <span className="text-[13px] font-bold tracking-tight text-white/95">
+        <span className=" font-bold tracking-tight text-white/95">
           {time}
         </span>
         <div className="flex items-center gap-1 ml-0.5">
