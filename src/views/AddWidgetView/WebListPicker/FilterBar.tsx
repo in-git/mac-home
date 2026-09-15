@@ -1,20 +1,13 @@
 import { Loader2, Search } from 'lucide-react';
 import React, { useState } from 'react';
-import { SiteCategory } from '@/api/site';
-import CategoryRow from './CategoryRow';
-
-/** 子级「全部」的标记值，与父级「全部」('') 区分，避免两者高亮态互相干扰 */
-export const CHILD_ALL = '__child_all__';
+import { FlatCategory } from './category';
 
 interface FilterBarProps {
-  /** 父级（顶层）分类列表，用于第一排 */
-  parentCategories: SiteCategory[];
-  /** 当前父级对应的子级列表，用于第二排；为空不渲染第二排 */
-  childCategories: SiteCategory[];
+  /** 平铺后的全部分类（一级 + 二级混排） */
+  categories: FlatCategory[];
   categoryLoading: boolean;
+  /** 当前选中的分类 id，空表示「全部」 */
   selectedCat: string;
-  /** 当前选中的父级；非空表示用户已选定某个父级（用于区分父级「全部」与子级「全部」） */
-  activeParent: string;
   searchKeyword: string;
   loading: boolean;
   /** 是否展示分类行：随列表滚动方向折叠 / 展开 */
@@ -25,12 +18,44 @@ interface FilterBarProps {
   onSelectCategory: (id: string) => void;
 }
 
+/** 分类胶囊：一级略强，二级常规；选中态为实心蓝 */
+function CategoryChip({
+  category,
+  active,
+  disabled,
+  onClick,
+}: {
+  category: FlatCategory;
+  active: boolean;
+  disabled?: boolean;
+  onClick: (id: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onClick(category.id)}
+      disabled={disabled}
+      className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 transition-colors ${
+        active
+          ? 'bg-blue-500 text-white'
+          : category.level === 0
+            ? 'bg-black/5 font-medium hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20'
+            : 'bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10'
+      }`}
+    >
+      {category.name}
+    </button>
+  );
+}
+
+/**
+ * 顶部筛选区：搜索框 + 单排平铺分类。
+ * 分类不分父子，一级与二级混排在同一横向滚动行内。
+ */
 export const FilterBar: React.FC<FilterBarProps> = ({
-  parentCategories,
-  childCategories,
+  categories,
   categoryLoading,
   selectedCat,
-  activeParent,
   searchKeyword,
   loading,
   showCategories,
@@ -64,9 +89,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           onBlur={() => setSearchFocused(false)}
           placeholder="输入关键词搜索"
           className={`w-full rounded-full bg-black/5 dark:bg-white/10 outline-none focus:ring-2 ring-[color:var(--accent)]/40 transition-[padding,font-size] duration-300 ease-out ${
-            compact
-              ? 'pl-4 pr-12 py-1.5 '
-              : 'pl-5 pr-14 py-3.5 text-base'
+            compact ? 'pl-4 pr-12 py-1.5 ' : 'pl-5 pr-14 py-3.5 text-base'
           }`}
         />
         {/* 输入框内右侧搜索按钮：加载中显示 spinner */}
@@ -94,33 +117,48 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           expanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
         }`}
       >
-        <div className="overflow-hidden min-h-0 space-y-4">
-          {/* 第一排：父级分类（顶层） */}
-          <CategoryRow
-            label="分类"
-            loading={categoryLoading}
-            categories={parentCategories}
-            activeId={activeParent}
-            onSelect={onSelectCategory}
-            disabled={!expanded}
-          />
-
-          {/* 第二排：子级分类（仅当前父级存在子级时显示，不会出现第三排） */}
-          {!categoryLoading && childCategories.length > 0 && (
-            <CategoryRow
-              label="子类"
-              loading={false}
-              categories={childCategories}
-              activeId={selectedCat}
-              onSelect={onSelectCategory}
-              disabled={!expanded}
-              allLabel="全部"
-              allActive={selectedCat === CHILD_ALL}
-              allValue={CHILD_ALL}
-            />
-          )}
+        <div className="overflow-hidden min-h-0">
+          {/* 平铺分类：单行横向滚动，不换行、不折叠成多级 */}
+          <div className="-mx-1 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex w-max items-center gap-2 px-1 text-md">
+              {categoryLoading ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-7 w-16 shrink-0 animate-pulse rounded-md bg-black/5 dark:bg-white/10"
+                  />
+                ))
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onSelectCategory('')}
+                    disabled={!expanded}
+                    className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 font-medium transition-colors ${
+                      selectedCat === ''
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20'
+                    }`}
+                  >
+                    全部
+                  </button>
+                  {categories.map((c) => (
+                    <CategoryChip
+                      key={c.id}
+                      category={c}
+                      active={selectedCat === c.id}
+                      disabled={!expanded}
+                      onClick={onSelectCategory}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default FilterBar;

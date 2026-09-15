@@ -11,33 +11,33 @@ import {
   SiteCardBaseProps,
 } from './cardParts';
 
-type SiteCardProps = SiteCardBaseProps;
+type SiteTileCardProps = SiteCardBaseProps;
 
 /**
- * 常规站点卡片：16:9 封面 + 底部信息条（Logo / 标题 / 描述）。
- * 仅负责网格中的普通卡片；头条区的大卡与宫格卡分别见 SiteHeroCard / SiteTileCard。
+ * 头条区宫格卡片：封面铺满卡片剩余高度（由外部行高决定），底部为信息条。
+ * 与 SiteCard 的区别只在封面是否按 16:9 固定，故独立成组件而不混用。
  */
-export const SiteCard: React.FC<SiteCardProps> = ({
+export const SiteTileCard: React.FC<SiteTileCardProps> = ({
   item,
   onOpen,
   favorited = false,
   onToggleFavorite,
 }) => {
   const coverSrc = item.cover || item.logo;
-  // 是否为新站点（发布时间在 3 天内）
   const showNew = isNewSite(item.createTime);
 
   return (
     <div
       onClick={() => onOpen(item)}
-      className={`${CARD_ROOT_CLASS} flex h-full flex-col`}
+      className={`${CARD_ROOT_CLASS} flex h-full min-h-[9rem] flex-col lg:min-h-0`}
     >
-      <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+      {/* 封面区：可伸缩，占满除信息条外的剩余高度 */}
+      <div className="relative min-h-0 flex-1 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         {coverSrc ? (
           <LazyImage
             src={coverSrc}
             alt={item.name}
-            ratio="16/9"
+            ratio="fill"
             fit="cover"
             fullWidth
             rounded="rounded-none"
@@ -45,7 +45,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           />
         ) : (
           <div
-            className="h-full w-full flex items-center justify-center text-white text-3xl font-bold"
+            className="absolute inset-0 flex h-full w-full items-center justify-center text-white text-3xl font-bold"
             style={{ background: gradientOf(item) }}
           >
             {(item.name || '?').charAt(0).toUpperCase()}
@@ -64,12 +64,9 @@ export const SiteCard: React.FC<SiteCardProps> = ({
       </div>
 
       <div className="relative p-2.5 flex items-center gap-3 text-left">
-        {/* 左侧：Logo + 标题与描述 */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <SiteAvatar item={item} />
-          {/* 文本区：宽度随内容自适应（w-fit），最长不超过可用宽度（max-w-full 后截断） */}
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-            {/* 标题行：非新站点直接渲染标题，不产生角标相关的任何节点 */}
             {showNew ? (
               <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
                 <p className="truncate text-xl">{item.name}</p>
@@ -78,11 +75,6 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             ) : (
               <p className="truncate text-xl max-w-full">{item.name}</p>
             )}
-            {item.des && (
-              <p className="truncate text-md mt-1 max-w-full text-gray-500">
-                {item.des}
-              </p>
-            )}
           </div>
         </div>
       </div>
@@ -90,4 +82,4 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   );
 };
 
-export default SiteCard;
+export default SiteTileCard;

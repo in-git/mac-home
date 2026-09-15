@@ -5,8 +5,8 @@ import {LazyLoadImage} from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import {Skeleton} from '@heroui/react';
 
-/** 支持的比例档位：默认 16/9，另提供 1/1 方形。 */
-export type LazyImageRatio = '16/9' | '1/1';
+/** 支持的比例档位：默认 16/9，另提供 1/1 方形、fill（绝对定位铺满父容器）。 */
+export type LazyImageRatio = '16/9' | '1/1' | 'fill';
 
 export interface LazyImageProps {
   src: string;
@@ -26,6 +26,8 @@ export interface LazyImageProps {
 const RATIO_CLASS: Record<LazyImageRatio, string> = {
   '16/9': 'aspect-[16/9]',
   '1/1': 'aspect-square',
+  // 铺满父容器：父级需为 relative 且具备确定高度
+  fill: 'absolute inset-0 h-full w-full',
 };
 
 /** 基于 react-lazy-load-image-component 的通用懒加载图片应用。 */
