@@ -1,16 +1,17 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { runRequestAction, useSiteList } from '../../../agent/request';
-import { Button } from '../../../components/Button/Button';
+import { runRequestAction, useSiteList } from '@/agent/request';
+import { Button } from '@/components/Button/Button';
 import { SiteCard } from './SiteCard';
 import { FilterBar, CHILD_ALL } from './FilterBar';
+import { WebListPickerProps } from './types';
+import { useScrollDirection } from '../useScrollDirection';
+import { SITE_GRID_CLASS } from './constants';
 import {
   flattenCategories,
   getChildCategories,
   findParentId,
-  SITE_GRID_CLASS,
-  WebListPickerProps,
-} from './types';
+} from './category';
 
 /**
  * 网页列表（WebListPicker）：
@@ -22,6 +23,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   onOpen,
   favorites,
   onToggleFavorite,
+  onVisibilityChange,
 }) => {
   const [categories, setCategories] = useState<ReturnType<typeof flattenCategories>>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
@@ -138,43 +140,41 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
 
   // 滚动触底自动加载下一页 + 按滚动方向折叠 / 展开分类行
   const scrollRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number | null>(null);
-  const lastScrollTopRef = useRef(0);
-  const [showCategories, setShowCategories] = useState(true);
+  // 方向判定统一走 useScrollDirection（含过渡锁，避免高度变化引发的滚动抖动）
+  const { visible: showCategories, onScroll: handleDirectionScroll } =
+    useScrollDirection(scrollRef);
 
-  /**
-   * 方向判定阈值（非对称）：
-   * - 恢复（向上）阈值小：只要有轻微上滑就立刻恢复原样，避免「滚上去了但没还原」
-   * - 收起（向下）阈值大：需要明确的向下意图才折叠，避免惯性滚动抖动误触发
-   */
-  const RESTORE_DELTA = 2;
-  const COLLAPSE_DELTA = 10;
+  // 分类显隐变化通知父级（移动端顶部导航与之联动）
+  useEffect(() => {
+    onVisibilityChange?.(showCategories);
+  }, [showCategories, onVisibilityChange]);
 
-  const handleScroll = useCallback(() => {
-    if (rafRef.current) return;
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
+  // 触底加载：与方向判定解耦，不受过渡锁影响
+  const loadRafRef = useRef<number | null>(null);
+  const handleLoadMore = useCallback(() => {
+    if (loadRafRef.current) return;
+    loadRafRef.current = requestAnimationFrame(() => {
+      loadRafRef.current = null;
       const el = scrollRef.current;
       if (!el) return;
-
-      // 方向判定：顶部区域始终展开；向下滚隐藏，向上滚恢复
-      const top = el.scrollTop;
-      const delta = top - lastScrollTopRef.current;
-      if (top <= 8) {
-        setShowCategories(true);
-      } else if (delta < -RESTORE_DELTA) {
-        setShowCategories(true);
-      } else if (delta > COLLAPSE_DELTA) {
-        setShowCategories(false);
-      }
-      lastScrollTopRef.current = top;
-
       if (appendLoading || !hasMore) return;
       if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
         loadMore(queryCat, debouncedKw, PAGE_SIZE);
       }
     });
   }, [appendLoading, hasMore, loadMore, queryCat, debouncedKw]);
+
+  useEffect(
+    () => () => {
+      if (loadRafRef.current !== null) cancelAnimationFrame(loadRafRef.current);
+    },
+    [],
+  );
+
+  const handleScroll = useCallback(() => {
+    handleDirectionScroll();
+    handleLoadMore();
+  }, [handleDirectionScroll, handleLoadMore]);
 
   // 点击卡片打开站点：优先走调用方回调，缺省时新窗口打开
   const handleOpen = (item: Parameters<typeof SiteCard>[0]['item']) => {

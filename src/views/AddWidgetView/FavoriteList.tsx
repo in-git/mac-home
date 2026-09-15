@@ -2,7 +2,7 @@ import { Heart } from 'lucide-react';
 import React from 'react';
 import { SiteItem } from '../../api/site';
 import { SiteCard } from './WebListPicker/SiteCard';
-import { SITE_GRID_CLASS } from './WebListPicker/types';
+import { SITE_GRID_CLASS } from './WebListPicker/constants';
 
 interface FavoriteListProps {
   /** 已收藏的站点（来自本地持久化字段 favoriteSites） */

@@ -1,12 +1,4 @@
-import { SiteCategory, SiteIdentity, SiteItem } from '../../../api/site';
-
-/**
- * 站点卡片网格：网页列表与「我的」收藏共用同一套列数 / 间距，
- * 保证两处卡片在不同屏幕宽度下的响应式大小完全一致。
- * 移动端 1 列，向上递进到 2 / 3 列，xl 及以上固定 5 列（一排最多 5 个）。
- */
-export const SITE_GRID_CLASS =
-  'grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
+import { SiteIdentity, SiteItem } from '@/api/site';
 
 export interface WebListPickerProps {
   /** 点击卡片打开站点时的回调；缺省时在新窗口打开 */
@@ -15,43 +7,11 @@ export interface WebListPickerProps {
   favorites?: SiteItem[];
   /** 切换某个站点的收藏状态；不传则不展示收藏按钮 */
   onToggleFavorite?: (item: SiteItem) => void;
+  /**
+   * 分类栏显隐变化（随列表滚动方向折叠 / 展开），
+   * 供父级联动其它元素（如移动端顶部导航）。
+   */
+  onVisibilityChange?: (visible: boolean) => void;
 }
 
-/**
- * 将分类树拍平成两级结构（父级 + 其子级）。
- * 仅保留两层：根节点作为父级，其 children 作为子级，不会出现第三排。
- */
-export function flattenCategories(categories: SiteCategory[]): SiteCategory[] {
-  return categories.map((parent) => ({
-    ...parent,
-    children: parent.children ? parent.children.map((child) => ({ ...child })) : [],
-  }));
-}
-
-/** 取所有父级（顶层）分类 */
-export function getParentCategories(categories: SiteCategory[]): SiteCategory[] {
-  return categories;
-}
-
-/** 根据父级 id 取其子级列表（无则空数组） */
-export function getChildCategories(
-  categories: SiteCategory[],
-  parentId: string,
-): SiteCategory[] {
-  if (!parentId) return [];
-  return categories.find((c) => c.id === parentId)?.children ?? [];
-}
-
-/** 根据任意分类 id（父或子）反查其所属父级 id */
-export function findParentId(
-  categories: SiteCategory[],
-  id: string,
-): string {
-  for (const parent of categories) {
-    if (parent.id === id) return parent.id;
-    if (parent.children?.some((c) => c.id === id)) return parent.id;
-  }
-  return '';
-}
-
-export type { SiteCategory, SiteIdentity, SiteItem };
+export type { SiteIdentity, SiteItem };

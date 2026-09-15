@@ -1,7 +1,7 @@
 import { Eye, Heart } from 'lucide-react';
 import React, { useState } from 'react';
-import { SiteItem } from '../../../api/site';
-import { LazyImage } from '../../../components/LazyImage/LazyImage';
+import { SiteItem } from '@/api/site';
+import { LazyImage } from '@/components/LazyImage/LazyImage';
 
 /** 新站点判定天数：发布时间在该天数内则打上 NEW 角标 */
 const NEW_DAYS = 3;
