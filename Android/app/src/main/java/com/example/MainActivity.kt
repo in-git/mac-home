@@ -76,6 +76,15 @@ const val TARGET_URL = "https://mx2d.cn/"
 /** 首屏停留超过该时长仍未完成渲染时，隐藏加载动画，避免一直转圈挡住页面 */
 private const val SPLASH_TIMEOUT_MS = 8_000L
 
+/**
+ * 网页触发的全屏 loading 的最长展示时长（ms）。
+ *
+ * 网页侧已经有一份 10 秒超时，但那只在 JS 正常运行时有效 ——
+ * 页面崩溃、被销毁、或 JS 执行出错时都不会发出 hideLoading。
+ * 原生这份兜底保证遮罩无论如何都会自己消失。
+ */
+private const val WEB_LOADING_TIMEOUT_MS = 11_000L
+
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -100,6 +109,26 @@ fun AppContent(modifier: Modifier = Modifier) {
   var showSplash by remember { mutableStateOf(true) }
   var lastBackPressTime by remember { mutableLongStateOf(0L) }
   val exitPrompt = stringResource(R.string.exit_prompt)
+
+  // 网页点击卡片后由 JS 桥接层拉起的全屏 loading（见 WebBridge）
+  var webLoading by remember { mutableStateOf(false) }
+  var webLoadingLabel by remember { mutableStateOf("") }
+  val mainHandler = remember { android.os.Handler(android.os.Looper.getMainLooper()) }
+  // 超时兜底：网页若因异常没发来 hideLoading，到点必须自己收掉遮罩
+  val webLoadingTimeout = remember {
+    Runnable { webLoading = false }
+  }
+
+  /** 收起网页 loading，并取消未到期的超时回调 */
+  fun dismissWebLoading() {
+    mainHandler.removeCallbacks(webLoadingTimeout)
+    webLoading = false
+  }
+
+  // 离开页面时清掉挂起的超时回调，避免回调在组件销毁后触发
+  DisposableEffect(Unit) {
+    onDispose { mainHandler.removeCallbacks(webLoadingTimeout) }
+  }
 
   // Handle Android back button
   BackHandler {
@@ -160,7 +189,25 @@ fun AppContent(modifier: Modifier = Modifier) {
       onError = {
         hasError = true
         showSplash = false
-      }
+      },
+      // 网页通过 MXBridge 请求展示 / 关闭全屏 loading
+      onShowWebLoading = { label ->
+        webLoadingLabel = label
+        webLoading = true
+        // 重置超时：连续点击多个卡片时，以最后一次为准
+        mainHandler.removeCallbacks(webLoadingTimeout)
+        mainHandler.postDelayed(webLoadingTimeout, WEB_LOADING_TIMEOUT_MS)
+      },
+      onHideWebLoading = { dismissWebLoading() }
+    )
+
+    // 网页触发的全屏 loading：放在 WebView 之后，自然盖在其上。
+    // 与底部进度条并存 —— 进度条反映 WebView 自身的加载，
+    // 遮罩反映「用户点击后等待目标站点打开」，两者语义不同。
+    AppLoadingOverlay(
+      visible = webLoading,
+      label = webLoadingLabel,
+      modifier = Modifier.fillMaxSize()
     )
 
     // Sleek top progress bar when loading
@@ -234,6 +281,8 @@ fun WebViewContainer(
   onProgressChanged: (Int) -> Unit,
   onPageFinished: () -> Unit,
   onError: () -> Unit,
+  onShowWebLoading: (String) -> Unit,
+  onHideWebLoading: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   val context = LocalContext.current
@@ -279,6 +328,13 @@ fun WebViewContainer(
             setAcceptThirdPartyCookies(webView, true)
           }
         }
+
+        // 注入 JS 桥：网页通过 window.MXBridge 请求原生全屏 loading
+        val bridge = WebBridge(webView).apply {
+          onShowLoading = onShowWebLoading
+          onHideLoading = onHideWebLoading
+        }
+        addJavascriptInterface(bridge, "MXBridge")
 
         webChromeClient = object : WebChromeClient() {
           override fun onProgressChanged(view: WebView?, newProgress: Int) {

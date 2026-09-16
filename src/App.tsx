@@ -20,7 +20,14 @@ export default function App() {
   return (
     <div className="h-[100dvh] bg-white w-full overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
       <AddWidgetView />
-      {/* 全局全屏 loading：由 loadingStore 驱动，打开网页 / 视频时展示 */}
+      {/**
+       * 网页内的全屏 loading：由 loadingStore 驱动。
+       *
+       * 目前只服务于**视频播放**（等首帧出画）。
+       * 打开网页卡片的 loading 不走这里 —— 在 App 内交给原生遮罩
+       * （见 `utils/appBridge.ts`），在浏览器内是开新标签页、
+       * 不需要遮罩遮掩当前页。
+       */}
       <LoadingOverlay />
     </div>
   );
