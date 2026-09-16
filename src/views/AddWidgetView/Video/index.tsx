@@ -8,6 +8,8 @@ import { SortBar, SortOption } from '@/components/SortBar/SortBar';
 import { useListScroll } from '../hooks/useListScroll';
 import { useSearch } from '../hooks/useSearch';
 import { VideoCard } from './VideoCard';
+import { VideoCardCompact } from './VideoCardCompact';
+import { VideoBanner } from './VideoBanner';
 import { VideoPlayerModal } from './VideoPlayerModal';
 
 /**
@@ -29,6 +31,9 @@ const DEFAULT_SORT = SORT_OPTIONS[0];
 /** 每页条数 */
 const PAGE_SIZE = 20;
 
+/** hero 右侧的普通卡片数量（PC 为 2 列 × 3 行） */
+const HERO_COL_CARDS = 6;
+
 interface VideoListProps {
   /**
    * 筛选区显隐变化（随列表滚动方向折叠 / 展开），
@@ -40,9 +45,11 @@ interface VideoListProps {
 }
 
 /**
- * 视频模块（照 B 站布局）：
- * 顶部为「三横杠 + 搜索框」筛选行，其下是响应式视频网格（封面 + 标题 + 播放量），
- * 点击卡片弹出播放器。移动端三横杠与搜索框同排。
+ * 视频模块（对齐设计稿的 B 站式首页）：
+ * 顶部为搜索 + 排序筛选区；
+ * 其下左侧是「1 张横幅轮播 + 2 张紧凑卡」，右侧是 3 列常规卡片网格；
+ * 右下角提供「收起全部」开关，可隐藏顶部推荐区只看网格。
+ * 点击任意卡片弹出播放器。
  */
 export const VideoList: React.FC<VideoListProps> = ({
   onVisibilityChange,
@@ -80,11 +87,17 @@ export const VideoList: React.FC<VideoListProps> = ({
   const [searchFocused, setSearchFocused] = useState(false);
   const sortVisible = showFilter || searchFocused;
 
+  // 推荐区：第 1 条做左侧 hero，紧随的 6 条做右侧普通卡片；其余进下方网格
+  const [bannerItem, ...restItems] = items;
+  const compactItems = restItems.slice(0, HERO_COL_CARDS);
+  const gridItems = restItems.slice(HERO_COL_CARDS);
+  const showHero = !!bannerItem;
+
   return (
     <div className="flex h-full flex-col">
       {/* 筛选区：移动端「三横杠 + 搜索框」同排，桌面端搜索框 50% 宽居中 */}
       <div
-        className={`space-y-3 border-b border-black/5 px-5 transition-[padding] duration-300 ease-out dark:border-white/10 ${
+        className={`border-b border-black/5 px-5 transition-[padding] duration-300 ease-out dark:border-white/10 ${
           compact ? 'py-2' : 'py-4'
         }`}
       >
@@ -100,13 +113,13 @@ export const VideoList: React.FC<VideoListProps> = ({
           onOpenMenu={onOpenMenu}
         />
 
-        {/* 排序筛选行：向下滚动时折叠，向上滚动或聚焦搜索框时展开 */}
+        {/* 排序：向下滚动时折叠，向上滚动或聚焦搜索框时展开 */}
         <div
           aria-hidden={!sortVisible}
           className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
             sortVisible
-              ? 'grid-rows-[1fr] opacity-100'
-              : 'grid-rows-[0fr] opacity-0'
+              ? 'mt-3 grid-rows-[1fr] opacity-100'
+              : 'mt-0 grid-rows-[0fr] opacity-0'
           }`}
         >
           <div className="min-h-0 overflow-hidden">
@@ -120,7 +133,7 @@ export const VideoList: React.FC<VideoListProps> = ({
         </div>
       </div>
 
-      {/* 视频网格 */}
+      {/* 内容区 */}
       <div
         ref={scrollRef}
         onScroll={onScroll}
@@ -135,14 +148,35 @@ export const VideoList: React.FC<VideoListProps> = ({
           </div>
         ) : items.length > 0 ? (
           <>
-            {/* B 站式响应式网格：移动端 1 列，逐级到 4 列 */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-5">
-              {items.map((item) => (
+            {/* 推荐区（PC）：hero 固定占 50% 宽度，右侧 6 张普通卡片（横向 3 列 × 2 行）占另一半，两栏等高。
+                移动端纵向堆叠：hero 在上，6 张卡片 2 列排布。 */}
+            {showHero && (
+              <div className="mb-5 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch lg:gap-5">
+                {/* hero：按 2:1 铺满左栏 */}
+                <div className="aspect-[2/1] w-full">
+                  <VideoBanner items={[bannerItem]} onPlay={setPlaying} />
+                </div>
+                {/* 右侧 6 张普通卡片：PC 横向 3 列 × 2 行等分撑满（与 hero 等高），移动端 2 列 */}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-3 lg:grid-rows-2 lg:gap-4">
+                  {compactItems.map((item) => (
+                    <VideoCardCompact
+                      key={item.id}
+                      item={item}
+                      onPlay={setPlaying}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 常规网格：移动端 2 列，逐级到 4 列 */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-5">
+              {gridItems.map((item) => (
                 <VideoCard key={item.id} item={item} onPlay={setPlaying} />
               ))}
             </div>
 
-            <div className="flex justify-center py-4">
+            <div className="flex justify-center py-5">
               {appendLoading ? (
                 <span className="text-slate-400">加载中…</span>
               ) : hasMore ? (

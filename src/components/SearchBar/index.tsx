@@ -1,8 +1,10 @@
 import React from 'react';
 import { SearchBarDesktop } from './SearchBarDesktop';
 import { SearchBarMobile } from './SearchBarMobile';
+import { SearchInputMobileHeight } from './SearchInput';
 
 export { SearchInput } from './SearchInput';
+export type { SearchInputMobileHeight } from './SearchInput';
 export { SearchBarDesktop } from './SearchBarDesktop';
 export { SearchBarMobile } from './SearchBarMobile';
 
@@ -21,6 +23,12 @@ interface SearchBarProps {
    * （用于「我的」等页面，三横杠由父级单独提供）。
    */
   onOpenMenu?: () => void;
+  /**
+   * 移动端尺寸档位，默认 md（三横杠 36px + 搜索框同高）。
+   * 只影响移动端；桌面端搜索框保持原尺寸。
+   * 可选 xs / sm / md / lg，对应 24 / 28 / 36 / 40px。
+   */
+  mobileSize?: SearchInputMobileHeight;
 }
 
 /**
@@ -33,11 +41,16 @@ interface SearchBarProps {
  */
 export const SearchBar: React.FC<SearchBarProps> = ({
   onOpenMenu,
+  mobileSize = 'md',
   ...searchProps
 }) => (
   <>
     {onOpenMenu && (
-      <SearchBarMobile onOpenMenu={onOpenMenu} {...searchProps} />
+      <SearchBarMobile
+        onOpenMenu={onOpenMenu}
+        size={mobileSize}
+        {...searchProps}
+      />
     )}
     <SearchBarDesktop {...searchProps} />
   </>

@@ -1,6 +1,7 @@
 import { Eye, Heart } from 'lucide-react';
 import React, { useState } from 'react';
 import { SiteItem } from '@/api/site';
+import { IconButton } from '@/components/IconButton/IconButton';
 
 /** 新站点判定天数：发布时间在该天数内则打上 NEW 角标 */
 const NEW_DAYS = 3;
@@ -102,23 +103,24 @@ export const FavoriteButton: React.FC<{
   favorited: boolean;
   onToggleFavorite: (item: SiteItem) => void;
 }> = ({ item, favorited, onToggleFavorite }) => (
-  <button
-    type="button"
+  <IconButton
+    label={favorited ? '取消收藏' : '收藏到我的'}
+    aria-pressed={favorited}
+    size="sm"
     onClick={(e) => {
       e.stopPropagation();
       onToggleFavorite(item);
     }}
-    title={favorited ? '取消收藏' : '收藏到我的'}
-    aria-label={favorited ? '取消收藏' : '收藏到我的'}
-    aria-pressed={favorited}
-    className={`absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md transition-all hover:bg-black/65 active:scale-90 ${
-      favorited
-        ? 'opacity-100'
-        : 'opacity-0 max-sm:opacity-100 group-hover:opacity-100 text-white'
-    }`}
-  >
-    <Heart size={15} className={favorited ? 'fill-rose-500 text-rose-500' : ''} />
-  </button>
+    icon={
+      <Heart
+        size={15}
+        className={favorited ? 'fill-rose-500 text-rose-500' : ''}
+      />
+    }
+    className={`absolute right-2 top-2 z-10 bg-black/45 ring-1 ring-white/25 backdrop-blur-md hover:bg-black/65 ${
+      favorited ? 'opacity-100' : 'text-white'
+    } ${favorited ? '' : 'opacity-0 max-sm:opacity-100 group-hover:opacity-100'}`}
+  />
 );
 
 /** 点击量角标：辅助信息，移动端 12px（text-xs），桌面端 14px（text-sm） */

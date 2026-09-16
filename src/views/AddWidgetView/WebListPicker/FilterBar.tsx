@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/Button/Button';
 import { SearchBar } from '@/components/SearchBar';
 import { FlatCategory } from './category';
 
@@ -20,7 +21,7 @@ interface FilterBarProps {
   onOpenMenu?: () => void;
 }
 
-/** 分类胶囊：一级略强，二级常规；选中态为实心蓝 */
+/** 分类胶囊：一级略强，二级常规；选中态为实心蓝。统一走通用 Button 的 pill 模式 */
 function CategoryChip({
   category,
   active,
@@ -33,20 +34,18 @@ function CategoryChip({
   onClick: (id: string) => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={() => onClick(category.id)}
+    <Button
+      variant="pill"
+      size="xs-md"
+      active={active}
       disabled={disabled}
-      className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 transition-colors ${
-        active
-          ? 'bg-blue-500 text-white'
-          : category.level === 0
-            ? 'bg-black/5 font-medium hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20'
-            : 'bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10'
+      onClick={() => onClick(category.id)}
+      className={`shrink-0 whitespace-nowrap ${
+        category.level === 0 && !active ? 'font-medium' : ''
       }`}
     >
       {category.name}
-    </button>
+    </Button>
   );
 }
 
@@ -110,18 +109,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 ))
               ) : (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => onSelectCategory('')}
+                  <Button
+                    variant="pill"
+                    size="xs-md"
+                    active={selectedCat === ''}
                     disabled={!expanded}
-                    className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 font-medium transition-colors ${
-                      selectedCat === ''
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20'
-                    }`}
+                    onClick={() => onSelectCategory('')}
+                    className="shrink-0 whitespace-nowrap font-medium"
                   >
                     全部
-                  </button>
+                  </Button>
                   {categories.map((c) => (
                     <CategoryChip
                       key={c.id}

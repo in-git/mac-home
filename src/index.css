@@ -11,6 +11,28 @@ button{
   outline: none;
 }
 
+/*
+ * 全局重置 a 标签的默认样式。
+ * 站内多处用 <a> 承载「导航项 / 卡片」等交互元素（而非外链文字），
+ * 需要剥离浏览器默认的下划线、颜色与点击高亮，
+ * 具体视觉一律交给 Tailwind 类名控制。
+ *
+ * 重要：必须放在 @layer base 中。Tailwind v4 的 utilities 层优先级高于 base，
+ * 否则这里的 color 会覆盖 text-[#86868B] 这类 arbitrary 工具类
+ * （表现为备案链接丢失灰色）。
+ */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a:visited {
+    color: inherit;
+  }
+}
+
 /* macOS Thin Elegant Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

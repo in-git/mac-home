@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { IconButton } from '@/components/IconButton/IconButton';
 import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
 
@@ -148,14 +149,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
         {/* 顶部标题栏：右侧关闭图标 */}
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-black/5 px-3 dark:border-white/10">
           <h1 className="text-font-title dark:text-white">{title}</h1>
-          <button
-            type="button"
+          <IconButton
+            label="关闭菜单"
+            variant="ghost"
+            size="md"
             onClick={handleClose}
-            aria-label="关闭菜单"
-            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-black/5 active:scale-95 dark:hover:bg-white/10"
-          >
-            <X size={20} />
-          </button>
+            icon={<X size={20} />}
+          />
         </div>
 
         <SidebarNav

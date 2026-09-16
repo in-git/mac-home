@@ -23,16 +23,24 @@ export interface VideoItem {
   description?: string;
   /** 浏览量 */
   count?: number;
+  /** 时长（秒）。后端当前未返回，前端按需兜底 */
+  duration?: number;
+  /** 作者 / UP 主名称。后端当前未返回，回退到 createUser */
+  author?: string;
+  /** 弹幕数（角标展示用） */
+  danmakuCount?: number;
   /** 状态：ENABLE / DISABLE */
   status?: string;
   /** 排序码 */
   sortCode?: number;
   /** 备注 */
   remark?: string;
-  /** 扩展信息（JSON 字符串） */
+  /** 扩展信息（JSON 字符串，可能内含 author / duration） */
   extJson?: string;
   createTime?: string;
   updateTime?: string;
+  /** 创建人 ID（后端当前以此为作者标识） */
+  createUser?: string;
 }
 
 export interface VideoPageParams {
@@ -62,6 +70,83 @@ export interface VideoPageParams {
 export function withBase(value?: string): string {
   if (!value) return '';
   return value.startsWith('/') ? `${getApiBaseUrl()}${value}` : value;
+}
+
+/** 解析 extJson（后端扩展字段，可能是 JSON 字符串或已是对象） */
+function parseExt(item: VideoItem): Record<string, unknown> {
+  const raw = item.extJson;
+  if (!raw) return {};
+  if (typeof raw === 'object') return raw as Record<string, unknown>;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/** 秒 → `mm:ss` / `h:mm:ss`；无有效时长返回空串（不渲染角标） */
+export function formatDuration(seconds?: number): string {
+  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+    return '';
+  }
+  const total = Math.floor(seconds);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+/** 播放量 / 弹幕数：B 站式紧凑写法（1.2万 / 3.4亿） */
+export function formatCount(value?: number): string {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+    return '';
+  }
+  if (value >= 100000000) return `${(value / 100000000).toFixed(1)}亿`;
+  if (value >= 10000) return `${(value / 10000).toFixed(1)}万`;
+  return String(Math.floor(value));
+}
+
+/** 发布时间：3 天内显示「N 天前 / 今天」，更早显示 YYYY-MM-DD */
+export function formatDate(createTime?: string): string {
+  if (!createTime) return '';
+  const normalized = createTime.trim().replace(' ', 'T');
+  const time = Date.parse(
+    /[Zz]$|[+-]\d{2}:?\d{2}$/.test(normalized) ? normalized : normalized,
+  );
+  if (Number.isNaN(time)) return createTime.slice(0, 10);
+
+  const diff = Date.now() - time;
+  const day = 24 * 60 * 60 * 1000;
+  if (diff >= 0 && diff < day) return '今天';
+  if (diff >= day && diff < 2 * day) return '昨天';
+  if (diff >= 2 * day && diff < 30 * day) return `${Math.floor(diff / day)} 天前`;
+  return createTime.slice(0, 10);
+}
+
+/** 卡片展示所需的派生字段（后端缺失时从 extJson / createUser 兜底） */
+export function videoMetaOf(item: VideoItem) {
+  const ext = parseExt(item);
+  const duration =
+    item.duration ??
+    (typeof ext.duration === 'number' ? (ext.duration as number) : undefined);
+  const author =
+    item.author ??
+    (typeof ext.author === 'string' ? (ext.author as string) : undefined);
+
+  return {
+    /** 格式化时长，空串表示不展示 */
+    duration: formatDuration(duration),
+    /** 作者名；后端未提供时显示占位（不暴露内部用户 ID） */
+    author: author || '未知作者',
+    /** 紧凑播放量 */
+    playCount: formatCount(item.count),
+    /** 紧凑弹幕数 */
+    danmakuCount: formatCount(item.danmakuCount),
+    /** 发布时间 */
+    date: formatDate(item.createTime),
+  };
 }
 
 const inFlight = new Map<string, Promise<unknown>>();

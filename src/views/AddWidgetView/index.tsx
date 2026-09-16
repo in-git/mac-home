@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { SiteItem } from '../../api/site';
-import { useHomeStore } from '../../store/useHomeStore';
+import { CategoryId, useHomeStore } from '../../store/useHomeStore';
 import { isSameSite } from '../../utils/siteHelper';
 import { useToast } from '../../components/Toast/Toast';
 import { Sidebar, MobileMenuDrawer } from './Sidebar';
@@ -22,17 +22,20 @@ type VisibilityMap = Record<string, boolean>;
  * - components/ hooks/  跨模块复用件（搜索框、滚动、搜索状态等）
  */
 export const AddWidgetView: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState<string>('web');
   // 移动端菜单抽屉开关
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // 「我的」收藏：本地持久化字段 favoriteSites
-  const { favoriteSites, toggleFavoriteSite } = useHomeStore(
-    useShallow((s) => ({
-      favoriteSites: s.favoriteSites,
-      toggleFavoriteSite: s.toggleFavoriteSite,
-    })),
-  );
+  // 「我的」收藏 + 当前分类：均为本地持久化字段
+  // （activeCategory 持久化后，刷新会回到上次浏览的标签页）
+  const { favoriteSites, toggleFavoriteSite, activeCategory, setActiveCategory } =
+    useHomeStore(
+      useShallow((s) => ({
+        favoriteSites: s.favoriteSites,
+        toggleFavoriteSite: s.toggleFavoriteSite,
+        activeCategory: s.activeCategory,
+        setActiveCategory: s.setActiveCategory,
+      })),
+    );
   const { showToast } = useToast();
 
   /**

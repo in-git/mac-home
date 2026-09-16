@@ -2,8 +2,12 @@ import React from 'react';
 
 /** 视觉风格：soft 浅灰底（默认）/ accent 强调色实心 / ghost 无底色 */
 export type IconButtonVariant = 'soft' | 'accent' | 'ghost';
-/** 尺寸档位 */
-export type IconButtonSize = 'sm' | 'md' | 'lg';
+/**
+ * 尺寸档位：
+ * - xs 24px / sm 28px / md 36px / lg 40px
+ * - sm-lg 移动端 28px、sm 断点起 40px（用于需要随屏幕放大的按钮）
+ */
+export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'sm-lg';
 
 export interface IconButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -25,9 +29,11 @@ export interface IconButtonProps
 }
 
 const SIZE_CLASS: Record<IconButtonSize, string> = {
+  xs: 'h-6 w-6',
   sm: 'h-7 w-7',
   md: 'h-9 w-9',
   lg: 'h-10 w-10',
+  'sm-lg': 'h-7 w-7 sm:h-10 sm:w-10',
 };
 
 const VARIANT_CLASS: Record<IconButtonVariant, string> = {

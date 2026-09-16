@@ -49,24 +49,27 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
     {CATEGORIES.map((cat) => {
       const active = activeCategory === cat.id;
       return (
-        <button
+        // 用 a 承载导航项：语义上更贴近「分类导航」，
+        // 且天然支持 aria-current；默认样式已由全局 CSS 重置
+        <a
           key={cat.id}
-          onClick={() => onSelect(cat.id)}
-          className={`flex items-center space-x-2.5 px-2.5 py-2 rounded-md transition-colors text-left ${
+          href={`#${cat.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+            onSelect(cat.id);
+          }}
+          aria-current={active ? 'page' : undefined}
+          className={`flex items-center space-x-2.5 px-2.5 py-2 rounded-md cursor-pointer transition-colors text-left ${
             active
               ? 'bg-white dark:bg-[#3A3A3C] shadow-xs'
               : 'hover:bg-black/5 dark:hover:bg-white/10'
           }`}
         >
           {cat.icon}
-          <span
-            className={` ${
-              active ? 'text-blue-500 dark:text-white' : ' '
-            }`}
-          >
+          <span className={active ? 'text-blue-500 dark:text-white' : ''}>
             {cat.label}
           </span>
-        </button>
+        </a>
       );
     })}
   </div>
