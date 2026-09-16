@@ -135,19 +135,24 @@ export const CountBadge: React.FC<{ count?: number }> = ({ count }) =>
 /**
  * NEW 角标：发布时间在 3 天内。
  *
- * 绝对定位于**最近的 relative 容器**右上角（封面区 / 信息条均可），
- * 默认让出右上角收藏按钮的位置（`right-9`），无收藏按钮时可传
- * `offsetRight={false}` 回到贴边（`right-2`）。
+ * 跟在**标题行的右侧**，各端一致（PC 与移动端相同）。
+ *
+ * 早期它绝对定位在封面右上角，问题有两个：
+ * - 移动端封面小，右上角还挤着收藏按钮，「New」既挡画面又容易和按钮打架
+ * - 压在图上需要靠 `right-9` 给收藏按钮让位，位置随按钮有无而变，不稳定
+ *
+ * 改为标题行内的普通 flex 子项后：位置由布局决定、不会浮在截断的
+ * 标题文字上，也不再需要为收藏按钮预留空间。
+ *
  * 实心胶囊自带底色（早期版本缺背景色时只剩阴影轮廓，表现为空边框）。
- * 字号为辅助信息档：移动端 12px，桌面端 14px。
+ * 字号为辅助信息档：12px。
  */
-export const NewBadge: React.FC<{ offsetRight?: boolean }> = ({
-  offsetRight = true,
+export const NewBadge: React.FC<{ className?: string }> = ({
+  className = '',
 }) => (
   <span
-    className={`absolute top-2 z-10 shrink-0 rounded-full bg-rose-500 px-1.5 py-px text-xs font-semibold uppercase leading-tight tracking-wide text-white ring-1 ring-white/25 ${
-      offsetRight ? 'right-9' : 'right-2'
-    }`}
+    className={`shrink-0 rounded-full bg-rose-500 px-1.5 py-px text-xs font-semibold uppercase leading-tight tracking-wide text-white ring-1 ring-white/25 ${className}`}
+    aria-label="新站点"
   >
     New
   </span>

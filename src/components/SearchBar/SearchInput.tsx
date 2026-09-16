@@ -3,8 +3,8 @@ import React from 'react';
 import { IconButton } from '../IconButton/IconButton';
 
 /**
- * 移动端尺寸档位（三横杠按钮与搜索框共用，保证两者永远等高）：
- * - xs：按钮/输入框 24px（最紧凑，本站默认）
+ * 移动端输入框尺寸档位：
+ * - xs：输入框 24px（最紧凑）
  * - sm：28px / md：36px / lg：40px
  */
 export type SearchInputMobileHeight = 'xs' | 'sm' | 'md' | 'lg';
@@ -17,10 +17,7 @@ const MOBILE_HEIGHT_CLASS: Record<SearchInputMobileHeight, string> = {
   lg: 'h-10 sm:h-auto',
 };
 
-/**
- * 移动端尺寸档位 → 内嵌搜索按钮尺寸档位。
- * 与同级的三横杠按钮使用**同一个档位**，宽度方向内缩 2px 视觉更透气。
- */
+/** 移动端尺寸档位 → 内嵌搜索按钮尺寸档位（比输入框略小，视觉更透气） */
 const MOBILE_SEARCH_BTN: Record<
   SearchInputMobileHeight,
   'xs' | 'sm' | 'md' | 'lg'
@@ -43,7 +40,7 @@ interface SearchInputProps {
   compact?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
-  /** 移动端输入框高度档位，默认 md（36px），需与三横杠按钮尺寸一致 */
+  /** 移动端输入框高度档位，默认 md（36px） */
   mobileHeight?: SearchInputMobileHeight;
 }
 
@@ -78,12 +75,12 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       onBlur={onBlur}
       placeholder={placeholder}
       className={`w-full rounded-full bg-black/5 text-center font-bold outline-none ring-[color:var(--accent)]/40 transition-[padding,font-size] duration-300 ease-out focus:ring-2 dark:bg-white/10 ${
-        // 移动端高度由 mobileHeight 参数决定（与旁边三横杠按钮等高）；
-        // sm 起解除固定高度，交回 py 撑开的舒展高度
+        // 移动端高度由 mobileHeight 参数决定；sm 起解除固定高度，
+        // 交回 py 撑开的舒展高度
         MOBILE_HEIGHT_CLASS[mobileHeight]
       } ${compact ? 'pl-4 pr-12 sm:py-1.5' : 'pl-5 pr-12 sm:py-3.5 sm:pr-14 sm:text-base'}`}
     />
-    {/* 内嵌右侧搜索按钮：与同级的三横杠同档位；加载中显示 spinner；sm 起固定 40px */}
+    {/* 内嵌右侧搜索按钮；加载中显示 spinner；sm 起固定 40px */}
     <IconButton
       label="搜索"
       variant="accent"

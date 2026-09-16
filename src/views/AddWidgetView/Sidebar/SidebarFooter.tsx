@@ -1,12 +1,15 @@
 import { Download, ShieldCheck } from 'lucide-react';
 import React from 'react';
-import { buildStatItems, StatRow } from '../statItems';
+import { buildStatItems, StatCell } from '../statItems';
 import { useSiteStats } from '../useSiteStats';
 
 /**
- * 侧边栏底部：访客统计 + 备案信息。
+ * 侧边栏底部：数据统计 + 备案信息。
  * 整体采用苹果「设置」分组风格：细分隔线 + 次级灰文本，备案区不再使用黑底块。
  * 统计加载失败时只展示备案信息。
+ *
+ * 统计区为 3 列网格（在线人数 / 网页总数 / 视频总数），
+ * 项数超过 3 时自动换行成多行。
  */
 export const SidebarFooter: React.FC = () => {
   const { stats, wsLive } = useSiteStats();
@@ -14,15 +17,15 @@ export const SidebarFooter: React.FC = () => {
 
   return (
     <div className="shrink-0 border-t border-black/[0.06] dark:border-white/[0.08]">
-      {/* 访客统计：图标 + 文本 + 数值 */}
+      {/* 数据统计：3 列网格，单元纵向排布（图标 / 数值 / 标签） */}
       {items.length > 0 && (
         <div className="px-2 pb-1 pt-2">
           <p className="px-2 pb-1 text-xs font-medium uppercase tracking-wider text-[#86868B] dark:text-[#98989D]">
             我的数据
           </p>
-          <div className="space-y-0.5">
+          <div className="grid grid-cols-3 gap-1">
             {items.map((item) => (
-              <StatRow key={item.label} item={item} />
+              <StatCell key={item.label} item={item} />
             ))}
           </div>
         </div>

@@ -61,12 +61,15 @@ export const LoadingOverlay: React.FC = () => {
       {failed ? (
         <>
           <TriangleAlert size={28} className="text-amber-500" />
-          <span className="text-md text-slate-600">打开超时，请重试</span>
+          {/* 移动端 12px / 桌面端 14px，与 Toast 保持一致的档位 */}
+          <span className="text-xs text-slate-600 sm:text-sm">
+            打开超时，请重试
+          </span>
         </>
       ) : (
         <>
           <Loader2 size={28} className="animate-spin text-blue-500" />
-          <span className="text-md text-slate-600">
+          <span className="text-xs text-slate-600 sm:text-sm">
             {current?.label ?? '正在打开…'}
           </span>
         </>

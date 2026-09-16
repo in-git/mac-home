@@ -40,8 +40,6 @@ interface VideoListProps {
    * 供父级联动移动端顶部导航。
    */
   onVisibilityChange?: (visible: boolean) => void;
-  /** 移动端：点击三横杠，由父级打开全屏菜单抽屉 */
-  onOpenMenu?: () => void;
 }
 
 /**
@@ -53,7 +51,6 @@ interface VideoListProps {
  */
 export const VideoList: React.FC<VideoListProps> = ({
   onVisibilityChange,
-  onOpenMenu,
 }) => {
   /** 当前播放的视频；null 表示未打开播放器 */
   const [playing, setPlaying] = useState<VideoItem | null>(null);
@@ -164,7 +161,6 @@ export const VideoList: React.FC<VideoListProps> = ({
           compact={compact}
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
-          onOpenMenu={onOpenMenu}
         />
 
         {/* 排序：向下滚动时折叠，向上滚动或聚焦搜索框时展开 */}

@@ -10,6 +10,18 @@ export const SITE_GRID_CLASS =
   'grid gap-3 sm:gap-4 xl:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
 
 /**
+ * 「我的」收藏网格：与 SITE_GRID_CLASS 的区别只在**移动端列数**。
+ *
+ * 网页列表移动端的卡是「大封面 + 信息条」，1 列才有足够宽度；
+ * 收藏页用户是在自己的列表里快速扫找，2 列一屏能看到更多，
+ * 且卡片结构与网页卡一致（同样有封面 + 标题），2 列仍能看清。
+ *
+ * sm 之后与网页列表保持一致（2 → 3 → 5 列）。
+ */
+export const FAVORITES_GRID_CLASS =
+  'grid gap-3 sm:gap-4 xl:gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
+
+/**
  * 头条区（抖音式）：左侧 1 张超大卡片（2:1）+ 右侧 2×2 共 4 张卡片。
  * 行高由左侧大卡的 16:9 推导，右侧四宫格通过 items-stretch 撑满同高；
  * 小屏为纵向堆叠，高度由卡片自身决定。

@@ -17,8 +17,6 @@ interface FilterBarProps {
   /** 点击搜索按钮 / 回车：立即以当前关键词搜索（跳过防抖等待） */
   onSearchSubmit: () => void;
   onSelectCategory: (id: string) => void;
-  /** 移动端：打开全屏菜单抽屉；不传则不渲染三横杠 */
-  onOpenMenu?: () => void;
 }
 
 /** 分类胶囊：一级略强，二级常规；选中态为实心蓝。统一走通用 Button 的 pill 模式 */
@@ -63,7 +61,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onSearchChange,
   onSearchSubmit,
   onSelectCategory,
-  onOpenMenu,
 }) => {
   // 搜索框聚焦状态：聚焦时强制还原为展开态（即使分类处于折叠态），失焦后跟随滚动状态
   const [searchFocused, setSearchFocused] = useState(false);
@@ -86,7 +83,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         compact={compact}
         onFocus={() => setSearchFocused(true)}
         onBlur={() => setSearchFocused(false)}
-        onOpenMenu={onOpenMenu}
       />
 
       {/* 分类行：向下滚动时折叠（grid-rows 1fr → 0fr 自适应高度），向上滚动或聚焦输入框时展开 */}

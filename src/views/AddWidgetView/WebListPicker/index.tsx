@@ -35,7 +35,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   favorites,
   onToggleFavorite,
   onVisibilityChange,
-  onOpenMenu,
 }) => {
   const [categories, setCategories] = useState<FlatCategory[]>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
@@ -129,7 +128,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         onSearchChange={setKeyword}
         onSearchSubmit={submit}
         onSelectCategory={setSelectedCat}
-        onOpenMenu={onOpenMenu}
       />
 
       {/* Site Grid */}

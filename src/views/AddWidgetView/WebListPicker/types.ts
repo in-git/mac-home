@@ -12,8 +12,6 @@ export interface WebListPickerProps {
    * 供父级联动其它元素（如移动端顶部导航）。
    */
   onVisibilityChange?: (visible: boolean) => void;
-  /** 移动端：点击三横杠，由父级打开全屏菜单抽屉 */
-  onOpenMenu?: () => void;
 }
 
 export type { SiteIdentity, SiteItem };

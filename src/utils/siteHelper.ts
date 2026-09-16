@@ -1,5 +1,10 @@
 import { siteApi, SiteItem } from '../api/site';
-import { hideNativeLoading, isNativeApp, showNativeLoading } from './appBridge';
+import {
+  hideNativeLoading,
+  isNativeApp,
+  openInSameContext,
+  showNativeLoading,
+} from './appBridge';
 import { openWithLoading } from './openWithLoading';
 
 /**
@@ -46,7 +51,18 @@ export function openSite(
         onOpen(item);
         return;
       }
-      if (item.link) window.open(item.link, '_blank', 'noreferrer');
+      if (!item.link) return;
+      /**
+       * 在 App 内必须复用同一个浏览上下文打开（openInSameContext），
+       * 否则每次打开都是一个全新窗口：站点存在 `sessionStorage` 的进度
+       * 会随上下文销毁一起丢失，表现为「存了下次打开又没了」。
+       *
+       * 普通浏览器里该函数返回 false，回退到新标签页 —— 桌面端
+       * 用户本来也更习惯「点开新标签、主页不丢」。
+       */
+      if (!openInSameContext(item.link)) {
+        window.open(item.link, '_blank', 'noreferrer');
+      }
     });
   };
 

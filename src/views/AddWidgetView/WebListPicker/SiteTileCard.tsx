@@ -53,8 +53,6 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
-        {/* NEW 角标：绝对定位于封面右上角（有收藏按钮时自动让位） */}
-        {showNew && <NewBadge offsetRight={!!onToggleFavorite} />}
         {onToggleFavorite && (
           <FavoriteButton
             item={item}
@@ -67,9 +65,16 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
         </span>
       </div>
 
-      {/* 移动端：纯图，标题以轻量浮层压在封面底部；lg 起改为常规信息条 */}
+      {/*
+        移动端：纯图，标题以轻量浮层压在封面底部。
+        本卡小于 lg 时没有独立信息条，标题就在这个浮层里，
+        因此 NEW 角标也放在此处，与 lg 起的信息条保持同样位置。
+      */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-8 lg:hidden">
-        <p className="truncate text-sm font-medium text-white">{item.name}</p>
+        <div className="flex min-w-0 items-start gap-1.5">
+          <p className="truncate text-sm font-medium text-white">{item.name}</p>
+          {showNew && <NewBadge />}
+        </div>
       </div>
 
       <div className="relative hidden p-2 sm:p-2.5 lg:flex items-center gap-3 text-left">
@@ -82,6 +87,8 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
             </p>
           </div>
         </div>
+        {/* NEW 跟在标题行右侧（self-start 对齐行顶，即「标题右上角」） */}
+        {showNew && <NewBadge className="self-start" />}
       </div>
     </div>
   );

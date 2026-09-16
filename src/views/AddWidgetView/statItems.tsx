@@ -1,10 +1,4 @@
-import {
-  CalendarDays,
-  CalendarRange,
-  Globe,
-  Radio,
-  Users,
-} from 'lucide-react';
+import { Globe, Radio, Video } from 'lucide-react';
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -25,14 +19,18 @@ export interface StatItem {
   live?: boolean;
 }
 
-/** 由原始数据拼装统计项：图标 + 文本 + 数值 */
+/**
+ * 由原始数据拼装统计项。
+ *
+ * 只保留「在线人数 / 网页总数 / 视频总数」三项：
+ * 今日 / 周 / 月访客这类 UV 数据已移除，不再展示（接口仍会返回，但不再取用）。
+ * 三项正好铺满 3 列网格的一行。
+ */
 export function buildStatItems(
   stats: {
     online: number | null;
-    today: number;
-    week: number;
-    month: number;
-    total: number;
+    siteTotal: number;
+    videoTotal: number;
   },
   /** WebSocket 是否实时连通：决定在线人数是否显示呼吸指示 */
   wsLive = false,
@@ -46,54 +44,50 @@ export function buildStatItems(
       live: wsLive,
     },
     {
-      label: '今日访客',
-      value: formatCount(stats.today),
-      icon: Users,
-      tone: 'from-orange-400 to-rose-500',
-    },
-    {
-      label: '周访客',
-      value: formatCount(stats.week),
-      icon: CalendarDays,
-      tone: 'from-blue-400 to-indigo-500',
-    },
-    {
-      label: '月访客',
-      value: formatCount(stats.month),
-      icon: CalendarRange,
-      tone: 'from-purple-400 to-violet-500',
-    },
-    {
       label: '网页总数',
-      value: formatCount(stats.total),
+      value: formatCount(stats.siteTotal),
       icon: Globe,
-      tone: 'from-slate-400 to-slate-500',
+      tone: 'from-emerald-400 to-teal-500',
+    },
+    {
+      label: '视频总数',
+      value: formatCount(stats.videoTotal),
+      icon: Video,
+      tone: 'from-sky-400 to-blue-500',
     },
   ];
 }
 
-/** 单项：小圆角渐变图标 + 文本 + 右侧数值，苹果「设置」列表风格 */
-export const StatRow: React.FC<{ item: StatItem }> = ({ item }) => {
+/**
+ * 单项：纵向的网格单元（图标 / 数值 / 标签），用于 3 列统计网格。
+ *
+ * 早先是横向的列表行（图标 + 标签 —— 数值），改为网格后单行空间不够，
+ * 所以改成纵向堆叠：数值最显眼，标签作为说明放在下方。
+ *
+ * 单元宽度在窄侧栏（约 60px）到移动端整宽（约 110px）之间变化，
+ * 故文字用 `truncate` + `text-center` 保证任何宽度下都不溢出。
+ */
+export const StatCell: React.FC<{ item: StatItem }> = ({ item }) => {
   const Icon = item.icon;
   return (
-    <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-black/[0.03] dark:hover:bg-white/[0.06]">
+    <div className="flex flex-col items-center gap-1 rounded-lg px-0.5 py-2">
       <span
-        className={`relative flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-gradient-to-br ${item.tone} text-white shadow-sm`}
+        className={`relative flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-gradient-to-br ${item.tone} text-white shadow-sm`}
       >
-        <Icon size={13} strokeWidth={2.2} />
+        <Icon size={14} strokeWidth={2.2} />
         {/* 实时项：右上角呼吸小圆点 */}
         {item.live && (
           <span className="absolute -right-0.5 -top-0.5 flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 ring-1 ring-white dark:ring-[#2C2C2E]" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 ring-1 ring-white" />
           </span>
         )}
       </span>
-      <span className="flex-1 truncate  text-[#86868B] dark:text-[#98989D]">
-        {item.label}
-      </span>
-      <span className="shrink-0  font-semibold tabular-nums text-[#1D1D1F] dark:text-white">
+      <span className="w-full truncate text-center text-sm font-semibold tabular-nums text-[#1D1D1F]">
         {item.value}
+      </span>
+      <span className="w-full truncate text-center text-[11px] leading-tight text-[#86868B]">
+        {item.label}
       </span>
     </div>
   );

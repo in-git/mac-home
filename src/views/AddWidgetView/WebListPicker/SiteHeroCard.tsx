@@ -50,8 +50,6 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
-        {/* NEW 角标：绝对定位于封面右上角（有收藏按钮时自动让位） */}
-        {showNew && <NewBadge offsetRight={!!onToggleFavorite} />}
         {onToggleFavorite && (
           <FavoriteButton
             item={item}
@@ -67,9 +65,13 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
         <div className="flex items-end gap-2 sm:gap-3">
           <SiteAvatar item={item} size="lg" />
           <div className="flex min-w-0 flex-1 flex-col justify-center">
-            <p className="truncate text-sm font-semibold sm:text-2xl">
-              {item.name}
-            </p>
+            {/* 标题行：NEW 排在标题右侧（self-start 对齐行顶，即「标题右上角」） */}
+            <div className="flex min-w-0 items-start gap-1.5">
+              <p className="truncate text-sm font-semibold sm:text-2xl">
+                {item.name}
+              </p>
+              {showNew && <NewBadge />}
+            </div>
             {item.des && (
               <p className="mt-0.5 line-clamp-2 text-xs text-white/80 sm:mt-1 sm:text-base">
                 {item.des}

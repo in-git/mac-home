@@ -26,6 +26,8 @@ interface NativeBridge {
   showLoading?: (label: string) => void;
   /** 请求关闭全屏 loading */
   hideLoading?: () => void;
+  /** 请求在当前 WebView 内打开链接（不新开窗口） */
+  openUrl?: (url: string) => void;
 }
 
 /** 读取桥接对象；不存在（普通浏览器）时返回 null */
@@ -41,6 +43,22 @@ function getBridge(): NativeBridge | null {
 export function isNativeApp(): boolean {
   const bridge = getBridge();
   return !!bridge && typeof bridge.showLoading === 'function';
+}
+
+/**
+ * 是否为 Android WebView（User-Agent 判定）。
+ *
+ * Android WebView 的 UA 会在设备信息后带一个 `; wv` 标记，
+ * 而 Chrome for Android 没有 —— 这是官方推荐的区分方式。
+ *
+ * 存在的意义：**已发布的旧版 APK 里还没有注入 MXBridge**（桥接是后加的），
+ * `isNativeApp()` 对它们恒为 false。要让这类已安装的 App 也能立刻
+ * 享受到「复用窗口」的修复，就需要这条不依赖桥接的判断。
+ */
+export function isAndroidWebView(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /Android/i.test(ua) && /;\s*wv\b/.test(ua);
 }
 
 /**
@@ -80,4 +98,43 @@ export function hideNativeLoading(): boolean {
     console.warn('[appBridge] hideLoading 调用失败', error);
     return false;
   }
+}
+
+/**
+ * 在**同一个浏览上下文**里打开链接，不新开窗口 / 标签页。
+ *
+ * 按优先级尝试三种方式：
+ * 1. 原生桥接 `openUrl` —— 最可靠，由 App 直接 `loadUrl` 到当前 WebView
+ * 2. Android WebView 兜底 —— 桥接不存在时改成本页导航（`location.href`），
+ *    App 的 `shouldOverrideUrlLoading` 对 http/https 返回 false，
+ *    于是仍由同一个 WebView 加载，效果等同
+ * 3. 都不满足（普通浏览器）→ 返回 false，由调用方退回 `window.open`
+ *
+ * 为什么「复用上下文」能解决数据丢失：
+ * 站点存在 `sessionStorage` 的数据生命周期绑定浏览上下文，
+ * 每次新开窗口就是全新上下文，上次存的读不到。复用后同一 origin 的
+ * `localStorage` / `sessionStorage` 在进程存活期间都会保留。
+ *
+ * @returns 是否已处理；false 表示当前是普通浏览器，应回退到新标签页
+ */
+export function openInSameContext(url: string): boolean {
+  // 1) 新版 App：走原生桥接
+  const bridge = getBridge();
+  if (bridge && typeof bridge.openUrl === 'function') {
+    try {
+      bridge.openUrl(url);
+      return true;
+    } catch (error) {
+      console.warn('[appBridge] openUrl 调用失败，回退到本页导航', error);
+    }
+  }
+
+  // 2) 旧版 App（无桥接）：Android WebView 下改成本页导航
+  if (isAndroidWebView()) {
+    window.location.href = url;
+    return true;
+  }
+
+  // 3) 普通浏览器：交给调用方开新标签页
+  return false;
 }

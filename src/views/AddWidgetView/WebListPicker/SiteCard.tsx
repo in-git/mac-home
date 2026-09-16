@@ -51,8 +51,6 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
-        {/* NEW 角标：绝对定位于封面右上角（有收藏按钮时自动让位） */}
-        {showNew && <NewBadge offsetRight={!!onToggleFavorite} />}
         {onToggleFavorite && (
           <FavoriteButton
             item={item}
@@ -83,6 +81,11 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             )}
           </div>
         </div>
+        {/*
+          NEW 跟在标题行右侧（self-start 对齐到行顶，即「标题右上角」）。
+          用 flex 子项而非绝对定位，避免浮在截断的标题文字上造成重叠。
+        */}
+        {showNew && <NewBadge className="self-start" />}
       </div>
     </div>
   );
