@@ -62,6 +62,17 @@ export function isAndroidWebView(): boolean {
 }
 
 /**
+ * 是否已经身处 App 容器里（用于隐藏「下载 App」这类入口）。
+ *
+ * 用「有桥接」或「UA 是 Android WebView」两者取或：
+ * 只看 `isNativeApp()` 会漏掉**没内置桥接的旧版 APK**，
+ * 结果就是已经装了 App 的用户还能看到「专属app 下载」按钮。
+ */
+export function isInAppContainer(): boolean {
+  return isNativeApp() || isAndroidWebView();
+}
+
+/**
  * 请求原生展示全屏 loading。
  *
  * 原生方法调用本身是同步的（跨进程通信由 WebView 内部处理），

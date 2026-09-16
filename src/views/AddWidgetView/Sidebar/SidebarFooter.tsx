@@ -1,47 +1,37 @@
 import { Download, ShieldCheck } from 'lucide-react';
 import React from 'react';
-import { buildStatItems, StatCell } from '../statItems';
-import { useSiteStats } from '../useSiteStats';
+import { isInAppContainer } from '../../../utils/appBridge';
 
 /**
- * 侧边栏底部：数据统计 + 备案信息。
+ * 侧边栏底部：App 下载入口 + 备案信息。
  * 整体采用苹果「设置」分组风格：细分隔线 + 次级灰文本，备案区不再使用黑底块。
- * 统计加载失败时只展示备案信息。
  *
- * 统计区为 3 列网格（在线人数 / 网页总数 / 视频总数），
- * 项数超过 3 时自动换行成多行。
+ * 「我的数据」统计入口已移除（连同 StatsPage / statItems / useSiteStats）。
  */
 export const SidebarFooter: React.FC = () => {
-  const { stats, wsLive } = useSiteStats();
-  const items = stats ? buildStatItems(stats, wsLive) : [];
+  /**
+   * 已经在 App 里时不展示下载入口：
+   * 用户此刻就身处 App 中，再给一个「下载 App」是自相矛盾的。
+   * 判断用 `isInAppContainer()`（桥接 或 Android WebView UA 二选其一命中），
+   * 这样没内置桥接的旧版 APK 也能正确隐藏。
+   */
+  const inApp = isInAppContainer();
 
   return (
     <div className="shrink-0 border-t border-black/[0.06] dark:border-white/[0.08]">
-      {/* 数据统计：3 列网格，单元纵向排布（图标 / 数值 / 标签） */}
-      {items.length > 0 && (
-        <div className="px-2 pb-1 pt-2">
-          <p className="px-2 pb-1 text-xs font-medium uppercase tracking-wider text-[#86868B] dark:text-[#98989D]">
-            我的数据
-          </p>
-          <div className="grid grid-cols-3 gap-1">
-            {items.map((item) => (
-              <StatCell key={item.label} item={item} />
-            ))}
-          </div>
+      {/* 专属 App 下载入口：仅在非 App 环境（浏览器）展示 */}
+      {!inApp && (
+        <div className="border-t border-black/[0.06] px-2 py-2 dark:border-white/[0.08]">
+          <a
+            href="/app-v1.0.apk"
+            download="app-v1.0.apk"
+            className="flex items-center justify-center gap-1.5 rounded-lg bg-[color:var(--accent)] px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[color:var(--accent-hover)]"
+          >
+            <Download size={15} className="shrink-0" />
+            <span>专属app</span>
+          </a>
         </div>
       )}
-
-      {/* 专属 App 下载入口：指向 public/app-v1.0.apk（Vite 会把 public 原样拷到根路径） */}
-      <div className="border-t border-black/[0.06] px-2 py-2 dark:border-white/[0.08]">
-        <a
-          href="/app-v1.0.apk"
-          download="app-v1.0.apk"
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-[color:var(--accent)] px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[color:var(--accent-hover)]"
-        >
-          <Download size={15} className="shrink-0" />
-          <span>专属app</span>
-        </a>
-      </div>
 
       {/* 备案信息：苹果次级文本风格 */}
       <div className="space-y-1 border-t border-black/[0.06] text-xs px-4 py-3 dark:border-white/[0.08]">

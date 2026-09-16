@@ -21,8 +21,9 @@ interface MineProps {
  * 因此本页不再需要监听滚动方向。
  *
  * 抽屉里原本还装着数据统计与备案信息（SidebarFooter）。
- * 抽屉移除后，这部分内容移到本页底部：备案信息在移动端必须仍可达
- * （境内站点要求展示），而「我的」是它的自然归宿。
+ * 抽屉移除后，这部分内容只在**移动端**落到本页底部：
+ * 备案信息在移动端没有侧栏可依托，必须在此保留（境内站点要求展示）；
+ * 桌面端则由左侧栏展示，本页不再重复。
  */
 export const Mine: React.FC<MineProps> = ({
   favorites,
@@ -61,8 +62,16 @@ export const Mine: React.FC<MineProps> = ({
           </>
         )}
 
-        {/* 数据统计 + 备案信息：原属移动端抽屉，抽屉移除后落在这里 */}
-        <div className="mt-6">
+        {/*
+          专属 App 下载 + 备案信息：仅移动端在本页展示。
+
+          桌面端（sm 起）左侧栏常驻渲染着同一个 SidebarFooter，
+          这里再放一份就是重复；备案信息在桌面端由侧栏承担展示，不会丢失。
+
+          移动端没有侧栏（由底部 tabbar 替代），所以必须在本页提供，
+          否则备案信息将无处可达。
+        */}
+        <div className="mt-6 sm:hidden">
           <SidebarFooter />
         </div>
       </div>

@@ -10,8 +10,7 @@
   <title>吴文龙的互联空间 | 吴文龙的主页 · 奇趣站点与网页游戏收录</title>
   <meta name="description"
     content="吴文龙的互联空间是吴文龙的主页，专注收录奇趣站点与网页游戏：无需下载、点开即玩的小游戏合集，以及有趣的在线工具、创意网站与实用资源。由吴文龙持续整理更新，按分类浏览、支持关键词搜索与收藏，一站直达值得一逛的互联网角落。" />
-  <meta name="keywords"
-    content="吴文龙,吴文龙的互联空间,吴文龙的主页,吴文龙个人主页,奇趣站点,网页游戏,在线小游戏,网页游戏合集,免费在线游戏,奇趣网站收录,游戏导航,网址导航" />
+  <meta name="keywords" content="吴文龙,吴文龙的互联空间,吴文龙的主页,吴文龙个人主页,奇趣站点,网页游戏,在线小游戏,网页游戏合集,免费在线游戏,奇趣网站收录,游戏导航,网址导航" />
   <meta name="author" content="吴文龙" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <link rel="canonical" href="https://mx2d.cn/" />
@@ -74,28 +73,20 @@
   </script>
 
   <style>
-    /* 仅供屏幕阅读器与搜索引擎读取的标题：页面为桌面式 UI，无可见标题位 */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
+    body{
       overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
     }
-
     /* JS 未执行时的首屏兜底内容，React 挂载后由应用界面接管 */
     #boot-fallback {
-      max-width: 720px;
-      margin: 12vh auto;
-      padding: 0 24px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
         'Microsoft YaHei', sans-serif;
       color: #666666;
       line-height: 1.8;
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
     #boot-fallback a {
@@ -105,84 +96,21 @@
     #boot-fallback ul {
       padding-left: 20px;
     }
-
-    /* 底部备案信息：固定在视口底部（桌面 UI 为 h-screen，普通文档流会被挤出首屏） */
-    #site-footer {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 20;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 6px 14px;
-      padding: 5px 12px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-        'Microsoft YaHei', sans-serif;
-      font-size: 12px;
-      line-height: 1.6;
-      /* 页面为纯色底（无动态壁纸），默认按浅色底的深色文字渲染 */
-      color: rgba(29, 29, 31, 0.78);
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      /* 容器不吃鼠标事件，避免遮挡桌面底部的可交互区域 */
-      pointer-events: none;
-    }
-
-    /* 深色模式下反转为浅色文字 + 半透明黑底 */
-    .dark #site-footer {
-      color: rgba(255, 255, 255, 0.88);
-      background: rgba(0, 0, 0, 0.28);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-    }
-
-    #site-footer a {
-      pointer-events: auto;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: inherit;
-      text-decoration: none;
-    }
-
-    #site-footer a:hover {
-      text-decoration: underline;
-    }
-
-    #site-footer svg {
-      flex: none;
-    }
   </style>
 </head>
 
 <body>
-  <!-- 全站唯一 h1：不随 React 渲染而消失，确保 Bing 渲染 JS 后仍能抓到主标题 -->
-  <header class="sr-only">
-    <h1>吴文龙的互联空间 · 吴文龙的私域 </h1>
-    <p>
-      吴文龙的互联空间是吴文龙的主页，专注收录奇趣站点与网页游戏：无需下载、点开即玩的在线小游戏，
-      以及有趣的创意网站、在线工具与实用资源，由吴文龙持续整理更新。
-    </p>
-  </header>
+
 
   <div id="root">
-    <!-- 首屏静态兜底：无 JS 环境（含部分爬虫）下依然有可读内容 -->
     <main id="boot-fallback">
-      <h2>吴文龙的互联空间 —— 吴文龙的主页</h2>
-      <p>
-        这里是由吴文龙整理维护的奇趣站点收录站，把值得一逛的网页游戏与有趣的网站聚合在一起：
-      </p>
-   
-      <p>页面正在加载，若长时间无响应，请检查浏览器是否已启用 JavaScript。</p>
+      <h1>吴文龙的互联空间 · 吴文龙的私域 </h1>
     </main>
   </div>
 
   <noscript>
     <p style="padding: 16px; font-family: sans-serif">
-  需要启用 JavaScript
+      需要启用 JavaScript
     </p>
   </noscript>
 
