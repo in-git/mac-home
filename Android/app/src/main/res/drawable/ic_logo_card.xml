@@ -1,0 +1,48 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="128dp"
+    android:height="128dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+    <!-- Rounded Blue Background -->
+    <path
+        android:pathData="M 28,8 h 72 a 20,20 0 0 1 20,20 v 72 a 20,20 0 0 1 -20,20 h -72 a 20,20 0 0 1 -20,-20 v -72 a 20,20 0 0 1 20,-20 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="16"
+                android:startY="16"
+                android:endX="112"
+                android:endY="112"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#2196F3" />
+                <item android:offset="1.0" android:color="#1565C0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Top "日" shape with inner cutout (centered in 128x128 canvas, offset +10, +10) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M 47,35 h 34 a 5,5 0 0 1 5,5 v 10 a 5,5 0 0 1 -5,5 h -34 a 5,5 0 0 1 -5,-5 v -10 a 5,5 0 0 1 5,-5 z M 56,40 h 16 a 3,3 0 0 1 3,3 v 4 a 3,3 0 0 1 -3,3 h -16 a 3,3 0 0 1 -3,-3 v -4 a 3,3 0 0 1 3,-3 z" />
+
+    <!-- First horizontal bar -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 42,59 h 44 a 1.5,1.5 0 0 1 1.5,1.5 v 1 a 1.5,1.5 0 0 1 -1.5,1.5 h -44 a 1.5,1.5 0 0 1 -1.5,-1.5 v -1 a 1.5,1.5 0 0 1 1.5,-1.5 z" />
+
+    <!-- Central connecting post -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 58,63 h 12 v 9 h -12 z" />
+
+    <!-- Second horizontal bar -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 40.5,72 h 47 a 1.5,1.5 0 0 1 1.5,1.5 v 1 a 1.5,1.5 0 0 1 -1.5,1.5 h -47 a 1.5,1.5 0 0 1 -1.5,-1.5 v -1 a 1.5,1.5 0 0 1 1.5,-1.5 z" />
+
+    <!-- Lower flared legs -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 56,76 h 16 l 19,18 h -17 l -10,-11 l -10,11 h -17 z" />
+</vector>

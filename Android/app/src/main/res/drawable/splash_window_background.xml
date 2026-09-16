@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 启动窗口背景：白底 + 居中品牌 Logo，消除冷启动白屏。
+     注意：<bitmap> 只能引用位图，矢量图需用 <item android:drawable> +
+     gravity 组合，直接写 <bitmap android:src="@drawable/ic_logo_card" />
+     会在启动时抛 XmlPullParserException 导致闪退。 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item
+        android:drawable="@drawable/ic_logo_card"
+        android:gravity="center"
+        android:width="96dp"
+        android:height="96dp" />
+</layer-list>

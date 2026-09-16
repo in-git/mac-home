@@ -108,6 +108,25 @@ export const VideoList: React.FC<VideoListProps> = ({
     });
   }, [items, patchItem]);
 
+  /** 移动端下滑手势：取列表中的上一个，开头则回到最后一个 */
+  const playPrev = React.useCallback(() => {
+    setPlaying((current) => {
+      if (!current || items.length === 0) return current;
+      const idx = items.findIndex((v) => v.id === current.id);
+      // idx 为 -1（列表已刷新丢当前项）时也回退到最后一个，避免卡住
+      const prev = items[(idx - 1 + items.length) % items.length];
+      videoApi
+        .click(prev.id)
+        .then(() => patchItem(prev.id, (v) => ({ count: (v.count ?? 0) + 1 })))
+        .catch(() => {
+          /* 上报失败不阻塞播放 */
+        });
+      return prev;
+    });
+  }, [items, patchItem]);
+
+
+
   // 滚动：触底加载下一页 + 按方向折叠 / 展开筛选行（并通知父级）
   const { scrollRef, onScroll, scrollVisible: showFilter } = useListScroll({
     canReachBottom: !appendLoading && hasMore,
@@ -244,6 +263,17 @@ export const VideoList: React.FC<VideoListProps> = ({
         // 自动连播：切到列表中的下一个视频，最后一个则回到第一个
         hasNext={items.length > 1}
         onNext={playNext}
+        // 移动端竖向轮播：上一个视频
+        hasPrev={items.length > 1}
+        onPrev={playPrev}
+        // 移动端竖向轮播直接以列表为数据源（原生滚动 + scroll-snap 吸附）
+        items={items}
+        // 滑到接近尾部自动加载下一页（与网页模块触底加载同构）
+        hasMore={hasMore}
+        loadingMore={appendLoading}
+        onLoadMore={() =>
+          loadMore(debouncedKw, PAGE_SIZE, sort.field, sort.order)
+        }
       />
     </div>
   );

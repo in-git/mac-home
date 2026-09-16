@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MyApplication" parent="android:Theme.DeviceDefault.NoActionBar" />
+
+    <!-- 启动主题：无 ActionBar + 品牌底色，冷启动期间不出现空白/白屏闪烁 -->
+    <style name="Theme.MyApplication.Splash">
+        <item name="android:windowBackground">@drawable/splash_window_background</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+</resources>

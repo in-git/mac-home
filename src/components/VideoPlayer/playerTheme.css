@@ -55,3 +55,49 @@
     font-size: 12px;
   }
 }
+
+/**
+ * 竖向轮播支持（移动端）：让外层的滚动容器接管上下滑动。
+ *
+ * 轮播由 `useSwipeSwitch` + CSS scroll-snap 实现，父容器是滚动容器。
+ * 但 `touch-action` 由**触摸起点所在元素**决定，祖先上的内联样式无法
+ * 覆盖后代自己的声明：ArtPlayer 内部给 .art-video-player / video 设了
+ * touch-action，浏览器因此把手势判给播放器、父容器收不到纵向滚动，
+ * 表现为「滑不动 / 直接弹回」。
+ *
+ * 这里统一声明 `pan-y`：纵向交还父容器做轮播，横向留给播放器拖进度。
+ * 不要写 `none` —— 那样纵向与横向都会被浏览器判给播放器，
+ * 滚动容器永远收不到滑动。
+ */
+.art-video-player,
+.art-video-player video,
+.art-video-player .art-video,
+.art-video-player .art-layers,
+.art-video-player .art-layer {
+  touch-action: pan-y !important;
+}
+
+/**
+ * 竖向轮播滚动容器（移动端全屏播放层）。
+ *
+ * 用原生滚动 + scroll-snap 替代手写触摸手势：
+ * - `scroll-snap-type: y mandatory` 让每一层整屏吸附，一甩即切换，
+ *   吸附动画由合成器线程完成，不掉帧
+ * - `overscroll-behavior: contain` 阻止滚动越界穿透到 body（下拉刷新 / 回弹）
+ * - 隐藏原生滚动条：播放层是全屏沉浸式，滚动条本身也是干扰
+ */
+.video-carousel {
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+.video-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* 每一层：撑满一屏并吸附到容器顶部 */
+.video-carousel-slide {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#1677FF</color>
+    <!-- 启动窗口底色：与站点首屏一致，避免启动瞬间闪白 -->
+    <color name="splash_background">#FFFFFF</color>
+</resources>

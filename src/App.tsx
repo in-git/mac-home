@@ -16,9 +16,8 @@ export default function App() {
   }, []);
 
 
-  // 桌面即「添加网页」，铺满整个视口。
   return (
-    <div className="h-[100dvh] w-full overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
+    <div className="h-[100dvh] bg-white w-full overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
       <AddWidgetView />
     </div>
   );

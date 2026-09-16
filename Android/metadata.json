@@ -1,0 +1,6 @@
+{
+  "name": "吴文龙",
+  "description": "吴文龙 个人网页应用，连接 mx2d.cn",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

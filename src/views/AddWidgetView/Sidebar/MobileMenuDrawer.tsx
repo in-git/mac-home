@@ -2,7 +2,6 @@ import { X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconButton } from '@/components/IconButton/IconButton';
-import { SidebarBrand } from './SidebarBrand';
 import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
 
@@ -146,11 +145,11 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
         }}
         className="flex h-full w-full flex-col bg-[#F2F2F7] dark:bg-[#2C2C2E]"
       >
-        {/* 顶部：品牌 Logo + 右侧关闭图标 */}
-        <div className="flex h-14 shrink-0 items-center border-b border-black/5 pr-3 dark:border-white/10">
-          <div className="min-w-0 flex-1">
-            <SidebarBrand />
-          </div>
+        {/* 顶部：标题 + 右侧关闭图标 */}
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/5 pl-4 pr-3 dark:border-white/10">
+          <h1 className="min-w-0 flex-1 truncate text-base font-semibold text-[#1D1D1F] dark:text-white">
+            吴文龙的私域
+          </h1>
           <IconButton
             label="关闭菜单"
             variant="ghost"
