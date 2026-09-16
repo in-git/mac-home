@@ -1,6 +1,32 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/*
+ * 固定为浅色主题，不跟随系统深色模式。
+ *
+ * 背景：Tailwind v4 的 `dark:` 变体默认基于 `prefers-color-scheme: dark`
+ * 媒体查询，即**跟随操作系统设置**，而不是看某个 class。这带来一个
+ * 在 WebView 容器里非常致命的问题：
+ *
+ *   Android 内置 WebView（以及 iOS WKWebView）会把系统的深色模式设置
+ *   透传给页面。用户手机开了深色模式，页面里所有 `dark:` 样式就会生效。
+ *   而本项目的深色适配并不完整 —— 大量元素的文字颜色是硬编码的深色
+ *   （如 App 根节点的 bg-white + 各类 text-slate-900），
+ *   结果是「深色背景下显示深色文字」，整页几乎看不见。
+ *
+ * 修法：用 `@custom-variant` 把 dark 变体改成**基于 class 的**形式。
+ * 这样 `dark:` 只在祖先元素带 `.dark` 类时才生效，而本项目自始至终
+ * 没有任何地方添加 `.dark` 类（也没有主题切换开关），
+ * 于是这些样式永远不激活，页面稳定呈现浅色。
+ *
+ * 相比逐条删掉 `dark:` 类的优点：
+ * - 改动只有一处，不用动几十个组件文件
+ * - 保留了深色样式代码，将来若要做真正的主题切换，
+ *   只需给根节点加/去 `.dark` 类即可，无需回滚这次修改
+ *
+ * 官方文档：https://tailwindcss.com/docs/dark-mode
+ */
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --accent: #007AFF;

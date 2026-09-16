@@ -20,6 +20,17 @@ export interface VideoPlayerProps {
   onTimeUpdate?: (currentTime: number) => void;
   /** 播放器实例就绪回调（可用于外部控制） */
   onReady?: (art: Artplayer) => void;
+  /**
+   * 视频**真正开始播放**（首帧出画）时回调。
+   *
+   * 与 `onReady` 的区别：ready 只代表播放器实例与元数据就绪，
+   * 此时画面还可能是黑屏 / 首帧未解码。若用它来关闭全屏 loading，
+   * 用户会看到「遮罩消失但画面还是黑的」。所以关闭 loading
+   * 应当用本回调。
+   */
+  onPlaying?: () => void;
+  /** 加载出错（网络异常 / 格式不支持 / 地址失效）时回调 */
+  onError?: (error: unknown) => void;
 }
 
 /**
@@ -47,6 +58,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onEnded,
   onTimeUpdate,
   onReady,
+  onPlaying,
+  onError,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<Artplayer | null>(null);
@@ -54,9 +67,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const onEndedRef = useRef(onEnded);
   const onReadyRef = useRef(onReady);
   const onTimeUpdateRef = useRef(onTimeUpdate);
+  const onPlayingRef = useRef(onPlaying);
+  const onErrorRef = useRef(onError);
   onEndedRef.current = onEnded;
   onReadyRef.current = onReady;
   onTimeUpdateRef.current = onTimeUpdate;
+  onPlayingRef.current = onPlaying;
+  onErrorRef.current = onError;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -140,6 +157,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     art.on('video:timeupdate', () => {
       onTimeUpdateRef.current?.(art.currentTime);
     });
+    /**
+     * 首帧出画：此时关闭全屏 loading 才不会看到黑屏。
+     *
+     * 用 `video:playing` 而非 `video:play` —— play 只是「已开始播放」，
+     * 数据尚未解码；playing 才是真正有画面输出。
+     */
+    art.on('video:playing', () => onPlayingRef.current?.());
+    // 加载失败（地址失效 / 网络异常 / 格式不支持）
+    art.on('video:error', (error) => onErrorRef.current?.(error));
 
     /**
      * 键盘快捷键（自行绑定，不依赖 ArtPlayer 内置 hotkey）。
