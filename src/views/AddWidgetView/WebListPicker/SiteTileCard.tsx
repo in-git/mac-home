@@ -14,8 +14,10 @@ import {
 type SiteTileCardProps = SiteCardBaseProps;
 
 /**
- * 头条区宫格卡片：封面铺满卡片剩余高度（由外部行高决定），底部为信息条。
- * 与 SiteCard 的区别只在封面是否按 16:9 固定，故独立成组件而不混用。
+ * 头条区宫格卡片：封面铺满整卡高度（由外部行高决定）。
+ * 移动端纯图展示（不渲染信息条，仅保留收藏按钮与点击量、标题浮在封面底部）；
+ * lg 起显示底部信息条（Logo / 标题）。
+ * 与 SiteCard 的区别在于封面不按 16:9 固定，故独立成组件而不混用。
  */
 export const SiteTileCard: React.FC<SiteTileCardProps> = ({
   item,
@@ -45,7 +47,7 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
           />
         ) : (
           <div
-            className="absolute inset-0 flex h-full w-full items-center justify-center text-white text-3xl font-bold"
+            className="absolute inset-0 flex h-full w-full items-center justify-center text-white text-2xl sm:text-3xl font-bold"
             style={{ background: gradientOf(item) }}
           >
             {(item.name || '?').charAt(0).toUpperCase()}
@@ -63,17 +65,25 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
         </span>
       </div>
 
-      <div className="relative p-2.5 flex items-center gap-3 text-left">
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+      {/* 移动端：纯图，标题以轻量浮层压在封面底部；lg 起改为常规信息条 */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-8 lg:hidden">
+        <p className="truncate text-sm font-medium text-white">{item.name}</p>
+      </div>
+
+      <div className="relative hidden p-2 sm:p-2.5 lg:flex items-center gap-3 text-left">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           <SiteAvatar item={item} />
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
+            {/* 字号：移动端 14px（text-sm），桌面端 18px */}
             {showNew ? (
               <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
-                <p className="truncate text-xl">{item.name}</p>
+                <p className="truncate text-sm sm:text-lg">{item.name}</p>
                 <NewBadge />
               </div>
             ) : (
-              <p className="truncate text-xl max-w-full">{item.name}</p>
+              <p className="truncate text-sm sm:text-lg max-w-full">
+                {item.name}
+              </p>
             )}
           </div>
         </div>

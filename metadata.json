@@ -1,6 +1,6 @@
 {
-  "name": "macOS Sonoma Desktop Homepage",
-  "description": "An Apple HIG compliant macOS style desktop home page featuring draggable widgets, sticky notes, weather, real-time task reminders, dynamic wallpapers, and full Apple HIG UI form components.",
+  "name": "吴文龙的互联空间 · 吴文龙的主页",
+  "description": "吴文龙的互联空间是吴文龙的主页，专注收录奇趣站点与网页游戏：无需下载、点开即玩的在线小游戏合集，以及有趣的创意网站与在线工具。按分类浏览、支持关键词搜索与收藏，由吴文龙持续整理更新。",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

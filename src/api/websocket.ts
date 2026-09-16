@@ -155,6 +155,8 @@ class OnlineCountClient {
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private manualClose = false;
+  /** 是否为「页面进入后台」导致的暂停断开：恢复可见时自动重连 */
+  private paused = false;
   private handlers = new Set<OnlineCountHandler>();
   private _connected = false;
   /** 订阅方引用计数：归零时才真正断开，避免某个组件卸载影响其它订阅者 */
@@ -263,6 +265,7 @@ class OnlineCountClient {
     this.refCount += 1;
     // 重新 acquire 时解除上一次 disconnect 留下的关闭标记
     this.manualClose = false;
+    this.paused = false;
     this.connect();
     let released = false;
     return () => {
@@ -273,8 +276,14 @@ class OnlineCountClient {
     };
   }
 
-  disconnect() {
-    this.manualClose = true;
+  /**
+   * 主动断开（引用归零 / 页面卸载）。
+   * @param pause 仅当页面仍在使用时（切后台）传 true：不置 manualClose，
+   *   以便可见性恢复后自动重连，无需上层重新 acquire。
+   */
+  disconnect(pause = false) {
+    this.manualClose = !pause;
+    this.paused = pause;
     if (this.retryTimer) {
       clearTimeout(this.retryTimer);
       this.retryTimer = null;
@@ -290,13 +299,45 @@ class OnlineCountClient {
     }
     this._connected = false;
   }
+
+  /**
+   * 页面恢复可见：若此前是「切后台暂停」且仍有订阅者，则重新计入在线人数。
+   * 与 acquire/disconnect 配对，避免恢复时把已卸载的订阅者重新连上。
+   */
+  resume() {
+    if (!this.paused) return;
+    this.paused = false;
+    if (this.refCount === 0) return;
+    this.manualClose = false;
+    this.connect();
+  }
 }
 
 export const onlineCountClient = new OnlineCountClient();
 
-// 页面卸载时主动关闭连接，加速下线（对接文档要点 6；服务端仍会超时兜底清理）
+/**
+ * 页面卸载 / 进入后台时主动断开连接，加速下线（对接文档要点 6；服务端仍会超时兜底清理）。
+ *
+ * 注意：不能只监听 beforeunload —— 移动端（iOS Safari / Android 手势返回）经常不派发它，
+ * 真正可靠的是 pagehide 与 visibilitychange。另外这几个场景都要覆盖，否则要等服务端
+ * 心跳 90s 超时才会 -1。
+ */
 if (typeof window !== 'undefined') {
+  // 页面卸载（覆盖 bfcache 进入与常规离开）
+  window.addEventListener('pagehide', () => {
+    onlineCountClient.disconnect();
+  });
+  // 兜底：部分浏览器只派发 beforeunload
   window.addEventListener('beforeunload', () => {
     onlineCountClient.disconnect();
+  });
+  // 切后台 / 息屏 / 切标签：移动端最主要的下线时机（visibilitychange 不保证触发 unload）
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      // pause：不置 manualClose，恢复可见时才能自动重连
+      onlineCountClient.disconnect(true);
+    } else {
+      onlineCountClient.resume();
+    }
   });
 }

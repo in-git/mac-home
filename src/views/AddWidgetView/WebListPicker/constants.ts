@@ -16,3 +16,13 @@ export const FEATURED_CLASS =
 
 /** 头条区右侧四宫格 */
 export const FEATURED_TILES_CLASS = 'grid grid-cols-2 grid-rows-2 gap-4 xl:gap-8';
+
+/**
+ * 列表排序：按创建时间倒序（最新的排最前），
+ * 保证头条区第 1 张大卡始终是最新上架的站点。
+ *
+ * 注意：后端实际只识别 asc / desc（含大写 ASC / DESC），
+ * 传 ASCEND / DESCEND 会被忽略并退回默认顺序。
+ */
+export const SITE_SORT_FIELD = 'createTime';
+export const SITE_SORT_ORDER = 'DESC';

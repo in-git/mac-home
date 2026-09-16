@@ -60,26 +60,31 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
       </div>
 
       {/* 信息以渐变浮层压在封面上 */}
-      <div className="absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/85 via-black/45 to-transparent px-4 pb-4 pt-16 text-white">
-        <div className="flex items-end gap-3">
+      {/* 字号：标题移动端 14px、桌面端 24px；描述移动端 12px、桌面端 16px */}
+      <div className="absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/85 via-black/45 to-transparent px-3 pb-3 pt-12 sm:px-4 sm:pb-4 sm:pt-16 text-white">
+        <div className="flex items-end gap-2 sm:gap-3">
           <SiteAvatar item={item} size="lg" />
           <div className="flex min-w-0 flex-1 flex-col justify-center">
             {showNew ? (
               <div className="flex min-w-0 max-w-full w-fit items-center gap-1.5">
-                <p className="truncate text-2xl font-semibold">{item.name}</p>
+                <p className="truncate text-sm font-semibold sm:text-2xl">
+                  {item.name}
+                </p>
                 <NewBadge />
               </div>
             ) : (
-              <p className="truncate text-2xl font-semibold">{item.name}</p>
+              <p className="truncate text-sm font-semibold sm:text-2xl">
+                {item.name}
+              </p>
             )}
             {item.des && (
-              <p className="mt-1 line-clamp-2 text-md text-white/80">
+              <p className="mt-0.5 line-clamp-2 text-xs text-white/80 sm:mt-1 sm:text-base">
                 {item.des}
               </p>
             )}
           </div>
         </div>
-        <div className="mt-3 flex">
+        <div className="mt-2 flex sm:mt-3">
           <CountBadge count={item.count} />
         </div>
       </div>

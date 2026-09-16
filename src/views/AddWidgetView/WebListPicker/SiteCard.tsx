@@ -45,7 +45,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           />
         ) : (
           <div
-            className="h-full w-full flex items-center justify-center text-white text-3xl font-bold"
+            className="h-full w-full flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
             style={{ background: gradientOf(item) }}
           >
             {(item.name || '?').charAt(0).toUpperCase()}
@@ -63,23 +63,27 @@ export const SiteCard: React.FC<SiteCardProps> = ({
         </span>
       </div>
 
-      <div className="relative p-2.5 flex items-center gap-3 text-left">
+      <div className="relative p-2 sm:p-2.5 flex items-center gap-3 text-left">
         {/* 左侧：Logo + 标题与描述 */}
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           <SiteAvatar item={item} />
           {/* 文本区：宽度随内容自适应（w-fit），最长不超过可用宽度（max-w-full 后截断） */}
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
             {/* 标题行：非新站点直接渲染标题，不产生角标相关的任何节点 */}
+            {/* 字号：移动端 14px（text-sm），桌面端 18px */}
             {showNew ? (
               <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
-                <p className="truncate text-xl">{item.name}</p>
+                <p className="truncate text-sm sm:text-lg">{item.name}</p>
                 <NewBadge />
               </div>
             ) : (
-              <p className="truncate text-xl max-w-full">{item.name}</p>
+              <p className="truncate text-sm sm:text-lg max-w-full">
+                {item.name}
+              </p>
             )}
+            {/* 描述为辅助富文本：移动端 12px（text-xs），桌面端 16px */}
             {item.des && (
-              <p className="truncate text-md mt-1 max-w-full text-gray-500">
+              <p className="truncate text-xs sm:text-base mt-0.5 sm:mt-1 max-w-full text-gray-500">
                 {item.des}
               </p>
             )}

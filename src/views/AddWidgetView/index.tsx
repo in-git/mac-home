@@ -59,32 +59,6 @@ export const AddWidgetView: React.FC = () => {
 
   return (
     <div className="flex h-[100dvh] w-full flex-col sm:flex-row overflow-hidden bg-white dark:bg-[#1C1C1E]">
-      {/* 移动端顶部栏：三横杠 + 标题；向下滚动时收起、向上滚动时恢复。
-          外层做高度过渡（h-12 ↔ h-0），内层同步淡出并轻微上移，避免被生硬裁切。 */}
-      <div
-        aria-hidden={!headerVisible}
-        className={`shrink-0 overflow-hidden transition-[height] duration-300 ease-out will-change-[height] sm:hidden sm:h-0 ${
-          headerVisible ? 'h-12' : 'h-0'
-        }`}
-      >
-        <header
-          className={`flex h-12 items-center gap-3 border-b border-black/5 px-3 transition-[opacity,transform] duration-300 ease-out dark:border-white/10 ${
-            headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => setMenuOpen(true)}
-            aria-label="打开菜单"
-            tabIndex={headerVisible ? undefined : -1}
-            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-black/5 active:scale-95 dark:hover:bg-white/10"
-          >
-            <Menu size={20} />
-          </button>
-          <span className="text-font-md">游趣</span>
-        </header>
-      </div>
-
       {/* 桌面端左侧栏 */}
       <div className="hidden sm:flex flex-col bg-[#F2F2F7] dark:bg-[#2C2C2E] sm:w-52 shrink-0 border-b sm:border-b-0 sm:border-r border-black/5 dark:border-white/10">
         <SidebarNav
@@ -108,6 +82,35 @@ export const AddWidgetView: React.FC = () => {
 
       {/* 右侧内容区 */}
       <div className="relative flex-1 min-w-0 min-h-0 flex flex-col">
+        {/* 移动端「我的」页：该页无搜索行，三横杠单独占一行；随列表滚动方向显隐。
+            「网页」页的三横杠并入了搜索行（见 FilterBar）。 */}
+        {activeCategory === 'mine' && (
+          <div
+            aria-hidden={!headerVisible}
+            className={`shrink-0 overflow-hidden transition-[height] duration-300 ease-out will-change-[height] sm:hidden ${
+              headerVisible ? 'h-11' : 'h-0'
+            }`}
+          >
+            <div
+              className={`flex h-11 items-center px-3 transition-[opacity,transform] duration-300 ease-out ${
+                headerVisible
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 -translate-y-2'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                aria-label="打开菜单"
+                tabIndex={headerVisible ? undefined : -1}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-slate-600 transition-colors hover:bg-black/10 active:scale-95 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/20"
+              >
+                <Menu size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 我的收藏 / 网页：使用公共「网页列表」选择器，收藏态与本地持久化字段联动 */}
         {activeCategory === 'mine' ? (
           <div
@@ -126,6 +129,8 @@ export const AddWidgetView: React.FC = () => {
               favorites={favoriteSites}
               onToggleFavorite={handleToggleFavorite}
               onVisibilityChange={handleWebVisibilityChange}
+              // 移动端三横杠已并入搜索行，由这里提供打开抽屉的回调
+              onOpenMenu={() => setMenuOpen(true)}
             />
           </div>
         )}

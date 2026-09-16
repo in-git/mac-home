@@ -26,6 +26,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   // 关闭时先播放滑出动画再卸载
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
+  /**
+   * 是否由「系统返回键 / 手势」关闭。
+   * 返回键在移动端同时承担「退出页面」的语义，因此由 popstate 关闭后，
+   * 需要再消费一次历史记录让用户真正离开页面（否则停留在原位、
+   * 表现为「点了返回但页面没走」）。
+   */
+  const [pendingExit, setPendingExit] = useState(false);
 
   /**
    * 统一关闭入口：若本抽屉压入了历史记录则走 history.back()，
@@ -57,14 +64,44 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
       if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', onKeyDown);
-    window.history.pushState({ drawer: true }, '');
-    const onPopState = () => onClose();
+
+    // 记录打开前的历史长度，用于在不依赖 history.state 的前提下安全回退
+    const entryBeforeOpen = window.history.length;
+    const canInterceptBack =
+      window.history.length > entryBeforeOpen - 1 && window.history.length > 1;
+
+    if (canInterceptBack) {
+      window.history.pushState({ drawer: true }, '');
+    }
+
+    const onPopState = () => {
+      // 仅当栈里确实还压着抽屉记录时，视为「返回键关闭抽屉」
+      if ((window.history.state as { drawer?: boolean } | null)?.drawer) return;
+      setPendingExit(true);
+      onClose();
+    };
     window.addEventListener('popstate', onPopState);
+
     return () => {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('popstate', onPopState);
+      // 组件卸载时若本抽屉压入的记录仍在栈顶（例如点关闭图标关闭），
+      // 主动清掉，避免残留一条记录让用户下次返回「按了没反应」
+      if ((window.history.state as { drawer?: boolean } | null)?.drawer) {
+        window.history.back();
+      }
     };
   }, [open, onClose]);
+
+  // 返回键关闭抽屉后，再消费一次历史记录，让用户真正离开页面
+  useEffect(() => {
+    if (!pendingExit) return;
+    const t = window.setTimeout(() => {
+      window.history.back();
+      setPendingExit(false);
+    }, TRANSITION_MS);
+    return () => window.clearTimeout(t);
+  }, [pendingExit]);
 
   if (!mounted) return null;
 

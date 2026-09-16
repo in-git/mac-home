@@ -20,7 +20,9 @@ export function isNewSite(createTime?: string): boolean {
       : `${normalized}${normalized.length > 10 ? '' : 'T00:00:00'}`,
   );
   if (Number.isNaN(time)) return false;
-  return Date.now() - time < NEW_WINDOW_MS;
+  // 未来时间（时区偏差 / 脏数据）不算新站点：否则 now - time 为负也会命中「3 天内」
+  const diff = Date.now() - time;
+  return diff >= 0 && diff < NEW_WINDOW_MS;
 }
 
 /** 各类站点卡片共用的入参 */
@@ -61,7 +63,11 @@ export const SiteAvatar: React.FC<SiteAvatarProps> = ({ item, size = 'md' }) => 
     if (imgRef.current?.complete) setImgLoaded(true);
   }, [item.logo]);
 
-  const sizeClass = size === 'lg' ? 'h-12 w-12 text-xl' : 'h-9 w-9 text-md';
+  // 头像尺寸：移动端略小，桌面端恢复；首字母字号随之响应式
+  const sizeClass =
+    size === 'lg'
+      ? 'h-10 w-10 text-base sm:h-12 sm:w-12 sm:text-xl'
+      : 'h-8 w-8 text-sm sm:h-9 sm:w-9 sm:text-md';
 
   if (item.logo && !imgError) {
     return (
@@ -115,18 +121,23 @@ export const FavoriteButton: React.FC<{
   </button>
 );
 
-/** 点击量角标 */
+/** 点击量角标：辅助信息，移动端 12px（text-xs），桌面端 14px（text-sm） */
 export const CountBadge: React.FC<{ count?: number }> = ({ count }) =>
   count !== undefined && count > 0 ? (
-    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/55 text-white leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65">
-      <Eye size={13} className="opacity-90" />
+    <span className="flex items-center gap-1 rounded-full bg-black/55 px-1.5 py-0.5 text-xs text-white leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65 sm:text-sm">
+      <Eye size={12} className="opacity-90" />
       {count > 999 ? '999+' : count}
     </span>
   ) : null;
 
-/** NEW 角标：发布时间在 3 天内 */
+/**
+ * NEW 角标：发布时间在 3 天内。
+ * 实心胶囊（自带底色）：早期版本缺背景色，白底卡片上只剩阴影轮廓，
+ * 表现为「一个带阴影的空边框」。
+ * 字号同为辅助信息档：移动端 12px，桌面端 14px。
+ */
 export const NewBadge: React.FC = () => (
-  <span className="shrink-0 rounded-full px-1.5 py-px text-md font-semibold uppercase leading-tight tracking-wide text-white shadow-sm">
+  <span className="shrink-0 rounded-full bg-rose-500 px-1.5 py-px text-xs font-semibold uppercase leading-tight tracking-wide text-white ring-1 ring-white/25 sm:text-sm">
     New
   </span>
 );
