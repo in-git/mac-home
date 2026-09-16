@@ -134,12 +134,21 @@ export const CountBadge: React.FC<{ count?: number }> = ({ count }) =>
 
 /**
  * NEW 角标：发布时间在 3 天内。
- * 实心胶囊（自带底色）：早期版本缺背景色，白底卡片上只剩阴影轮廓，
- * 表现为「一个带阴影的空边框」。
- * 字号同为辅助信息档：移动端 12px，桌面端 14px。
+ *
+ * 绝对定位于**最近的 relative 容器**右上角（封面区 / 信息条均可），
+ * 默认让出右上角收藏按钮的位置（`right-9`），无收藏按钮时可传
+ * `offsetRight={false}` 回到贴边（`right-2`）。
+ * 实心胶囊自带底色（早期版本缺背景色时只剩阴影轮廓，表现为空边框）。
+ * 字号为辅助信息档：移动端 12px，桌面端 14px。
  */
-export const NewBadge: React.FC = () => (
-  <span className="shrink-0 rounded-full bg-rose-500 px-1.5 py-px text-xs font-semibold uppercase leading-tight tracking-wide text-white ring-1 ring-white/25 sm:text-sm">
+export const NewBadge: React.FC<{ offsetRight?: boolean }> = ({
+  offsetRight = true,
+}) => (
+  <span
+    className={`absolute top-2 z-10 shrink-0 rounded-full bg-rose-500 px-1.5 py-px text-xs font-semibold uppercase leading-tight tracking-wide text-white ring-1 ring-white/25 ${
+      offsetRight ? 'right-9' : 'right-2'
+    }`}
+  >
     New
   </span>
 );

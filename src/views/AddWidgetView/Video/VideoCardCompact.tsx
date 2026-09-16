@@ -1,7 +1,8 @@
 import { Clock, Play } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { VideoItem, videoMetaOf, withBase } from '@/api/video';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
+import { VideoHoverPreview } from './VideoHoverPreview';
 
 interface VideoCardCompactProps {
   item: VideoItem;
@@ -14,17 +15,23 @@ interface VideoCardCompactProps {
  *
  * 封面高度：PC 由父级 `lg:grid-rows-2` 等分决定（`flex-1` 撑满），
  * 6 张卡片平铺撑满列高，与左侧 hero 等高对齐；移动端退回 16:9。
+ * 鼠标悬停时静音预览播放并记录进度，点击进入模态框从该进度续播。
  */
 export const VideoCardCompact: React.FC<VideoCardCompactProps> = ({
   item,
   onPlay,
 }) => {
   const cover = withBase(item.cover);
+  const videoSrc = withBase(item.url);
   const meta = videoMetaOf(item);
+  /** 是否悬停（触发静音预览播放） */
+  const [hovered, setHovered] = useState(false);
 
   return (
     <div
       onClick={() => onPlay(item)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="group flex h-full min-h-0 cursor-pointer flex-col"
     >
       {/* 封面区：
@@ -40,12 +47,38 @@ export const VideoCardCompact: React.FC<VideoCardCompactProps> = ({
             fit="cover"
             fullWidth
             rounded="rounded-none"
-            className="bg-transparent transition-transform duration-300 group-hover:scale-105"
+            className="bg-transparent"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-white">
             <Play size={24} className="opacity-70" />
           </div>
+        )}
+
+        {/* 图片底部渐变浮层：浏览量 · 发布时间（压在封面内） */}
+        {(meta.playCount || meta.date) && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-1.5 pb-2  text-xs leading-tight text-white">
+            {meta.playCount && (
+              <span className="flex shrink-0 items-center gap-1">
+                <Play size={10} className="fill-current" />
+                {meta.playCount}
+              </span>
+            )}
+            {meta.date && (
+              <>
+                {meta.playCount && <span className="shrink-0">·</span>}
+                <span className="flex shrink-0 items-center gap-1">
+                  <Clock size={10} />
+                  {meta.date}
+                </span>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* 悬停静音预览：覆盖在封面上，移出即卸载并记录进度 */}
+        {hovered && videoSrc && (
+          <VideoHoverPreview src={videoSrc} videoId={item.id} active={hovered} />
         )}
 
         {/* 图片底部渐变浮层：浏览量 · 发布时间（压在封面内） */}

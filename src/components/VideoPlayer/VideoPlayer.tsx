@@ -12,8 +12,12 @@ export interface VideoPlayerProps {
   poster?: string;
   /** 是否自动播放，默认 true */
   autoplay?: boolean;
+  /** 起播位置（秒）。用于从卡片悬停预览的进度续播 */
+  startAt?: number;
   /** 播完一个视频后触发（用于自动连播） */
   onEnded?: () => void;
+  /** 播放进度变化回调（用于记忆进度） */
+  onTimeUpdate?: (currentTime: number) => void;
   /** 播放器实例就绪回调（可用于外部控制） */
   onReady?: (art: Artplayer) => void;
 }
@@ -39,7 +43,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   src,
   poster,
   autoplay = true,
+  startAt = 0,
   onEnded,
+  onTimeUpdate,
   onReady,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -47,8 +53,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   // 用 ref 持有回调，避免回调变化导致播放器重建（会打断播放）
   const onEndedRef = useRef(onEnded);
   const onReadyRef = useRef(onReady);
+  const onTimeUpdateRef = useRef(onTimeUpdate);
   onEndedRef.current = onEnded;
   onReadyRef.current = onReady;
+  onTimeUpdateRef.current = onTimeUpdate;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -74,8 +82,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       gesture: true,
       // 关闭内置 hotkey，改用下方自行绑定的 document 监听（行为更可控）
       hotkey: false,
-      // 记忆播放进度与音量
-      autoPlayback: true,
+      // 关闭 ArtPlayer 自带的进度记忆：进度由外部 playbackMemory 统一管理，
+      // 两个来源并存会在续播时互相覆盖
+      autoPlayback: false,
       moreVideoAttr: {
         // 不要设 crossOrigin：视频托管在独立 CDN，未返回 CORS 头，
         // 声明 anonymous 会导致浏览器直接拒绝加载（ERR_FAILED）。
@@ -112,10 +121,25 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           art.playbackRate = PLAYBACK_RATES[(idx + 1) % PLAYBACK_RATES.length];
         },
       });
+      // 从记录的进度续播（卡片悬停预览时的位置）。
+      // 接近结尾时从头播，避免「一打开就播完」。
+      if (startAt > 0) {
+        const dur = art.duration;
+        if (!Number.isFinite(dur) || startAt < dur - 3) {
+          art.currentTime = startAt;
+          art.play().catch(() => {
+            /* 自动播放被拦截时保持暂停，由用户手动点击 */
+          });
+        }
+      }
       onReadyRef.current?.(art);
     });
     // 播放结束：交由上层决定是否自动连播
     art.on('video:ended', () => onEndedRef.current?.());
+    // 进度变化：上报给外部记录（用于下次续播）
+    art.on('video:timeupdate', () => {
+      onTimeUpdateRef.current?.(art.currentTime);
+    });
 
     /**
      * 键盘快捷键（自行绑定，不依赖 ArtPlayer 内置 hotkey）。

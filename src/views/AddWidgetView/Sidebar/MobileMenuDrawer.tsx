@@ -2,6 +2,7 @@ import { X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconButton } from '@/components/IconButton/IconButton';
+import { SidebarBrand } from './SidebarBrand';
 import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
 
@@ -12,19 +13,18 @@ interface MobileMenuDrawerProps {
   onClose: () => void;
   activeCategory: string;
   onSelectCategory: (id: string) => void;
-  title?: string;
 }
 
 /**
  * 移动端菜单抽屉：点击顶栏三横杠打开，全屏且从左向右滑入，
- * 右上角为关闭按钮；选中分类 / 按返回键 / 点关闭图标均会关闭。
+ * 顶部为品牌 Logo，右上角为关闭按钮；
+ * 选中分类 / 按返回键 / 点关闭图标均会关闭。
  */
 export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   open,
   onClose,
   activeCategory,
   onSelectCategory,
-  title = '添加应用',
 }) => {
   // 关闭时先播放滑出动画再卸载
   const [mounted, setMounted] = useState(open);
@@ -146,9 +146,11 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
         }}
         className="flex h-full w-full flex-col bg-[#F2F2F7] dark:bg-[#2C2C2E]"
       >
-        {/* 顶部标题栏：右侧关闭图标 */}
-        <div className="flex h-12 shrink-0 items-center justify-between border-b border-black/5 px-3 dark:border-white/10">
-          <h1 className="text-font-title dark:text-white">{title}</h1>
+        {/* 顶部：品牌 Logo + 右侧关闭图标 */}
+        <div className="flex h-14 shrink-0 items-center border-b border-black/5 pr-3 dark:border-white/10">
+          <div className="min-w-0 flex-1">
+            <SidebarBrand />
+          </div>
           <IconButton
             label="关闭菜单"
             variant="ghost"

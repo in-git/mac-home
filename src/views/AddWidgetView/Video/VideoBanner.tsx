@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { VideoItem, videoMetaOf, withBase } from '@/api/video';
 import { IconButton } from '@/components/IconButton/IconButton';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
+import { VideoHoverPreview } from './VideoHoverPreview';
 
 interface VideoBannerProps {
   items: VideoItem[];
@@ -14,7 +15,8 @@ interface VideoBannerProps {
 /**
  * 首页横幅轮播（对齐设计稿左侧大图）：
  * 整块铺满封面，标题与元信息以渐变浮层压在左下角，
- * 右侧为左右切换箭头，左下为序号圆点。
+ * 右侧为左右切换箭头，右下为序号圆点。
+ * 鼠标悬停时静音预览播放当前视频并记录进度，点击进入模态框续播。
  * 未提供 items 时整块不渲染（由父级决定布局）。
  */
 export const VideoBanner: React.FC<VideoBannerProps> = ({
@@ -30,25 +32,26 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
     setIndex((i) => (i < count ? i : 0));
   }, [count]);
 
-  // 自动轮播；鼠标悬停或仅一张时暂停
-  const [paused, setPaused] = useState(false);
+  // 自动轮播 + 悬停静音预览：鼠标进入时暂停轮播并播放预览
+  const [hovered, setHovered] = useState(false);
   useEffect(() => {
-    if (!interval || count <= 1 || paused) return;
+    if (!interval || count <= 1 || hovered) return;
     const t = setInterval(() => setIndex((i) => (i + 1) % count), interval);
     return () => clearInterval(t);
-  }, [interval, count, paused]);
+  }, [interval, count, hovered]);
 
   if (count === 0) return null;
 
   const item = items[Math.min(index, count - 1)];
   const cover = withBase(item.cover);
+  const videoSrc = withBase(item.url);
   const meta = videoMetaOf(item);
   const go = (delta: number) => setIndex((i) => (i + delta + count) % count);
 
   return (
     <div
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       onClick={() => onPlay(item)}
       className="group relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800"
     >
@@ -60,7 +63,7 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
           fit="cover"
           fullWidth
           rounded="rounded-none"
-          className="bg-transparent transition-transform duration-500 group-hover:scale-[1.03]"
+          className="bg-transparent"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-white">
@@ -68,8 +71,13 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
         </div>
       )}
 
+      {/* 悬停静音预览：覆盖在封面上，移出即卸载并记录进度 */}
+      {hovered && videoSrc && (
+        <VideoHoverPreview src={videoSrc} videoId={item.id} active={hovered} />
+      )}
+
       {/* 底部渐变浮层：标题 + 浏览量 / 日期 */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-4 pb-4 pt-14 text-white">
+      <div className="absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/85 via-black/40 to-transparent px-4 pb-4 pt-14 text-white">
         <p className="line-clamp-2 text-base font-semibold leading-snug sm:text-xl">
           {item.title}
         </p>
@@ -101,7 +109,7 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
               e.stopPropagation();
               go(-1);
             }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/35 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/55 group-hover:opacity-100 max-sm:opacity-100"
+            className="absolute left-2 top-1/2 z-[2] -translate-y-1/2 bg-black/35 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/55 group-hover:opacity-100 max-sm:opacity-100"
           />
           <IconButton
             label="下一张"
@@ -112,14 +120,14 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
               e.stopPropagation();
               go(1);
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/35 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/55 group-hover:opacity-100 max-sm:opacity-100"
+            className="absolute right-2 top-1/2 z-[2] -translate-y-1/2 bg-black/35 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/55 group-hover:opacity-100 max-sm:opacity-100"
           />
         </>
       )}
 
       {/* 序号圆点：置于右下角，避开左下角的标题浮层 */}
       {count > 1 && (
-        <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
+        <div className="absolute bottom-3 right-3 z-[2] flex items-center gap-1.5">
           {items.map((_, i) => (
             <button
               key={i}

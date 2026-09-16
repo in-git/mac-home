@@ -51,6 +51,8 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
+        {/* NEW 角标：绝对定位于封面右上角（有收藏按钮时自动让位） */}
+        {showNew && <NewBadge offsetRight={!!onToggleFavorite} />}
         {onToggleFavorite && (
           <FavoriteButton
             item={item}
@@ -69,18 +71,10 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           <SiteAvatar item={item} />
           {/* 文本区：宽度随内容自适应（w-fit），最长不超过可用宽度（max-w-full 后截断） */}
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-            {/* 标题行：非新站点直接渲染标题，不产生角标相关的任何节点 */}
-            {/* 字号：移动端 14px（text-sm），桌面端 18px */}
-            {showNew ? (
-              <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
-                <p className="truncate text-sm sm:text-lg">{item.name}</p>
-                <NewBadge />
-              </div>
-            ) : (
-              <p className="truncate text-sm sm:text-lg max-w-full">
-                {item.name}
-              </p>
-            )}
+            {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
+            <p className="truncate text-sm sm:text-lg max-w-full">
+              {item.name}
+            </p>
             {/* 描述为辅助富文本：移动端 12px（text-xs），桌面端 16px */}
             {item.des && (
               <p className="truncate text-xs sm:text-base mt-0.5 sm:mt-1 max-w-full text-gray-500">

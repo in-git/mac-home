@@ -53,6 +53,8 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
+        {/* NEW 角标：绝对定位于封面右上角（有收藏按钮时自动让位） */}
+        {showNew && <NewBadge offsetRight={!!onToggleFavorite} />}
         {onToggleFavorite && (
           <FavoriteButton
             item={item}
@@ -74,17 +76,10 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
         <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           <SiteAvatar item={item} />
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-            {/* 字号：移动端 14px（text-sm），桌面端 18px */}
-            {showNew ? (
-              <div className="flex items-center gap-1.5 min-w-0 max-w-full w-fit">
-                <p className="truncate text-sm sm:text-lg">{item.name}</p>
-                <NewBadge />
-              </div>
-            ) : (
-              <p className="truncate text-sm sm:text-lg max-w-full">
-                {item.name}
-              </p>
-            )}
+            {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
+            <p className="truncate text-sm sm:text-lg max-w-full">
+              {item.name}
+            </p>
           </div>
         </div>
       </div>

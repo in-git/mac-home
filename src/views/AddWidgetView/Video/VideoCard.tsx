@@ -1,7 +1,8 @@
 import { Clock, Play, Subtitles } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { VideoItem, videoMetaOf, withBase } from '@/api/video';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
+import { VideoHoverPreview } from './VideoHoverPreview';
 
 interface VideoCardProps {
   item: VideoItem;
@@ -13,15 +14,20 @@ interface VideoCardProps {
  * 16:9 封面（左上角类型标、右上角弹幕数、右下角时长）
  * + 两行标题。
  * 浏览量 / 发布时间以渐变浮层压在封面底部（图片右下角）；
- * 悬停时封面轻微放大并浮现播放按钮；移动端常驻显示播放浮层。
+ * 鼠标悬停时静音预览播放并记录进度，点击进入模态框从该进度续播（移动端无悬停，仅显示播放浮层）。
  */
 export const VideoCard: React.FC<VideoCardProps> = ({ item, onPlay }) => {
   const cover = withBase(item.cover);
+  const videoSrc = withBase(item.url);
   const meta = videoMetaOf(item);
+  /** 是否悬停（触发静音预览播放） */
+  const [hovered, setHovered] = useState(false);
 
   return (
     <div
       onClick={() => onPlay(item)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="group flex h-full cursor-pointer flex-col"
     >
       {/* 封面区：圆角卡片，悬停放大 + 播放浮层 */}
@@ -34,7 +40,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ item, onPlay }) => {
             fit="cover"
             fullWidth
             rounded="rounded-none"
-            className="bg-transparent transition-transform duration-300 group-hover:scale-105"
+            className="bg-transparent"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-white">
@@ -42,8 +48,14 @@ export const VideoCard: React.FC<VideoCardProps> = ({ item, onPlay }) => {
           </div>
         )}
 
+        {/* 悬停静音预览：覆盖在封面上，移出即卸载并记录进度。
+            只在悬停时挂载，避免整页卡片同时拉流 */}
+        {hovered && videoSrc && (
+          <VideoHoverPreview src={videoSrc} videoId={item.id} active={hovered} />
+        )}
+
         {/* 播放按钮浮层：悬停出现，移动端常驻 */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100 max-sm:opacity-100">
+        <div className="absolute inset-0 z-[1] flex items-center justify-center bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100 max-sm:opacity-100">
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/30 backdrop-blur-md">
             <Play size={20} className="ml-0.5 fill-current" />
           </span>

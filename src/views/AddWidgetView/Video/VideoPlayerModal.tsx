@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { VideoItem, withBase } from '@/api/video';
 import { IconButton } from '@/components/IconButton/IconButton';
 import { VideoPlayer } from '@/components/VideoPlayer/VideoPlayer';
+import { clearProgress, getProgress, saveProgress } from './playbackMemory';
 
 interface VideoPlayerModalProps {
   item: VideoItem | null;
@@ -57,20 +58,23 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     };
   }, [item, onClose]);
 
-  /** 播放结束：自动连播下一个（3 秒倒计时内可被「下一个」按钮立即触发） */
+  /** 播放结束：清除进度（下次从头播），并自动连播下一个 */
   const handleEnded = useCallback(() => {
+    if (item?.id) clearProgress(item.id);
     if (!onNext || !hasNext) return;
     setEnded(true);
     endedTimerRef.current = window.setTimeout(() => {
       setEnded(false);
       onNext();
     }, 3000);
-  }, [onNext, hasNext]);
+  }, [item?.id, onNext, hasNext]);
 
   if (!item) return null;
 
   const src = withBase(item.url);
   const poster = withBase(item.cover);
+  // 续播位置：来自卡片悬停预览（或上次观看）记录的进度
+  const startAt = getProgress(item.id);
 
   return (
     <div
@@ -116,7 +120,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           src={src}
           poster={poster || undefined}
           autoplay
+          startAt={startAt}
           onEnded={handleEnded}
+          // 播放中持续记录进度，下次（含刷新后）可续播
+          onTimeUpdate={(t) => saveProgress(item.id, t)}
         />
 
         {/* 播放结束提示：即将自动连播 */}
