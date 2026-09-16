@@ -172,4 +172,11 @@ export const videoApi = {
     dedupe(`video:detail:${id}`, () =>
       request.get<VideoItem>(API_ENDPOINTS.videoDetail, { params: { id } }),
     ),
+
+  /**
+   * 点击量自增（免登录公开接口，仅对 count 自增）。
+   * 用户真实点击视频时调用；失败不影响播放流程，调用方需自行吞掉异常。
+   */
+  click: (id: string): Promise<null> =>
+    request.get<null>(API_ENDPOINTS.videoClick, { params: { id } }),
 };

@@ -62,6 +62,8 @@ export const API_ENDPOINTS = {
   videoPage: '/api/public/video/page',
   /** C 端视频详情（免登录公开读，后端路径 /public/video/detail） */
   videoDetail: '/api/public/video/detail',
+  /** C 端视频点击量自增（免登录公开写计数，后端路径 /public/video/click） */
+  videoClick: '/api/public/video/click',
 } as const;
 
 /**

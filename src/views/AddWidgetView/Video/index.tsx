@@ -1,6 +1,6 @@
 import { Film } from 'lucide-react';
 import React, { useState } from 'react';
-import { VideoItem } from '@/api/video';
+import { VideoItem, videoApi } from '@/api/video';
 import { useVideoList } from '@/agent/request';
 import { Button } from '@/components/Button/Button';
 import { SearchBar } from '@/components/SearchBar';
@@ -47,9 +47,9 @@ interface VideoListProps {
 /**
  * 视频模块（对齐设计稿的 B 站式首页）：
  * 顶部为搜索 + 排序筛选区；
- * 其下左侧是「1 张横幅轮播 + 2 张紧凑卡」，右侧是 3 列常规卡片网格；
- * 右下角提供「收起全部」开关，可隐藏顶部推荐区只看网格。
- * 点击任意卡片弹出播放器。
+ * 其下左侧是 hero 大图（占 50% 宽），右侧 6 张普通卡片（3 列 × 2 行）；
+ * 再往下是常规卡片网格。
+ * 点击任意卡片：先上报点击量（`/public/video/click`），再弹出播放器。
  */
 export const VideoList: React.FC<VideoListProps> = ({
   onVisibilityChange,
@@ -61,7 +61,7 @@ export const VideoList: React.FC<VideoListProps> = ({
   const [sort, setSort] = useState<SortOption>(DEFAULT_SORT);
   const { keyword, setKeyword, debouncedKw, nonce, submit } = useSearch();
 
-  const { items, loading, appendLoading, hasMore, fetchVideos, loadMore } =
+  const { items, loading, appendLoading, hasMore, fetchVideos, loadMore, patchItem } =
     useVideoList({
       autoFetch: false,
       defaultSortField: DEFAULT_SORT.field,
@@ -72,6 +72,24 @@ export const VideoList: React.FC<VideoListProps> = ({
   React.useEffect(() => {
     fetchVideos(1, debouncedKw, PAGE_SIZE, sort.field, sort.order);
   }, [debouncedKw, nonce, sort, fetchVideos]);
+
+  /**
+   * 用户点击视频：先上报点击量（`/public/video/click` 使 count 自增），再打开播放器。
+   * 上报是「尽力而为」：失败不阻塞播放，只记录 warn；
+   * 同时本地 +1 让播放量立刻可见（服务端下次返回会覆盖为权威值）。
+   */
+  const handlePlay = React.useCallback(
+    (item: VideoItem) => {
+      setPlaying(item);
+      videoApi
+        .click(item.id)
+        .then(() => patchItem(item.id, (v) => ({ count: (v.count ?? 0) + 1 })))
+        .catch((err) => {
+          console.warn('[video] 点击量上报失败', item.id, err);
+        });
+    },
+    [patchItem],
+  );
 
   // 滚动：触底加载下一页 + 按方向折叠 / 展开筛选行（并通知父级）
   const { scrollRef, onScroll, scrollVisible: showFilter } = useListScroll({
@@ -154,7 +172,7 @@ export const VideoList: React.FC<VideoListProps> = ({
               <div className="mb-5 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch lg:gap-5">
                 {/* hero：按 2:1 铺满左栏 */}
                 <div className="aspect-[2/1] w-full">
-                  <VideoBanner items={[bannerItem]} onPlay={setPlaying} />
+                  <VideoBanner items={[bannerItem]} onPlay={handlePlay} />
                 </div>
                 {/* 右侧 6 张普通卡片：PC 横向 3 列 × 2 行等分撑满（与 hero 等高），移动端 2 列 */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-3 lg:grid-rows-2 lg:gap-4">
@@ -162,7 +180,7 @@ export const VideoList: React.FC<VideoListProps> = ({
                     <VideoCardCompact
                       key={item.id}
                       item={item}
-                      onPlay={setPlaying}
+                      onPlay={handlePlay}
                     />
                   ))}
                 </div>
@@ -172,7 +190,7 @@ export const VideoList: React.FC<VideoListProps> = ({
             {/* 常规网格：移动端 2 列，逐级到 4 列 */}
             <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-5">
               {gridItems.map((item) => (
-                <VideoCard key={item.id} item={item} onPlay={setPlaying} />
+                <VideoCard key={item.id} item={item} onPlay={handlePlay} />
               ))}
             </div>
 

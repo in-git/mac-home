@@ -132,6 +132,23 @@ export function useVideoList(options: UseVideoListOptions = {}) {
 
   const hasMore = page < totalPages;
 
+  /**
+   * 局部更新某一项（不重新请求列表）。
+   * 用于点击后乐观更新浏览量等场景。
+   */
+  const patchItem = useCallback(
+    (id: string, patch: Partial<VideoItem> | ((item: VideoItem) => Partial<VideoItem>)) => {
+      setItems((prev) =>
+        prev.map((v) =>
+          v.id === id
+            ? { ...v, ...(typeof patch === 'function' ? patch(v) : patch) }
+            : v,
+        ),
+      );
+    },
+    [],
+  );
+
   useEffect(() => {
     if (autoFetch) {
       fetchVideos(defaultPage, defaultKw, defaultSize);
@@ -149,5 +166,6 @@ export function useVideoList(options: UseVideoListOptions = {}) {
     error,
     fetchVideos,
     loadMore,
+    patchItem,
   };
 }
