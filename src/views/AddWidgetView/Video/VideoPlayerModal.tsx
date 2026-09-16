@@ -2,7 +2,6 @@ import { SkipForward, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { VideoItem, withBase } from '@/api/video';
 import { IconButton } from '@/components/IconButton/IconButton';
-import { hideLoading, showLoading } from '@/components/LoadingOverlay/loadingStore';
 import { VideoPlayer } from '@/components/VideoPlayer/VideoPlayer';
 import { isMobileDevice } from '@/utils/device';
 import { clearProgress, getProgress, saveProgress } from './playbackMemory';
@@ -211,50 +210,17 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   }, [item, onClose]);
 
   /**
-   * 打开播放器时拉起全屏 loading，首帧出画后收起。
+   * 加载失败：仅记录日志，便于排查失效地址 / 网络问题。
    *
-   * 遮罩 z-index（400）高于播放层（300），所以这里盖住的是
-   * 「modal 已出现、视频还没出画」那段黑屏期。
-   *
-   * 关闭条件有两个，**任一到达即关**：
-   * - `onPlaying`：首帧出画（正常路径）
-   * - `onError`：地址失效 / 网络异常
-   * 再加超时兜底（见 showLoading 的第二参）与 unmount 兜底，
-   * 保证遮罩不可能卡死 —— 这是「处理异常」要求的核心。
+   * 原先这里还要收掉全屏 loading，现已移除 loading 效果 ——
+   * 播放器挂载时会先显示封面（`CarouselSlide` 的 poster），
+   * 本身就能盖住「首帧未出」的间隙，不需要额外遮罩。
    */
-  const loadingIdRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!item) return;
-    loadingIdRef.current = showLoading('正在加载视频…');
-    return () => {
-      // 关闭 / 组件卸载：必须收掉遮罩。
-      // 用户可能在视频出画前就 ESC 关掉，此时不会有 onPlaying 回调，
-      // 少了这一步遮罩会一直留在屏幕上。
-      if (loadingIdRef.current !== null) {
-        hideLoading(loadingIdRef.current);
-        loadingIdRef.current = null;
-      }
-    };
-  }, [item?.id]);
-
-  /** 关闭本播放器拉起的 loading（幂等，重复调用无副作用） */
-  const closeLoading = useCallback(() => {
-    if (loadingIdRef.current === null) return;
-    hideLoading(loadingIdRef.current);
-    loadingIdRef.current = null;
-  }, []);
-
-  /** 首帧出画：收掉全屏 loading */
-  const handlePlaying = useCallback(() => closeLoading(), [closeLoading]);
-
-  /** 加载失败：收掉 loading，并把失败原因打到控制台便于排查 */
   const handlePlayError = useCallback(
     (error: unknown) => {
       console.warn('[video] 播放失败', item?.id, error);
-      closeLoading();
     },
-    [closeLoading, item?.id],
+    [item?.id],
   );
 
   /** 播放结束：清除进度（下次从头播），并自动连播下一个 */
@@ -307,7 +273,6 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
             // 已停稳、播放还没开始：先显示封面，不要留一块黑屏
             pending={v.id === shown.id && v.id !== playItem.id}
             onEnded={handleEnded}
-            onPlaying={handlePlaying}
             onError={handlePlayError}
           />
         ))}
@@ -419,11 +384,9 @@ const CarouselSlide: React.FC<{
   pending?: boolean;
   /** 播放结束回调（仅当前层会触发，默认用于自动连播） */
   onEnded?: () => void;
-  /** 首帧出画：关闭全屏 loading */
-  onPlaying?: () => void;
-  /** 加载失败：关闭全屏 loading 并提示 */
+  /** 加载失败：仅用于记录日志 */
   onError?: (error: unknown) => void;
-}> = ({ item, active, pending = false, onEnded, onPlaying, onError }) => {
+}> = ({ item, active, pending = false, onEnded, onError }) => {
   const poster = withBase(item.cover);
 
   return (
@@ -443,7 +406,6 @@ const CarouselSlide: React.FC<{
           startAt={getProgress(item.id)}
           onEnded={onEnded}
           onTimeUpdate={(t) => saveProgress(item.id, t)}
-          onPlaying={onPlaying}
           onError={onError}
         />
       ) : poster ? (
