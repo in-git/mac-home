@@ -28,10 +28,11 @@ export const SidebarFooter: React.FC = () => {
         </div>
       )}
 
-      {/* 专属 App 下载入口（地址待补充） */}
+      {/* 专属 App 下载入口：指向 public/app-v1.0.apk（Vite 会把 public 原样拷到根路径） */}
       <div className="border-t border-black/[0.06] px-2 py-2 dark:border-white/[0.08]">
         <a
-          href=""
+          href="/app-v1.0.apk"
+          download="app-v1.0.apk"
           className="flex items-center justify-center gap-1.5 rounded-lg bg-[color:var(--accent)] px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[color:var(--accent-hover)]"
         >
           <Download size={15} className="shrink-0" />

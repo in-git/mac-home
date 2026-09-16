@@ -63,6 +63,33 @@ android {
   }
 }
 
+/**
+ * 重命名打包产物，让 APK 文件名带上版本号：`app-v1.0.apk`。
+ *
+ * 默认产物名是固定的 `app-release.apk` / `app-debug.apk`，多个版本
+ * 下载到同一个文件夹里无法区分，只能靠手动改名。
+ *
+ * 版本号取自上面 `defaultConfig.versionName`，改版本时只需改那一处，
+ * 文件名自动跟着走 —— 不需要在两个地方同步维护。
+ *
+ * 注意这是 AGP 的内部实现类（`VariantOutputImpl`）：
+ * 公开的 `VariantOutput` 接口并不暴露可写的 `outputFileName`，必须强转。
+ * 该类型属内部 API，跨 AGP 大版本可能改名；升级 AGP 后若这里编译不过，
+ * 以编译器的提示为准改 import，或退回到「打包后用脚本重命名」的方案。
+ */
+androidComponents {
+  onVariants { variant ->
+    variant.outputs.forEach { output ->
+      val impl = output as? com.android.build.api.variant.impl.VariantOutputImpl
+        ?: return@forEach
+      val versionName = impl.versionName.orNull ?: "0"
+      // 版本号里的非法字符（如 `1.0 beta`）归一化成 `-`，避免生成怪异文件名
+      val safeVersion = versionName.replace(Regex("[^A-Za-z0-9._-]"), "-")
+      impl.outputFileName.set("app-v$safeVersion.apk")
+    }
+  }
+}
+
 // Configure the Secrets Gradle Plugin to use .env and .env.example files
 // to match the convention used in Web projects.
 secrets {
