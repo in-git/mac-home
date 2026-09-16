@@ -6,6 +6,7 @@ import { useHomeStore } from '../../store/useHomeStore';
 import { isSameSite } from '../../utils/siteHelper';
 import { useToast } from '../../components/Toast/Toast';
 import { WebListPicker } from './WebListPicker';
+import { VideoList } from './VideoList';
 import { FavoriteList } from './FavoriteList';
 import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
@@ -33,20 +34,35 @@ export const AddWidgetView: React.FC = () => {
 
   /**
    * 移动端顶部导航显隐：与列表滚动方向联动。
-   * 「网页」页由 WebListPicker 回调，「我的」页由本组件的滚动容器驱动，
-   * 两者都走 useScrollDirection（含过渡锁，避免高度变化引发滚动抖动）。
+   * 「网页」「视频」页由各自列表回调，「我的」页由本组件的滚动容器驱动，
+   * 三者都走 useScrollDirection（含过渡锁，避免高度变化引发滚动抖动）。
    */
   const [webHeaderVisible, setWebHeaderVisible] = useState(true);
   const handleWebVisibilityChange = useCallback((visible: boolean) => {
     setWebHeaderVisible(visible);
+  }, []);
+  const [videoHeaderVisible, setVideoHeaderVisible] = useState(true);
+  const handleVideoVisibilityChange = useCallback((visible: boolean) => {
+    setVideoHeaderVisible(visible);
   }, []);
   const mineScrollRef = useRef<HTMLDivElement>(null);
   const {
     visible: mineHeaderVisible,
     onScroll: handleMineScroll,
   } = useScrollDirection(mineScrollRef);
-  const headerVisible =
-    activeCategory === 'mine' ? mineHeaderVisible : webHeaderVisible;
+  // 各分类独立的顶部导航显隐状态，避免切换分类时互相干扰
+  const headerVisibleMap: Record<string, boolean> = {
+    mine: mineHeaderVisible,
+    web: webHeaderVisible,
+    video: videoHeaderVisible,
+  };
+  const headerVisible = headerVisibleMap[activeCategory] ?? true;
+
+  /**
+   * 需要单独渲染三横杠行的分类：这些页面顶部没有搜索行。
+   * 「网页」「视频」页的三横杠并入了各自搜索行，无需单独一行。
+   */
+  const needsStandaloneMenuButton = activeCategory === 'mine';
 
   const handleToggleFavorite = (item: SiteItem) => {
     const already = favoriteSites.some((s) => isSameSite(s, item));
@@ -82,9 +98,9 @@ export const AddWidgetView: React.FC = () => {
 
       {/* 右侧内容区 */}
       <div className="relative flex-1 min-w-0 min-h-0 flex flex-col">
-        {/* 移动端「我的」页：该页无搜索行，三横杠单独占一行；随列表滚动方向显隐。
-            「网页」页的三横杠并入了搜索行（见 FilterBar）。 */}
-        {activeCategory === 'mine' && (
+        {/* 移动端「我的」页：顶部无搜索行，三横杠单独占一行；随列表滚动方向显隐。
+            「网页」「视频」页的三横杠并入了各自搜索行（见 FilterBar / VideoList）。 */}
+        {needsStandaloneMenuButton && (
           <div
             aria-hidden={!headerVisible}
             className={`shrink-0 overflow-hidden transition-[height] duration-300 ease-out will-change-[height] sm:hidden ${
@@ -111,7 +127,7 @@ export const AddWidgetView: React.FC = () => {
           </div>
         )}
 
-        {/* 我的收藏 / 网页：使用公共「网页列表」选择器，收藏态与本地持久化字段联动 */}
+        {/* 我的收藏 / 网页列表 / 视频列表 */}
         {activeCategory === 'mine' ? (
           <div
             ref={mineScrollRef}
@@ -121,6 +137,13 @@ export const AddWidgetView: React.FC = () => {
             <FavoriteList
               favorites={favoriteSites}
               onToggleFavorite={handleToggleFavorite}
+            />
+          </div>
+        ) : activeCategory === 'video' ? (
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <VideoList
+              onVisibilityChange={handleVideoVisibilityChange}
+              onOpenMenu={() => setMenuOpen(true)}
             />
           </div>
         ) : (

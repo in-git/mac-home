@@ -58,7 +58,23 @@ const UNAUTHORIZED_CODES = [401, 1011007, 1011008];
  */
 export const API_ENDPOINTS = {
   aiChat: '/api/public/ai/chat',
+  /** C 端视频分页列表（免登录公开读，后端路径 /public/video/page） */
+  videoPage: '/api/public/video/page',
+  /** C 端视频详情（免登录公开读，后端路径 /public/video/detail） */
+  videoDetail: '/api/public/video/detail',
 } as const;
+
+/**
+ * 接口 base 前缀。
+ * 前端不直连后端（避免跨域并隐藏后端地址），所有请求经同源转发：
+ * dev 由 vite proxy 处理 /api，生产由网关处理，故此处恒为 '/api'。
+ */
+export const API_BASE_URL = '/api';
+
+/** 相对路径 → 可访问的完整地址（对接文档要求：媒体地址需拼 base 后使用） */
+export function getApiBaseUrl(): string {
+  return API_BASE_URL;
+}
 
 /** 可自定义配置 */
 export interface RequestConfig {
@@ -81,7 +97,6 @@ const TOKEN_KEY = 'CLIENT_TOKEN';
 function createRequest(options: RequestConfig = {}) {
   const {
 
-    // API_PROXY_TARGET 不带 VITE_ 前缀，不会注入前端；前端不直连后端，避免跨域且避免暴露后端地址。
     baseURL = '',
     getToken = () => localStorage.getItem(TOKEN_KEY),
     onUnauthorized = (code) => {

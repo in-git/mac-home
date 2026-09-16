@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   // 从 .env.development / .env.production 读取后端地址，仅作 dev server proxy 目标使用。
   // 注意：变量名故意不加 VITE_ 前缀，避免被 Vite 注入前端 bundle 而暴露后端地址（前端走同源 /api 转发）。
   const env = loadEnv(mode, process.cwd(), '');
-  const backendTarget = env.API_PROXY_TARGET || 'https://wwl.mx2d.cn';
+  const backendTarget = env.VITE_API_BASE_URL || 'https://wwl.mx2d.cn';
 
   return {
     plugins: [react(), tailwindcss()],

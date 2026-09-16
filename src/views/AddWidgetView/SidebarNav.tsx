@@ -1,4 +1,4 @@
-import { Globe, Heart } from 'lucide-react';
+import { Globe, Heart, Play } from 'lucide-react';
 import React from 'react';
 
 /** 侧边栏分类配置 */
@@ -18,6 +18,15 @@ const CATEGORIES: { id: string; label: string; icon: React.ReactNode }[] = [
     icon: (
       <span className="flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-emerald-400 to-teal-500 text-white">
         <Globe size={15} />
+      </span>
+    ),
+  },
+  {
+    id: 'video',
+    label: '视频',
+    icon: (
+      <span className="flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 text-white">
+        <Play size={15} className="fill-current" />
       </span>
     ),
   },

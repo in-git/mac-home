@@ -11,6 +11,8 @@ export { requestActions } from './actions';
 export type { RequestAction, RequestActionResult } from './actions';
 export { useSiteList } from './useSiteList';
 export type { UseSiteListOptions } from './useSiteList';
+export { useVideoList } from './useVideoList';
+export type { UseVideoListOptions } from './useVideoList';
 
 /** 按 name 建立索引，供 skill 调用快速查找 */
 const requestActionMap: Record<string, RequestAction> = Object.fromEntries(
