@@ -1,15 +1,16 @@
 import { Globe } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SiteItem } from '@/api/site';
 import { runRequestAction, useSiteList } from '@/agent/request';
 import { Button } from '@/components/Button/Button';
 import { openSite } from '@/utils/siteHelper';
+import { useListScroll } from '../hooks/useListScroll';
+import { useSearch } from '../hooks/useSearch';
 import { SiteCard } from './SiteCard';
 import { SiteHeroCard } from './SiteHeroCard';
 import { SiteTileCard } from './SiteTileCard';
 import { FilterBar } from './FilterBar';
 import { WebListPickerProps } from './types';
-import { useScrollDirection } from '../useScrollDirection';
 import {
   FEATURED_CLASS,
   FEATURED_TILES_CLASS,
@@ -22,11 +23,12 @@ import { FlatCategory, flattenCategories } from './category';
 /** 头条区占位数量：左侧 1 张大卡 + 右侧 4 张小卡 */
 const FEATURED_SIZE = 5;
 
+/** 每页卡片数 */
+const PAGE_SIZE = 20;
+
 /**
  * 网页列表（WebListPicker）：
- * 通用站点选择器，供多个应用复用（如快捷导航的「站点库」）。
  * 顶部为平铺的分类，其下为抖音式头条区（左 1 超大卡 + 右 4 卡），再往下是常规卡片网格。
- * 选中状态由父应用传入（selected），新增 / 删除等变更事件均交由父应用处理。
  */
 export const WebListPicker: React.FC<WebListPickerProps> = ({
   onOpen,
@@ -39,11 +41,9 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   const [categoryLoading, setCategoryLoading] = useState(true);
   // 当前选中的分类，空表示「全部」
   const [selectedCat, setSelectedCat] = useState<string>('');
-  const [searchKeyword, setSearchKeyword] = useState<string>('');
-  // 搜索防抖后的值，用于实际拉取，避免每次按键都请求
-  const [debouncedKw, setDebouncedKw] = useState<string>('');
-  // 固定每页卡片数（初始化加载条数）
-  const PAGE_SIZE = 20;
+
+  // 搜索（输入值 / 防抖值 / 立即搜索）
+  const { keyword, setKeyword, debouncedKw, nonce, submit } = useSearch();
 
   const {
     items,
@@ -83,64 +83,19 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     loadCategories();
   }, []);
 
-  // 立即搜索（点击搜索按钮 / 回车）：同步防抖值并递增 nonce，
-  // 保证关键词与上次相同时也能重新拉取（两者在同一批次更新，effect 只跑一次）
-  const [searchNonce, setSearchNonce] = useState(0);
-  const handleSearchSubmit = () => {
-    setDebouncedKw(searchKeyword);
-    setSearchNonce((n) => n + 1);
-  };
-
   // 分类 / 搜索变化时，回到第一页重新拉取（等分类就绪后再拉，保证默认分类生效）
   useEffect(() => {
     if (!categoriesReady) return;
     fetchSites(1, selectedCat, debouncedKw, PAGE_SIZE);
-    // searchNonce 仅用于触发立即搜索（点击搜索按钮时关键词可能未变）
-  }, [categoriesReady, selectedCat, debouncedKw, searchNonce, fetchSites]);
+    // nonce 仅用于触发立即搜索（点击搜索按钮时关键词可能未变）
+  }, [categoriesReady, selectedCat, debouncedKw, nonce, fetchSites]);
 
-  // 搜索关键词 400ms 防抖
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedKw(searchKeyword), 400);
-    return () => clearTimeout(timer);
-  }, [searchKeyword]);
-
-  // 滚动触底自动加载下一页 + 按滚动方向折叠 / 展开分类行
-  const scrollRef = useRef<HTMLDivElement>(null);
-  // 方向判定统一走 useScrollDirection（含过渡锁，避免高度变化引发的滚动抖动）
-  const { visible: showCategories, onScroll: handleDirectionScroll } =
-    useScrollDirection(scrollRef);
-
-  // 分类显隐变化通知父级（移动端顶部导航与之联动）
-  useEffect(() => {
-    onVisibilityChange?.(showCategories);
-  }, [showCategories, onVisibilityChange]);
-
-  // 触底加载：与方向判定解耦，不受过渡锁影响
-  const loadRafRef = useRef<number | null>(null);
-  const handleLoadMore = useCallback(() => {
-    if (loadRafRef.current) return;
-    loadRafRef.current = requestAnimationFrame(() => {
-      loadRafRef.current = null;
-      const el = scrollRef.current;
-      if (!el) return;
-      if (appendLoading || !hasMore) return;
-      if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
-        loadMore(selectedCat, debouncedKw, PAGE_SIZE);
-      }
-    });
-  }, [appendLoading, hasMore, loadMore, selectedCat, debouncedKw]);
-
-  useEffect(
-    () => () => {
-      if (loadRafRef.current !== null) cancelAnimationFrame(loadRafRef.current);
-    },
-    [],
-  );
-
-  const handleScroll = useCallback(() => {
-    handleDirectionScroll();
-    handleLoadMore();
-  }, [handleDirectionScroll, handleLoadMore]);
+  // 滚动：触底加载下一页 + 按方向折叠 / 展开分类行（并通知父级）
+  const { scrollRef, onScroll, scrollVisible: showCategories } = useListScroll({
+    canReachBottom: !appendLoading && hasMore,
+    onReachBottom: () => loadMore(selectedCat, debouncedKw, PAGE_SIZE),
+    onVisibilityChange,
+  });
 
   // 点击卡片：上报点击量后打开站点（优先走调用方回调，缺省时新窗口打开）
   const handleOpen = (item: SiteItem) => {
@@ -168,11 +123,11 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         categories={categories}
         categoryLoading={categoryLoading}
         selectedCat={selectedCat}
-        searchKeyword={searchKeyword}
+        searchKeyword={keyword}
         loading={loading}
         showCategories={showCategories}
-        onSearchChange={setSearchKeyword}
-        onSearchSubmit={handleSearchSubmit}
+        onSearchChange={setKeyword}
+        onSearchSubmit={submit}
         onSelectCategory={setSelectedCat}
         onOpenMenu={onOpenMenu}
       />
@@ -180,7 +135,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       {/* Site Grid */}
       <div
         ref={scrollRef}
-        onScroll={handleScroll}
+        onScroll={onScroll}
         className="flex-1 overflow-y-auto p-5 relative"
       >
         {/* Loading 遮罩 */}

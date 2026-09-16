@@ -1,5 +1,5 @@
-import { Loader2, Menu, Search } from 'lucide-react';
 import React, { useState } from 'react';
+import { SearchBar } from '@/components/SearchBar';
 import { FlatCategory } from './category';
 
 interface FilterBarProps {
@@ -51,7 +51,7 @@ function CategoryChip({
 }
 
 /**
- * 顶部筛选区：搜索框 + 单排平铺分类。
+ * 网页列表顶部筛选区：搜索框 + 单排平铺分类。
  * 分类不分父子，一级与二级混排在同一横向滚动行内。
  */
 export const FilterBar: React.FC<FilterBarProps> = ({
@@ -79,53 +79,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         compact ? 'py-2' : 'py-4'
       }`}
     >
-      {/* 搜索行：移动端「三横杠 + 搜索框」同排，桌面端仅搜索框且 50% 宽居中 */}
-      <div className="mx-auto flex w-full items-center gap-2 sm:w-1/2">
-        {onOpenMenu && (
-          <button
-            type="button"
-            onClick={onOpenMenu}
-            aria-label="打开菜单"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-slate-600 transition-colors hover:bg-black/10 active:scale-95 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/20 sm:hidden"
-          >
-            <Menu size={20} />
-          </button>
-        )}
-
-        {/* 搜索框：移动端占满剩余宽度，胶囊圆角 */}
-        <div className="relative min-w-0 flex-1">
-          <input
-            type="text"
-            value={searchKeyword}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') onSearchSubmit();
-            }}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-            placeholder="输入关键词搜索"
-            className={`w-full text-center font-bold rounded-full bg-black/5 dark:bg-white/10 outline-none focus:ring-2 ring-[color:var(--accent)]/40 transition-[padding,font-size] duration-300 ease-out ${
-              compact ? 'pl-4 pr-12 py-1.5 ' : 'pl-5 pr-14 py-3.5 text-base'
-            }`}
-          />
-          {/* 输入框内右侧搜索按钮：加载中显示 spinner */}
-          <button
-            type="button"
-            onClick={onSearchSubmit}
-            disabled={loading}
-            aria-label="搜索"
-            className={`absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-blue-500 text-white transition-[width,height] duration-300 ease-out hover:brightness-110 active:scale-95 disabled:opacity-60 ${
-              compact ? 'h-7 w-7' : 'h-10 w-10'
-            }`}
-          >
-            {loading ? (
-              <Loader2 size={compact ? 15 : 18} className="animate-spin" />
-            ) : (
-              <Search size={compact ? 15 : 18} />
-            )}
-          </button>
-        </div>
-      </div>
+      <SearchBar
+        value={searchKeyword}
+        onChange={onSearchChange}
+        onSubmit={onSearchSubmit}
+        loading={loading}
+        compact={compact}
+        onFocus={() => setSearchFocused(true)}
+        onBlur={() => setSearchFocused(false)}
+        onOpenMenu={onOpenMenu}
+      />
 
       {/* 分类行：向下滚动时折叠（grid-rows 1fr → 0fr 自适应高度），向上滚动或聚焦输入框时展开 */}
       <div
