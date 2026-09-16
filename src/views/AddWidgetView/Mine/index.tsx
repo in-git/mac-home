@@ -62,7 +62,7 @@ export const Mine: React.FC<MineProps> = ({
       <div
         ref={scrollRef}
         onScroll={onScroll}
-        className="flex-1 min-h-0 overflow-y-auto p-5"
+        className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5"
       >
         {favorites.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-24">

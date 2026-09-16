@@ -91,6 +91,23 @@ export const VideoList: React.FC<VideoListProps> = ({
     [patchItem],
   );
 
+  /** 自动连播 / 「下一个」按钮：取列表中的下一个，末尾则回到第一个 */
+  const playNext = React.useCallback(() => {
+    setPlaying((current) => {
+      if (!current || items.length === 0) return current;
+      const idx = items.findIndex((v) => v.id === current.id);
+      const next = items[(idx + 1) % items.length];
+      // 同样上报点击量（播放下一个也算一次点击）
+      videoApi
+        .click(next.id)
+        .then(() => patchItem(next.id, (v) => ({ count: (v.count ?? 0) + 1 })))
+        .catch(() => {
+          /* 上报失败不阻塞播放 */
+        });
+      return next;
+    });
+  }, [items, patchItem]);
+
   // 滚动：触底加载下一页 + 按方向折叠 / 展开筛选行（并通知父级）
   const { scrollRef, onScroll, scrollVisible: showFilter } = useListScroll({
     canReachBottom: !appendLoading && hasMore,
@@ -115,7 +132,7 @@ export const VideoList: React.FC<VideoListProps> = ({
     <div className="flex h-full flex-col">
       {/* 筛选区：移动端「三横杠 + 搜索框」同排，桌面端搜索框 50% 宽居中 */}
       <div
-        className={`border-b border-black/5 px-5 transition-[padding] duration-300 ease-out dark:border-white/10 ${
+        className={`border-b border-black/5 px-3 sm:px-5 transition-[padding] duration-300 ease-out dark:border-white/10 ${
           compact ? 'py-2' : 'py-4'
         }`}
       >
@@ -155,7 +172,7 @@ export const VideoList: React.FC<VideoListProps> = ({
       <div
         ref={scrollRef}
         onScroll={onScroll}
-        className="relative flex-1 overflow-y-auto p-5"
+        className="relative flex-1 overflow-y-auto p-3 sm:p-5"
       >
         {loading && items.length === 0 ? (
           <div className="flex min-h-[320px] h-40 items-center justify-center">
@@ -167,15 +184,16 @@ export const VideoList: React.FC<VideoListProps> = ({
         ) : items.length > 0 ? (
           <>
             {/* 推荐区（PC）：hero 固定占 50% 宽度，右侧 6 张普通卡片（横向 3 列 × 2 行）占另一半，两栏等高。
-                移动端纵向堆叠：hero 在上，6 张卡片 2 列排布。 */}
+                移动端纵向堆叠：hero 在上，6 张卡片 2 列排布。
+                间距：仅 < sm 收紧（12px），sm 起恢复原值。 */}
             {showHero && (
-              <div className="mb-5 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch lg:gap-5">
+              <div className="mb-4 grid grid-cols-1 gap-3 sm:gap-4 lg:mb-5 lg:grid-cols-2 lg:items-stretch lg:gap-5">
                 {/* hero：按 2:1 铺满左栏 */}
                 <div className="aspect-[2/1] w-full">
                   <VideoBanner items={[bannerItem]} onPlay={handlePlay} />
                 </div>
                 {/* 右侧 6 张普通卡片：PC 横向 3 列 × 2 行等分撑满（与 hero 等高），移动端 2 列 */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-3 lg:grid-rows-2 lg:gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-x-4 sm:gap-y-5 lg:grid-cols-3 lg:grid-rows-2 lg:gap-4">
                   {compactItems.map((item) => (
                     <VideoCardCompact
                       key={item.id}
@@ -188,7 +206,7 @@ export const VideoList: React.FC<VideoListProps> = ({
             )}
 
             {/* 常规网格：移动端 2 列，逐级到 4 列 */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-x-4 sm:gap-y-5 lg:grid-cols-4 xl:gap-x-5">
               {gridItems.map((item) => (
                 <VideoCard key={item.id} item={item} onPlay={handlePlay} />
               ))}
@@ -220,7 +238,13 @@ export const VideoList: React.FC<VideoListProps> = ({
         )}
       </div>
 
-      <VideoPlayerModal item={playing} onClose={() => setPlaying(null)} />
+      <VideoPlayerModal
+        item={playing}
+        onClose={() => setPlaying(null)}
+        // 自动连播：切到列表中的下一个视频，最后一个则回到第一个
+        hasNext={items.length > 1}
+        onNext={playNext}
+      />
     </div>
   );
 };

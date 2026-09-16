@@ -50,7 +50,7 @@ export const VideoCardCompact: React.FC<VideoCardCompactProps> = ({
 
         {/* 图片底部渐变浮层：浏览量 · 发布时间（压在封面内） */}
         {(meta.playCount || meta.date) && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-1.5 pb-1 pt-6 text-xs leading-tight text-white">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-1.5 pb-2  text-xs leading-tight text-white">
             {meta.playCount && (
               <span className="flex shrink-0 items-center gap-1">
                 <Play size={10} className="fill-current" />

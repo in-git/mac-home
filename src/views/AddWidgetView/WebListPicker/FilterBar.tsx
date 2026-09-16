@@ -74,7 +74,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <div
-      className={`px-5 border-b border-black/5 dark:border-white/10 space-y-4 transition-[padding] duration-300 ease-out ${
+      className={`px-3 sm:px-5 border-b border-black/5 dark:border-white/10 space-y-4 transition-[padding] duration-300 ease-out ${
         compact ? 'py-2' : 'py-4'
       }`}
     >

@@ -136,7 +136,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
       <div
         ref={scrollRef}
         onScroll={onScroll}
-        className="flex-1 overflow-y-auto p-5 relative"
+        className="flex-1 overflow-y-auto p-3 sm:p-5 relative"
       >
         {/* Loading 遮罩 */}
         {loading && items.length > 0 && (

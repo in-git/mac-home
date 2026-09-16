@@ -1,36 +1,48 @@
-import { Loader2, X } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import { SkipForward, X } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { VideoItem, withBase } from '@/api/video';
 import { IconButton } from '@/components/IconButton/IconButton';
+import { VideoPlayer } from '@/components/VideoPlayer/VideoPlayer';
 
 interface VideoPlayerModalProps {
   item: VideoItem | null;
   onClose: () => void;
+  /** 自动连播：播放结束后切到下一个视频（不传则不连播） */
+  onNext?: () => void;
+  /** 是否存在下一个（决定是否显示「下一个」按钮） */
+  hasNext?: boolean;
 }
 
 /**
- * 全屏视频播放层。
+ * 全屏视频播放层（ArtPlayer）。
  *
- * - 铺满整个视口（100dvh，移动端不受地址栏影响），背景纯黑
- * - 视频按原始比例（`max-w-full max-h-full` + `object-contain`）尽可能放大，
- *   宽度优先吃满，超出高度时按比例收缩，永不变形、不裁切
- * - 关闭按钮固定在右上角，尺寸较大（移动端 44px 触摸热区）
- * - 标题 / 描述以底部渐变浮层压在视频上，不挤占视频高度
- * - 关闭方式：右上角按钮 / 点击空白处 / ESC
+ * - 铺满整个视口（100dvh），纯黑背景
+ * - 播放器占满可用空间，ArtPlayer 的 autoSize 会按视频原始比例适配容器
+ * - 右上角大尺寸关闭按钮 + 可选「下一个」按钮
+ * - 标题 / 描述以底部渐变浮层压在播放器上，不挤占画面
+ * - 播放结束自动连播（若上层提供 onNext）
+ * - 关闭方式：右上角按钮 / 点击空白 / ESC（ESC 也由 ArtPlayer 内部处理全屏退出）
  */
 export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   item,
   onClose,
+  onNext,
+  hasNext = false,
 }) => {
-  const [ready, setReady] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  /** 播放结束的提示态：显示「即将播放下一个」 */
+  const [ended, setEnded] = useState(false);
+  const endedTimerRef = useRef<number | null>(null);
 
-  // 切换视频时重置加载态
+  // 切换视频时重置提示态
   useEffect(() => {
-    setReady(false);
+    setEnded(false);
+    if (endedTimerRef.current) {
+      window.clearTimeout(endedTimerRef.current);
+      endedTimerRef.current = null;
+    }
   }, [item?.id]);
 
-  // ESC 关闭，并在打开期间锁定 body 滚动
+  // ESC 关闭 + 打开期间锁定 body 滚动
   useEffect(() => {
     if (!item) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -45,10 +57,15 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     };
   }, [item, onClose]);
 
-  // 关闭时暂停播放，避免声音继续
-  useEffect(() => {
-    if (!item) videoRef.current?.pause();
-  }, [item]);
+  /** 播放结束：自动连播下一个（3 秒倒计时内可被「下一个」按钮立即触发） */
+  const handleEnded = useCallback(() => {
+    if (!onNext || !hasNext) return;
+    setEnded(true);
+    endedTimerRef.current = window.setTimeout(() => {
+      setEnded(false);
+      onNext();
+    }, 3000);
+  }, [onNext, hasNext]);
 
   if (!item) return null;
 
@@ -63,41 +80,65 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
       aria-modal="true"
       aria-label={item.title}
     >
-      {/* 关闭按钮：固定在右上角，大尺寸 */}
-      <IconButton
-        label="关闭"
-        variant="ghost"
-        size="lg"
-        onClick={onClose}
-        icon={<X size={26} />}
-        className="absolute right-3 top-3 z-20 h-11 w-11 bg-black/45 text-white backdrop-blur-md hover:bg-black/70 sm:right-5 sm:top-5 sm:h-12 sm:w-12"
-      />
+      {/* 右上角操作区：下一个 + 关闭（大尺寸） */}
+      <div
+        className="absolute right-3 top-3 z-20 flex items-center gap-2 sm:right-5 sm:top-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {hasNext && !ended && (
+          <IconButton
+            label="下一个"
+            variant="ghost"
+            size="lg"
+            onClick={onNext}
+            icon={<SkipForward size={22} />}
+            className="h-11 w-11 bg-black/45 text-white backdrop-blur-md hover:bg-black/70 sm:h-12 sm:w-12"
+          />
+        )}
+        <IconButton
+          label="关闭"
+          variant="ghost"
+          size="lg"
+          onClick={onClose}
+          icon={<X size={26} />}
+          className="h-11 w-11 bg-black/45 text-white backdrop-blur-md hover:bg-black/70 sm:h-12 sm:w-12"
+        />
+      </div>
 
-      {/* 视频舞台：占满可用空间并居中 */}
+      {/* 播放器舞台 */}
       <div
         className="relative flex min-h-0 flex-1 items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        {!ready && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 size={32} className="animate-spin text-white/70" />
-          </div>
-        )}
-        {/* object-contain + max 尺寸：宽度优先吃满，同时保持原始比例不变形 */}
-        <video
-          ref={videoRef}
+        <VideoPlayer
+          // key 保证切换视频时重建播放器实例，避免复用导致的地址串台
+          key={item.id}
           src={src}
           poster={poster || undefined}
-          controls
-          autoPlay
-          playsInline
-          onLoadedData={() => setReady(true)}
-          className="max-h-full max-w-full object-contain"
+          autoplay
+          onEnded={handleEnded}
         />
+
+        {/* 播放结束提示：即将自动连播 */}
+        {ended && (
+          <div className="pointer-events-auto absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-black/70 backdrop-blur-sm">
+            <p className="text-sm text-white/80 sm:text-base">
+              即将播放下一个…
+            </p>
+            <button
+              type="button"
+              onClick={onNext}
+              className="flex items-center gap-2 rounded-full bg-[color:var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-transform hover:scale-105 active:scale-95 sm:text-base"
+            >
+              <SkipForward size={18} />
+              立即播放
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* 底部渐变浮层：标题 / 描述，不占视频高度 */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-4 pb-16 pt-12 text-white sm:px-8 sm:pb-20">
+      {/* 底部渐变浮层：标题 / 描述（不影响播放器控件） */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/80 to-transparent px-4 pb-16 pt-12 text-white sm:px-8 sm:pb-20">
         <p className="line-clamp-1 text-base font-medium sm:text-xl">
           {item.title}
         </p>

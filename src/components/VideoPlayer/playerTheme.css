@@ -1,0 +1,57 @@
+/**
+ * ArtPlayer 主题适配：让默认控件与站点的 B 站式视觉一致。
+ * 只覆盖必要的颜色 / 圆角，不改变其布局逻辑。
+ */
+
+/* 字体继承站点；主题色 / 圆角 / 进度条高度由 VideoPlayer 的 cssVar 统一注入 */
+.art-video-player {
+  --art-bottom-gap: 0px;
+  font-family: inherit;
+}
+
+/* 控制栏：加一层底部渐变，白字在任何画面上都可读 */
+.art-video-player .art-bottom {
+  background: linear-gradient(to top, rgb(0 0 0 / 0.75), transparent);
+  padding-top: 20px;
+}
+
+/* 进度条：悬停加粗，贴近 B 站手感 */
+.art-video-player .art-progress {
+  transition: height 0.15s ease;
+}
+.art-video-player:hover .art-progress {
+  height: 5px;
+}
+
+/* 控制栏图标统一为白色，去掉默认的描边差异 */
+.art-video-player .art-controls .art-control {
+  color: #fff;
+}
+.art-video-player .art-controls .art-control:hover {
+  color: var(--accent, #007aff);
+}
+
+/* 倍速 / 设置面板：深色半透明 + 圆角，与站点弹层一致 */
+.art-video-player .art-settings,
+.art-video-player .art-contextmenus,
+.art-video-player .art-selector {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 中央大播放按钮 */
+.art-video-player .art-state {
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+}
+.art-video-player .art-state:hover {
+  opacity: 1;
+}
+
+/* 移动端：交给浏览器原生控件，隐藏自定义控件条避免过密 */
+@media (max-width: 640px) {
+  .art-video-player .art-bottom,
+  .art-video-player .art-controls {
+    font-size: 12px;
+  }
+}
