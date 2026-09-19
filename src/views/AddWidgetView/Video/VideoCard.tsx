@@ -104,7 +104,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ item, onPlay }) => {
       </div>
 
       {/* 标题：最多两行 */}
-      <p className="mt-2 line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-[color:var(--accent)] sm:text-base">
+      <p className="mt-2 line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-[color:var(--accent)] ">
         {item.title}
       </p>
     </div>

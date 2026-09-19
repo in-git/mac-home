@@ -78,7 +78,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         // 移动端高度由 mobileHeight 参数决定；sm 起解除固定高度，
         // 交回 py 撑开的舒展高度
         MOBILE_HEIGHT_CLASS[mobileHeight]
-      } ${compact ? 'pl-4 pr-12 sm:py-1.5' : 'pl-5 pr-12 sm:py-3.5 sm:pr-14 sm:text-base'}`}
+      } ${compact ? 'pl-4 pr-12 sm:py-1.5' : 'pl-5 pr-12 sm:py-3.5 sm:pr-14 '}`}
     />
     {/* 内嵌右侧搜索按钮；加载中显示 spinner；sm 起固定 40px */}
     <IconButton

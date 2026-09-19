@@ -330,11 +330,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/70 backdrop-blur-sm"
           onClick={(e) => e.stopPropagation()}
         >
-          <p className="text-sm text-white/80 sm:text-base">即将播放下一个…</p>
+          <p className="text-sm text-white/80 ">即将播放下一个…</p>
           <button
             type="button"
             onClick={onNext}
-            className="flex items-center gap-2 rounded-full bg-[color:var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-transform hover:scale-105 active:scale-95 sm:text-base"
+            className="flex items-center gap-2 rounded-full bg-[color:var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-transform hover:scale-105 active:scale-95 "
           >
             <SkipForward size={18} />
             立即播放

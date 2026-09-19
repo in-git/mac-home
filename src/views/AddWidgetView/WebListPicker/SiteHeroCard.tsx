@@ -74,7 +74,7 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
               {showNew && <NewBadge />}
             </div>
             {item.des && (
-              <p className="mt-0.5 line-clamp-2 text-xs text-white/80 sm:mt-1 sm:text-base">
+              <p className="mt-0.5 line-clamp-2 text-xs text-white/80 sm:mt-1 ">
                 {item.des}
               </p>
             )}
