@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { SiteItem } from '../../api/site';
+import type { SiteDevice, SiteItem } from '../../api/site';
+import { isMobileDevice } from '../../utils/device';
 import { runRequestAction } from './index';
 
 export interface UseSiteListOptions {
@@ -13,10 +14,17 @@ export interface UseSiteListOptions {
   defaultKw?: string;
   /** 是否进入页面时自动加载，默认 true */
   autoFetch?: boolean;
-  /** 排序字段，如 'createTime' */
+  /** 排序字段，如 'createTime'；不传则不带排序参数，由后端返回默认顺序 */
   defaultSortField?: string;
-  /** 排序方向，'ascend' | 'descend' */
+  /** 排序方向，'ascend' | 'descend'；不传则不带排序参数 */
   defaultSortOrder?: string;
+  /** 请求携带的设备标识；不传则按当前运行环境自动判定 */
+  defaultDevice?: SiteDevice;
+}
+
+/** 按当前运行环境判定设备：触屏/移动 UA 视为 MOBILE，其余视为 PC */
+function detectDevice(): SiteDevice {
+  return isMobileDevice() ? 'MOBILE' : 'PC';
 }
 
 export function useSiteList(options: UseSiteListOptions = {}) {
@@ -26,8 +34,9 @@ export function useSiteList(options: UseSiteListOptions = {}) {
     defaultCat = '',
     defaultKw = '',
     autoFetch = true,
-    defaultSortField = 'createTime',
-    defaultSortOrder = 'ASCEND',
+    defaultSortField = '',
+    defaultSortOrder = '',
+    defaultDevice = detectDevice(),
   } = options;
 
   const [items, setItems] = useState<SiteItem[]>([]);
@@ -54,6 +63,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       size = defaultSize,
       sortField = defaultSortField,
       sortOrder = defaultSortOrder,
+      device = defaultDevice,
     ): Promise<SiteItem[] | null> => {
       setLoading(true);
       setError(null);
@@ -67,6 +77,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       if (kw) args.searchKey = kw;
       if (sortField) args.sortField = sortField;
       if (sortOrder) args.sortOrder = sortOrder;
+      if (device) args.device = device;
 
       try {
         const res = await runRequestAction('site_get_page', args);
@@ -96,7 +107,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       }
       return null;
     },
-    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder],
+    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder, defaultDevice],
   );
 
   // 触底加载：拉取下一页并**追加**到已有列表（不清空），带并发防重入
@@ -107,6 +118,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       size = defaultSize,
       sortField = defaultSortField,
       sortOrder = defaultSortOrder,
+      device = defaultDevice,
     ) => {
       if (loadingRef.current) return; // 上一次尚未完成，避免重复加载
       const next = pageRef.current + 1;
@@ -123,6 +135,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       if (kw) args.searchKey = kw;
       if (sortField) args.sortField = sortField;
       if (sortOrder) args.sortOrder = sortOrder;
+      if (device) args.device = device;
 
       try {
         const res = await runRequestAction('site_get_page', args);
@@ -152,7 +165,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
         loadingRef.current = false;
       }
     },
-    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder],
+    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder, defaultDevice],
   );
 
   const hasMore = page < totalPages;

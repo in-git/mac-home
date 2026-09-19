@@ -9,6 +9,7 @@ import {
   NewBadge,
   SiteAvatar,
   SiteCardBaseProps,
+  SiteMetaRow,
 } from './cardParts';
 
 type SiteCardProps = SiteCardBaseProps;
@@ -87,6 +88,9 @@ export const SiteCard: React.FC<SiteCardProps> = ({
         */}
         {showNew && <NewBadge className="self-start" />}
       </div>
+
+      {/* 底部辅助信息行：信号强度 + 适用设备（字段缺失时整行不渲染） */}
+      <SiteMetaRow item={item} />
     </div>
   );
 };

@@ -125,6 +125,25 @@ fun AppContent(modifier: Modifier = Modifier) {
     webLoading = false
   }
 
+  /**
+   * 用户主动取消：收起 loading + 停止 WebView 加载 + 回到原页面。
+   *
+   * 为什么要 `stopLoading`：仅 dismissWebLoading 会留下一个「WebView 还在加载新 URL、
+   * 遮罩却没了」的状态，等新页面 ready 后会再次触发 onPageFinished 把 loading 收一遍
+   * （no-op）—— 看起来没事，但用户期待的是「立刻停止」。
+   *
+   * 为什么要 `goBack`：WebView 已经开始渲染新页面后，单纯 stopLoading 不会让已渲染的
+   * 内容消失，必须 goBack 才能回到上一页。主页状态（canGoBack=false）则保持原样。
+   */
+  fun cancelWebLoading() {
+    dismissWebLoading()
+    val webView = webViewInstance
+    webView?.stopLoading()
+    if (webView?.canGoBack() == true) {
+      webView.goBack()
+    }
+  }
+
   // 离开页面时清掉挂起的超时回调，避免回调在组件销毁后触发
   DisposableEffect(Unit) {
     onDispose { mainHandler.removeCallbacks(webLoadingTimeout) }
@@ -185,6 +204,10 @@ fun AppContent(modifier: Modifier = Modifier) {
       onPageFinished = {
         hasError = false
         showSplash = false
+        // 新页面 ready 时自动收起 JS 拉起的全屏 loading：
+        // 跨页面跳转后 JS 错过 hideLoading 的关闭信号，必须由原生兜底。
+        // 未显示时 dismissWebLoading 是 no-op，无需分支。
+        dismissWebLoading()
       },
       onError = {
         hasError = true
@@ -207,6 +230,7 @@ fun AppContent(modifier: Modifier = Modifier) {
     AppLoadingOverlay(
       visible = webLoading,
       label = webLoadingLabel,
+      onCancel = { cancelWebLoading() },
       modifier = Modifier.fillMaxSize()
     )
 

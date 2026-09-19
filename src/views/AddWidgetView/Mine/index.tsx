@@ -2,7 +2,7 @@ import { Heart } from 'lucide-react';
 import React, { useCallback } from 'react';
 import { SiteItem } from '@/api/site';
 import { openSite } from '@/utils/siteHelper';
-import { SidebarFooter } from '../Sidebar/SidebarFooter';
+import { AppDownloadEntry, RecordInfo } from '../Sidebar/SidebarFooter';
 import { SiteCard } from '../WebListPicker/SiteCard';
 import { FAVORITES_GRID_CLASS } from '../WebListPicker/constants';
 
@@ -48,7 +48,27 @@ export const Mine: React.FC<MineProps> = ({
         ) : (
           <>
             <div className="mb-4 xl:text-2xl text-lg  font-bold">我的收藏</div>
-            <div className={FAVORITES_GRID_CLASS}>
+            {/*
+              移动端：横向滚动单行（卡片定宽，一屏可见多张，滚动查看其余）。
+              桌面端（sm 起）：恢复为响应式网格。
+              用「容器查询」式的两套结构切换：外层负责滚动方向，内层是网格。
+            */}
+            <div className="sm:hidden -mx-3 px-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex w-max gap-3">
+                {favorites.map((item, index) => (
+                  <div key={item.id || item.link || `fav-${index}`} className="w-40 shrink-0">
+                    <SiteCard
+                      item={item}
+                      onOpen={handleOpen}
+                      favorited
+                      onToggleFavorite={onToggleFavorite}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={`${FAVORITES_GRID_CLASS} hidden sm:grid`}>
               {favorites.map((item, index) => (
                 <SiteCard
                   key={item.id || item.link || `fav-${index}`}
@@ -62,18 +82,17 @@ export const Mine: React.FC<MineProps> = ({
           </>
         )}
 
-        {/*
-          专属 App 下载 + 备案信息：仅移动端在本页展示。
+      </div>
 
-          桌面端（sm 起）左侧栏常驻渲染着同一个 SidebarFooter，
-          这里再放一份就是重复；备案信息在桌面端由侧栏承担展示，不会丢失。
+      {/*
+        专属 App 下载 + 备案信息：仅移动端在本页展示，固定在底部（滚动区外），
+        不论收藏列表多长都始终可见。两者各自独立成卡片。
 
-          移动端没有侧栏（由底部 tabbar 替代），所以必须在本页提供，
-          否则备案信息将无处可达。
-        */}
-        <div className="mt-6 sm:hidden">
-          <SidebarFooter />
-        </div>
+        桌面端（sm 起）由左侧栏常驻展示，本页不再重复。
+      */}
+      <div className="sm:hidden space-y-2 border-t border-black/[0.06] p-3">
+        <AppDownloadEntry card />
+        <RecordInfo card />
       </div>
     </div>
   );

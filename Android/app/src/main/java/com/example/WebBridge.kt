@@ -1,5 +1,8 @@
 package com.example
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 
@@ -9,20 +12,10 @@ import android.webkit.WebView
  * 通过 `WebView.addJavascriptInterface(this, "MXBridge")` 注入，
  * 网页侧以 `window.MXBridge.xxx(...)` 调用。
  *
- * ── 为什么需要它 ─────────────────────────────────────────────
- * 站在网页里做「打开站点」的全屏 loading 效果并不理想：
- * 遮罩画在 WebView 的内容层上，会跟着页面滚动/重绘一起抖动，
- * 层级也比原生控件低；更重要的是网页无法感知「跳转是否真的开始」，
- * 只能靠 10 秒超时这种笨办法兜底。
- *
- * 交给原生做则天然合适：它就是一层独立的 Compose 覆盖物，
- * 与 WebView 平级，不参与页面渲染，动画由系统主线程驱动。
- *
  * ── 安全 ───────────────────────────────────────────────────
  * `addJavascriptInterface` 只在 API 17+ 上对已加载的页面暴露方法，
  * 但**任何**在该 WebView 中打开的页面都能调用这些方法。本应用只加载
- * 自家的 https 站点，不加载任意外部 URL（外链走系统浏览器，见
- * `shouldOverrideUrlLoading`），因此风险可控。
+ * 自家的 https 站点，因此风险可控。
  * 若将来允许 WebView 打开任意第三方页面，必须改为
  * `WebViewCompat.addWebMessageListener`（限定 origin）。
  */
@@ -54,24 +47,28 @@ class WebBridge(private val webView: WebView) {
   }
 
   /**
-   * 网页请求打开一个链接 —— **在当前 WebView 内**加载，不新开窗口。
+   * 网页请求打开链接 —— **交由系统浏览器**接管，不在当前 WebView 内加载。
    *
-   * 为什么必须复用同一个 WebView：
-   * 站点（尤其是小游戏 / 在线工具）常把进度存在 `localStorage` /
-   * `sessionStorage` 里。`sessionStorage` 的生命周期绑定**浏览上下文**，
-   * 一旦每次打开都新建窗口（或新建 WebView），上下文就是全新的，
-   * 上次存的数据自然读不到 —— 表现就是「改完存了，再打开又没了」。
+   * 为什么不用 `webView.loadUrl`：那样会把新页面替换到当前 WebView，
+   * 用户从原生返回键回不到主页，体验割裂。
+   * 走 Intent.ACTION_VIEW 后：
+   * - 当前 WebView 维持主页不动，用户操作不被打断
+   * - 系统浏览器接管新页面，原生返回键可回到本 App
    *
-   * 复用同一个 WebView 后，同一 origin 的存储会一直保留（进程存活期间），
-   * 且返回键可回到主页（`canGoBack` 已由 Activity 处理）。
-   *
-   * 不用 `window.open(url, "_blank")` 的原因：那会走 WebChromeClient 的
-   * `onCreateWindow`，在「多窗口未启用」时行为随系统版本而异，
-   * 可能新开上下文、也可能被直接丢弃，无法保证复用。
+   * 没有可用浏览器时静默失败（极少见），调用方可在 JS 侧 catch 后 fallback
+   * 到 `window.open`。
    */
   @JavascriptInterface
-  fun openUrl(url: String?) {
+  fun openInExternal(url: String?) {
     val target = url?.takeIf { it.isNotBlank() } ?: return
-    webView.post { webView.loadUrl(target) }
+    webView.post {
+      try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(target))
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        webView.context.startActivity(intent)
+      } catch (e: Exception) {
+        Log.w("MXBridge", "openInExternal 失败", e)
+      }
+    }
   }
 }

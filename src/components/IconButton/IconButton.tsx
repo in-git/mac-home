@@ -66,6 +66,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
     title={rest.title ?? label}
     className={[
       'flex shrink-0 items-center justify-center rounded-full',
+      'cursor-pointer',
       'transition-[background-color,color,filter,transform,width,height] duration-200 ease-out',
       'active:scale-95 disabled:opacity-60 disabled:pointer-events-none',
       SIZE_CLASS[size],

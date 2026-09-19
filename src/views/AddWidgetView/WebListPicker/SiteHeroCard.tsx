@@ -7,6 +7,7 @@ import {
   gradientOf,
   isNewSite,
   NewBadge,
+  SignalBars,
   SiteAvatar,
   SiteCardBaseProps,
 } from './cardParts';
@@ -79,8 +80,10 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
             )}
           </div>
         </div>
-        <div className="mt-2 flex sm:mt-3">
+        {/* 底部元信息行：点击量 + 信号强度 */}
+        <div className="mt-2 flex items-center gap-2 sm:mt-3">
           <CountBadge count={item.count} />
+          <SignalBars signal={item.signal} variant="onImage" />
         </div>
       </div>
     </div>

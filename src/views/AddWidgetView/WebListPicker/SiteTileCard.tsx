@@ -7,6 +7,7 @@ import {
   gradientOf,
   isNewSite,
   NewBadge,
+  SignalBars,
   SiteAvatar,
   SiteCardBaseProps,
 } from './cardParts';
@@ -75,20 +76,30 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
           <p className="truncate text-sm font-medium text-white">{item.name}</p>
           {showNew && <NewBadge />}
         </div>
+        {/* 信号条（深色浮层上需自带底色保证可读） */}
+        <div className="mt-1 flex">
+          <SignalBars signal={item.signal} variant="onImage" />
+        </div>
       </div>
 
-      <div className="relative hidden p-2 sm:p-2.5 lg:flex items-center gap-3 text-left">
-        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
-          <SiteAvatar item={item} />
-          <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-            {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
-            <p className="truncate text-sm sm:text-lg max-w-full">
-              {item.name}
-            </p>
+      <div className="relative hidden p-2 sm:p-2.5 lg:flex flex-col text-left">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+            <SiteAvatar item={item} />
+            <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
+              {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
+              <p className="truncate text-sm sm:text-lg max-w-full">
+                {item.name}
+              </p>
+            </div>
           </div>
+          {/* NEW 跟在标题行右侧（self-start 对齐行顶，即「标题右上角」） */}
+          {showNew && <NewBadge className="self-start" />}
         </div>
-        {/* NEW 跟在标题行右侧（self-start 对齐行顶，即「标题右上角」） */}
-        {showNew && <NewBadge className="self-start" />}
+        {/* 信号强度（字段缺失时不渲染） */}
+        <div className="mt-1 flex items-center gap-2">
+          <SignalBars signal={item.signal} variant="plain" />
+        </div>
       </div>
     </div>
   );

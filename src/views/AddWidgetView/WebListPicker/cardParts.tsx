@@ -1,6 +1,6 @@
 import { Eye, Heart } from 'lucide-react';
 import React, { useState } from 'react';
-import { SiteItem } from '@/api/site';
+import { normalizeSignal, SiteItem } from '@/api/site';
 import { IconButton } from '@/components/IconButton/IconButton';
 
 /** 新站点判定天数：发布时间在该天数内则打上 NEW 角标 */
@@ -157,3 +157,89 @@ export const NewBadge: React.FC<{ className?: string }> = ({
     New
   </span>
 );
+
+/** 信号条总格数：与 signal 的取值上限（5）一致 */
+const SIGNAL_LEVELS = 5;
+
+/** 各档位的柱高（px），由弱到强递增；配合 5 格形成阶梯感 */
+const SIGNAL_BAR_HEIGHTS = [4, 6, 8, 11, 14];
+
+/** 按强度取色：弱（1-2）偏灰、中（3）琥珀、强（4-5）绿 */
+function signalColor(level: number): string {
+  if (level <= 2) return 'bg-slate-400';
+  if (level === 3) return 'bg-amber-400';
+  return 'bg-emerald-500';
+}
+
+/**
+ * 信号强度可视化：5 格阶梯柱状条，点亮的格数 = signal（1 最弱、5 最强）。
+ *
+ * 关于配色：不用红/黄/绿三档暗示好坏，仅按「弱=中性灰、中=琥珀、强=绿」递进，
+ * 未点亮的格子统一低透明度灰底，保证在封面图与信息条两种底色上都可读。
+ *
+ * `variant` 决定适配的场景：
+ * - `onImage`：压在封面图上，用白色半透明底 + ring 提升对比度
+ * - `plain`：位于卡片信息条内，跟随前景色
+ */
+export const SignalBars: React.FC<{
+  signal?: number;
+  variant?: 'onImage' | 'plain';
+  className?: string;
+}> = ({ signal, variant = 'plain', className = '' }) => {
+  const level = normalizeSignal(signal);
+  if (level === null) return null;
+
+  const onImage = variant === 'onImage';
+
+  return (
+    <span
+      className={`flex items-end gap-[2px] leading-none ${
+        onImage
+          ? 'rounded-full bg-black/55 px-1.5 py-1 ring-1 ring-white/15 backdrop-blur-md'
+          : ''
+      } ${className}`}
+      title={`信号强度 ${level}/5`}
+      aria-label={`信号强度 ${level} / 5`}
+      role="img"
+    >
+      {Array.from({ length: SIGNAL_LEVELS }).map((_, i) => {
+        const idx = i + 1;
+        const active = idx <= level;
+        return (
+          <span
+            key={idx}
+            style={{ height: SIGNAL_BAR_HEIGHTS[i], width: 3 }}
+            className={`rounded-[1px] transition-colors ${
+              active
+                ? signalColor(level)
+                : onImage
+                  ? 'bg-white/30'
+                  : 'bg-black/20 dark:bg-white/25'
+            }`}
+          />
+        );
+      })}
+    </span>
+  );
+};
+
+/**
+ * 卡片辅助信息行：信号强度。
+ *
+ * signal 为后端补充的元数据，可能缺失；缺失时返回 null，
+ * 避免在卡片底部留下一行空白高度，影响网格对齐。
+ */
+export const SiteMetaRow: React.FC<{
+  item: SiteItem;
+  className?: string;
+}> = ({ item, className = '' }) => {
+  if (normalizeSignal(item.signal) === null) return null;
+
+  return (
+    <div
+      className={`flex items-center gap-2 px-2 pb-2 sm:px-2.5 ${className}`}
+    >
+      <SignalBars signal={item.signal} variant="plain" />
+    </div>
+  );
+};

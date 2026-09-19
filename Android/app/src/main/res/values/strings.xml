@@ -7,4 +7,8 @@
     <string name="network_error_msg">无法加载网页内容，请检查网络连接后重试</string>
     <string name="retry_button">重新加载</string>
     <string name="exit_prompt">再次按返回键退出应用</string>
+    <!-- 备案信息：仅作为 APK 资源供应用商店扫描识别，
+         App 内部 UI 不展示，避免对用户造成干扰。 -->
+    <string name="beian_police">粤公网安备44011202003613号</string>
+    <string name="beian_police_url">https://beian.mps.gov.cn/#/query/webSearch?code=44011202003613</string>
 </resources>

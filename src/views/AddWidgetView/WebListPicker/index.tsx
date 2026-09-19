@@ -15,8 +15,6 @@ import {
   FEATURED_CLASS,
   FEATURED_TILES_CLASS,
   SITE_GRID_CLASS,
-  SITE_SORT_FIELD,
-  SITE_SORT_ORDER,
 } from './constants';
 import { FlatCategory, flattenCategories } from './category';
 
@@ -53,9 +51,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     loadMore,
   } = useSiteList({
     autoFetch: false,
-    // 最新的排最前：头条区大卡取 items[0]，即最新上架的站点
-    defaultSortField: SITE_SORT_FIELD,
-    defaultSortOrder: SITE_SORT_ORDER,
   });
 
   // 分类元数据是否已就绪（用于推迟首次列表拉取，避免先用「全部」查一次再按默认分类重查）

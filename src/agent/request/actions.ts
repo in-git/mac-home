@@ -1,5 +1,5 @@
 import { siteApi } from '../../api/site';
-import type { SitePageParams } from '../../api/site';
+import type { SiteDevice, SitePageParams } from '../../api/site';
 import type { AgentToolParam } from '../types';
 
 export interface RequestActionResult {
@@ -81,6 +81,11 @@ export const requestActions: RequestAction[] = [
         description: '排序方向，仅支持大写 ASCEND（升序）/ DESCEND（降序），需与 sortField 同时非空才生效',
         required: false,
       },
+      device: {
+        type: 'string',
+        description: '当前请求设备的标识，可选值：PC / MOBILE / COMPATIBLE',
+        required: false,
+      },
     },
     run: async (args) => {
       try {
@@ -95,6 +100,7 @@ export const requestActions: RequestAction[] = [
         if (args.module !== undefined) params.module = String(args.module);
         if (args.sortField !== undefined) params.sortField = String(args.sortField);
         if (args.sortOrder !== undefined) params.sortOrder = String(args.sortOrder);
+        if (args.device !== undefined) params.device = String(args.device) as SiteDevice;
 
         const res = await siteApi.getPage(params);
         return {

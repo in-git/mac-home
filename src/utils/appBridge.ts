@@ -112,40 +112,29 @@ export function hideNativeLoading(): boolean {
 }
 
 /**
- * 在**同一个浏览上下文**里打开链接，不新开窗口 / 标签页。
+ * 在**系统浏览器**里打开链接，不在当前 WebView 内加载。
  *
- * 按优先级尝试三种方式：
- * 1. 原生桥接 `openUrl` —— 最可靠，由 App 直接 `loadUrl` 到当前 WebView
- * 2. Android WebView 兜底 —— 桥接不存在时改成本页导航（`location.href`），
- *    App 的 `shouldOverrideUrlLoading` 对 http/https 返回 false，
- *    于是仍由同一个 WebView 加载，效果等同
- * 3. 都不满足（普通浏览器）→ 返回 false，由调用方退回 `window.open`
+ * 链路：
+ * 1. 原生桥接 `openInExternal` —— App 内由原生发起 Intent.ACTION_VIEW，
+ *    启动系统浏览器接管链接；当前 WebView 维持主页不动
+ * 2. 桥接不存在（普通浏览器）→ 直接 `window.open` 新标签页
  *
- * 为什么「复用上下文」能解决数据丢失：
- * 站点存在 `sessionStorage` 的数据生命周期绑定浏览上下文，
- * 每次新开窗口就是全新上下文，上次存的读不到。复用后同一 origin 的
- * `localStorage` / `sessionStorage` 在进程存活期间都会保留。
+ * 之所以放弃「同 WebView 加载」：那样会替换主页，用户从原生返回键
+ * 回不到当前页，体验割裂。走系统浏览器后，原生返回可直接回到 App 主页。
  *
- * @returns 是否已处理；false 表示当前是普通浏览器，应回退到新标签页
+ * 不存在失败场景：系统总会兜到一个浏览器；调用方可放心忽略返回值。
  */
-export function openInSameContext(url: string): boolean {
-  // 1) 新版 App：走原生桥接
+export function openInExternal(url: string): boolean {
   const bridge = getBridge();
-  if (bridge && typeof bridge.openUrl === 'function') {
+  if (bridge && typeof bridge.openInExternal === 'function') {
     try {
-      bridge.openUrl(url);
+      bridge.openInExternal(url);
       return true;
     } catch (error) {
-      console.warn('[appBridge] openUrl 调用失败，回退到本页导航', error);
+      console.warn('[appBridge] openInExternal 调用失败，回退到 window.open', error);
     }
   }
-
-  // 2) 旧版 App（无桥接）：Android WebView 下改成本页导航
-  if (isAndroidWebView()) {
-    window.location.href = url;
-    return true;
-  }
-
-  // 3) 普通浏览器：交给调用方开新标签页
-  return false;
+  // 普通浏览器 / bridge 不可用：开新标签页
+  window.open(url, '_blank', 'noreferrer');
+  return true;
 }

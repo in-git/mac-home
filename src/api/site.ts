@@ -15,6 +15,20 @@ export interface SiteIdentity {
   identityName: string;
 }
 
+/** 站点适用设备：请求参数 device 的取值 */
+export type SiteDevice = 'PC' | 'MOBILE' | 'COMPATIBLE';
+
+/**
+ * 归一化信号强度：合法范围 1-5（1 最弱、5 最强）。
+ * 非法值（非数值 / 越界）返回 null，表示不展示信号。
+ */
+export function normalizeSignal(signal?: number): number | null {
+  if (typeof signal !== 'number' || !Number.isFinite(signal)) return null;
+  const rounded = Math.round(signal);
+  if (rounded < 1 || rounded > 5) return null;
+  return rounded;
+}
+
 export interface SiteItem {
   // 数据库的ID
   id?: string;
@@ -46,6 +60,10 @@ export interface SiteItem {
   createTime?: string;
   // 应用所属的分类列表
   categoryList?: SiteCategory[];
+  /** 信号强度：1-5，1 最弱、5 最强 */
+  signal?: number;
+  /** 适用设备：PC / MOBILE / COMPATIBLE */
+  device?: SiteDevice;
 }
 
 export interface SitePageParams {
@@ -59,6 +77,8 @@ export interface SitePageParams {
   module?: string;
   sortField?: string;
   sortOrder?: string;
+  /** 按适用设备筛选：PC / MOBILE / COMPATIBLE */
+  device?: SiteDevice;
 }
 
 const inFlight = new Map<string, Promise<unknown>>();

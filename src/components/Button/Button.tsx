@@ -103,6 +103,7 @@ export const Button: React.FC<ButtonProps> = ({
       aria-pressed={isPill ? active : rest['aria-pressed']}
       className={[
         'inline-flex items-center justify-center rounded-md ',
+        'cursor-pointer',
         'transition-[transform,background-color,filter,box-shadow,padding,font-size] duration-150 select-none',
         // 胶囊标签在标签组里空间紧张，不要缩放位移，避免横向抖动
         isPill ? '' : 'hover:scale-[1.03] active:scale-95',
