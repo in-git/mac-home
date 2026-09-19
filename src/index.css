@@ -60,14 +60,14 @@ button{
 }
 
 /*
- * 弹窗入场 / 出场动画（Toast 使用）。
+ * Toast 入场动画。
  *
  * 必须显式定义：Toast 里写的是 `animate-[toastIn_0.2s_ease-out]`，
  * 这是任意值语法，Tailwind 会照抄成 `animation: ... toastIn` 规则，
  * 但**不会**帮忙生成 `@keyframes`。早先这段关键帧缺失，
  * 结果就是「动画属性写了、但没有任何反应」，弹窗生硬地闪现。
  *
- * 出场用同一套位移反向，保证来去对称。
+ * 出场动画已随关闭按钮一并移除，提示现在到时直接消失。
  */
 @keyframes toastIn {
   from {
@@ -80,27 +80,9 @@ button{
   }
 }
 
-@keyframes toastOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.96);
-  }
-}
-
 /* 尊重「减少动态效果」偏好：关闭动画，直接切换状态 */
 @media (prefers-reduced-motion: reduce) {
   @keyframes toastIn {
-    from,
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  @keyframes toastOut {
     from,
     to {
       opacity: 1;

@@ -60,10 +60,8 @@ export const AddWidgetView: React.FC = () => {
   const handleToggleFavorite = (item: SiteItem) => {
     const already = favoriteSites.some((s) => isSameSite(s, item));
     toggleFavoriteSite(item);
-    showToast(
-      already ? `已取消收藏「${item.name}」` : `已收藏「${item.name}」`,
-      already ? 'info' : 'success',
-    );
+    // 提示不带站点名：Toast 宽度固定，长名称会被折行撑高，且此处文案已足够明确
+    showToast(already ? '已取消收藏' : '已收藏', already ? 'info' : 'success');
   };
 
   return (

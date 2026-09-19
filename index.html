@@ -4,6 +4,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    缓存策略：index.html 每次回源校验，避免用户（尤其是内嵌 WebView 的 App）
+    一直命中旧页面 —— 旧 HTML 会引用旧的 JS 文件名，表现为「已发版但界面没更新」。
+    带 hash 的静态资源由 Vite 产物名保证唯一，无需在此限制。
+
+    注意：http-equiv 的优先级低于服务端响应头。若服务端（Nginx / CDN）
+    已显式下发 Cache-Control，仍以响应头为准；此处的声明用于
+    未配置响应头的静态托管场景兜底。
+  -->
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
   <!-- ── 核心 SEO：标题 / 描述（Bing 最看重 title + description） ── -->

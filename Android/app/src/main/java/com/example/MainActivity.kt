@@ -331,8 +331,19 @@ fun WebViewContainer(
           databaseEnabled = true
           // 站点未声明 charset 时，默认按 UTF-8 解析，避免中文乱码（WebView 无自动嗅探 API）
           defaultTextEncodingName = "UTF-8"
-          // 站点为 ES module 打包产物，禁用缓存可规避旧资源导致的空白页
-          cacheMode = WebSettings.LOAD_DEFAULT
+          /*
+           * 不使用缓存：网页每次更新都能立刻生效。
+           *
+           * 背景：站点是 ES module 打包产物，index.html 一旦被缓存，
+           * 里面引用的旧 JS 文件名会一直沿用，表现为「网页已更新但 App 还是旧版」。
+           * 仅靠 HTTP 缓存头不可控（服务端 / CDN 行为不受客户端掌握），
+           * 这里直接在客户端禁用缓存，代价是每次冷启动重新下载资源。
+           *
+           * 若后续改为「静态资源仍走缓存、只让 index.html 每次校验」，
+           * 可换回 LOAD_DEFAULT 并在服务端给 index.html 加
+           * `Cache-Control: no-cache, must-revalidate`。
+           */
+          cacheMode = WebSettings.LOAD_NO_CACHE
           loadWithOverviewMode = true
           useWideViewPort = true
           setSupportZoom(true)
@@ -424,7 +435,18 @@ fun WebViewContainer(
           }
         }
 
-        loadUrl(url)
+        /*
+         * 首页加载时显式带上 no-cache 头。
+         *
+         * cacheMode = LOAD_NO_CACHE 已让后续请求不走缓存，但对「本次」加载，
+         * 部分机型仍可能直接吐出磁盘上已存在的旧 index.html。
+         * 附带该请求头后，本次请求一定回源校验，确保拿到最新页面。
+         */
+        val noCacheHeaders = mapOf(
+          "Cache-Control" to "no-cache, no-store, must-revalidate",
+          "Pragma" to "no-cache"
+        )
+        loadUrl(url, noCacheHeaders)
         onWebViewCreated(this)
       }
     },

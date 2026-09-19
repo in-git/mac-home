@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { CheckCircle2, XCircle, Info, X } from 'lucide-react';
+import { CheckCircle2, XCircle, Info } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
 
@@ -25,10 +25,7 @@ interface ToastItem {
   type: ToastType;
   message: string;
   description?: string;
-  duration: number;
   action?: ToastAction;
-  /** 正在播出场动画；动画结束后才真正从列表移除 */
-  closing?: boolean;
 }
 
 /**
@@ -45,9 +42,6 @@ const ICONS: Record<ToastType, React.ReactNode> = {
   error: <XCircle className={`${ICON_CLASS} text-rose-500`} />,
   info: <Info className={`${ICON_CLASS} text-sky-500`} />,
 };
-
-/** 出场动画时长（ms），需与 index.css 里 toastOut 的时长保持一致 */
-const CLOSE_ANIM_MS = 180;
 
 // ---- 模块级状态：脱离 React 树，任何位置都可命令式调用 ----
 let items: ToastItem[] = [];
@@ -76,29 +70,13 @@ function clearTimers(id: number) {
 }
 
 /**
- * 立即移除（不做动画）。
- * 仅供出场动画播完后的收尾，以及 panic 清空使用。
+ * 移除指定 toast（连同其定时器）。
+ * 自动关闭与 action 按钮点击后都走这里。
  */
-function removeNow(id: number) {
+function removeToast(id: number) {
   clearTimers(id);
   items = items.filter((t) => t.id !== id);
   emit();
-}
-
-/**
- * 开始关闭：先标记 closing 播出场动画，动画结束后才真正移除。
- *
- * 直接 remove 会让弹窗「啪」地消失；标了 closing 后由 CSS
- * 播 toastOut，视觉上与入场对称。
- */
-function beginClose(id: number) {
-  const target = items.find((t) => t.id === id);
-  // 已移除或已在关闭中：避免重复触发导致定时器叠加
-  if (!target || target.closing) return;
-  clearTimers(id);
-  items = items.map((t) => (t.id === id ? { ...t, closing: true } : t));
-  emit();
-  window.setTimeout(() => removeNow(id), CLOSE_ANIM_MS);
 }
 
 /** 安排自动关闭 */
@@ -106,7 +84,7 @@ function scheduleAutoClose(id: number, ms: number) {
   if (ms <= 0) return;
   autoStartedAt.set(id, Date.now());
   autoRemaining.set(id, ms);
-  autoTimers.set(id, window.setTimeout(() => beginClose(id), ms));
+  autoTimers.set(id, window.setTimeout(() => removeToast(id), ms));
 }
 
 /**
@@ -142,12 +120,15 @@ function ToastCard({ item }: { item: ToastItem }) {
        *
        * 尺寸档位集中在这里，不散落到各子元素，避免「标题大了描述没跟上」。
        * 图标与操作按钮都从父级继承字号（见下方 text-[1em] 的说明）。
+       *
+       * 宽度：按内容自适应并居中 —— 用 `w-fit` 而非 `w-full`，
+       * 否则短文案也会被撑成父容器的整宽。
+       * - `min-w-[120px]`：短文案（如「已收藏」）也不至于缩成一小块，
+       *   多条提示堆叠时宽度观感更整齐
+       * - `max-w-md`：长文案在 448px 处封顶，超出则换行
+       * 父容器是 `items-center`，宽度变化时左右自动居中。
        */
-      className={`pointer-events-auto flex w-full max-w-md items-start gap-2 rounded-lg bg-white/95 px-3 py-2.5 text-xs text-[#1D1D1F] shadow-lg ring-1 ring-black/[0.08] backdrop-blur-md sm:gap-2.5 sm:px-3.5 sm:py-2 sm:text-sm ${
-        item.closing
-          ? 'animate-[toastOut_0.18s_ease-out_forwards]'
-          : 'animate-[toastIn_0.2s_ease-out]'
-      }`}
+      className="pointer-events-auto flex w-fit min-w-[120px] max-w-md animate-[toastIn_0.2s_ease-out] items-start gap-2 rounded-lg bg-white/95 px-3 py-2.5 text-xs text-[#1D1D1F] shadow-lg ring-1 ring-black/[0.08] backdrop-blur-md sm:gap-2.5 sm:px-3.5 sm:py-2 sm:text-sm"
       onMouseEnter={() => pauseAutoClose(item.id)}
       onMouseLeave={() => resumeAutoClose(item.id)}
     >
@@ -168,24 +149,14 @@ function ToastCard({ item }: { item: ToastItem }) {
           type="button"
           onClick={() => {
             item.action?.onClick();
-            beginClose(item.id);
+            removeToast(item.id);
           }}
           // 字号跟随父级（`text-[1em]`），避免按钮比正文大一号
-          className="ml-0.5 shrink-0 rounded-md px-1.5 py-0.5 text-[1em] font-medium text-blue-500 transition-colors hover:bg-black/5 sm:px-2 sm:py-1"
+          className="ml-0.5 shrink-0 cursor-pointer rounded-md px-1.5 py-0.5 text-[1em] font-medium text-blue-500 transition-colors hover:bg-black/5 sm:px-2 sm:py-1"
         >
           {item.action.label}
         </button>
       )}
-
-      <button
-        type="button"
-        onClick={() => beginClose(item.id)}
-        // 命中区域略大于图标本身，手指点得到（移动端最小 ~28px）
-        className="-mr-1 -mt-0.5 flex shrink-0 items-center justify-center rounded-md p-1 text-[#A1A1A6] transition-colors hover:bg-black/5 hover:text-[#6E6E73]"
-        aria-label="关闭提示"
-      >
-        <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-      </button>
     </div>
   );
 }
@@ -230,22 +201,61 @@ function ensureMounted() {
 }
 
 /**
+ * 清空全部 toast（连同挂起的定时器）。
+ *
+ * 注意：必须清掉定时器，否则旧提示的 `removeToast` 回调仍会在稍后触发，
+ * 而新提示此时可能刚拿到一个不同的 id —— 影响不大但属于无效调用。
+ */
+function clearAll() {
+  autoTimers.forEach((handle) => window.clearTimeout(handle));
+  autoTimers.clear();
+  autoStartedAt.clear();
+  autoRemaining.clear();
+  items = [];
+}
+
+/**
  * 命令式 toast。用法：
  *   toast('已保存')
  *   toast('邀请你加入团队', { type: 'info', description: '...', action: { label: '撤销', onClick } })
+ *
+ * **单例语义**：同一时刻只存在一个提示。新提示到来时直接替换上一条，
+ * 不做堆叠排队 —— 短时间内的连续操作（如快速点几次收藏）只会看到
+ * 最后一条，而不是一串提示往下叠。
  */
 export function toast(message: string, options?: ToastOptions): number {
   ensureMounted();
+
+  const type = options?.type ?? 'success';
+  const current = items[items.length - 1];
+
+  /**
+   * 与当前提示完全相同时直接跳过：重置计时而不是替换。
+   *
+   * 这样重复触发同一操作时（如反复点击已收藏的卡片），
+   * 提示会「原地续期」而不是重新入场，避免同一句文案反复闪动。
+   */
+  if (
+    current &&
+    current.message === message &&
+    current.type === type &&
+    current.description === options?.description
+  ) {
+    clearTimers(current.id);
+    scheduleAutoClose(current.id, options?.duration ?? 2200);
+    return current.id;
+  }
+
+  // 替换：先清空上一条（含其定时器），保证任何时刻最多一个
+  clearAll();
   const id = ++idRef;
   const duration = options?.duration ?? 2200;
   items = [
-    ...items,
     {
       id,
       message,
-      type: options?.type ?? 'success',
+      type,
       description: options?.description,
-      duration,
       action: options?.action,
     },
   ];
@@ -254,19 +264,19 @@ export function toast(message: string, options?: ToastOptions): number {
   return id;
 }
 
-/** 关闭指定 toast（无参则关闭全部）。 */
+/**
+ * 关闭指定 toast（无参则关闭全部）。
+ *
+ * 关闭按钮已移除，提示目前只按 duration 自动消失；
+ * 该 API 保留供程序化收起（如提交成功后提前收掉上一条）与调试使用。
+ */
 toast.dismiss = (id?: number) => {
   if (id == null) {
-    // 清空：连同所有挂起的定时器一起清掉，否则会有回调打到已移除的 id 上
-    autoTimers.forEach((handle) => window.clearTimeout(handle));
-    autoTimers.clear();
-    autoStartedAt.clear();
-    autoRemaining.clear();
-    items = [];
+    clearAll();
     emit();
     return;
   }
-  beginClose(id);
+  removeToast(id);
 };
 toast.clear = () => toast.dismiss();
 

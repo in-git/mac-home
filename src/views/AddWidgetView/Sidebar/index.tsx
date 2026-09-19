@@ -1,9 +1,11 @@
 import React from 'react';
 import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
+import { SocialLinks } from './SocialLinks';
 
 export { SidebarNav, CATEGORIES } from './SidebarNav';
 export { SidebarFooter } from './SidebarFooter';
+export { SocialLinks } from './SocialLinks';
 export { MobileTabBar } from './MobileTabBar';
 
 interface SidebarProps {
@@ -12,7 +14,7 @@ interface SidebarProps {
 }
 
 /**
- * 桌面端左侧栏：顶部标题 + 分类导航 + 底部访客统计 / 备案信息。
+ * 桌面端左侧栏：顶部标题 + 分类导航 + 底部社交账号 / 访客统计 / 备案信息。
  * 仅桌面显示（sm 起），移动端由底部 MobileTabBar 承担同等职责。
  */
 export const Sidebar: React.FC<SidebarProps> = ({ activeCategory, onSelect }) => (
@@ -24,8 +26,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeCategory, onSelect }) =>
       </h1>
     </div>
     <SidebarNav activeCategory={activeCategory} onSelect={onSelect} />
-    {/* 底部：访客统计 + 备案信息 */}
+    {/* 底部：社交账号 + 访客统计 / 备案信息 */}
     <div className="mt-auto">
+      <div className="px-2 py-2">
+        <SocialLinks />
+      </div>
       <SidebarFooter />
     </div>
   </div>
