@@ -2,9 +2,7 @@ import React from 'react';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
 import {
   CARD_ROOT_CLASS,
-  CountBadge,
-  CoverStatsBadge,
-  FavoriteButton,
+  CardTopRightBar,
   gradientOf,
   isNewSite,
   NewBadge,
@@ -62,22 +60,19 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
-        {onToggleFavorite && (
-          <FavoriteButton
-            item={item}
-            favorited={favorited}
-            onToggleFavorite={onToggleFavorite}
-          />
-        )}
-        {/* 封面右下角：浏览量（仅 lg 起；移动端与标题同一排，见下方浮层） */}
-        <CoverStatsBadge item={item} className="max-lg:hidden" />
+        {/* 右上角：浏览量 + 收藏（与超大卡、常规卡同一组件，样式统一） */}
+        <CardTopRightBar
+          item={item}
+          favorited={favorited}
+          onToggleFavorite={onToggleFavorite}
+        />
       </div>
 
       {/*
         移动端：纯图，标题以轻量浮层压在封面底部。
         本卡小于 lg 时没有独立信息条，标题就在这个浮层里，
-        因此信号条、NEW 角标与浏览量也放在此处，与标题同一排展示。
-        信号条不带底色与边框，与各卡片保持一致。
+        因此信号条与 NEW 角标也放在此处，与标题同一排展示。
+        浏览量已在右上角工具条里，此处不再重复。
       */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-8 lg:hidden">
         <div className="flex min-w-0 items-center gap-1.5">
@@ -86,7 +81,6 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
             {item.name}
           </p>
           {showNew && <NewBadge />}
-          <CountBadge count={item.count} />
         </div>
       </div>
 

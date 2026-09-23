@@ -97,12 +97,18 @@ export const SiteAvatar: React.FC<SiteAvatarProps> = ({ item, size = 'md' }) => 
   );
 };
 
-/** 右上角收藏按钮：移动端（无 hover）常驻显示；桌面端仅悬停时显示；已收藏则始终显示 */
+/**
+ * 右上角收藏按钮：移动端（无 hover）常驻显示；桌面端仅悬停时显示；已收藏则始终显示。
+ *
+ * 暴露给 `CardTopRightBar` 使用（作为其 flex 子项，故不带绝对定位）；
+ * 若需单独放置，请自行补上定位类名。
+ */
 export const FavoriteButton: React.FC<{
   item: SiteItem;
   favorited: boolean;
   onToggleFavorite: (item: SiteItem) => void;
-}> = ({ item, favorited, onToggleFavorite }) => (
+  className?: string;
+}> = ({ item, favorited, onToggleFavorite, className = '' }) => (
   <IconButton
     label={favorited ? '取消收藏' : '收藏到我的'}
     aria-pressed={favorited}
@@ -117,23 +123,48 @@ export const FavoriteButton: React.FC<{
         className={favorited ? 'fill-rose-500 text-rose-500' : ''}
       />
     }
-    className={`absolute right-2 top-2 z-10 bg-black/45 ring-1 ring-white/25 backdrop-blur-md hover:bg-black/65 ${
-      favorited ? 'opacity-100' : 'text-white'
-    } ${favorited ? '' : 'opacity-0 max-sm:opacity-100 group-hover:opacity-100'}`}
+    className={`pointer-events-auto bg-black/45 text-white ring-1 ring-white/25 backdrop-blur-md hover:bg-black/65 ${className}`}
   />
 );
 
 /**
+ * 点击量角标的尺寸档位。
+ * - `badge`（默认）：高 18px，与信号条（`SignalBars`）严格等高 ——
+ *   两者常在封面浮层上并排展示，高度不同会明显错位；
+ * - `button`：高 28px，与 `IconButton` 的 `sm` 档等高，用于和图标按钮同排的场景。
+ */
+export type CountBadgeSize = 'badge' | 'button';
+
+const COUNT_BADGE_SIZE_CLASS: Record<CountBadgeSize, string> = {
+  badge: 'h-[18px] px-1.5',
+  button: 'h-7 px-2',
+};
+
+/**
  * 点击量角标：辅助信息，字号移动端 12px（text-xs）、桌面端 14px（text-sm）。
  *
- * 高度固定 18px（不随字号变化），与信号条（`SignalBars`）严格等高 ——
- * 两者常在封面浮层上并排展示，高度不同会明显错位。
- *
  * 图标与数字都是纯白（不额外降透明度），在半透明黑底上保持最高对比度。
+ *
+ * 视觉与收藏按钮（`FavoriteButton`）**逐条对齐**，两者并排时才算真正一致：
+ * - 底色 `bg-black/45`、描边 `ring-1 ring-white/25`、模糊 `backdrop-blur-md`；
+ * - 悬停加深同样用 `hover:bg-black/65`（**自身**悬停，而非 `group-hover`）——
+ *   收藏按钮是 `IconButton`、加深挂在自身 `hover` 上，角标若用整卡 `group-hover`，
+ *   会出现「鼠标扫过卡片时角标变深、收藏按钮却纹丝不动」的不一致；
+ * - 过渡与 `IconButton` 同为一档（`duration-200 ease-out`），只是仅作用于底色：
+ *   角标是纯展示元素，不参与点击，不需要按压缩放；
+ * - 不带阴影 / 缩放：收藏按钮没有这些，角标单方面加上会显得更"浮"。
  */
-export const CountBadge: React.FC<{ count?: number }> = ({ count }) =>
+export const CountBadge: React.FC<{
+  count?: number;
+  /** 尺寸档位，默认 `badge`（18px，与信号条等高） */
+  size?: CountBadgeSize;
+  /** 追加类名，用于外部调整定位 / 对齐 */
+  className?: string;
+}> = ({ count, size = 'badge', className = '' }) =>
   count !== undefined && count > 0 ? (
-    <span className="flex h-[18px] items-center gap-1 rounded-full bg-black/55 px-1.5 text-xs text-white leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65 sm:text-sm">
+    <span
+      className={`pointer-events-auto flex shrink-0 items-center justify-center gap-1 rounded-full bg-black/45 text-xs text-white leading-none ring-1 ring-white/25 backdrop-blur-md transition-[background-color] duration-200 ease-out hover:bg-black/65 sm:text-sm ${COUNT_BADGE_SIZE_CLASS[size]} ${className}`}
+    >
       <Eye size={12} strokeWidth={2.5} />
       <span className="text-white">
         {count > 999 ? '999+' : count}
@@ -247,27 +278,54 @@ export const SiteSignal: React.FC<{
 );
 
 /**
- * 封面右下角浮层：点击量。
+ * 卡片**右上角工具条**：浏览量 + 收藏，各卡片统一走这里。
  *
- * 各端（移动端与 PC）统一走这里：压在封面图上，故自带半透明黑底 + ring
- * 保证可读性。
+ * 早期两者是分开的 —— 收藏固定在右上角，浏览量浮在右下角、且是更小的
+ * `badge` 档。结果同一张卡上两个同类信息散落两处、深浅与大小也不一致。
+ * 现统一为「右上角一条工具条」，两者同高（28px）、同底色、同显隐节奏。
  *
- * count 缺失或为 0 时返回 null，避免在封面上留下一个空的浮层。
+ * **显隐规则由容器统一控制**（与收藏按钮原有行为一致）：
+ * - 未收藏：默认隐藏，鼠标悬停卡片（`group-hover`）才出现；移动端无悬停，常驻；
+ * - 已收藏：常驻（收藏状态本身是需要常显的信息）。
+ * 规则放在容器而非各子元素上，否则会出现「收藏常驻、浏览量时隐时现」的半截闪动。
+ *
+ * `pointer-events-none` 让工具条不拦截卡片的拖动手势 / 点击；
+ * 收藏按钮自身再用 `pointer-events-auto` 收回点击能力（浏览量是纯展示，无需点击）。
+ *
+ * 收藏按钮不传时（`onToggleFavorite` 缺省）只渲染浏览量，显隐退化为常驻。
  */
-export const CoverStatsBadge: React.FC<{
+export const CardTopRightBar: React.FC<{
   item: SiteItem;
+  favorited?: boolean;
+  onToggleFavorite?: (item: SiteItem) => void;
+  /** 追加类名，用于外部调整定位 */
   className?: string;
-}> = ({ item, className = '' }) => {
+}> = ({
+  item,
+  favorited = false,
+  onToggleFavorite,
+  className = '',
+}) => {
   const hasCount = item.count !== undefined && item.count > 0;
-
-  if (!hasCount) return null;
+  // 两者都无内容时不渲染空容器
+  if (!hasCount && !onToggleFavorite) return null;
 
   return (
-    <span
-      className={`pointer-events-none absolute bottom-2 right-2 z-[1] flex items-center gap-1 ${className}`}
-      onClick={(e) => e.stopPropagation()}
+    <div
+      className={`pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1.5 transition-opacity ${
+        favorited
+          ? 'opacity-100'
+          : 'opacity-0 max-sm:opacity-100 group-hover:opacity-100'
+      } ${className}`}
     >
-      <CountBadge count={item.count} />
-    </span>
+      <CountBadge count={item.count} size="button" />
+      {onToggleFavorite && (
+        <FavoriteButton
+          item={item}
+          favorited={favorited}
+          onToggleFavorite={onToggleFavorite}
+        />
+      )}
+    </div>
   );
 };

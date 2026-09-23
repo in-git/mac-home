@@ -80,6 +80,38 @@ export interface SitePageParams {
   device?: SiteDevice;
 }
 
+/**
+ * 首页聚合请求参数（`GET /public/site/homeAggregate`）。
+ */
+export interface SiteHomeAggregateParams {
+  /** `latest` / `hottest` 各自返回的条数，默认 5，范围 1-50（超出按 50 处理） */
+  size?: number;
+  /**
+   * 当前用户设备：`PC` / `MOBILE` / `COMPATIBLE`。
+   *
+   * 语义是**分组**而非精确匹配：
+   * - `PC` 返回「仅 PC + 兼容」
+   * - `MOBILE` 返回「仅移动端 + 兼容」
+   * - 不传则不限制设备
+   */
+  device?: SiteDevice;
+}
+
+/**
+ * 首页聚合返回结构（`BizSiteHomeAggregateVo`）。
+ *
+ * 一次请求带回头条区所需的全部数据，替代原先「推荐 / 最新 / 最热」
+ * 三次独立分页调用（详情接口见 `/public/site/homeAggregate`）。
+ */
+export interface SiteHomeAggregate {
+  /** 最新发布，按 createTime 倒序，同值时按 orderNum 升序 */
+  latest: SiteItem[];
+  /** 访问量最高，按 count 倒序，同值时按 createTime 倒序 */
+  hottest: SiteItem[];
+  /** 所有推荐站点，按 orderNum 升序、createTime 倒序 */
+  recommends: SiteItem[];
+}
+
 const inFlight = new Map<string, Promise<unknown>>();
 
 function dedupe<T>(key: string, factory: () => Promise<T>): Promise<T> {
@@ -102,6 +134,21 @@ export const siteApi = {
     dedupe(`site:categoryTree:${module ?? ''}`, () =>
       request.get<SiteCategory[]>('/api/public/site/categoryTree', {
         params: module ? { module } : {},
+      }),
+    ),
+
+  /**
+   * 首页聚合：一次拿到「最新 / 最热 / 推荐」三组站点。
+   *
+   * 取代首屏原本并发的三次 `page` 请求（各自还要带不同排序 / 推荐条件），
+   * 减少请求数、也让三份榜单在同一时刻的快照上，不会互相错位。
+   */
+  getHomeAggregate: (
+    params: SiteHomeAggregateParams = {},
+  ): Promise<SiteHomeAggregate> =>
+    dedupe(`site:homeAggregate:${JSON.stringify(params)}`, () =>
+      request.get<SiteHomeAggregate>('/api/public/site/homeAggregate', {
+        params,
       }),
     ),
 

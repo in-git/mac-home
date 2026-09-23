@@ -87,9 +87,10 @@
   </script>
 
   <style>
-    body{
+    body {
       overflow: hidden;
     }
+
     /* JS 未执行时的首屏兜底内容，React 挂载后由应用界面接管 */
     #boot-fallback {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
@@ -103,7 +104,7 @@
       overflow: hidden;
     }
 
-    #boot-fallback  h1{
+    #boot-fallback h1 {
       color: gray;
       font-size: 14px;
     }
@@ -119,7 +120,9 @@
 
   <div id="root">
     <main id="boot-fallback">
-      <h1>吴文龙的互联空间 · 吴文龙的私域 </h1>
+      <div>
+        <h1>吴文龙的互联空间 </h1>
+      </div>
     </main>
   </div>
 

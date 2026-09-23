@@ -30,7 +30,7 @@ export interface GameCardProps {
  * 游戏卡片：**纯图片**，2×2 方形（aspect-square），不渲染任何文字信息条、
  * 角标或收藏按钮，专用于游戏区的陈列。
  *
- * 与站点卡片（SiteCard / SiteTileCard / SiteHeroCard）的区别：
+ * 与站点卡片（SiteCard / SiteTileCard / SiteHeroCarousel）的区别：
  * - 无信息条、无信号条 / 浏览量 / NEW / 收藏按钮，视觉上只有封面
  * - 固定 1:1 方形，便于「2×2」这类等分宫格排布
  *

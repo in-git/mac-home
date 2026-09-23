@@ -2,8 +2,7 @@ import React from 'react';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
 import {
   CARD_ROOT_CLASS,
-  CoverStatsBadge,
-  FavoriteButton,
+  CardTopRightBar,
   gradientOf,
   isNewSite,
   NewBadge,
@@ -16,7 +15,7 @@ type SiteCardProps = SiteCardBaseProps;
 
 /**
  * 常规站点卡片：16:9 封面 + 底部信息条（Logo / 标题 / 描述）。
- * 仅负责网格中的普通卡片；头条区的大卡与宫格卡分别见 SiteHeroCard / SiteTileCard。
+ * 仅负责网格中的普通卡片；头条区的大卡与宫格卡分别见 SiteHeroCarousel / SiteTileCard。
  */
 export const SiteCard: React.FC<SiteCardProps> = ({
   item,
@@ -52,15 +51,12 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             {(item.name || '?').charAt(0).toUpperCase()}
           </div>
         )}
-        {onToggleFavorite && (
-          <FavoriteButton
-            item={item}
-            favorited={favorited}
-            onToggleFavorite={onToggleFavorite}
-          />
-        )}
-        {/* 封面右下角：信号强度 + 浏览量并排 */}
-        <CoverStatsBadge item={item} />
+        {/* 右上角：浏览量 + 收藏（与超大卡、宫格卡同一组件，样式统一） */}
+        <CardTopRightBar
+          item={item}
+          favorited={favorited}
+          onToggleFavorite={onToggleFavorite}
+        />
       </div>
 
       <div className="relative p-2 sm:p-2.5 flex items-center gap-3 text-left">

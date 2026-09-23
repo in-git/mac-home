@@ -1,5 +1,9 @@
 import { siteApi } from '../../api/site';
-import type { SiteDevice, SitePageParams } from '../../api/site';
+import type {
+  SiteDevice,
+  SiteHomeAggregateParams,
+  SitePageParams,
+} from '../../api/site';
 import type { AgentToolParam } from '../types';
 
 export interface RequestActionResult {
@@ -112,6 +116,50 @@ export const requestActions: RequestAction[] = [
         return {
           ok: false,
           message: `获取站点分页数据失败：${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
+    },
+  },
+  {
+    name: 'site_get_home_aggregate',
+    title: '获取首页聚合数据',
+    description:
+      '一次获取首页首屏所需的三组站点：最新发布（latest）、访问量最高（hottest）、所有推荐（recommends），避免并发调用多次分页接口。',
+    parameters: {
+      size: {
+        type: 'number',
+        description:
+          'latest / hottest 各自返回的条数，默认 5，范围 1-50（超出按 50 处理）',
+        required: false,
+      },
+      device: {
+        type: 'string',
+        description:
+          '当前请求设备的标识，可选值：PC / MOBILE / COMPATIBLE；PC 返回「仅PC + 兼容」，MOBILE 返回「仅移动端 + 兼容」，不传则不限制设备',
+        required: false,
+      },
+    },
+    run: async (args) => {
+      try {
+        const params: SiteHomeAggregateParams = {};
+        if (args.size !== undefined) params.size = Number(args.size);
+        if (args.device !== undefined) {
+          params.device = String(args.device) as SiteDevice;
+        }
+
+        const res = await siteApi.getHomeAggregate(params);
+        const latest = res.latest?.length ?? 0;
+        const hottest = res.hottest?.length ?? 0;
+        const recommends = res.recommends?.length ?? 0;
+        return {
+          ok: true,
+          message: `成功获取首页聚合数据（最新 ${latest} 条 / 最热 ${hottest} 条 / 推荐 ${recommends} 条）`,
+          data: res,
+        };
+      } catch (error) {
+        return {
+          ok: false,
+          message: `获取首页聚合数据失败：${error instanceof Error ? error.message : String(error)}`,
         };
       }
     },

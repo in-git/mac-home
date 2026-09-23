@@ -11,6 +11,8 @@ export { requestActions } from './actions';
 export type { RequestAction, RequestActionResult } from './actions';
 export { useSiteList } from './useSiteList';
 export type { UseSiteListOptions } from './useSiteList';
+export { useSiteHomeAggregate } from './useSiteHomeAggregate';
+export type { UseSiteHomeAggregateOptions } from './useSiteHomeAggregate';
 export { useVideoList } from './useVideoList';
 export type { UseVideoListOptions } from './useVideoList';
 
