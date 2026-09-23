@@ -247,8 +247,9 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           </div>
         ) : items.length > 0 ? (
           <>
-            {/* 头条区：左侧超大卡片 + 右侧宫格（排行榜卡 + 推荐站点卡） */}
-            <div className={`mb-4 xl:mb-8 ${FEATURED_CLASS}`}>
+            {/* 头条区：左侧超大卡片 + 右侧宫格（排行榜卡 + 推荐站点卡）。
+                下边距与网格 gap 同分档，避免小屏桌面被大屏间距挤压 */}
+            <div className={`mb-4 xl:mb-5 2xl:mb-8 ${FEATURED_CLASS}`}>
               <SiteHeroCard
                 item={heroItem}
                 onOpen={handleOpen}
