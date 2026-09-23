@@ -3,13 +3,14 @@ import { LazyImage } from '@/components/LazyImage/LazyImage';
 import {
   CARD_ROOT_CLASS,
   CountBadge,
+  CoverStatsBadge,
   FavoriteButton,
   gradientOf,
   isNewSite,
   NewBadge,
-  SignalBars,
   SiteAvatar,
   SiteCardBaseProps,
+  SiteSignal,
 } from './cardParts';
 
 type SiteTileCardProps = SiteCardBaseProps;
@@ -19,6 +20,9 @@ type SiteTileCardProps = SiteCardBaseProps;
  * 移动端纯图展示（不渲染信息条，仅保留收藏按钮与点击量、标题浮在封面底部）；
  * lg 起显示底部信息条（Logo / 标题）。
  * 与 SiteCard 的区别在于封面不按 16:9 固定，故独立成组件而不混用。
+ *
+ * 高度：lg 以下由 `min-h` 兜底（封面为弹性高度，无其它固定内容），
+ * 取值偏小让 2×2 宫格更扁、不显得是正方形；lg 起由行高决定，故置为 `lg:min-h-0`。
  */
 export const SiteTileCard: React.FC<SiteTileCardProps> = ({
   item,
@@ -32,7 +36,7 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
   return (
     <div
       onClick={() => onOpen(item)}
-      className={`${CARD_ROOT_CLASS} flex h-full min-h-[9rem] flex-col lg:min-h-0`}
+      className={`${CARD_ROOT_CLASS} flex h-full min-h-[7rem] flex-col lg:min-h-0`}
     >
       {/* 封面区：可伸缩，占满除信息条外的剩余高度 */}
       <div className="relative min-h-0 flex-1 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -61,24 +65,24 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
             onToggleFavorite={onToggleFavorite}
           />
         )}
-        <span className="absolute bottom-2 right-2">
-          <CountBadge count={item.count} />
-        </span>
+        {/* 封面右下角：浏览量（仅 lg 起；移动端与标题同一排，见下方浮层） */}
+        <CoverStatsBadge item={item} className="max-lg:hidden" />
       </div>
 
       {/*
         移动端：纯图，标题以轻量浮层压在封面底部。
         本卡小于 lg 时没有独立信息条，标题就在这个浮层里，
-        因此 NEW 角标也放在此处，与 lg 起的信息条保持同样位置。
+        因此信号条、NEW 角标与浏览量也放在此处，与标题同一排展示。
+        信号条不带底色与边框，与各卡片保持一致。
       */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-8 lg:hidden">
-        <div className="flex min-w-0 items-start gap-1.5">
-          <p className="truncate text-sm font-medium text-white">{item.name}</p>
+        <div className="flex min-w-0 items-center gap-1.5">
+          <SiteSignal item={item} className="shrink-0" />
+          <p className="min-w-0 flex-1 truncate text-sm font-medium text-white">
+            {item.name}
+          </p>
           {showNew && <NewBadge />}
-        </div>
-        {/* 信号条（深色浮层上需自带底色保证可读） */}
-        <div className="mt-1 flex">
-          <SignalBars signal={item.signal} variant="onImage" />
+          <CountBadge count={item.count} />
         </div>
       </div>
 
@@ -87,18 +91,18 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
             <SiteAvatar item={item} />
             <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-              {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
-              <p className="truncate text-sm sm:text-lg max-w-full">
-                {item.name}
-              </p>
+              {/* 标题行：信号条紧贴标题文字前 */}
+              <div className="flex min-w-0 items-center gap-1.5">
+                <SiteSignal item={item} className="shrink-0" />
+                {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
+                <p className="truncate text-sm sm:text-lg max-w-full">
+                  {item.name}
+                </p>
+              </div>
             </div>
           </div>
           {/* NEW 跟在标题行右侧（self-start 对齐行顶，即「标题右上角」） */}
           {showNew && <NewBadge className="self-start" />}
-        </div>
-        {/* 信号强度（字段缺失时不渲染） */}
-        <div className="mt-1 flex items-center gap-2">
-          <SignalBars signal={item.signal} variant="plain" />
         </div>
       </div>
     </div>

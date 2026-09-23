@@ -1,0 +1,158 @@
+
+<!-- saved from url=(0066)https://rope-and-nails-iyqowi-0-0-28-webview.devvit.net/index.html -->
+<html lang="zh-CN"><div id="__caoliao-browser-ext-root"></div><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./devvit.v1.min.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绳索与钉子</title>
+    <style>
+      /* Deliberately no touch-action / overscroll-behavior / position locks:
+         the inline post must let the Reddit feed scroll naturally when the
+         pointer is over it. Capturing scroll here is scrolljacking, which
+         Reddit prohibits. */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #f7f3ea;
+      }
+      #app {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .rn-native-text-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .rn-modal-text-layer {
+        z-index: 3;
+      }
+      .rn-native-text {
+        position: absolute;
+        box-sizing: border-box;
+        white-space: pre-wrap;
+        overflow: visible;
+        line-height: normal;
+        pointer-events: none;
+      }
+      /* Before the game boots #app is empty; hide it so the launch splash
+         fills the view instead of being pushed below a full-height blank. */
+      #app:empty {
+        display: none;
+      }
+      /* Inline launch splash for puzzle posts: a non-interactive board+strings
+         preview with a Play button that expands to the game. Stays fully
+         scroll-neutral (no touch-action / position locks) so the feed scrolls
+         naturally over it. */
+      #splash {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f7f3ea;
+        padding: 14px;
+        box-sizing: border-box;
+      }
+      /* The board dominates the post: as large as fits, minimal whitespace. */
+      .splash-card {
+        text-align: center;
+        width: 100%;
+        max-width: 560px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: splashIn 0.5s ease both;
+      }
+      .splash-art {
+        /* Cap by height too (minus room for the copy + button) so the whole
+           card fits the inline post without the Play button overflowing. */
+        width: min(90vw, 460px, calc(100vh - 208px));
+        height: auto;
+        aspect-ratio: 1 / 1;
+        border-radius: 16px;
+        box-shadow: 0 8px 22px rgba(42, 33, 24, 0.28);
+      }
+      .splash-head {
+        font-family: Poppins, Arial, sans-serif;
+        font-weight: 700;
+        font-size: clamp(18px, 5vw, 26px);
+        color: #2a2118;
+        margin: 16px 0 4px;
+        line-height: 1.2;
+      }
+      .splash-tag {
+        font-family: Lora, Georgia, serif;
+        font-size: clamp(13px, 3.6vw, 17px);
+        color: #6a655e;
+        margin: 0 0 16px;
+        min-height: 1.4em;
+        line-height: 1.35;
+        max-width: 460px;
+      }
+      .splash-play {
+        font-family: Poppins, Arial, sans-serif;
+        font-weight: 700;
+        font-size: clamp(18px, 4.6vw, 22px);
+        color: #f7f3ea;
+        background: #3d5a80;
+        border: none;
+        border-radius: 14px;
+        padding: 16px 68px;
+        cursor: pointer;
+        touch-action: manipulation;
+        box-shadow: 0 6px 16px rgba(61, 90, 128, 0.4);
+        animation: splashPulse 2.4s ease-in-out infinite;
+      }
+      .splash-play:hover {
+        background: #34507a;
+      }
+      .splash-play:active {
+        transform: scale(0.96);
+        animation: none;
+      }
+      @keyframes splashPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.045);
+        }
+      }
+      @keyframes splashIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .splash-card {
+          animation: none;
+        }
+        .splash-play {
+          animation: none;
+        }
+      }
+    </style>
+    <script type="module" crossorigin="" src="./main-DuU2zMKx.js"></script>
+  </head>
+  <body>
+    <div id="app"><canvas width="2552" height="1308" class="rn-modal-canvas" style="display: block; position: absolute; inset: 0px; z-index: 2; width: 100%; height: 100%; pointer-events: auto;"></canvas><canvas width="2552" height="1308" style="display: block; position: absolute; inset: 0px; z-index: 0; width: 100%; height: 100%;"></canvas><div class="rn-native-text-layer" style="display: none;"><div class="rn-native-text" style="pointer-events: none; left: 16px; top: 1270px; width: 1px; height: 18px; font-family: Lora, Georgia, serif; font-size: 16px; font-style: normal; font-weight: 400; text-align: left; color: rgb(74, 70, 61); opacity: 1; display: block; visibility: visible;"></div><div class="rn-native-text" style="pointer-events: none; left: 1161.5px; top: 1218px; width: 229px; height: 16px; font-family: Lora, Georgia, serif; font-size: 14px; font-style: normal; font-weight: 400; text-align: left; color: rgb(20, 20, 19); opacity: 0; display: block; visibility: visible;">Sandbox mode: server not reachable.</div><div class="rn-native-text" style="pointer-events: none; left: 2463px; top: 1270px; width: 58px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(247, 243, 234); opacity: 1; display: block; visibility: visible;">Publish</div><div class="rn-native-text" style="pointer-events: none; left: 2382.5px; top: 1270px; width: 41px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">Clear</div><div class="rn-native-text" style="pointer-events: none; left: 2311px; top: 1270px; width: 40px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">Redo</div><div class="rn-native-text" style="pointer-events: none; left: 2240.5px; top: 1270px; width: 41px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">Undo</div><div class="rn-native-text" style="pointer-events: none; left: 26.5px; top: 20px; width: 27px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">6x6</div><div class="rn-native-text" style="pointer-events: none; left: 2518px; top: 20px; width: 10px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">?</div></div><div class="rn-native-text-layer rn-modal-text-layer"><div class="rn-native-text" style="pointer-events: none; left: 1210px; top: 494.5px; width: 132px; height: 23px; font-family: Poppins, Arial, sans-serif; font-size: 20px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">How to create</div><div class="rn-native-text" style="pointer-events: none; left: 1380.5px; top: 614px; width: 51px; height: 16px; font-family: Poppins, Arial, sans-serif; font-size: 14px; font-style: normal; font-weight: 700; text-align: left; color: rgb(247, 243, 234); opacity: 1; display: none; visibility: visible;">Publish</div><div class="rn-native-text" style="pointer-events: none; left: 1173px; top: 688px; width: 47px; height: 16px; font-family: Poppins, Arial, sans-serif; font-size: 13px; font-style: normal; font-weight: 700; text-align: left; color: rgb(247, 243, 234); opacity: 1; display: none; visibility: visible;">Publish</div><div class="rn-native-text" style="pointer-events: none; left: 1127.5px; top: 687.5px; width: 26px; height: 17px; font-family: Lora, Georgia, serif; font-size: 15px; font-style: normal; font-weight: 400; text-align: left; color: rgb(74, 70, 61); opacity: 1; display: none; visibility: visible;">Tap</div><div class="rn-native-text" style="pointer-events: none; left: 1239.5px; top: 687.5px; width: 185px; height: 17px; font-family: Lora, Georgia, serif; font-size: 15px; font-style: normal; font-weight: 400; text-align: left; color: rgb(74, 70, 61); opacity: 1; display: none; visibility: visible;">to post it for others to solve.</div><div class="rn-native-text" style="pointer-events: none; left: 1102.5px; top: 543px; width: 31px; height: 14px; font-family: Poppins, Arial, sans-serif; font-size: 12px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: none; visibility: visible;">Undo</div><div class="rn-native-text" style="pointer-events: none; left: 1165px; top: 543px; width: 30px; height: 14px; font-family: Poppins, Arial, sans-serif; font-size: 12px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: none; visibility: visible;">Redo</div><div class="rn-native-text" style="pointer-events: none; left: 1136.5px; top: 667px; width: 279px; height: 34px; font-family: Lora, Georgia, serif; font-size: 15px; font-style: normal; font-weight: 400; text-align: center; color: rgb(74, 70, 61); opacity: 1; display: block; visibility: visible;">Pick a board size up top (3x3 to 6x6), then
+tap two nails to hang a string (up to four).</div><div class="rn-native-text" style="pointer-events: none; left: 1104px; top: 736px; width: 124px; height: 16px; font-family: Lora, Georgia, serif; font-size: 13px; font-style: normal; font-weight: 400; text-align: left; color: rgb(74, 70, 61); opacity: 1; display: block; visibility: visible;">Don't show this again</div><div class="rn-native-text" style="pointer-events: none; left: 1103px; top: 782px; width: 34px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: block; visibility: visible;">Skip</div><div class="rn-native-text" style="pointer-events: none; left: 1404.5px; top: 782px; width: 35px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(247, 243, 234); opacity: 1; display: block; visibility: visible;">Next</div><div class="rn-native-text" style="pointer-events: none; left: 1297.5px; top: 782px; width: 53px; height: 18px; font-family: Poppins, Arial, sans-serif; font-size: 16px; font-style: normal; font-weight: 700; text-align: left; color: rgb(20, 20, 19); opacity: 1; display: none; visibility: visible;">&lt; Back</div></div></div>
+
+  
+
+</body><div id="__caoliao-browser-ext" data-context="{}"></div></html>

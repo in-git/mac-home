@@ -1,0 +1,125 @@
+
+<!-- saved from url=(0062)https://marblemazer-imaym1-0-0-30-webview.devvit.net/game.html -->
+<html lang="zh-CN" class="h-full" style="--minimap-h: 124px;"><div id="__caoliao-browser-ext-root"></div><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./devvit.v1.min.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>弹珠迷宫</title>
+    <!--
+      THE COLD OPEN — the app's first frame, and the only one that costs nothing.
+
+      The entry bundle is ~1.1MB gz (71% of it Rapier's wasm, inlined as base64), and until this
+      existed the <body> was a bare #root: the post rendered a black rectangle for the whole download,
+      then finally painted a loading dot, then replaced it. The loading screen arrived once the
+      loading was nearly done, which is the worst possible time for it.
+
+      So the opening lives HERE, in markup and CSS, with no JS behind it at all. It paints as soon as
+      the document and stylesheet land, long before a byte of the engine, and it keeps running whether
+      the bundle takes 300ms or never arrives. Its tiles bloom from the centre outward on purpose:
+      that is the same move the engine's own attract intro makes (INTRO_STAGGER in LabyrinthEngine),
+      so the handoff reads as one continuous piece of motion rather than a spinner cutting to a game.
+
+      Removed by dismissColdOpen() once the engine has actually rendered a frame; see coldOpen.ts.
+      No inline <script> here by house rule (AGENTS.md) — none is needed, it is all CSS.
+    -->
+    <style>
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 26px;
+        background: #060607;
+        transition: opacity 420ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      /* Dismissal: faded by dismissColdOpen(), then removed from the DOM on transitionend. */
+      #boot.boot-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .boot-grid {
+        position: relative; /* containing block for the marble */
+        display: grid;
+        grid-template-columns: repeat(5, 18px);
+        grid-auto-rows: 18px;
+        gap: 6px;
+      }
+      /* Base state is the VISIBLE one so that reduced motion (which index.css collapses to a 0.001ms
+         single iteration) leaves a settled grid rather than 25 invisible tiles. */
+      .boot-grid i {
+        display: block;
+        border-radius: 2px;
+        background: #5a6fd4;
+        opacity: 1;
+        animation: bootTile 2400ms cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) infinite;
+      }
+      @keyframes bootTile {
+        0% {
+          opacity: 0;
+          transform: translateY(7px) scale(0.7);
+        }
+        18% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+        62% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-4px) scale(0.86);
+        }
+      }
+      /* The marble, already in motion before the game exists — it orbits the grid's centre on the
+         same 2400ms period, so it reads as the thing the tiles are waking up for. */
+      .boot-marble {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -9px 0 0 -9px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 34% 30%, #e8eeff, #5a6fd4 68%, #33459b);
+        box-shadow: 0 0 18px rgba(90, 111, 212, 0.55);
+        animation: bootMarble 2400ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      }
+      /* ±42px keeps the orbit inside the 114px grid (5×18 + 4×6) with the marble's radius to spare */
+      @keyframes bootMarble {
+        0%,
+        100% {
+          transform: translate(42px, -42px);
+        }
+        25% {
+          transform: translate(42px, 42px);
+        }
+        50% {
+          transform: translate(-42px, 42px);
+        }
+        75% {
+          transform: translate(-42px, -42px);
+        }
+      }
+      .boot-mark {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 10px;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: #56565e;
+        /* padding-left balances the trailing letter-space so the word stays optically centred */
+        padding-left: 0.34em;
+      }
+    </style>
+    <script type="module" crossorigin="" src="./default.js"></script>
+    <link rel="modulepreload" crossorigin="" href="https://marblemazer-imaym1-0-0-30-webview.devvit.net/preload-helper.js">
+    <link rel="stylesheet" crossorigin="" href="./preload-helper.css">
+  <link rel="modulepreload" as="script" crossorigin="" href="https://marblemazer-imaym1-0-0-30-webview.devvit.net/GameView.js"><link rel="modulepreload" as="script" crossorigin="" href="https://marblemazer-imaym1-0-0-30-webview.devvit.net/BoardThumb.js"><link rel="modulepreload" as="script" crossorigin="" href="https://marblemazer-imaym1-0-0-30-webview.devvit.net/LabyrinthEngine.js"></head>
+  <body class="h-full">
+    <div id="root" class="h-full"><div style="position: fixed; inset: 0px; overflow: hidden; background: var(--void);"><div style="position: absolute; inset: 0px;"><canvas style="width: 100%; height: 100%; display: block; touch-action: none;" data-engine="three.js r184" width="2552" height="1308"></canvas></div><div style="position: absolute; right: 12px; z-index: 18; display: block; opacity: 0.55; padding: 4px; border-radius: var(--radius-md); background: var(--face); border: 1px solid var(--rule); box-shadow: var(--key-top); bottom: calc(16px + env(safe-area-inset-bottom, var(--safe-bottom))); top: auto; pointer-events: none;"><canvas width="114" height="114" style="display: block; border-radius: 3px; touch-action: none; width: 114px; height: 114px;"></canvas></div><div style="position: absolute; inset: 0px; z-index: 10; touch-action: none;"></div><div style="position: fixed; display: none; width: 128px; height: 128px; margin-left: -64px; margin-top: -64px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.04); z-index: 11; pointer-events: none;"></div><div style="position: fixed; display: none; width: 56px; height: 56px; margin-left: -28px; margin-top: -28px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.55); background: rgba(255, 255, 255, 0.12); box-shadow: none; z-index: 12; pointer-events: none;"></div><div style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 22; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: calc(env(safe-area-inset-top, 0px) + 12px) 14px 0; pointer-events: none;"><div style="flex: 0 1 auto; min-width: 0px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-shadow: rgba(6, 6, 7, 0.92) 0px 1px 14px;"><span style="display: inline-flex; align-items: baseline; gap: 8px;"><span style="font-family: var(--font-grotesque); font-weight: 700; font-size: 14px; line-height: 1; display: inline-block; color: var(--lcd); text-shadow: var(--lcd-bleed);">S</span><span style="display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: var(--canvas-cyan); box-shadow: rgba(54, 163, 255, 0.65) 0px 0px 8px;"></span>0 falls</span><span style="display: inline-flex; flex-direction: column; align-items: stretch; gap: 2px;"><span aria-label="3 of 3 counter-steer walls" style="display: inline-flex; align-items: center; gap: 3px;"><span aria-hidden="true" style="width: 3px; height: 9px; border-radius: 1.5px; background: rgb(255, 122, 0); box-shadow: rgba(255, 122, 0, 0.55) 0px 0px 6px;"></span><span aria-hidden="true" style="width: 3px; height: 9px; border-radius: 1.5px; background: rgb(255, 122, 0); box-shadow: rgba(255, 122, 0, 0.55) 0px 0px 6px;"></span><span aria-hidden="true" style="width: 3px; height: 9px; border-radius: 1.5px; background: rgb(255, 122, 0); box-shadow: rgba(255, 122, 0, 0.55) 0px 0px 6px; animation: rk-rise 220ms var(--ease-out) both;"></span></span></span></span><span class="romk-voiceline" style="font-family: var(--font-mono); color: var(--text-muted); font-size: 10px; letter-spacing: 0.08em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0px; animation: voiceLine 2600ms var(--ease-out) both;">Corkscrew</span></div><div style="flex-shrink: 0; display: flex; gap: 4px; pointer-events: auto; padding-top: 2px;"><button class="romk-press" data-ui-sfx="none" aria-pressed="false" aria-label="Guard rails off. Turn on to have walls stop you falling off, at a lower rank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0px 8px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; cursor: pointer; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-secondary); filter: drop-shadow(rgba(6, 6, 7, 0.92) 0px 1px 10px);"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid; background: transparent;"></span>rails</button><button class="romk-press" data-ui-sfx="none" aria-label="Mute sound" aria-pressed="false" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; color: var(--text-secondary); cursor: pointer; filter: drop-shadow(rgba(6, 6, 7, 0.92) 0px 1px 10px);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: block; flex: 0 0 auto;"><path d="M11 5 6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg></button><button class="romk-press" aria-label="Leaderboard" data-ui-sfx="open" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; color: var(--text-secondary); cursor: pointer; filter: drop-shadow(rgba(6, 6, 7, 0.92) 0px 1px 10px);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: block; flex: 0 0 auto;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M6 4v6a6 6 0 0 0 12 0V4M8 21h8M12 17v4"></path></svg></button><button class="romk-press" aria-label="Pause and open the menu" data-ui-sfx="open" style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0px 6px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: transparent; cursor: pointer; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-primary); filter: drop-shadow(rgba(6, 6, 7, 0.92) 0px 1px 10px);">menu</button></div></div></div></div>
+    
+  
+
+</body><div id="__caoliao-browser-ext" data-context="{}"></div></html>

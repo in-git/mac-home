@@ -1,0 +1,219 @@
+
+<!-- saved from url=(1371)https://daily-hoops-jedhct-0-0-3-webview.devvit.net/index.html?token=eyJhbGciOiJSUzI1NiIsImtpZCI6IjZiYWQ1NGQ0LTEwNTgtNTVhZC1iNzg5LTMxYjY3YzY2YTdlMCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZXZ2aXQtZ2F0ZXdheS5yZWRkaXQuY29tIiwiYXVkIjpbIjIxZTJmODA3LTU1NjItNDI4ZC1iNWQyLWQ3ZTFjZmRlZTVjMi5kYWlseS1ob29wcy5tYWluLmRldnZpdC1nYXRld2F5LnJlZGRpdC5jb20iXSwiZXhwIjoxNzkwMjEyODM5LCJuYmYiOjE3OTAxMjY0MzksImlhdCI6MTc5MDEyNjQzOSwianRpIjoiYzQyZmY2ZDMtNzQ3Ny00NDE3LWJlMmItYTIzY2JmNWZmMTA0IiwiZGV2dml0Ijp7Imluc3RhbGxhdGlvbiI6eyJpZCI6IjIxZTJmODA3LTU1NjItNDI4ZC1iNWQyLWQ3ZTFjZmRlZTVjMiJ9LCJhcHAiOnsiaWQiOiIxNWEyMjk3Ny02OGQxLTRkMTItYmJiNS02MDQxODYxMmQzMzAiLCJuYW1lIjoiZGFpbHktaG9vcHMiLCJ2ZXJzaW9uIjoiMC4wLjMiLCJzdGF0dXMiOjEsInNsdWciOiJkYWlseS1ob29wcyIsImFjY291bnQiOnsiaWQiOiJ0Ml8ya2UzdXkxMG1kIn19LCJwb3N0Ijp7ImlkIjoidDNfMXcxNzcxciIsImF1dGhvciI6InQyXzJrZTN1eTEwbWQifSwic3VicmVkZGl0Ijp7Im5hbWUiOiJEYWlseUhvb3BzIiwiaWQiOiJ0NV9qZWRoY3QifSwidXNlciI6eyJuYW1lIjoiTGVnaXRpbWF0ZU11c2NsZTM3OTUiLCJpZCI6InQyXzJrenhydDhibDQiLCJzZXNzaW9uX2lkIjoiaWtlcWNrZG5taHBwbmltZmdlIn19fQ.DYuGd5qw_lGoyk9z25qv-WVq25ZDTAPoLZEqGDYTB2mf-8l5CqIjF5c4frIiXhC7V6B_RF2D-_7UuSmYjgtRjPjqD7JPKsmEW4IJlU5_xc5go_naLPwpdzKcsEnObfAbyVcCkHNx0aNfdY3952sv7fF8QPOmrVLat17KH2RQSJwKqACQfVUNmKfcGhcP-mGCnQVbMF1oKvgSM86PvCtv1Cv_Wwp3vj9oBvNxDJPxSZOqaqFFP6x1XkV4NSVn4p94Na0ZEBa06XIw05me9hL6helzKVVnmI5dDLSykpQR-xYNg98W-JWQMbzNMFtqnVyef67E-IhuC9U7tABa_i4PxQ -->
+<html lang="zh-CN"><div id="__caoliao-browser-ext-root"></div><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./devvit.v1.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>每日篮筐</title>
+    <script type="module" crossorigin="" src="./game.js"></script>
+    <link rel="modulepreload" crossorigin="" href="https://daily-hoops-jedhct-0-0-3-webview.devvit.net/realtime_subscriptions.js">
+    <link rel="stylesheet" crossorigin="" href="./game.css">
+  </head>
+  <body>
+    <div id="app">
+      <main class="court-wrap">
+        <canvas id="court" width="420" height="672"></canvas>
+
+        <div id="startGate" class="court-gate">
+          <div class="gate-card">
+            <div class="gate-title">Swipe to shoot</div>
+            <div class="gate-text">
+              Ten lives. The hoop starts still, then starts moving the more you
+              sink. Three in a row and the ball catches fire — every bucket
+              after that wins a life back. Equal buckets? The faster run ranks
+              higher, so don't dawdle.
+            </div>
+            <button id="startBtn" class="action-btn action-btn-orange" type="button">
+              <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 4.5v15l13-7.5z" fill="currentColor"></path>
+              </svg>
+              <span>TIP OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="playedGate" class="court-gate hidden">
+          <div class="gate-card">
+            <div class="gate-title">Today's run is in the books</div>
+            <div class="gate-text">
+              You sank <strong id="playedScore">0</strong>. One run per day —
+              a fresh court drops at 00:05 UTC.
+            </div>
+            <button id="playedResults" class="action-btn action-btn-green" type="button">
+              <span>SEE RESULTS</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="loginGate" class="court-gate hidden">
+          <div class="gate-card">
+            <svg class="login-logo" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" fill="#E8641F"></circle>
+              <path d="M12 2v20M2 12h20M4.5 5A16 16 0 0 1 4.5 19M19.5 5a16 16 0 0 0 0 14" stroke="#7a2f08" stroke-width="1.3" fill="none"></path>
+            </svg>
+            <div class="gate-title">Log in to play</div>
+            <div class="gate-text">
+              Sign in to Reddit to shoot today's court, save your best score and
+              climb the daily leaderboard.
+            </div>
+            <button id="loginBtn" class="action-btn action-btn-orange" type="button">
+              <span>LOG IN TO REDDIT</span>
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="score" id="score">0</div>
+          <div class="subtitle">
+            <span id="gameLabel">Hoops #20719</span>
+            <span class="dot">·</span>
+            <span id="avgLabel">Today's avg: —</span>
+          </div>
+        </div>
+        <button id="viewLeaderboard" class="action-btn action-btn-green hidden" type="button">
+          <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 4h10l-.4 3h2.9v3a4 4 0 0 1-3.6 4 5 5 0 0 1-2.4 2v2h3v2H7v-2h3v-2a5 5 0 0 1-2.4-2A4 4 0 0 1 4 10V7h2.9L7 4zm0 5H6v1a2 2 0 0 0 1 1.7V9zm10 0v2.7A2 2 0 0 0 18 10V9h-1z" fill="currentColor"></path>
+          </svg>
+          <span>LEADERBOARD</span>
+        </button>
+      </header>
+
+      <section class="howto" id="howto">
+        <div class="howto-item">
+          <div class="swipe-demo" aria-hidden="true">
+            <span class="swipe-arrow"></span>
+            <span class="swipe-ball"></span>
+          </div>
+          <div class="howto-text">Swipe up to shoot</div>
+        </div>
+        <div class="howto-item">
+          <div class="points-demo" aria-hidden="true">
+            <span class="pt live"></span>
+            <span class="pt live"></span>
+            <span class="pt spent"></span>
+          </div>
+          <div class="howto-text">10 lives · 3 in a row earns more</div>
+        </div>
+      </section>
+
+      <div id="results" class="results hidden">
+        <div class="bubbles" aria-hidden="true">
+          <div class="bubble b1"></div>
+          <div class="bubble b2"></div>
+          <div class="bubble b3"></div>
+          <div class="bubble b4"></div>
+          <div class="bubble b5"></div>
+          <div class="bubble b6"></div>
+          <div class="bubble b7"></div>
+          <div class="bubble b8"></div>
+        </div>
+        <div class="results-card">
+          <div class="confetti" aria-hidden="true"></div>
+          <h2 class="results-title">
+            <span id="resultsScore">0</span> buckets
+            <span class="results-in">in</span>
+            <span id="resultsTime">0.0s</span>
+          </h2>
+          <p class="results-subtitle" id="resultsSubtitle">
+            🏀 New court tomorrow — keep your streak alive!
+          </p>
+
+          <div id="streakBanner" class="streak-banner hidden">
+            <svg class="flame" viewBox="0 0 32 44" aria-hidden="true">
+              <path d="M16 0c2 6 10 11 10 22a10 10 0 0 1-20 0c0-4 2-6 4-8-1 4 1 7 3 7 2 0 4-2 3-5 3 2 4 5 4 8a6 6 0 0 1-12 0c0-8 6-14 8-24z" fill="url(#flameGrad)"></path>
+              <defs>
+                <lineargradient id="flameGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#FFD76A"></stop>
+                  <stop offset="1" stop-color="#FFB84A"></stop>
+                </lineargradient>
+              </defs>
+            </svg>
+            <div class="streak-text">
+              <div class="streak-title">On fire</div>
+              <div class="streak-sub"><span id="streakDays">0</span>-day streak!</div>
+            </div>
+          </div>
+
+          <div id="tierRow" class="tier-row hidden">
+            <div class="tier" data-tier="champion" data-threshold="7">
+              <div class="tier-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 3h10v2h3v3a4 4 0 0 1-4 4 5 5 0 0 1-3.5 3.5V18h3v2H8.5v-2h3v-2.5A5 5 0 0 1 8 12a4 4 0 0 1-4-4V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z" fill="currentColor"></path>
+                </svg>
+              </div>
+              <div class="tier-days">7 days</div>
+              <div class="tier-label">Starter</div>
+            </div>
+            <div class="tier" data-tier="icon" data-threshold="31">
+              <div class="tier-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 2h8l1 5-5 4-5-4 1-5zm4 8 6 4-2 8-4-3-4 3-2-8 6-4zm0 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" fill="currentColor"></path>
+                </svg>
+              </div>
+              <div class="tier-days">31 days</div>
+              <div class="tier-label">All-Star</div>
+            </div>
+            <div class="tier" data-tier="hof" data-threshold="50">
+              <div class="tier-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 4c2 0 5 2 6 6-3 0-6-2-6-6zm14 0c0 4-3 6-6 6 1-4 4-6 6-6zM8 11h8l-1 7H9l-1-7zm3 8h2v2h-2v-2z" fill="currentColor"></path>
+                </svg>
+              </div>
+              <div class="tier-days">50 days</div>
+              <div class="tier-label">Hall of fame</div>
+            </div>
+            <div class="tier" data-tier="invincible" data-threshold="100">
+              <div class="tier-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3zm0 5-1.5 3.2L7 10.7l2.6 2.4-.7 3.4L12 14.8l3.1 1.7-.7-3.4 2.6-2.4-3.5-.5L12 7z" fill="currentColor"></path>
+                </svg>
+              </div>
+              <div class="tier-days">100 days</div>
+              <div class="tier-label">Legend</div>
+            </div>
+          </div>
+
+          <div class="results-row">
+            <div class="stat"><div class="v" id="rSwishes">0</div><div class="l">Swishes</div></div>
+            <div class="stat"><div class="v" id="rStreak">0</div><div class="l">Best run</div></div>
+            <div class="stat"><div class="v" id="rBest">—</div><div class="l">Your best</div></div>
+            <div class="stat"><div class="v" id="rRank">—</div><div class="l">Rank</div></div>
+          </div>
+          <div class="leaderboard" id="leaderboard"></div>
+          <!-- Dev build only: replay today's court without waiting for tomorrow. -->
+          <div class="results-retry">
+            <button id="tryAgain" class="action-btn action-btn-purple hidden" type="button">
+              <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z" fill="currentColor"></path>
+              </svg>
+              <span>TRY AGAIN</span>
+            </button>
+          </div>
+          <div class="results-actions">
+            <button id="shareResults" class="action-btn action-btn-orange" type="button">
+              <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 8a3 3 0 1 0-2.8-4L9 7.5a3 3 0 1 0 0 9l6.2 3.5A3 3 0 1 0 18 16a3 3 0 0 0-2 .8L9.9 13.3a3 3 0 0 0 0-2.6L16 7.2A3 3 0 0 0 18 8z" fill="currentColor"></path>
+              </svg>
+              <span>SHARE</span>
+            </button>
+            <button id="joinSub" class="action-btn action-btn-blue" type="button">
+              <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"></path>
+              </svg>
+              <span>JOIN r/DailyHoops</span>
+            </button>
+            <button id="closeResults" class="action-btn action-btn-purple" type="button">
+              <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+              </svg>
+              <span>BACK</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  
+
+</body><div id="__caoliao-browser-ext" data-context="{}"></div></html>

@@ -123,12 +123,21 @@ export const FavoriteButton: React.FC<{
   />
 );
 
-/** 点击量角标：辅助信息，移动端 12px（text-xs），桌面端 14px（text-sm） */
+/**
+ * 点击量角标：辅助信息，字号移动端 12px（text-xs）、桌面端 14px（text-sm）。
+ *
+ * 高度固定 18px（不随字号变化），与信号条（`SignalBars`）严格等高 ——
+ * 两者常在封面浮层上并排展示，高度不同会明显错位。
+ *
+ * 图标与数字都是纯白（不额外降透明度），在半透明黑底上保持最高对比度。
+ */
 export const CountBadge: React.FC<{ count?: number }> = ({ count }) =>
   count !== undefined && count > 0 ? (
-    <span className="flex items-center gap-1 rounded-full bg-black/55 px-1.5 py-0.5 text-xs text-white leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65 sm:text-sm">
-      <Eye size={12} className="opacity-90" />
-      {count > 999 ? '999+' : count}
+    <span className="flex h-[18px] items-center gap-1 rounded-full bg-black/55 px-1.5 text-xs text-white leading-none shadow-md ring-1 ring-white/15 backdrop-blur-md duration-200 group-hover:scale-105 group-hover:bg-black/65 sm:text-sm">
+      <Eye size={12} strokeWidth={2.5} />
+      <span className="text-white">
+        {count > 999 ? '999+' : count}
+      </span>
     </span>
   ) : null;
 
@@ -161,8 +170,17 @@ export const NewBadge: React.FC<{ className?: string }> = ({
 /** 信号条总格数：与 signal 的取值上限（5）一致 */
 const SIGNAL_LEVELS = 5;
 
-/** 各档位的柱高（px），由弱到强递增；配合 5 格形成阶梯感 */
-const SIGNAL_BAR_HEIGHTS = [4, 6, 8, 11, 14];
+/**
+ * 各档位的柱高（px），由弱到强递增形成阶梯感。
+ *
+ * 必须用固定 px 而不是百分比：柱高百分比是相对**容器高度**解析的，
+ * 最高一档只能到 88% × 18 ≈ 15.8px，视觉上永远比 18px 的「浏览量」矮一截，
+ * 两者并排就会错位。写死 px 后最高柱严格等于容器高度。
+ */
+const SIGNAL_BAR_HEIGHTS = [6, 8, 10, 14, 18];
+
+/** 信号条整体高度（px）：最高一档柱高，与 `CountBadge` 严格等高 */
+const SIGNAL_HEIGHT = 18;
 
 /** 按强度取色：弱（1-2）偏灰、中（3）琥珀、强（4-5）绿 */
 function signalColor(level: number): string {
@@ -174,30 +192,26 @@ function signalColor(level: number): string {
 /**
  * 信号强度可视化：5 格阶梯柱状条，点亮的格数 = signal（1 最弱、5 最强）。
  *
- * 关于配色：不用红/黄/绿三档暗示好坏，仅按「弱=中性灰、中=琥珀、强=绿」递进，
- * 未点亮的格子统一低透明度灰底，保证在封面图与信息条两种底色上都可读。
+ * 关于配色：不用红/黄/绿三档暗示好坏，仅按「弱=中性灰、中=琥珀、强=绿」递进。
  *
- * `variant` 决定适配的场景：
- * - `onImage`：压在封面图上，用白色半透明底 + ring 提升对比度
- * - `plain`：位于卡片信息条内，跟随前景色
+ * 外观上**不带任何底色与边框**，直接落在卡片背景上：
+ * - 未点亮的格子用 `bg-current`（跟随前景色）+ 低透明度，
+ *   这样在浅色信息条（深色文字）与深色封面浮层（白色文字）上都能看清。
+ * - 点亮的格子用彩色，保证可辨识。
+ *
+ * 卡片请勿直接使用本组件，统一走 `SiteSignal`。
  */
 export const SignalBars: React.FC<{
   signal?: number;
-  variant?: 'onImage' | 'plain';
   className?: string;
-}> = ({ signal, variant = 'plain', className = '' }) => {
+}> = ({ signal, className = '' }) => {
   const level = normalizeSignal(signal);
   if (level === null) return null;
 
-  const onImage = variant === 'onImage';
-
   return (
     <span
-      className={`flex items-end gap-[2px] leading-none ${
-        onImage
-          ? 'rounded-full bg-black/55 px-1.5 py-1 ring-1 ring-white/15 backdrop-blur-md'
-          : ''
-      } ${className}`}
+      className={`flex items-end gap-[2px] leading-none ${className}`}
+      style={{ height: SIGNAL_HEIGHT }}
       title={`信号强度 ${level}/5`}
       aria-label={`信号强度 ${level} / 5`}
       role="img"
@@ -210,11 +224,7 @@ export const SignalBars: React.FC<{
             key={idx}
             style={{ height: SIGNAL_BAR_HEIGHTS[i], width: 3 }}
             className={`rounded-[1px] transition-colors ${
-              active
-                ? signalColor(level)
-                : onImage
-                  ? 'bg-white/30'
-                  : 'bg-black/20 dark:bg-white/25'
+              active ? signalColor(level) : 'bg-current opacity-25'
             }`}
           />
         );
@@ -224,22 +234,40 @@ export const SignalBars: React.FC<{
 };
 
 /**
- * 卡片辅助信息行：信号强度。
+ * 卡片信号强度：各卡片展示信噪比的**唯一入口**。
  *
- * signal 为后端补充的元数据，可能缺失；缺失时返回 null，
- * 避免在卡片底部留下一行空白高度，影响网格对齐。
+ * 只是对 `SignalBars` 的薄封装（传入 `item` 而非 `signal`，减少各卡片重复取字段），
+ * 样式固定为无底色、无边框，避免每张卡片手写 variant / className 造成不一致。
  */
-export const SiteMetaRow: React.FC<{
+export const SiteSignal: React.FC<{
+  item: SiteItem;
+  className?: string;
+}> = ({ item, className = '' }) => (
+  <SignalBars signal={item.signal} className={className} />
+);
+
+/**
+ * 封面右下角浮层：点击量。
+ *
+ * 各端（移动端与 PC）统一走这里：压在封面图上，故自带半透明黑底 + ring
+ * 保证可读性。
+ *
+ * count 缺失或为 0 时返回 null，避免在封面上留下一个空的浮层。
+ */
+export const CoverStatsBadge: React.FC<{
   item: SiteItem;
   className?: string;
 }> = ({ item, className = '' }) => {
-  if (normalizeSignal(item.signal) === null) return null;
+  const hasCount = item.count !== undefined && item.count > 0;
+
+  if (!hasCount) return null;
 
   return (
-    <div
-      className={`flex items-center gap-2 px-2 pb-2 sm:px-2.5 ${className}`}
+    <span
+      className={`pointer-events-none absolute bottom-2 right-2 z-[1] flex items-center gap-1 ${className}`}
+      onClick={(e) => e.stopPropagation()}
     >
-      <SignalBars signal={item.signal} variant="plain" />
-    </div>
+      <CountBadge count={item.count} />
+    </span>
   );
 };

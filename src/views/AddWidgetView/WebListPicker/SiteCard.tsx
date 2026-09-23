@@ -2,14 +2,14 @@ import React from 'react';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
 import {
   CARD_ROOT_CLASS,
-  CountBadge,
+  CoverStatsBadge,
   FavoriteButton,
   gradientOf,
   isNewSite,
   NewBadge,
   SiteAvatar,
   SiteCardBaseProps,
-  SiteMetaRow,
+  SiteSignal,
 } from './cardParts';
 
 type SiteCardProps = SiteCardBaseProps;
@@ -59,9 +59,8 @@ export const SiteCard: React.FC<SiteCardProps> = ({
             onToggleFavorite={onToggleFavorite}
           />
         )}
-        <span className="absolute bottom-2 right-2">
-          <CountBadge count={item.count} />
-        </span>
+        {/* 封面右下角：信号强度 + 浏览量并排 */}
+        <CoverStatsBadge item={item} />
       </div>
 
       <div className="relative p-2 sm:p-2.5 flex items-center gap-3 text-left">
@@ -70,10 +69,14 @@ export const SiteCard: React.FC<SiteCardProps> = ({
           <SiteAvatar item={item} />
           {/* 文本区：宽度随内容自适应（w-fit），最长不超过可用宽度（max-w-full 后截断） */}
           <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
-            {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
-            <p className="truncate text-sm sm:text-lg max-w-full">
-              {item.name}
-            </p>
+            {/* 标题行：信号条紧贴标题文字前（各端一致，无底色无边框） */}
+            <div className="flex min-w-0 items-center gap-1.5">
+              <SiteSignal item={item} className="shrink-0" />
+              {/* 标题：字号移动端 14px（text-sm），桌面端 18px */}
+              <p className="truncate text-sm sm:text-lg max-w-full">
+                {item.name}
+              </p>
+            </div>
             {/* 描述为辅助富文本：移动端 12px（text-xs），桌面端 16px */}
             {item.des && (
               <p className="truncate text-xs  mt-0.5 sm:mt-1 max-w-full text-gray-500">
@@ -88,9 +91,6 @@ export const SiteCard: React.FC<SiteCardProps> = ({
         */}
         {showNew && <NewBadge className="self-start" />}
       </div>
-
-      {/* 底部辅助信息行：信号强度 + 适用设备（字段缺失时整行不渲染） */}
-      <SiteMetaRow item={item} />
     </div>
   );
 };

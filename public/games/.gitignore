@@ -1,0 +1,6 @@
+# Temp scripts generated during the i18n / file-move work.
+# Safe to delete at any time; excluded so they don't pollute the repo.
+_zh_apply.js
+_zh_pairs.txt
+_revert_move.js
+_scan_recycle.js
