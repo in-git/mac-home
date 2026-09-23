@@ -90,13 +90,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   const { keyword, setKeyword, debouncedKw, nonce, submit } = useSearch();
 
   // 常规列表：**只看非推荐**（recommend = false）。
-  //
-  // 头条区已经把推荐站点用掉了（宫格 3 张 + 轮播若干），常规列表若仍返回
-  // 推荐站点，同一站点就会在首屏出现两次 —— 上方推荐区一次、下方网格又一次。
-  // 因此这里显式传 recommend=false 把推荐站点排除掉，两块内容互不重叠。
-  //
-  // 注意 useSiteList 里对 recommend 的处理：`false` 也必须显式下发，
-  // 丢弃该参数后端会按「不带条件」返回全部站点（含推荐），与不传无异。
+
   const {
     items,
     loading,

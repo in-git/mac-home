@@ -83,8 +83,9 @@ const RankSkeleton: React.FC = () => (
       ))}
     </div>
     {/* 榜单行占位：与真实布局同样按 5 份等分，行高随卡片高度自适应；
-        只占「名次 + 标题」两段，与真实行一致（榜单已不含站点 icon） */}
-    <div className="flex min-h-0 flex-[5] flex-col">
+        只占「名次 + 标题」两段，与真实行一致（榜单已不含站点 icon）。
+        行之间加 gap 避免移动端 5 行贴在一起，gap 也会让每行高度相应变小。 */}
+    <div className="flex min-h-0 flex-[5] flex-col gap-1.5 sm:gap-2">
       {Array.from({ length: 5 }).map((_, idx) => (
         <div key={idx} className="flex min-h-0 flex-1 items-center gap-2 px-3">
           <Block className="h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]" />

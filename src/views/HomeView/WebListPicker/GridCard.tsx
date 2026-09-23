@@ -213,7 +213,7 @@ export const GridCard: React.FC<GridCardProps> = ({
             榜单行与 tabbar 立刻不等高。
             因此用固定 `basis-0 grow` + 等分容器，缺的行留白而非撑高其余行。
           */
-          <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1 flex-col gap-1.5 sm:gap-2">
             {Array.from({ length: RANK_SIZE }).map((_, idx) => {
               const item = rows[idx];
               return item ? (
