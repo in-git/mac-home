@@ -22,7 +22,7 @@ type VisibilityMap = Record<string, boolean>;
  * - WebListPicker/  网页（头条区 + 卡片网格）
  * - components/ hooks/  跨模块复用件（搜索框、滚动、搜索状态等）
  */
-export const AddWidgetView: React.FC = () => {
+export const HomeView: React.FC = () => {
   // 「我的」收藏 + 当前分类：均为本地持久化字段
   // （activeCategory 持久化后，刷新会回到上次浏览的标签页）
   const { favoriteSites, toggleFavoriteSite, activeCategory, setActiveCategory } =
@@ -105,4 +105,4 @@ export const AddWidgetView: React.FC = () => {
   );
 };
 
-export default AddWidgetView;
+export default HomeView;

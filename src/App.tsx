@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAppInit } from './hooks/useAppInit';
 
-import { AddWidgetView } from './views/AddWidgetView';
+import { HomeView } from './views/HomeView';
 import { visitorApi } from './api/visitor';
 import { LoadingOverlay } from './components/LoadingOverlay/LoadingOverlay';
 
@@ -19,7 +19,7 @@ export default function App() {
 
   return (
     <div className="h-[100dvh] bg-white w-full overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
-      <AddWidgetView />
+      <HomeView />
       {/**
        * 网页内的全屏 loading：由 loadingStore 驱动。
        *

@@ -54,8 +54,7 @@ export interface SiteItem {
   orderNum?: number;
   // 应用所属的模块
   module?: string;
-  /** 是否显示在系统应用中：网页应用（web-app）为 false，其余为 true。 */
-  showInSystem?: boolean;
+
   // 应用的创建时间
   createTime?: string;
   // 应用所属的分类列表

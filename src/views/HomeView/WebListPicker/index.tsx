@@ -21,6 +21,7 @@ import {
   SITE_GRID_CLASS,
 } from './constants';
 import { GridCard, RankTab } from './GridCard';
+import { SiteGridSkeleton } from './SiteGridSkeleton';
 import { CategoryGroup, groupCategories } from './category';
 
 /** 宫格内渲染的推荐卡数量：与排行榜错开，避免同一批数据重复展示 */
@@ -238,13 +239,9 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           </div>
         )}
 
+        {/* 首屏加载：骨架屏按真实布局（头条区 + 网格）占位，避免转圈带来的空白与跳动 */}
         {loading && items.length === 0 ? (
-          <div className="flex h-40 items-center justify-center min-h-[320px]">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 border-2 border-[color:var(--accent)] border-t-transparent rounded-full animate-spin" />
-              <span className=" text-slate-400">加载中…</span>
-            </div>
-          </div>
+          <SiteGridSkeleton />
         ) : items.length > 0 ? (
           <>
             {/* 头条区：左侧超大卡片 + 右侧宫格（排行榜卡 + 推荐站点卡）。
