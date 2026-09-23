@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Pagination } from 'swiper/modules';
 import type { Swiper as SwiperClass } from 'swiper';
 import 'swiper/css';
-import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import './SiteHeroCarousel.css';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { IconButton } from '@/components/IconButton/IconButton';
 import { SiteItem } from '@/api/site';
 import { LazyImage } from '@/components/LazyImage/LazyImage';
 import { openSite } from '@/utils/siteHelper';
@@ -38,6 +40,7 @@ export const SiteHeroCarousel: React.FC<SiteHeroCarouselProps> = ({
 }) => {
   const count = items.length;
   const [index, setIndex] = useState(0);
+  const [swiper, setSwiper] = useState<SwiperClass | null>(null);
 
   const clampedIndex = count > 0 ? Math.min(index, count - 1) : 0;
   const item = items[clampedIndex];
@@ -53,28 +56,10 @@ export const SiteHeroCarousel: React.FC<SiteHeroCarouselProps> = ({
   const categoryName = item.categoryList?.map((c) => c.name).join(' / ') ?? '';
 
   return (
-    <div
-      style={
-        {
-          // Swiper 官方主题变量：箭头与激活圆点统一为白色；缩小箭头尺寸
-          '--swiper-navigation-color': '#ffffff',
-          '--swiper-navigation-size': '1.5rem',
-          '--swiper-pagination-color': '#ffffff',
-          '--swiper-pagination-bullet-inactive-color': '#ffffff',
-          '--swiper-pagination-bullet-inactive-opacity': '0.55',
-        } as React.CSSProperties
-      }
-      className={`${CARD_ROOT_CLASS} aspect-[2/1] w-full ${className}
-        [&_.swiper-button-prev]:[filter:drop-shadow(0_1px_3px_rgba(0,0,0,.75))]
-        [&_.swiper-button-next]:[filter:drop-shadow(0_1px_3px_rgba(0,0,0,.75))]
-        [&_.swiper-pagination-bullet]:!h-1.5 [&_.swiper-pagination-bullet]:!w-1.5
-        [&_.swiper-pagination-bullet]:!bg-white
-        [&_.swiper-pagination-bullet]:[filter:drop-shadow(0_1px_2px_rgba(0,0,0,.75))]
-        [&_.swiper-pagination-bullet-active]:!w-4 [&_.swiper-pagination-bullet-active]:!opacity-100`}
-    >
+    <div className={`site-hero-carousel ${CARD_ROOT_CLASS} aspect-[2/1] w-full ${className}`}>
       <Swiper
         className="absolute inset-0 h-full w-full"
-        modules={[Autoplay, Navigation, Pagination]}
+        modules={[Autoplay, Pagination]}
         slidesPerView={1}
         loop={count > 1}
         grabCursor
@@ -83,8 +68,8 @@ export const SiteHeroCarousel: React.FC<SiteHeroCarouselProps> = ({
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}
-        navigation={count > 1}
         pagination={count > 1 ? { clickable: true } : false}
+        onSwiper={setSwiper}
         onSlideChange={(s: SwiperClass) => setIndex(s.realIndex)}
       >
         {items.map((it, i) => {
@@ -166,6 +151,26 @@ export const SiteHeroCarousel: React.FC<SiteHeroCarouselProps> = ({
         favorited={favorited}
         onToggleFavorite={onToggleFavorite}
       />
+
+      {/* 左右箭头：用项目 IconButton + lucide 箭头自绘（24px 图标 / 32px 浅黑圆底） */}
+      {count > 1 && (
+        <IconButton
+          label="上一张"
+          absolute
+          className="!left-3 !right-auto z-10 h-8 w-8 bg-black/35 text-white hover:bg-black/55"
+          icon={<ChevronLeft size={24} strokeWidth={2.5} />}
+          onClick={() => swiper?.slidePrev()}
+        />
+      )}
+      {count > 1 && (
+        <IconButton
+          label="下一张"
+          absolute
+          className="!right-3 !left-auto z-10 h-8 w-8 bg-black/35 text-white hover:bg-black/55"
+          icon={<ChevronRight size={24} strokeWidth={2.5} />}
+          onClick={() => swiper?.slideNext()}
+        />
+      )}
     </div>
   );
 };

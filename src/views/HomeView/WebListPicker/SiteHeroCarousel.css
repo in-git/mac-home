@@ -1,0 +1,20 @@
+/* 首页头条轮播主题：底部指示器外观（箭头改用项目 IconButton 自绘） */
+
+.site-hero-carousel {
+  /* Swiper 官方主题变量：激活圆点统一为白色 */
+  --swiper-pagination-color: #ffffff;
+  --swiper-pagination-bullet-inactive-color: #ffffff;
+  --swiper-pagination-bullet-inactive-opacity: 0.55;
+}
+
+/* 底部指示器：圆形（非椭圆）、加大、无阴影 */
+.site-hero-carousel .swiper-pagination-bullet {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: #ffffff;
+  opacity: 0.55;
+}
+
+.site-hero-carousel .swiper-pagination-bullet-active {
+  opacity: 1;
+}
