@@ -8,7 +8,12 @@ export interface FlatCategory {
   level: 0 | 1;
 }
 
-/** 一级分类及其子级（用于顶部「一级一行 + 子级一行」的居中展示） */
+/**
+ * 一级分类及其子级。
+ *
+ * 供顶部「一级下拉 → 二级下拉」使用：选中某个一级后，从其 children 里取子级
+ * 渲染二级下拉；children 为空则说明该一级没有子级、不出现二级下拉。
+ */
 export interface CategoryGroup {
   /** 一级分类本身 */
   parent: FlatCategory;
@@ -19,9 +24,8 @@ export interface CategoryGroup {
 /**
  * 将分类树整理为「一级 + 子级」的分组列表。
  *
- * 与旧的 flattenCategories 不同：不再把父子拍平成同一行，
- * 而是保留层级关系，供顶部按两行分别居中渲染。
- * 无子级的一级分类 children 为空数组，选中它时只请求该分类。
+ * 保留层级关系而非拍平，供顶部按「一级下拉 → 二级下拉」两级渲染。
+ * 无子级的一级分类 children 为空数组，选中它时只请求该分类、不显示二级下拉。
  */
 export function groupCategories(categories: SiteCategory[]): CategoryGroup[] {
   return categories.map((parent) => ({

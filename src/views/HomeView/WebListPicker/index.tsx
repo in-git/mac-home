@@ -192,9 +192,16 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     setRankTab(tab);
   };
 
-  // 当前一级分类下的二级分类（用于第二行居中展示）
-  const subCategories =
-    groups.find((g) => g.parent.id === selectedParent)?.children ?? [];
+  /**
+   * 一级 id → 其二级分类列表（完整分类树映射）。
+   *
+   * FilterBar 据此把二级分类**紧跟其一级之后**平铺到同一行，
+   * 并判断某个一级是否有子级（决定是否显示实心箭头）——
+   * 两件事取自同一份数据，因此不会出现「有箭头但没有二级可点」这类不一致。
+   */
+  const childrenByParent = new Map(
+    groups.map((g) => [g.parent.id, g.children]),
+  );
 
   // 点击一级分类：按父级筛选（后端 categoryId 级联包含其所有子分类），并清空二级选中
   const handleSelectParent = (id: string) => {
@@ -219,22 +226,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
    * - 也正因如此，推荐数据不会随分类 / 搜索重新拉取（见上方 effect 注释）。
    */
   const showFeatured = selectedCat === ALL_CATEGORY_ID && !debouncedKw;
-
-  /**
-   * 是否处于「首屏加载」：骨架屏的唯一开关。
-   *
-   * 常规列表与头条区聚合是两个独立请求，二者任一先返回都会让 `items` / 布局变化。
-   * 若只以常规列表的 `loading` 为判断依据，聚合稍慢时会出现这一幕：
-   * 骨架屏整体被撤下、真实卡片铺开，但排行榜卡仍带着 `rankLoading=true`，
-   * 于是它在页面里单独渲染出一块自己的内部骨架 —— 看起来就是
-   * 「其他骨架都加载完了，排行榜还挂着在那儿转」。
-   *
-   * 因此这里把两个 loading 合并：只有当**常规列表已有数据**、
-   * 且**头条区已就绪（或不展示头条区）**时，才认为首屏加载完成。
-   */
-  const featuredPending = showFeatured && aggregateLoading;
-  const firstScreenLoading =
-    items.length === 0 && (loading || featuredPending);
 
   /**
    * 头条区推荐数据分配，**宫格优先**：
@@ -276,7 +267,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     <div className="flex flex-col h-full">
       <FilterBar
         categories={groups.map((g) => g.parent)}
-        subCategories={subCategories}
+        childrenByParent={childrenByParent}
         selectedParent={selectedParent}
         categoryLoading={categoryLoading}
         selectedCat={selectedCat}
@@ -306,81 +297,85 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         )}
 
         {/*
-          首屏加载：骨架屏按真实布局（头条区 + 网格）占位，避免转圈带来的空白与跳动。
-          头条区是否出骨架同样由 showFeatured 决定，否则选中分类后骨架会多出一整块。
+          头条区与常规网格**各自独立**决定「出骨架 / 出内容」。
 
-          **必须等常规列表与头条区聚合都返回**才算首屏加载完成：
-          两者是两个独立请求，只要有一个先到，`items` 非空就会切走骨架屏，
-          而排行榜卡会带着 `rankLoading=true` 单独渲染自己的内部骨架 ——
-          表现为「其他骨架都消失了，只有排行榜还挂着一块在转」。
-          合并成同一个条件后，二者同时就绪才切到真实内容。
+          原因是两者的数据来自两个独立请求，谁先返回不由前端决定：
+          - 若用「都就绪才整体切真实内容」的单一开关，常规列表快时会被迫一起等聚合，
+            白白空等；
+          - 若只用常规列表的 loading 判断，聚合慢时就撤了骨架，头条区却还是空的 ——
+            表现为「其他骨架都消失了，只有排行榜单独杵着」（空壳渲染「暂无数据」）。
+
+          因此这里拆成两个条件，谁就绪谁先出真实内容。
+
+          头条区骨架的显隐还要叠加 `showFeatured`：切到分类 / 有搜索词时头条区
+          本就不展示，骨架也不该多出那一整块。
         */}
-        {firstScreenLoading ? (
-          <SiteGridSkeleton showFeatured={showFeatured} />
-        ) : items.length > 0 ? (
-          <>
-            {/* 头条区：左侧推荐轮播大卡 + 右侧宫格（排行榜卡 + 推荐站点卡）。
-                仅在「推荐」（未选分类 / 无搜索）时展示，切到分类后整块收起。
-                下边距与网格 gap 同分档，避免小屏桌面被大屏间距挤压 */}
-            {showFeatured && (
-              <div className={`mb-4 xl:mb-5 2xl:mb-8 ${FEATURED_CLASS}`}>
-                {/* 推荐轮播：与右侧宫格推荐卡取自推荐数组的不同片段，因此不会重复；
-                    暂无推荐数据时不渲染（宫格会自动占满整行） */}
-                {heroItems.length > 0 && (
-                  <SiteHeroCarousel
-                    items={heroItems}
-                    onOpen={handleOpen}
-                    favoritedOf={isFavorited}
-                    onToggleFavorite={onToggleFavorite}
-                    className={FEATURED_HERO_CLASS}
-                  />
-                )}
-                <div className={FEATURED_TILES_CLASS}>
-                  {/* 排行榜卡：移动端跨 2 行独占左列、lg 起只占左上单格，tabbar 切「最新 / 最热」 */}
-                  <GridCard
-                    latest={latestItems}
-                    hot={hotItems}
-                    rankTab={rankTab}
-                    onRankTabChange={handleRankTabChange}
-                    onOpen={handleOpenRank}
-                    className={FEATURED_GRID_CARD_CLASS}
-                  />
-                  {/*
-                    宫格其余格子：推荐站点卡。
-                    移动端宫格为 2 列，排行榜卡已占满左列上下 2 格，
-                    第 3 张推荐卡会溢出到第 3 行（左侧空一格），故 < lg 时隐藏，
-                    只保留填满右列的 2 张；lg 起排行榜只占 1 格，3 张正好铺满其余 3 格。
-                  */}
-                  {tileItems.map((item, idx) => (
-                    <SiteTileCard
-                      key={item.id || item.link || `${item.name}-${idx}`}
-                      item={item}
-                      onOpen={handleOpen}
-                      favorited={isFavorited(item)}
-                      onToggleFavorite={onToggleFavorite}
-                      className={`${
-                        idx === 0 ? FEATURED_TILE_FIRST_CLASS : ''
-                      } ${idx === FEATURED_TILE_COUNT - 1 ? FEATURED_TILE_LAST_CLASS : ''}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 常规卡片列表 */}
-            {gridItems.length > 0 && (
-              <div className={SITE_GRID_CLASS}>
-                {gridItems.map((item) => (
-                  <SiteCard
-                    key={item.id}
+        {/* 头条区：聚合未就绪时出骨架，就绪后出真实内容 */}
+        {showFeatured &&
+          (aggregateLoading ? (
+            <SiteGridSkeleton showFeatured showCards={false} />
+          ) : (
+            <div className={`mb-4 xl:mb-5 2xl:mb-8 ${FEATURED_CLASS}`}>
+              {/* 推荐轮播：与右侧宫格推荐卡取自推荐数组的不同片段，因此不会重复；
+                  暂无推荐数据时不渲染（宫格会自动占满整行） */}
+              {heroItems.length > 0 && (
+                <SiteHeroCarousel
+                  items={heroItems}
+                  onOpen={handleOpen}
+                  favoritedOf={isFavorited}
+                  onToggleFavorite={onToggleFavorite}
+                  className={FEATURED_HERO_CLASS}
+                />
+              )}
+              <div className={FEATURED_TILES_CLASS}>
+                {/* 排行榜卡：移动端跨 2 行独占左列、lg 起只占左上单格，tabbar 切「最新 / 最热」 */}
+                <GridCard
+                  latest={latestItems}
+                  hot={hotItems}
+                  rankTab={rankTab}
+                  onRankTabChange={handleRankTabChange}
+                  onOpen={handleOpenRank}
+                  className={FEATURED_GRID_CARD_CLASS}
+                />
+                {/*
+                  宫格其余格子：推荐站点卡。
+                  移动端宫格为 2 列，排行榜卡已占满左列上下 2 格，
+                  第 3 张推荐卡会溢出到第 3 行（左侧空一格），故 < lg 时隐藏，
+                  只保留填满右列的 2 张；lg 起排行榜只占 1 格，3 张正好铺满其余 3 格。
+                */}
+                {tileItems.map((item, idx) => (
+                  <SiteTileCard
+                    key={item.id || item.link || `${item.name}-${idx}`}
                     item={item}
                     onOpen={handleOpen}
                     favorited={isFavorited(item)}
                     onToggleFavorite={onToggleFavorite}
+                    className={`${
+                      idx === 0 ? FEATURED_TILE_FIRST_CLASS : ''
+                    } ${idx === FEATURED_TILE_COUNT - 1 ? FEATURED_TILE_LAST_CLASS : ''}`}
                   />
                 ))}
               </div>
-            )}
+            </div>
+          ))}
+
+        {/* 常规网格：首次加载中出骨架（已有数据时为分页 / 切分类，走上方 loading 遮罩）；
+            就绪且有数据后出真实卡片 */}
+        {items.length === 0 && loading ? (
+          <SiteGridSkeleton showFeatured={false} />
+        ) : items.length > 0 ? (
+          <>
+            <div className={SITE_GRID_CLASS}>
+              {gridItems.map((item) => (
+                <SiteCard
+                  key={item.id}
+                  item={item}
+                  onOpen={handleOpen}
+                  favorited={isFavorited(item)}
+                  onToggleFavorite={onToggleFavorite}
+                />
+              ))}
+            </div>
             {/* 底部：有数据显示「加载更多」按钮，无更多显示提示 */}
             <div className="py-4 flex justify-center">
               {appendLoading ? (
@@ -398,12 +393,12 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
               )}
             </div>
           </>
-        ) : (
+        ) : !showFeatured && !loading ? (
           <div className="flex h-40 flex-col items-center justify-center gap-2 min-h-[320px]">
             <Globe size={36} strokeWidth={1} />
             <p className="text-base">没有数据</p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

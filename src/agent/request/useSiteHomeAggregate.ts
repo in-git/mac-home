@@ -70,11 +70,24 @@ export function useSiteHomeAggregate(options: UseSiteHomeAggregateOptions = {}) 
   } = options;
 
   const [data, setData] = useState<SiteHomeAggregate>(EMPTY_AGGREGATE);
-  const [loading, setLoading] = useState(false);
+  /**
+   * 是否**尚未就绪**（正在加载，或还没开始加载）。
+   *
+   * 初始值必须是 `true` 而不是 `false`：首屏渲染发生在 `useEffect` 之前，
+   * 那一刻请求还一次都没发出、`data` 也是空的。若初始为 `false`，
+   * 调用方看到的是「不在加载中 + 数据为空」，于是渲染出**空壳**
+   * （排行榜卡显示「暂无数据」），下一帧才切回骨架 —— 表现为首屏闪一下空卡。
+   *
+   * 本质上 loading 承载的是三态（未开始 / 进行中 / 已完成），
+   * 这里把「未开始」和「进行中」统一归为 `true`，调用方只需判断一个布尔值。
+   */
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   /** 并发防重入：首屏与刷新可能同时触发 */
   const loadingRef = useRef(false);
+  /** 是否已成功拿到过数据：用于区分「加载完但结果为空」与「还没加载」 */
+  const loadedRef = useRef(false);
 
   const fetchAggregate = useCallback(
     async (
@@ -94,6 +107,7 @@ export function useSiteHomeAggregate(options: UseSiteHomeAggregateOptions = {}) 
         if (res.ok) {
           const normalized = normalize(res.data);
           setData(normalized);
+          loadedRef.current = true;
           return normalized;
         }
         setError(res.message || '获取首页聚合数据失败');
@@ -101,6 +115,7 @@ export function useSiteHomeAggregate(options: UseSiteHomeAggregateOptions = {}) 
         setError(err instanceof Error ? err.message : String(err));
       } finally {
         loadingRef.current = false;
+        // 无论成功失败都算「本次加载结束」，避免失败后一直卡在骨架态
         setLoading(false);
       }
       return null;

@@ -49,7 +49,15 @@ export function useSiteList(options: UseSiteListOptions = {}) {
   } = options;
 
   const [items, setItems] = useState<SiteItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  /**
+   * 是否**尚未就绪**（正在加载，或还没开始加载）。
+   *
+   * 初始值为 `true` 的原因同 `useSiteHomeAggregate`：首屏渲染发生在
+   * `useEffect` 之前，那一刻请求还没发出、`items` 也是空的。
+   * 若初始为 `false`，调用方看到「不在加载 + 无数据」，会渲染出
+   * 「没有数据」的空态，下一帧才切回骨架 —— 首屏闪一下错误提示。
+   */
+  const [loading, setLoading] = useState(true);
   const [appendLoading, setAppendLoading] = useState(false);
   const [page, setPage] = useState(defaultPage);
   const [totalPages, setTotalPages] = useState(1);

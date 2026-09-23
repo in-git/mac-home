@@ -1,13 +1,18 @@
-import { Check, ChevronDown } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/Button/Button';
 import { SearchBar } from '@/components/SearchBar';
 import { FlatCategory } from './category';
 
 interface FilterBarProps {
   /** 一级分类（含「推荐」由本组件内部追加） */
   categories: FlatCategory[];
-  /** 当前选中一级分类下的二级分类；无二级时为空数组 */
-  subCategories: FlatCategory[];
+  /**
+   * **完整分类树**下的子级映射：一级 id → 其二级分类列表。
+   *
+   * 用于把「有子级的一级」展开平铺成同一行的胶囊，以及渲染其下的二级。
+   */
+  childrenByParent: Map<string, FlatCategory[]>;
   /** 当前选中一级分类的 id，空表示「推荐」 */
   selectedParent: string;
   categoryLoading: boolean;
@@ -35,118 +40,48 @@ interface FilterBarProps {
 export const ALL_CATEGORY_ID = '';
 export const ALL_CATEGORY_LABEL = '推荐';
 
-/** 一级下拉的菜单项：可能是「推荐」，也可能是某个一级分类 */
-type ParentOption = FlatCategory & {
-  /** 是否有子级：决定是否展示实心箭头 */
-  hasChildren: boolean;
-};
-
 /**
- * 分类下拉按钮。
+ * 分类胶囊的公共样式：**宽度固定为 4 个汉字**（`--chip-w`）。
  *
- * 选中态用强调色实心表达（与旧胶囊标签的选中态一致，保持视觉延续），
- * `hasChildren` 为真时在文字右侧显示**实心**下箭头，提示「点开还有子分类」。
+ * 固定宽度的前提是全局等宽字体（见 index.css）：等宽下 4 个汉字与
+ * 4 个拉丁字符推进宽度接近，按钮才不会「有的很宽有的很窄」。
+ * 内容超出 4 字时由 Button 内部的 `truncate` 截断。
+ *
+ * 高度：Button 的 `xs-md` 档给的是移动端 24px / PC 36px。
+ * 移动端那 24px 作为**触摸目标偏小**（iOS / Material 建议至少 44 / 48dp，
+ * 至少也要 32px 以上才好点），因此这里在移动端抬高到 32px；
+ * PC 用鼠标、指针精度高，维持原有 36px 不动。
+ *
+ * 宽度不受高度影响：`--chip-w` 是按字符数算的，与高度各管一轴。
  */
-const CategoryDropdown: React.FC<{
-  label: string;
-  active: boolean;
-  open: boolean;
-  /**
-   * 是否有子级。为真时展示实心下箭头。
-   *
-   * 箭头用 `fill-current` 画成实心三角，而不是 lucide 默认的描边 V 形 ——
-   * 描边箭头在浅底上偏细、容易和文字糊在一起，实心块更醒目。
-   */
-  hasChildren?: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}> = ({ label, active, open, hasChildren = false, disabled, onClick }) => (
-  <button
-    type="button"
-    disabled={disabled}
-    aria-haspopup="listbox"
-    aria-expanded={open}
-    onClick={onClick}
-    className={`inline-flex h-6 shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-sm font-medium whitespace-nowrap transition-colors duration-150 select-none sm:h-9 sm:px-3 sm:text-md ${
-      active
-        ? 'bg-blue-500 text-white'
-        : 'bg-black/5 text-slate-700 hover:bg-black/10 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/20'
-    } disabled:opacity-50 disabled:pointer-events-none`}
-  >
-    <span className="truncate">{label}</span>
-    {hasChildren && (
-      <ChevronDown
-        size={12}
-        strokeWidth={0}
-        className={`shrink-0 fill-current transition-transform duration-200 ${
-          open ? 'rotate-180' : ''
-        }`}
-      />
-    )}
-  </button>
-);
+const CHIP_CLASS =
+  'h-8 sm:h-9 w-[var(--chip-w)] max-w-[var(--chip-w)] border border-black/10 sm:border-2 sm:border-black/15 dark:border-white/15 dark:sm:border-white/20';
 
 /**
- * 下拉菜单面板。
+ * 二级胶囊的降级样式。
  *
- * **绝对定位**，因此展开时不会把下方内容顶下去 —— 这是它相对旧「两行胶囊」
- * 的核心收益：不占用列表空间，收起时只留一行高度。
+ * 二级与一级是同一套胶囊，靠**降低不透明度**区分层级 ——
+ * 比换一套配色更轻，也不会让它看起来像另一种控件。
  */
-const DropdownPanel: React.FC<{
-  options: { id: string; name: string; hasChildren?: boolean }[];
-  selectedId: string;
-  onSelect: (id: string) => void;
-  /**
-   * 面板宽度策略：`min-w` 撑到与触发按钮等宽，内容更长时再自行变宽。
-   * 分类名长短差异大，固定宽度会出现文字被截断或大片留白。
-   */
-}> = ({ options, selectedId, onSelect }) => (
-  <div
-    role="listbox"
-    className="absolute left-0 top-full z-30 mt-1.5 max-h-72 min-w-full overflow-y-auto rounded-lg border border-black/5 bg-white py-1 shadow-lg ring-1 ring-black/5 dark:border-white/10 dark:bg-slate-800 dark:ring-white/10"
-  >
-    {options.map((opt) => {
-      const selected = opt.id === selectedId;
-      return (
-        <button
-          key={opt.id || 'recommend'}
-          type="button"
-          role="option"
-          aria-selected={selected}
-          onClick={() => onSelect(opt.id)}
-          className={`flex w-full cursor-pointer items-center gap-1.5 whitespace-nowrap px-3 py-2 text-left text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/10 ${
-            selected
-              ? 'font-medium text-[color:var(--accent)]'
-              : 'text-slate-700 dark:text-slate-200'
-          }`}
-        >
-          <span className="flex-1 truncate">{opt.name}</span>
-          {/* 有子级的项在菜单里也用同一个实心箭头提示 */}
-          {opt.hasChildren && (
-            <ChevronDown
-              size={11}
-              strokeWidth={0}
-              className="-rotate-90 shrink-0 fill-current opacity-50"
-            />
-          )}
-          {selected && <Check size={14} className="shrink-0" />}
-        </button>
-      );
-    })}
-  </div>
-);
+const SUB_CHIP_CLASS = 'opacity-80';
 
 /**
- * 网页列表顶部筛选区：搜索框 + 分类下拉。
+ * 网页列表顶部筛选区：搜索框 + 分类行。
  *
- * 分类收进**两个下拉**（一级、以及选中一级有子级时的二级），
- * 收起时只占一行，不再像旧的「两行胶囊」那样长期占用列表空间。
+ * 分类**全部平铺在同一行**（推荐 / 一级 / 其下的二级），而不是把二级藏进
+ * 下拉或浮层 —— 一眼能看到所有可选项，少一次交互。
  *
- * 有子级的一级分类在其按钮上显示实心下箭头，提示可展开子分类。
+ * 布局：**单行横向排布**。
+ * - 内容不足一行：整行居中（`w-max min-w-full justify-center`）；
+ * - 内容超出一行：横向滚动，移动端左右两侧出现滚动箭头。
+ *
+ * 层级用两件事表达，而不是靠"藏起来"：
+ * - 二级胶囊紧跟在其一级之后，且降低不透明度（`SUB_CHIP_CLASS`）；
+ * - **不用箭头图标提示"有子级"** —— 二级已直接平铺在旁，箭头纯属冗余噪音。
  */
 export const FilterBar: React.FC<FilterBarProps> = ({
   categories,
-  subCategories,
+  childrenByParent,
   selectedParent,
   categoryLoading,
   selectedCat,
@@ -161,81 +96,78 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   // 搜索框聚焦状态：聚焦时强制还原为展开态（即使分类处于折叠态），失焦后跟随滚动状态
   const [searchFocused, setSearchFocused] = useState(false);
 
-  // 当前展开的下拉：null 表示都收起。同一时刻只允许开一个
-  const [openMenu, setOpenMenu] = useState<'parent' | 'child' | null>(null);
-
-  // 下拉容器的 ref：用于点击外部 / Esc 关闭
-  const containerRef = useRef<HTMLDivElement>(null);
-
   // 聚焦输入框时等同于「向上滚动」：分类与紧凑态一并还原
   const expanded = showCategories || searchFocused;
   const compact = !expanded;
 
-  // 折叠时（未展开）强制关闭下拉，避免分类行不可见却仍浮着一个面板
-  useEffect(() => {
-    if (!expanded) setOpenMenu(null);
-  }, [expanded]);
-
-  // 点击面板外部 / 按 Esc 时关闭下拉
-  useEffect(() => {
-    if (!openMenu) return;
-
-    const onPointerDown = (e: MouseEvent | TouchEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) setOpenMenu(null);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenMenu(null);
-    };
-
-    document.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('touchstart', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', onPointerDown);
-      document.removeEventListener('touchstart', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [openMenu]);
-
-  // 一级选项：首项为「推荐」（不筛选），其余为真实一级分类。
-  // `hasChildren` 取自该分类是否有二级，用于决定是否显示实心箭头。
-  const parentOptions: ParentOption[] = [
-    { id: ALL_CATEGORY_ID, name: ALL_CATEGORY_LABEL, level: 0, hasChildren: false },
-    ...categories
-      .filter((c) => c.level === 0)
-      .map((c) => ({
-        ...c,
-        // 仅当前选中的一级能拿到子级列表；未选中时无从判断，
-        // 由调用方传入的 categories 无法表达「是否有子级」，
-        // 因此这里以「是否为当前选中」+ 子级列表共同推断（见下方 hasChildrenOf）
-        hasChildren: false,
-      })),
-  ];
+  /** 分类行的滚动容器：用于横向滚动与溢出判断 */
+  const scrollRef = useRef<HTMLDivElement>(null);
+  /** 左 / 右是否还有可滚动内容（决定移动端箭头显隐） */
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   /**
-   * 判断某个一级分类是否有子级。
+   * 重新计算左右溢出状态（滚动、缩放、数据变化后都要调）。
    *
-   * 接口只在「选中该一级」后才返回其子级，因此对**当前选中**的一级可以直接看
-   * `subCategories`；未选中的一级无法得知，此时按「存在子级」保守显示箭头 ——
-   * 分类树里一级带子级是压倒性的常见情况，多显示箭头远好于漏提示；
-   * 若点开后确实没有子级，二级下拉自然不会出现，不影响使用。
+   * 注意"是否可滚动"要看 `scrollWidth > clientWidth`：内容不足一行时整行居中、
+   * 根本没得滚，此时两个箭头都该隐藏。
    */
-  const hasChildrenOf = (id: string): boolean => {
-    if (id === ALL_CATEGORY_ID) return false;
-    if (id === selectedParent) return subCategories.length > 0;
-    return true;
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // 留 1px 容差：子像素舍入会让 scrollWidth 与 clientWidth 差出零点几像素，
+    // 严格比较会导致"明明滚到头了箭头还亮着"
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setCanScrollLeft(el.scrollLeft > 1);
+    setCanScrollRight(el.scrollLeft < maxScroll - 1);
+  }, []);
+
+  // 内容变化 / 视口变化时重算溢出状态
+  useEffect(() => {
+    updateScrollState();
+
+    const el = scrollRef.current;
+    if (!el) return;
+
+    // ResizeObserver 比 window.resize 更准：容器宽度会随侧栏折叠等变化，
+    // 那些不会触发 window resize
+    const ro = new ResizeObserver(updateScrollState);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [updateScrollState, categories, childrenByParent, expanded]);
+
+  /** 点箭头：按容器宽度滚动一屏 */
+  const scrollByPage = (dir: -1 | 1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
   };
 
-  // 一级按钮的文案：选中「推荐」显「推荐」，否则显对应分类名
-  const parentLabel =
-    selectedParent === ALL_CATEGORY_ID
-      ? ALL_CATEGORY_LABEL
-      : parentOptions.find((c) => c.id === selectedParent)?.name ??
-        ALL_CATEGORY_LABEL;
-
-  // 二级按钮的文案：未选中二级时提示「全部」，让用户知道还能再缩小范围
-  const childLabel =
-    subCategories.find((c) => c.id === selectedCat)?.name ?? '全部';
+  /**
+   * 分类平铺列表：首项「推荐」，其后每个一级都紧跟其全部二级。
+   *
+   * 用扁平数组（而非两级嵌套）渲染：层级已由「紧跟其后 + 降低透明度」表达，
+   * 扁平化后布局只需一种居中换行规则，不必为两级各写一套。
+   */
+  type Tile = { chip: FlatCategory; sub: boolean; parentId: string };
+  const tiles: Tile[] = [
+    {
+      chip: { id: ALL_CATEGORY_ID, name: ALL_CATEGORY_LABEL, level: 0 },
+      sub: false,
+      parentId: ALL_CATEGORY_ID,
+    },
+    ...categories
+      .filter((c) => c.level === 0)
+      .flatMap((c) => [
+        { chip: c, sub: false, parentId: c.id },
+        // 二级跟在其一级之后；`parentId` 指向所属一级，点击时用于同步父级
+        ...(childrenByParent.get(c.id) ?? []).map((s) => ({
+          chip: s,
+          sub: true,
+          parentId: c.id,
+        })),
+      ]),
+  ];
 
   return (
     <div
@@ -260,78 +192,107 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           expanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
         }`}
       >
-        <div className="overflow-hidden min-h-0">
+        <div className="min-h-0 overflow-hidden">
           {categoryLoading ? (
-            // 骨架屏：与真实布局一致的一行两个下拉占位
-            <div className="flex items-center gap-2">
-              {[0, 1].map((i) => (
+            // 骨架屏：与真实布局一致的一行胶囊占位，同样居中
+            <div className="flex items-center justify-center gap-2 overflow-hidden">
+              {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className="h-6 w-20 shrink-0 animate-pulse rounded-md bg-black/5 sm:h-9 sm:w-28 dark:bg-white/10"
+                  className="h-6 w-[var(--chip-w)] shrink-0 animate-pulse rounded-md bg-black/5 sm:h-9 dark:bg-white/10"
                 />
               ))}
             </div>
           ) : (
-            <div ref={containerRef} className="relative flex items-center gap-2">
-              {/* 一级分类下拉：始终存在，收起时显示当前选中的分类名 */}
-              <div className="relative">
-                <CategoryDropdown
-                  label={parentLabel}
-                  active={selectedParent !== ALL_CATEGORY_ID}
-                  open={openMenu === 'parent'}
-                  hasChildren={hasChildrenOf(selectedParent)}
-                  disabled={!expanded}
-                  onClick={() =>
-                    setOpenMenu((cur) => (cur === 'parent' ? null : 'parent'))
-                  }
-                />
-                {openMenu === 'parent' && (
-                  <DropdownPanel
-                    options={parentOptions.map((c) => ({
-                      id: c.id,
-                      name: c.name,
-                      hasChildren: hasChildrenOf(c.id),
-                    }))}
-                    selectedId={selectedParent}
-                    onSelect={(id) => {
-                      setOpenMenu(null);
-                      if (id !== selectedParent) onSelectParent(id);
-                    }}
-                  />
-                )}
+            /* `relative` 是左右箭头的定位基准 */
+            <div className="relative">
+              {/*
+                移动端左箭头：仅当左侧还有内容时出现。
+
+                做成**贴边渐隐**样式而不是居中浮起的圆形按钮：
+                圆形按钮必然要压在胶囊上（或被留白顶开），
+                那样分类就无法与下方卡片左右对齐。渐隐则是"压在边缘",
+                视觉上像内容延伸出去被截断，天然提示"左边还有"。
+                用 `pointer-events-none` + 透明度过渡隐藏，
+                避免透明箭头仍拦截下方胶囊的点击。
+              */}
+              <button
+                type="button"
+                aria-label="向左滚动分类"
+                onClick={() => scrollByPage(-1)}
+                className={`absolute left-0 top-0 bottom-0 z-10 hidden w-7 cursor-pointer items-center justify-start bg-gradient-to-r from-white to-transparent transition-opacity duration-200 max-sm:flex ${
+                  canScrollLeft ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+              >
+                <ChevronLeft size={16} className="shrink-0" />
+              </button>
+
+              {/*
+                分类行：单行横向排布 + 溢出滚动。
+
+                居中做法是「内层 `w-max mx-auto`」，**不是**滚动容器直接
+                `justify-center`：后者在内容溢出时会把起始部分推到滚动起点左侧，
+                左侧内容永远滚不到（浏览器不会把负向滚动区算进去），
+                表现为「第一个分类点不到」。用 `mx-auto` 让内层在容器更宽时
+                自动居中，溢出时则老老实实从 0 开始，两端都能滚到。
+
+                `overscroll-x-contain` 防止滑到头时带动页面整体左右晃动；
+                滚动条隐藏 —— 移动端有箭头提示，桌面端滚轮 / 触控板已足够。
+              */}
+              <div
+                ref={scrollRef}
+                onScroll={updateScrollState}
+                className="overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                <div className="flex w-max min-w-full items-center justify-center gap-2">
+                  {tiles.map((t) => {
+                  const { chip, sub, parentId } = t;
+                  // 二级的选中态看 selectedCat；一级的看 selectedParent
+                  const active = sub
+                    ? chip.id === selectedCat
+                    : chip.id === selectedParent;
+
+                  return (
+                    <Button
+                      key={`${parentId}-${chip.id || 'all'}`}
+                      variant="pill"
+                      size="xs-md"
+                      active={active}
+                      onClick={() => {
+                        if (sub) {
+                          /*
+                            点二级：先把一级切过去（保证 selectedParent 与
+                            selectedCat 同属一条分支），再设二级。
+                            两者都是 setState，同一次事件里批量生效。
+                          */
+                          if (selectedParent !== parentId) {
+                            onSelectParent(parentId);
+                          }
+                          onSelectCategory(chip.id);
+                        } else {
+                          onSelectParent(chip.id);
+                        }
+                      }}
+                      className={`${CHIP_CLASS} ${sub ? SUB_CHIP_CLASS : ''}`}
+                    >
+                        <span className="truncate">{chip.name}</span>
+                    </Button>
+                  );
+                })}
+                </div>
               </div>
 
-              {/* 二级分类下拉：仅当前一级有子级时出现 */}
-              {subCategories.length > 0 && (
-                <div className="relative">
-                  <CategoryDropdown
-                    label={childLabel}
-                    active={selectedCat !== selectedParent}
-                    open={openMenu === 'child'}
-                    disabled={!expanded}
-                    onClick={() =>
-                      setOpenMenu((cur) => (cur === 'child' ? null : 'child'))
-                    }
-                  />
-                  {openMenu === 'child' && (
-                    <DropdownPanel
-                      // 首项「全部」：回到该一级下的全部分类（即清空二级筛选）
-                      options={[
-                        { id: selectedParent, name: '全部' },
-                        ...subCategories.map((c) => ({
-                          id: c.id,
-                          name: c.name,
-                        })),
-                      ]}
-                      selectedId={selectedCat}
-                      onSelect={(id) => {
-                        setOpenMenu(null);
-                        onSelectCategory(id);
-                      }}
-                    />
-                  )}
-                </div>
-              )}
+              {/* 移动端右箭头：仅当右侧还有内容时出现，与左箭头同为贴边渐隐 */}
+              <button
+                type="button"
+                aria-label="向右滚动分类"
+                onClick={() => scrollByPage(1)}
+                className={`absolute right-0 top-0 bottom-0 z-10 hidden w-7 cursor-pointer items-center justify-end bg-gradient-to-l from-white to-transparent transition-opacity duration-200 max-sm:flex ${
+                  canScrollRight ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+              >
+                <ChevronRight size={16} className="shrink-0" />
+              </button>
             </div>
           )}
         </div>

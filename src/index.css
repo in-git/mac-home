@@ -38,6 +38,62 @@ button{
 }
 
 /*
+ * 全局等宽字体。
+ *
+ * 背景：分类胶囊需要「固定宽度容纳 4 个字」，而等宽字体下中文与拉丁字符
+ * 的推进宽度接近，按钮宽度才可按字符数稳定推算；比例字体里
+ * 「全部」与「WWWW」宽度天差地别，固定宽度必然出现一边留白一边溢出。
+ * 另外站点名 / 计数在多处并排，等宽使纵向字距更整齐。
+ *
+ * 注意必须设为 4 个字宽的基准：--chip-w 与下方按钮宽度都依赖它。
+ */
+:root {
+  --font-mono-stack: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Menlo',
+    'Consolas', 'DejaVu Sans Mono', 'PingFang SC', 'Microsoft YaHei',
+    monospace;
+  /*
+   * 分类胶囊的固定宽度：容纳 4 个汉字。
+   *
+   * 用 `em` 而非 `px`：等宽字体下 1 个汉字约 1em，4 字即 4em，
+   * 再补左右内边距（各 0.5em）与 1px 边框 → 5em 出头，取 5.25em 留余量。
+   * 用 em 的好处是移动端 / PC 两档字号变化时宽度自动跟随，无需各写一套。
+   */
+  --chip-w: 5.25em;
+}
+
+/*
+ * PC（`sm` 起，与 `CHIP_CLASS` 的断点同口径）加宽分类胶囊。
+ *
+ * 移动端要省横向空间，4 字宽度刚好；PC 上胶囊偏窄会显得局促、
+ * 点击目标也偏小，因此在同一基准上多留两个字宽的余量。
+ * 仍然用 `em`，字号档位变化时宽度自动跟随。
+ */
+@media (min-width: 640px) {
+  :root {
+    --chip-w: 7.5em;
+  }
+}
+
+html,
+body {
+  font-family: var(--font-mono-stack);
+}
+
+/* 表单控件不继承 font-family，需显式指定，否则输入框仍是比例字体 */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+/* 等宽字体下的数字对齐更整齐（配合 tabular-nums 使用） */
+.font-mono-app {
+  font-family: var(--font-mono-stack);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
  * 全局重置 a 标签的默认样式。
  * 站内多处用 <a> 承载「导航项 / 卡片」等交互元素（而非外链文字），
  * 需要剥离浏览器默认的下划线、颜色与点击高亮，

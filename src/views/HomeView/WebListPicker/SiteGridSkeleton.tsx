@@ -131,10 +131,19 @@ interface SiteGridSkeletonProps {
    * 骨架若仍铺那一整块，数据到达时会出现「骨架有、内容没有」的塌陷跳动。
    */
   showFeatured?: boolean;
+  /**
+   * 是否渲染下方**常规卡片网格**的骨架。
+   *
+   * 常规列表与头条区聚合是两个独立请求，可能一个已就绪、另一个还在路上。
+   * 此时只该为「仍未就绪」的那部分出骨架 ——
+   * 若一律铺满，已到达的真实卡片会被骨架盖住，白等一轮。
+   */
+  showCards?: boolean;
 }
 
 export const SiteGridSkeleton: React.FC<SiteGridSkeletonProps> = ({
   showFeatured = true,
+  showCards = true,
 }) => (
   <div aria-hidden="true">
     {/* 头条区：超大卡 + 宫格（排行榜卡 + 推荐卡），栅格与真实布局共用类名 */}
@@ -157,11 +166,13 @@ export const SiteGridSkeleton: React.FC<SiteGridSkeletonProps> = ({
     )}
 
     {/* 常规卡片网格：首屏骨架铺两行，行数与常见首屏可视范围相当 */}
-    <div className={SITE_GRID_CLASS}>
-      {Array.from({ length: showFeatured ? 8 : 10 }).map((_, idx) => (
-        <CardSkeleton key={idx} />
-      ))}
-    </div>
+    {showCards && (
+      <div className={SITE_GRID_CLASS}>
+        {Array.from({ length: showFeatured ? 8 : 10 }).map((_, idx) => (
+          <CardSkeleton key={idx} />
+        ))}
+      </div>
+    )}
   </div>
 );
 
