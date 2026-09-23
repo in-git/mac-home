@@ -13,7 +13,10 @@ import {
   SiteSignal,
 } from './cardParts';
 
-type SiteTileCardProps = SiteCardBaseProps;
+type SiteTileCardProps = SiteCardBaseProps & {
+  /** 追加到根节点的类名（用于网格起止位置等布局控制） */
+  className?: string;
+};
 
 /**
  * 头条区宫格卡片：封面铺满整卡高度（由外部行高决定）。
@@ -29,6 +32,7 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
   onOpen,
   favorited = false,
   onToggleFavorite,
+  className = '',
 }) => {
   const coverSrc = item.cover || item.logo;
   const showNew = isNewSite(item.createTime);
@@ -36,7 +40,7 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
   return (
     <div
       onClick={() => onOpen(item)}
-      className={`${CARD_ROOT_CLASS} flex h-full min-h-[7rem] flex-col lg:min-h-0`}
+      className={`${CARD_ROOT_CLASS} flex h-full min-h-[7rem] flex-col lg:min-h-0 ${className}`}
     >
       {/* 封面区：可伸缩，占满除信息条外的剩余高度 */}
       <div className="relative min-h-0 flex-1 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -87,7 +91,7 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
       </div>
 
       <div className="relative hidden p-2 sm:p-2.5 lg:flex flex-col text-left">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-3">
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
             <SiteAvatar item={item} />
             <div className="flex flex-col justify-center min-w-0 max-w-full w-fit">
@@ -99,6 +103,12 @@ export const SiteTileCard: React.FC<SiteTileCardProps> = ({
                   {item.name}
                 </p>
               </div>
+              {/* 描述：各端统一 16px（text-base） */}
+              {item.des && (
+                <p className="truncate text-base mt-0.5 sm:mt-1 max-w-full text-gray-500">
+                  {item.des}
+                </p>
+              )}
             </div>
           </div>
           {/* NEW 跟在标题行右侧（self-start 对齐行顶，即「标题右上角」） */}

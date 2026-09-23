@@ -77,9 +77,9 @@ export const SiteCard: React.FC<SiteCardProps> = ({
                 {item.name}
               </p>
             </div>
-            {/* 描述为辅助富文本：移动端 12px（text-xs），桌面端 16px */}
+            {/* 描述为辅助富文本：各端统一 16px（text-base） */}
             {item.des && (
-              <p className="truncate text-xs  mt-0.5 sm:mt-1 max-w-full text-gray-500">
+              <p className="truncate text-base mt-0.5 sm:mt-1 max-w-full text-gray-500">
                 {item.des}
               </p>
             )}

@@ -12,7 +12,10 @@ import {
   SiteSignal,
 } from './cardParts';
 
-type SiteHeroCardProps = SiteCardBaseProps;
+type SiteHeroCardProps = SiteCardBaseProps & {
+  /** 追加到根节点的类名（用于网格跨列等布局控制） */
+  className?: string;
+};
 
 /**
  * 头条区超大卡片：整卡铺满封面（2:1），底部渐变浮层承载 Logo / 标题 / 描述 / 点击量。
@@ -23,6 +26,7 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
   onOpen,
   favorited = false,
   onToggleFavorite,
+  className = '',
 }) => {
   const coverSrc = item.cover || item.logo;
   const showNew = isNewSite(item.createTime);
@@ -30,7 +34,7 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
   return (
     <div
       onClick={() => onOpen(item)}
-      className={`${CARD_ROOT_CLASS} aspect-[2/1] w-full`}
+      className={`${CARD_ROOT_CLASS} aspect-[2/1] w-full ${className}`}
     >
       <div className="absolute inset-0 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         {coverSrc ? (
@@ -73,8 +77,9 @@ export const SiteHeroCard: React.FC<SiteHeroCardProps> = ({
               </p>
               {showNew && <NewBadge />}
             </div>
+            {/* 描述：各端统一 16px（text-base） */}
             {item.des && (
-              <p className="mt-0.5 line-clamp-2 text-xs text-white/80 sm:mt-1 ">
+              <p className="mt-0.5 line-clamp-2 text-base text-white/80 sm:mt-1 ">
                 {item.des}
               </p>
             )}

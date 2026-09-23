@@ -20,6 +20,8 @@ export interface UseSiteListOptions {
   defaultSortOrder?: string;
   /** 请求携带的设备标识；不传则按当前运行环境自动判定 */
   defaultDevice?: SiteDevice;
+  /** 是否只查询推荐站点（后端 recommend 为布尔值，非 "Y" / "N" 字符串） */
+  defaultRecommend?: boolean;
 }
 
 /** 按当前运行环境判定设备：触屏/移动 UA 视为 MOBILE，其余视为 PC */
@@ -37,6 +39,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
     defaultSortField = '',
     defaultSortOrder = '',
     defaultDevice = detectDevice(),
+    defaultRecommend = false,
   } = options;
 
   const [items, setItems] = useState<SiteItem[]>([]);
@@ -64,6 +67,7 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       sortField = defaultSortField,
       sortOrder = defaultSortOrder,
       device = defaultDevice,
+      recommend = defaultRecommend,
     ): Promise<SiteItem[] | null> => {
       setLoading(true);
       setError(null);
@@ -78,6 +82,8 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       if (sortField) args.sortField = sortField;
       if (sortOrder) args.sortOrder = sortOrder;
       if (device) args.device = device;
+      // 文档：recommend 为布尔值（后端已把 Y/N 转成 true/false），传 "Y" 无效
+      if (recommend) args.recommend = true;
 
       try {
         const res = await runRequestAction('site_get_page', args);
@@ -107,7 +113,15 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       }
       return null;
     },
-    [defaultCat, defaultKw, defaultSize, defaultSortField, defaultSortOrder, defaultDevice],
+    [
+      defaultCat,
+      defaultKw,
+      defaultSize,
+      defaultSortField,
+      defaultSortOrder,
+      defaultDevice,
+      defaultRecommend,
+    ],
   );
 
   // 触底加载：拉取下一页并**追加**到已有列表（不清空），带并发防重入
