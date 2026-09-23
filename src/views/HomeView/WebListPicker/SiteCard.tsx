@@ -22,6 +22,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   onOpen,
   favorited = false,
   onToggleFavorite,
+  className = '',
 }) => {
   const coverSrc = item.cover || item.logo;
   // 是否为新站点（发布时间在 3 天内）
@@ -30,7 +31,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   return (
     <div
       onClick={() => onOpen(item)}
-      className={`${CARD_ROOT_CLASS} flex h-full flex-col`}
+      className={`${CARD_ROOT_CLASS} flex h-full flex-col ${className}`}
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         {coverSrc ? (

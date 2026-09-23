@@ -34,6 +34,8 @@ export interface SiteCardBaseProps {
   favorited?: boolean;
   /** 切换收藏状态；不传则不展示收藏按钮 */
   onToggleFavorite?: (item: SiteItem) => void;
+  /** 追加类名，用于外部调整定位 / 显隐 */
+  className?: string;
 }
 
 /** 卡片根容器共用的类名（边框、圆角、悬停高亮等） */

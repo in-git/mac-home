@@ -1,5 +1,6 @@
-import { Globe, Heart, Play } from 'lucide-react';
+import { Heart, Play } from 'lucide-react';
 import React from 'react';
+import { WebIcon } from '@/components/WebIcon/WebIcon';
 
 /** lucide 图标组件的最小签名（只用到 size / className） */
 type IconComponent = React.ComponentType<{
@@ -21,6 +22,8 @@ export interface CategoryDef {
   tone: string;
   /** 是否填充图标（Play 这类实心更协调） */
   fill?: boolean;
+  /** 双色图标：激活时由消费方传入 filled，外框填主题色、内线白色（WebIcon） */
+  dualTone?: boolean;
 }
 
 /**
@@ -41,13 +44,15 @@ export const CATEGORIES: CategoryDef[] = [
   {
     id: 'web',
     label: '网页',
-    Icon: Globe,
+    Icon: WebIcon,
     tone: 'from-emerald-400 to-teal-500',
+    dualTone: true,
   },
   {
     id: 'mine',
     label: '我的',
     Icon: Heart,
+    fill: true,
     tone: 'from-rose-400 to-pink-500',
   },
 ];

@@ -220,6 +220,8 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
    * - 也正因如此，推荐数据不会随分类 / 搜索重新拉取（见上方 effect 注释）。
    */
   const showFeatured = selectedCat === ALL_CATEGORY_ID && !debouncedKw;
+  // 非推荐分类：选中了某个具体分类（而非「推荐」）
+  const isNonRecommendQuery = selectedCat !== ALL_CATEGORY_ID;
 
   /**
    * 头条区推荐数据分配，**宫格优先**：
@@ -359,14 +361,36 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           <SiteGridSkeleton showFeatured={false} />
         ) : items.length > 0 ? (
           <>
+            {/*
+              非推荐分类（选中了某具体分类）下，移动端把前 4 张做成 2x2 大卡展示
+              （仅 < sm 显示），让分类头部更聚焦；其余卡片照常展示。
+              桌面端无此分块，全部走下方常规网格。
+            */}
+            {isNonRecommendQuery && gridItems.length > 0 && (
+              <div className="mb-3 grid grid-cols-2 gap-3 sm:hidden">
+                {gridItems.slice(0, 4).map((item) => (
+                  <SiteCard
+                    key={item.id}
+                    item={item}
+                    onOpen={handleOpen}
+                    favorited={isFavorited(item)}
+                    onToggleFavorite={onToggleFavorite}
+                  />
+                ))}
+              </div>
+            )}
             <div className={SITE_GRID_CLASS}>
-              {gridItems.map((item) => (
+              {gridItems.map((item, idx) => (
                 <SiteCard
                   key={item.id}
                   item={item}
                   onOpen={handleOpen}
                   favorited={isFavorited(item)}
                   onToggleFavorite={onToggleFavorite}
+                  /* 非推荐分类：移动端前 4 张已在上方的 2x2 分块展示，这里隐藏避免重复 */
+                  className={
+                    isNonRecommendQuery && idx < 4 ? 'max-sm:hidden' : ''
+                  }
                 />
               ))}
             </div>

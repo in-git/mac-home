@@ -58,26 +58,24 @@ const CHIP_CLASS =
   'h-8 sm:h-9 w-[var(--chip-w)] max-w-[var(--chip-w)] border border-black/10 sm:border-2 sm:border-black/15 dark:border-white/15 dark:sm:border-white/20';
 
 /**
- * 二级胶囊的降级样式。
- *
- * 二级与一级是同一套胶囊，靠**降低不透明度**区分层级 ——
- * 比换一套配色更轻，也不会让它看起来像另一种控件。
+ * 子级胶囊的降级样式：靠降低不透明度与其它项区分。
  */
 const SUB_CHIP_CLASS = 'opacity-80';
 
 /**
  * 网页列表顶部筛选区：搜索框 + 分类行。
  *
- * 分类**全部平铺在同一行**（推荐 / 一级 / 其下的二级），而不是把二级藏进
- * 下拉或浮层 —— 一眼能看到所有可选项，少一次交互。
+ * 分类**全部平铺在同一行**（推荐 / 各分类），不分层级下拉 ——
+ * 一眼能看到所有可选项，少一次交互。
  *
  * 布局：**单行横向排布**。
  * - 内容不足一行：整行居中（`w-max min-w-full justify-center`）；
  * - 内容超出一行：横向滚动，移动端左右两侧出现滚动箭头。
  *
- * 层级用两件事表达，而不是靠"藏起来"：
- * - 二级胶囊紧跟在其一级之后，且降低不透明度（`SUB_CHIP_CLASS`）；
- * - **不用箭头图标提示"有子级"** —— 二级已直接平铺在旁，箭头纯属冗余噪音。
+ * 展平规则：
+ * - 有子级的父分类**只展示其子级**（父级自身移除，避免与子级重复）；
+ * - 无子级的父分类作为独立项展示；
+ * - 子级胶囊降低不透明度，与独立项区分（`SUB_CHIP_CLASS`）。
  */
 export const FilterBar: React.FC<FilterBarProps> = ({
   categories,
@@ -115,8 +113,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    // 留 1px 容差：子像素舍入会让 scrollWidth 与 clientWidth 差出零点几像素，
-    // 严格比较会导致"明明滚到头了箭头还亮着"
+
     const maxScroll = el.scrollWidth - el.clientWidth;
     setCanScrollLeft(el.scrollLeft > 1);
     setCanScrollRight(el.scrollLeft < maxScroll - 1);
@@ -144,10 +141,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   /**
-   * 分类平铺列表：首项「推荐」，其后每个一级都紧跟其全部二级。
+   * 分类平铺列表：首项「推荐」，其后按序展开各分类。
    *
-   * 用扁平数组（而非两级嵌套）渲染：层级已由「紧跟其后 + 降低透明度」表达，
-   * 扁平化后布局只需一种居中换行规则，不必为两级各写一套。
+   * 展平规则：父分类若有子级则只保留子级（父级移除，避免重复），
+   * 子级经 `parentId` 记录所属父级，点击时用于同步父级选中。
    */
   type Tile = { chip: FlatCategory; sub: boolean; parentId: string };
   const tiles: Tile[] = [
@@ -156,17 +153,15 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       sub: false,
       parentId: ALL_CATEGORY_ID,
     },
-    ...categories
-      .filter((c) => c.level === 0)
-      .flatMap((c) => [
-        { chip: c, sub: false, parentId: c.id },
-        // 二级跟在其一级之后；`parentId` 指向所属一级，点击时用于同步父级
-        ...(childrenByParent.get(c.id) ?? []).map((s) => ({
-          chip: s,
-          sub: true,
-          parentId: c.id,
-        })),
-      ]),
+    ...categories.flatMap((c) => {
+      const children = childrenByParent.get(c.id) ?? [];
+      // 有子级：只平铺子级，移除父级本身
+      if (children.length > 0) {
+        return children.map((s) => ({ chip: s, sub: true, parentId: c.id }));
+      }
+      // 无子级：作为独立分类展示
+      return [{ chip: c, sub: false, parentId: c.id }];
+    }),
   ];
 
   return (
@@ -204,18 +199,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               ))}
             </div>
           ) : (
-            /* `relative` 是左右箭头的定位基准 */
             <div className="relative">
-              {/*
-                移动端左箭头：仅当左侧还有内容时出现。
-
-                做成**贴边渐隐**样式而不是居中浮起的圆形按钮：
-                圆形按钮必然要压在胶囊上（或被留白顶开），
-                那样分类就无法与下方卡片左右对齐。渐隐则是"压在边缘",
-                视觉上像内容延伸出去被截断，天然提示"左边还有"。
-                用 `pointer-events-none` + 透明度过渡隐藏，
-                避免透明箭头仍拦截下方胶囊的点击。
-              */}
+             
               <button
                 type="button"
                 aria-label="向左滚动分类"
@@ -227,18 +212,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 <ChevronLeft size={16} className="shrink-0" />
               </button>
 
-              {/*
-                分类行：单行横向排布 + 溢出滚动。
-
-                居中做法是「内层 `w-max mx-auto`」，**不是**滚动容器直接
-                `justify-center`：后者在内容溢出时会把起始部分推到滚动起点左侧，
-                左侧内容永远滚不到（浏览器不会把负向滚动区算进去），
-                表现为「第一个分类点不到」。用 `mx-auto` 让内层在容器更宽时
-                自动居中，溢出时则老老实实从 0 开始，两端都能滚到。
-
-                `overscroll-x-contain` 防止滑到头时带动页面整体左右晃动；
-                滚动条隐藏 —— 移动端有箭头提示，桌面端滚轮 / 触控板已足够。
-              */}
               <div
                 ref={scrollRef}
                 onScroll={updateScrollState}
@@ -260,11 +233,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                       active={active}
                       onClick={() => {
                         if (sub) {
-                          /*
-                            点二级：先把一级切过去（保证 selectedParent 与
-                            selectedCat 同属一条分支），再设二级。
-                            两者都是 setState，同一次事件里批量生效。
-                          */
+                     
                           if (selectedParent !== parentId) {
                             onSelectParent(parentId);
                           }
@@ -282,7 +251,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 </div>
               </div>
 
-              {/* 移动端右箭头：仅当右侧还有内容时出现，与左箭头同为贴边渐隐 */}
               <button
                 type="button"
                 aria-label="向右滚动分类"

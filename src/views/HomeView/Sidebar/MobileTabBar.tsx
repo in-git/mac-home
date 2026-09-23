@@ -1,5 +1,6 @@
 import React from 'react';
 import { CATEGORIES } from './SidebarNav';
+import { WebIcon } from '@/components/WebIcon/WebIcon';
 
 interface MobileTabBarProps {
   activeCategory: string;
@@ -52,11 +53,28 @@ export const MobileTabBar: React.FC<MobileTabBarProps> = ({
             }`}
           >
             {/**
-             * 选中态用图标 + 文字同时变色表意。
+             * 选中态用图标 + 文字同时变色表意：
+             * - 双色图标（dualTone，如网页 WebIcon）：激活时传 `filled`，
+             *   外框填充主题色、内线白色，达成「实心 + 线条清晰」；
+             * - 常规实心图标（cat.fill，如视频 Play）：激活时 `fill-current`；
+             * - 未选中：仅描边（空心）+ 灰色。
              * 这里不加渐变底座（侧边栏列表才用）：tabbar 尺寸小，
              * 色块会显得很重，实心图标本身就足够区分。
              */}
-            <cat.Icon size={22} className={cat.fill ? 'fill-current' : ''} />
+            {cat.dualTone ? (
+              <WebIcon
+                size={22}
+                filled={active}
+                strokeWidth={active ? 2.5 : 1.75}
+              />
+            ) : (
+              <cat.Icon
+                size={22}
+                className={`${cat.fill && active ? 'fill-current' : ''} ${
+                  active ? 'stroke-[2.5]' : 'stroke-[1.75]'
+                }`}
+              />
+            )}
             <span className="text-xs leading-none">{cat.label}</span>
           </button>
         );
