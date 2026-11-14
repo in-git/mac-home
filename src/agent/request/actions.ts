@@ -100,7 +100,8 @@ export const requestActions: RequestAction[] = [
         if (args.categoryId !== undefined) params.categoryId = String(args.categoryId);
         if (args.identityId !== undefined) params.identityId = String(args.identityId);
         if (args.keyword !== undefined) params.keyword = String(args.keyword);
-        if (args.recommend !== undefined) params.recommend = Boolean(args.recommend);
+        // recommend 仅在「只看推荐」(true) 时下发；false 不发，避免搜索场景下被过滤
+        if (args.recommend) params.recommend = true;
         if (args.module !== undefined) params.module = String(args.module);
         if (args.sortField !== undefined) params.sortField = String(args.sortField);
         if (args.sortOrder !== undefined) params.sortOrder = String(args.sortOrder);

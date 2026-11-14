@@ -21,11 +21,10 @@ export interface UseSiteListOptions {
   /** 请求携带的设备标识；不传则按当前运行环境自动判定 */
   defaultDevice?: SiteDevice;
   /**
-   * 推荐筛选：`true` 只看推荐、`false` 只看非推荐（两者互斥）。
-   * 为 `undefined` 时才完全不传该参数、返回全部站点。
+   * 推荐筛选：`true` 时仅返回推荐站点；`false` / 不传则该字段完全不下发，
+   * 由后端按「不带条件」返回全部站点（含推荐与未推荐，搜索场景即如此）。
    *
-   * 该条件会同时作用于**首页**与**翻页**（loadMore）两条链路，
-   * 否则第 2 页起会换一套口径，列表前后不一致。
+   * 该条件同时作用于**首页**与**翻页**（loadMore）两条链路，保证口径一致。
    */
   defaultRecommend?: boolean;
 }
@@ -96,10 +95,9 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       if (sortField) args.sortField = sortField;
       if (sortOrder) args.sortOrder = sortOrder;
       if (device) args.device = device;
-      // recommend 是 Boolean 请求参数（文档：`recommend | Boolean | 否 | 是否只看推荐`）。
-      // 必须显式传 false，不能只在为 true 时才带 ——
-      // 否则 recommend=false 时该参数被丢弃，后端会按「不带条件」返回**全部**站点（含 N 的）。
-      if (recommend !== undefined) args.recommend = recommend;
+      // recommend 仅在「只看推荐」(true) 时下发；false / 不传均不带该字段，
+      // 由后端按「不带条件」返回全部站点（含推荐与未推荐），搜索场景即如此。
+      if (recommend) args.recommend = recommend;
 
       try {
         const res = await runRequestAction('site_get_page', args);
@@ -166,10 +164,9 @@ export function useSiteList(options: UseSiteListOptions = {}) {
       if (sortField) args.sortField = sortField;
       if (sortOrder) args.sortOrder = sortOrder;
       if (device) args.device = device;
-      // 必须与首页 fetchSites 的筛选条件保持一致：漏传会被后端当成
-      // 「不带条件」，于是第 2 页起又把推荐站点捞回来，与首页口径矛盾。
-      // 与上方同因，false 也要显式下发。
-      if (defaultRecommend !== undefined) args.recommend = defaultRecommend;
+      // 与首页 fetchSites 口径保持一致：recommend 仅在 true 时下发，
+      // false / 不传都不带该字段，翻页结果与首屏一致（均含推荐站点）。
+      if (defaultRecommend) args.recommend = defaultRecommend;
 
       try {
         const res = await runRequestAction('site_get_page', args);

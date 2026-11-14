@@ -8,6 +8,16 @@ const NEW_DAYS = 3;
 const NEW_WINDOW_MS = NEW_DAYS * 24 * 60 * 60 * 1000;
 
 /**
+ * 容忍的客户端 / 服务端时钟偏差。
+ *
+ * 发布时间由服务端生成，若服务端时钟略快于客户端（或接口往返期间客户端
+ * `Date.now()` 早于服务端落库时间），解析出的 createTime 会短暂落在「未来」，
+ * 此时 `Date.now() - time` 为负，若直接判 `diff >= 0` 会漏掉刚添加的站点
+ * （表现为「刚添加的 1 分钟内不显示 NEW」）。在此窗口内的「未来时间」仍视为新站点。
+ */
+const CLOCK_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+
+/**
  * 发布时间是否在「新」窗口内。
  * 兼容后端常见的 'YYYY-MM-DD HH:mm:ss'（Safari 无法解析空格分隔，替换为 T）。
  */
@@ -21,9 +31,10 @@ export function isNewSite(createTime?: string): boolean {
       : `${normalized}${normalized.length > 10 ? '' : 'T00:00:00'}`,
   );
   if (Number.isNaN(time)) return false;
-  // 未来时间（时区偏差 / 脏数据）不算新站点：否则 now - time 为负也会命中「3 天内」
   const diff = Date.now() - time;
-  return diff >= 0 && diff < NEW_WINDOW_MS;
+  // 容忍时钟偏差：略「未来」的发布时间也视为新站点；
+  // 明显未来（超出容忍窗口）的脏数据仍不计入，避免永远命中「3 天内」。
+  return diff > -CLOCK_SKEW_TOLERANCE_MS && diff < NEW_WINDOW_MS;
 }
 
 /** 各类站点卡片共用的入参 */

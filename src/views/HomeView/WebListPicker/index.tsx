@@ -17,59 +17,32 @@ import { FilterBar, ALL_CATEGORY_ID } from './FilterBar';
 import { WebListPickerProps } from './types';
 import {
   FEATURED_CLASS,
-  FEATURED_GRID_CARD_CLASS,
   FEATURED_HERO_CLASS,
   FEATURED_TILES_CLASS,
-  FEATURED_TILE_FIRST_CLASS,
-  FEATURED_TILE_LAST_CLASS,
   SITE_GRID_CLASS,
 } from './constants';
-import { GridCard, RankTab } from './GridCard';
 import { SiteGridSkeleton } from './SiteGridSkeleton';
+import { LatestContentCarousel } from './LatestContentCarousel';
 import { CategoryGroup, groupCategories } from './category';
 
-/**
- * 宫格内渲染的推荐卡「槽位数」：lg 起为 3 张，移动端第 3 张由
- * `FEATURED_TILE_LAST_CLASS`（max-lg:hidden）隐藏，因此实际可见 2 张。
- *
- * **这 3 格必须优先填满**：宫格是固定四格（左上是排行榜卡）的棋盘，
- * 少一张就会露出空洞；轮播则是有几张放几张，不存在「填不满」的问题。
- */
-const FEATURED_TILE_COUNT = 3;
-
-/**
- * 头条区左侧推荐**轮播**的幻灯片数上限。
- *
- * 轮播拿的是宫格挑剩下的数据，因此这里只是上限而非固定张数；
- * 取 4 张在「够看」与「不拖慢首屏」之间取平衡。
- */
-const FEATURED_HERO_MAX = 4;
+/** Banner 右侧宫格卡片数 */
+const FEATURED_TILE_COUNT = 4;
 
 /** 每页卡片数 */
 const PAGE_SIZE = 20;
 
-/**
- * 头条区聚合接口 `size` 参数：**最新 / 最热各自**的返回条数。
- *
- * 推荐榜不受该参数约束（接口固定返回全部推荐），宫格靠前 3 条、轮播取剩余，
- * 因此这里只需覆盖排行榜卡渲染 5 行的需求。
- */
-const AGGREGATE_SIZE = 5;
+/** 最新内容每次通用分页查询的条数 */
+const LATEST_PAGE_SIZE = 5;
 
 /**
  * 网页列表（WebListPicker）：
- * 顶部为搜索 + 两行分类筛选，其下为抖音式头条区（左 1 轮播大卡 + 右宫格），
+ * 顶部为搜索 + 两行分类筛选，其下为推荐轮播 + 右侧四卡片、最新内容，
  * 再往下是常规卡片网格与加载更多。
  *
  * **首屏数据来源**：
- * - 头条区（推荐轮播 + 排行榜 + 推荐宫格）：一次 `homeAggregate` 聚合请求，
- *   同时拿回 `recommends` / `latest` / `hottest` 三组数据；
- * - 常规网格：独立的 `site_get_page` 分页请求（带分类 / 搜索条件，且排除推荐站点）。
- *
- * 头条区内部的数据分配：
- * - 推荐数据（`recommends`）：**按接口顺序整批分配、互不重复** ——
- *   前 `FEATURED_TILE_COUNT` 条先填满宫格推荐卡，剩下的才给左侧轮播；
- * - 排行榜卡：最新榜（`latest`）/ 最热榜（`hottest`），独占宫格左侧。
+ * - 推荐轮播与右侧卡片共享 `recommends`：前 4 条进入卡片，其余进入轮播；
+ * - 最新内容：独立的 `site_get_page` 分页请求，按 createTime 倒序；
+ * - 常规网格：独立的 `site_get_page` 分页请求（带分类 / 搜索条件）。
  *
  * 常规列表（`items`）全部进下方网格，不再切出首条作超大卡。
  */
@@ -89,7 +62,9 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   // 搜索（输入值 / 防抖值 / 立即搜索）
   const { keyword, setKeyword, debouncedKw, nonce, submit } = useSearch();
 
-  // 常规列表：**只看非推荐**（recommend = false）。
+  // 常规列表：沿用默认（不传 recommend 字段），后端返回全部站点（含推荐），
+  // 搜索结果也会包含推荐站点；与头条区推荐卡重复是可接受的。
+  // 默认按点击量（count）降序排序。
 
   const {
     items,
@@ -100,30 +75,36 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     loadMore,
   } = useSiteList({
     autoFetch: false,
-    defaultRecommend: false,
+    defaultSortField: 'count',
+    defaultSortOrder: 'descend',
+  });
+
+  // 最新内容：通用分页查询，按创建时间倒序；右箭头在轮播末尾加载下一页
+  const {
+    items: latestItems,
+    appendLoading: latestAppendLoading,
+    hasMore: latestHasMore,
+    fetchSites: fetchLatestSites,
+    loadMore: loadMoreLatest,
+  } = useSiteList({
+    autoFetch: false,
+    defaultSortField: 'createTime',
+    defaultSortOrder: 'descend',
   });
 
   /**
-   * 头条区数据：一次聚合请求拿回「推荐 / 最新 / 最热」三组。
+   * 头条区数据：一次聚合请求拿回推荐站点（recommends）。
    *
    * 排序与筛选口径全部由后端定义（见接口文档），前端不再自行拼排序参数：
    * - recommends 按 orderNum 升序、createTime 倒序
-   * - latest 按 createTime 倒序、同值按 orderNum 升序
-   * - hottest 按 count 倒序、同值按 createTime 倒序
    */
   const {
-    latest: latestItems,
-    hottest: hotItems,
     recommends: recommendItems,
     loading: aggregateLoading,
     fetchAggregate,
   } = useSiteHomeAggregate({
     autoFetch: false,
-    defaultSize: AGGREGATE_SIZE,
   });
-
-  // 排行榜当前 tab：两榜数据都已在聚合响应里，切换纯前端行为，无需再发请求
-  const [rankTab, setRankTab] = useState<RankTab>('latest');
 
   // 分类元数据是否已就绪（用于推迟首次列表拉取，避免先用「全部」查一次再按默认分类重查）
   const [categoriesReady, setCategoriesReady] = useState(false);
@@ -158,11 +139,12 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     // nonce 仅用于触发立即搜索（点击搜索按钮时关键词可能未变）
   }, [categoriesReady, selectedCat, debouncedKw, nonce, fetchSites]);
 
-  // 头条区聚合数据：首次进入时拉取一次（等分类就绪后与常规列表并发，避免早于首屏渲染）
+  // 推荐聚合与最新内容：首次进入时各自拉取一次，与分类 / 搜索条件无关
   useEffect(() => {
     if (!categoriesReady) return;
-    fetchAggregate(AGGREGATE_SIZE);
-  }, [categoriesReady, fetchAggregate]);
+    fetchAggregate();
+    fetchLatestSites(1, '', '', LATEST_PAGE_SIZE, 'createTime', 'descend');
+  }, [categoriesReady, fetchAggregate, fetchLatestSites]);
 
   // 滚动：触底加载下一页 + 按方向折叠 / 展开分类行（并通知父级）
   const { scrollRef, onScroll, scrollVisible: showCategories } = useListScroll({
@@ -174,16 +156,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   // 点击卡片：上报点击量后打开站点（优先走调用方回调，缺省时新窗口打开）
   const handleOpen = (item: SiteItem) => {
     openSite(item, onOpen);
-  };
-
-  // 点击排行榜条目：上报点击量后打开站点
-  const handleOpenRank = (item: SiteItem) => {
-    openSite(item, onOpen);
-  };
-
-  // 排行榜 tab 切换：两榜数据都随聚合响应一并到达，切换纯前端行为，无需再发请求
-  const handleRankTabChange = (tab: RankTab) => {
-    setRankTab(tab);
   };
 
   /**
@@ -212,7 +184,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   const gridItems = items;
 
   /**
-   * 是否展示头条区（推荐轮播 + 排行榜 + 推荐宫格）。
+   * 是否展示头条区（推荐轮播与最新内容）。
    *
    * 仅当**未选中任何分类**（顶部第一行的「推荐」）且**无搜索词**时展示：
    * - 一旦切到某个一级 / 二级分类，或输入关键词，用户就是在「找特定内容」，
@@ -223,32 +195,14 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   // 非推荐分类：选中了某个具体分类（而非「推荐」）
   const isNonRecommendQuery = selectedCat !== ALL_CATEGORY_ID;
 
-  /**
-   * 头条区推荐数据分配，**宫格优先**：
-   *
-   * 1. 先取 `FEATURED_TILE_COUNT` 条给宫格的 3 个槽位 —— 宫格是固定棋盘，
-   *    少一张就露空洞，必须优先保证填满；
-   * 2. 剩下的全部给左侧轮播（最多 `FEATURED_HERO_MAX` 张，多余的截掉）。
-   *
-   * 两段取自同一数组的不同区间，因此**不会重复**；推荐总数不足时，
-   * 宫格先降级为占位，轮播坦然为空（此时不渲染，宫格自然占满整行）。
-   *
-   * 若改成「轮播优先」，推荐正好 4~6 条时宫格就会缺格 —— 这正是要避免的。
-   *
-   * 聚合接口的 recommends 固定返回**全部**推荐站点（不受 size 约束），
-   * 可能远超轮播需要的张数，因此这里必须再截一次上限。
-   *
-   * 不展示头条区时两者都清空，避免隐藏状态下仍持有数据。
-   */
+  /** 推荐数据前 4 条进入右侧宫格，其余进入 Banner 轮播 */
   const tileItems = showFeatured
     ? recommendItems.slice(0, FEATURED_TILE_COUNT)
     : [];
   const heroItems = showFeatured
-    ? recommendItems.slice(
-        FEATURED_TILE_COUNT,
-        FEATURED_TILE_COUNT + FEATURED_HERO_MAX,
-      )
+    ? recommendItems.slice(FEATURED_TILE_COUNT)
     : [];
+  const latestContentItems = showFeatured ? latestItems : [];
 
   // 收藏态判定：id / link / name 任一命中即视为已收藏
   const isFavorited = (item: SiteItem) =>
@@ -311,10 +265,16 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           (aggregateLoading ? (
             <SiteGridSkeleton showFeatured showCards={false} />
           ) : (
-            <div className={`mb-4 xl:mb-5 2xl:mb-8 ${FEATURED_CLASS}`}>
-              {/* 推荐轮播：与右侧宫格推荐卡取自推荐数组的不同片段，因此不会重复；
-                  暂无推荐数据时不渲染（宫格会自动占满整行） */}
+            <div className={`relative mb-4 xl:mb-5 2xl:mb-8 ${FEATURED_CLASS}`}>
               {heroItems.length > 0 && (
+                <span
+                  className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-xs font-semibold text-white shadow ring-1 ring-white/25"
+                  aria-label="超推荐"
+                >
+                  超推荐
+                </span>
+              )}
+              {heroItems.length > 0 ? (
                 <SiteHeroCarousel
                   items={heroItems}
                   onOpen={handleOpen}
@@ -322,23 +282,14 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
                   onToggleFavorite={onToggleFavorite}
                   className={FEATURED_HERO_CLASS}
                 />
+              ) : (
+                <div
+                  className={`flex aspect-[2/1] w-full items-center justify-center rounded-md border border-dashed border-black/10 bg-slate-50 text-sm text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500 ${FEATURED_HERO_CLASS}`}
+                >
+                  暂无数据
+                </div>
               )}
               <div className={FEATURED_TILES_CLASS}>
-                {/* 排行榜卡：移动端跨 2 行独占左列、lg 起只占左上单格，tabbar 切「最新 / 最热」 */}
-                <GridCard
-                  latest={latestItems}
-                  hot={hotItems}
-                  rankTab={rankTab}
-                  onRankTabChange={handleRankTabChange}
-                  onOpen={handleOpenRank}
-                  className={FEATURED_GRID_CARD_CLASS}
-                />
-                {/*
-                  宫格其余格子：推荐站点卡。
-                  移动端宫格为 2 列，排行榜卡已占满左列上下 2 格，
-                  第 3 张推荐卡会溢出到第 3 行（左侧空一格），故 < lg 时隐藏，
-                  只保留填满右列的 2 张；lg 起排行榜只占 1 格，3 张正好铺满其余 3 格。
-                */}
                 {tileItems.map((item, idx) => (
                   <SiteTileCard
                     key={item.id || item.link || `${item.name}-${idx}`}
@@ -346,14 +297,26 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
                     onOpen={handleOpen}
                     favorited={isFavorited(item)}
                     onToggleFavorite={onToggleFavorite}
-                    className={`${
-                      idx === 0 ? FEATURED_TILE_FIRST_CLASS : ''
-                    } ${idx === FEATURED_TILE_COUNT - 1 ? FEATURED_TILE_LAST_CLASS : ''}`}
                   />
                 ))}
               </div>
             </div>
           ))}
+
+        {/* 最新内容：通用分页查询 + 横向轮播，末尾右滑加载下一页 */}
+        {latestContentItems.length > 0 && (
+          <LatestContentCarousel
+            items={latestContentItems}
+            hasMore={latestHasMore}
+            loadingMore={latestAppendLoading}
+            onLoadMore={() =>
+              loadMoreLatest('', '', LATEST_PAGE_SIZE, 'createTime', 'descend')
+            }
+            onOpen={handleOpen}
+            favoritedOf={isFavorited}
+            onToggleFavorite={onToggleFavorite}
+          />
+        )}
 
         {/* 常规网格：首次加载中出骨架（已有数据时为分页 / 切分类，走上方 loading 遮罩）；
             就绪且有数据后出真实卡片 */}
@@ -361,6 +324,11 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
           <SiteGridSkeleton showFeatured={false} />
         ) : items.length > 0 ? (
           <>
+            {showFeatured && (
+              <h2 className="mb-3 text-base font-semibold sm:mb-4 sm:text-lg">
+                高赞内容
+              </h2>
+            )}
             {/*
               非推荐分类（选中了某具体分类）下，移动端把前 4 张做成 2x2 大卡展示
               （仅 < sm 显示），让分类头部更聚焦；其余卡片照常展示。

@@ -1,23 +1,16 @@
 import React from 'react';
 import {
   FEATURED_CLASS,
-  FEATURED_GRID_CARD_CLASS,
   FEATURED_HERO_CLASS,
   FEATURED_TILES_CLASS,
-  FEATURED_TILE_FIRST_CLASS,
-  FEATURED_TILE_LAST_CLASS,
   SITE_GRID_CLASS,
 } from './constants';
 
 /**
  * 网页列表首屏骨架屏。
  *
- * 设计要点：**复用真实布局的栅格类名**（FEATURED_* / SITE_GRID_CLASS），
- * 而不是另写一套尺寸。这样骨架与成品的位置、列数、间距、各卡跨列完全一致，
- * 数据到达后不会出现跳位；同时所有断点调整只需改 constants 一处，骨架自动跟随。
- *
- * 各块高度用与真实卡片一致的内部比例（如超大卡 2:1、推荐卡 1:1）来撑开，
- * 避免骨架偏矮导致加载完成后整页跳动。
+ * 头条区与常规网格复用真实布局的栅格类名和卡片比例，
+ * 避免数据到达后页面跳动。
  */
 
 /** 基础灰块：统一圆角与脉冲动画 */
@@ -44,7 +37,7 @@ const Line: React.FC<{ className?: string }> = ({ className = '' }) => (
  */
 const HeroSkeleton: React.FC = () => (
   <div
-    className={`relative overflow-hidden rounded-lg border border-black/5 bg-slate-200 dark:border-white/5 dark:bg-slate-700/70 ${FEATURED_HERO_CLASS}`}
+    className={`relative w-full overflow-hidden rounded-lg border border-black/5 bg-slate-200 dark:border-white/5 dark:bg-slate-700/70 ${FEATURED_HERO_CLASS}`}
   >
     <div className="aspect-[2/1] w-full animate-pulse" />
     <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-gradient-to-t from-black/30 to-transparent p-3 pb-6 sm:p-4 sm:pb-7">
@@ -60,49 +53,11 @@ const HeroSkeleton: React.FC = () => (
   </div>
 );
 
-/**
- * 排行榜卡骨架：顶部 tabbar 两条 + 5 行榜单，结构与真实 `GridCard` 严格一致。
- *
- * 高度分配必须与真实卡片**同一套规则**：整卡纵向等分为 `RANK_SIZE + 1` 份，
- * tabbar 占 1 份（`flex-1`）、榜单容器占 `RANK_SIZE` 份（`flex-[5]`，
- * 其下各行再均分）。否则骨架里 tabbar 是固定高度、真实卡片里是弹性高度，
- * 数据到达并切回真实卡片时 tabbar 会突然变矮/变高，形成可见跳动。
- *
- * 对应常量见 `GridCard`：`RANK_SIZE` 与 `RANK_ROWS_FLEX_CLASS`。
- */
-const RankSkeleton: React.FC = () => (
-  <div
-    className={`flex h-full w-full flex-col overflow-hidden rounded-md border border-black/5 bg-slate-100 dark:border-white/5 dark:bg-white/5 ${FEATURED_GRID_CARD_CLASS}`}
-  >
-    {/* tabbar 占位：与真实布局同结构（两个 tab 平分整行、flex-1 参与等分）+ 白底 */}
-    <div className="flex flex-1 items-stretch border-b border-black/5 bg-white dark:border-white/10 dark:bg-white/10">
-      {[0, 1].map((idx) => (
-        <div key={idx} className="flex flex-1 items-center justify-center">
-          <Line className="h-4 w-8 sm:h-5 sm:w-10" />
-        </div>
-      ))}
-    </div>
-    {/* 榜单行占位：与真实布局同样按 5 份等分，行高随卡片高度自适应；
-        只占「名次 + 标题」两段，与真实行一致（榜单已不含站点 icon）。
-        行之间加 gap 避免移动端 5 行贴在一起，gap 也会让每行高度相应变小。 */}
-    <div className="flex min-h-0 flex-[5] flex-col gap-1.5 sm:gap-2">
-      {Array.from({ length: 5 }).map((_, idx) => (
-        <div key={idx} className="flex min-h-0 flex-1 items-center gap-2 px-3">
-          <Block className="h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]" />
-          <Line className="h-4 min-w-0 flex-1 sm:h-5" />
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-/** 推荐卡骨架：纯图 + 底部标题浮层，对应 SiteTileCard / ThumbCard */
-const TileSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div
-    className={`relative h-full w-full overflow-hidden rounded-md border border-black/5 bg-slate-200 dark:border-white/5 dark:bg-slate-700/70 ${className}`}
-  >
+/** Banner 旁宫格卡片骨架 */
+const TileSkeleton: React.FC = () => (
+  <div className="relative h-full min-h-[7rem] w-full overflow-hidden rounded-md border border-black/5 bg-slate-200 dark:border-white/5 dark:bg-slate-700/70 lg:min-h-0">
     <div className="h-full w-full animate-pulse" />
-    <div className="absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-gradient-to-t from-black/30 to-transparent px-2 pb-1.5 pt-6">
+    <div className="absolute inset-x-0 bottom-0 flex items-center px-2 pb-1.5 pt-6">
       <Line className="h-3 min-w-0 flex-1 bg-white/35 dark:bg-white/25" />
     </div>
   </div>
@@ -126,7 +81,7 @@ const CardSkeleton: React.FC = () => (
 
 interface SiteGridSkeletonProps {
   /**
-   * 是否渲染头条区（推荐轮播 + 排行榜 + 推荐宫格）的骨架。
+   * 是否渲染推荐轮播与右侧宫格骨架。
    *
    * 必须与真实渲染的显隐条件保持一致：选中分类 / 输入搜索词后头条区收起，
    * 骨架若仍铺那一整块，数据到达时会出现「骨架有、内容没有」的塌陷跳动。
@@ -147,20 +102,13 @@ export const SiteGridSkeleton: React.FC<SiteGridSkeletonProps> = ({
   showCards = true,
 }) => (
   <div aria-hidden="true">
-    {/* 头条区：超大卡 + 宫格（排行榜卡 + 推荐卡），栅格与真实布局共用类名 */}
+    {/* 头条区：推荐轮播 + 右侧 2×2 宫格 */}
     {showFeatured && (
       <div className={`mb-4 xl:mb-5 2xl:mb-8 ${FEATURED_CLASS}`}>
         <HeroSkeleton />
         <div className={FEATURED_TILES_CLASS}>
-          <RankSkeleton />
-          {/* 与真实渲染一致：移动端 2 张、lg 起 3 张，末张的显隐类名直接复用 */}
-          {[0, 1, 2].map((idx) => (
-            <TileSkeleton
-              key={idx}
-              className={`${idx === 0 ? FEATURED_TILE_FIRST_CLASS : ''} ${
-                idx === 2 ? FEATURED_TILE_LAST_CLASS : ''
-              }`}
-            />
+          {[0, 1, 2, 3].map((idx) => (
+            <TileSkeleton key={idx} />
           ))}
         </div>
       </div>

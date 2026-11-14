@@ -15,7 +15,7 @@ type SiteCardProps = SiteCardBaseProps;
 
 /**
  * 常规站点卡片：16:9 封面 + 底部信息条（Logo / 标题 / 描述）。
- * 仅负责网格中的普通卡片；头条区的大卡与宫格卡分别见 SiteHeroCarousel / SiteTileCard。
+ * 仅负责网格中的普通卡片；头条区的大卡见 SiteHeroCarousel。
  */
 export const SiteCard: React.FC<SiteCardProps> = ({
   item,
@@ -74,9 +74,8 @@ export const SiteCard: React.FC<SiteCardProps> = ({
                 {item.name}
               </p>
             </div>
-            {/* 描述为辅助富文本：各端统一 16px（text-base） */}
             {item.des && (
-              <p className="truncate text-base mt-0.5 sm:mt-1 max-w-full text-gray-500">
+              <p className="truncate mt-0.5 text-xs sm:mt-1 sm:text-base max-w-full text-gray-500">
                 {item.des}
               </p>
             )}
