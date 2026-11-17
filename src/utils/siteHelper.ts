@@ -29,22 +29,16 @@ export function openSite(
   item: SiteItem,
   onOpen?: (item: SiteItem) => void,
 ): void {
-  // 点击量上报是「尽力而为」：失败也照样跳转，只是不计入统计
-  const report = item.id
-    ? siteApi.recordClick(item.id).catch(() => {})
-    : Promise.resolve();
+  // 在点击事件内同步发起上报，再打开链接；不等待 Promise，避免异步跳转被拦截
+  if (item.id) {
+    void siteApi.recordClick(item.id).catch(() => {});
+  }
 
-  void report
-    .then(() => {
-      if (onOpen) {
-        onOpen(item);
-        return;
-      }
-      if (!item.link) return;
-      // app 内 → 系统浏览器接管；浏览器内 → 新标签页
-      openInExternal(item.link);
-    })
-    .catch((error) => {
-      console.warn('[site] 打开失败', item.id ?? item.link, error);
-    });
+  if (onOpen) {
+    onOpen(item);
+    return;
+  }
+  if (!item.link) return;
+  // app 内 → 系统浏览器接管；浏览器内 → 新标签页
+  openInExternal(item.link);
 }

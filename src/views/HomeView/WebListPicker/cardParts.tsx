@@ -47,6 +47,8 @@ export interface SiteCardBaseProps {
   onToggleFavorite?: (item: SiteItem) => void;
   /** 追加类名，用于外部调整定位 / 显隐 */
   className?: string;
+  /** 仅移动端生效：为 true 时隐藏底部信息条（Logo / 标题 / 描述），只展示封面图 */
+  mobileImageOnly?: boolean;
 }
 
 /** 卡片根容器共用的类名（边框、圆角、悬停高亮等） */

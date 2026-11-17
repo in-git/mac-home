@@ -1,12 +1,12 @@
 import { Globe } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { SiteItem } from '@/api/site';
+import highRatedContentTitle from '@/assets/高赞内容.webp';
 import {
   runRequestAction,
   useSiteHomeAggregate,
   useSiteList,
 } from '@/agent/request';
-import { Button } from '@/components/Button/Button';
 import { openSite } from '@/utils/siteHelper';
 import { useListScroll } from '../hooks/useListScroll';
 import { useSearch } from '../hooks/useSearch';
@@ -19,10 +19,12 @@ import {
   FEATURED_CLASS,
   FEATURED_HERO_CLASS,
   FEATURED_TILES_CLASS,
+  SITE_GRID_BREAKPOINTS,
   SITE_GRID_CLASS,
 } from './constants';
 import { SiteGridSkeleton } from './SiteGridSkeleton';
 import { LatestContentCarousel } from './LatestContentCarousel';
+import { useLoadMoreRows, ViewMoreTile } from './LoadMoreGrid';
 import { CategoryGroup, groupCategories } from './category';
 
 /** Banner 右侧宫格卡片数 */
@@ -31,20 +33,21 @@ const FEATURED_TILE_COUNT = 4;
 /** 每页卡片数 */
 const PAGE_SIZE = 20;
 
-/** 最新内容每次通用分页查询的条数 */
-const LATEST_PAGE_SIZE = 5;
+/** 最新内容每次通用分页查询的条数；前端按各断点列数整排分批展示 */
+const LATEST_PAGE_SIZE = 10;
 
 /**
  * 网页列表（WebListPicker）：
  * 顶部为搜索 + 两行分类筛选，其下为推荐轮播 + 右侧四卡片、最新内容，
- * 再往下是常规卡片网格与加载更多。
+ * 再往下是高赞内容卡片网格。
  *
  * **首屏数据来源**：
  * - 推荐轮播与右侧卡片共享 `recommends`：前 4 条进入卡片，其余进入轮播；
  * - 最新内容：独立的 `site_get_page` 分页请求，按 createTime 倒序；
- * - 常规网格：独立的 `site_get_page` 分页请求（带分类 / 搜索条件）。
+ * - 高赞内容：独立的 `site_get_page` 分页请求（带分类 / 搜索条件）。
  *
- * 常规列表（`items`）全部进下方网格，不再切出首条作超大卡。
+ * 两个网格的翻页均通过末尾的「查看更多」卡片触发，共用
+ * `useLoadMoreRows` 按各断点列数整排分批放量；常规列表不再切出首条作超大卡。
  */
 export const WebListPicker: React.FC<WebListPickerProps> = ({
   onOpen,
@@ -79,7 +82,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     defaultSortOrder: 'descend',
   });
 
-  // 最新内容：通用分页查询，按创建时间倒序；右箭头在轮播末尾加载下一页
+  // 最新内容：通用分页查询，按创建时间倒序；点击「查看更多」追加下一页
   const {
     items: latestItems,
     appendLoading: latestAppendLoading,
@@ -146,10 +149,10 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
     fetchLatestSites(1, '', '', LATEST_PAGE_SIZE, 'createTime', 'descend');
   }, [categoriesReady, fetchAggregate, fetchLatestSites]);
 
-  // 滚动：触底加载下一页 + 按方向折叠 / 展开分类行（并通知父级）
+  // 滚动：仅负责按方向折叠 / 展开分类行（并通知父级）。
+  // 分页统一走网格末尾的「查看更多」卡片，与最新内容保持一致，避免触底与分批放量互相冲突
   const { scrollRef, onScroll, scrollVisible: showCategories } = useListScroll({
-    canReachBottom: !appendLoading && hasMore,
-    onReachBottom: () => loadMore(selectedCat, debouncedKw, PAGE_SIZE),
+    canReachBottom: false,
     onVisibilityChange,
   });
 
@@ -182,6 +185,21 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
 
   // 常规列表整批进下方网格，不再切出首条作超大卡（超大卡由推荐轮播承担）
   const gridItems = items;
+
+  // 高赞内容（常规网格）：与最新内容共用同一套「查看更多」分批放量规则，
+  // 按各断点列数整排展示，按钮始终落在最后一排最后一格。
+  const {
+    visibleItems: visibleGridItems,
+    classNameFor: gridItemClassName,
+    handleLoadMore: handleGridLoadMore,
+    showMore: showGridMore,
+  } = useLoadMoreRows(gridItems, {
+    breakpoints: SITE_GRID_BREAKPOINTS,
+    hasMore,
+    loadingMore: appendLoading,
+    onLoadMore: () => loadMore(selectedCat, debouncedKw, PAGE_SIZE),
+    resetKey: `${selectedCat}|${debouncedKw}|${nonce}`,
+  });
 
   /**
    * 是否展示头条区（推荐轮播与最新内容）。
@@ -303,7 +321,7 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
             </div>
           ))}
 
-        {/* 最新内容：通用分页查询 + 横向轮播，末尾右滑加载下一页 */}
+        {/* 最新内容：按创建时间倒序展示 */}
         {latestContentItems.length > 0 && (
           <LatestContentCarousel
             items={latestContentItems}
@@ -325,18 +343,22 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
         ) : items.length > 0 ? (
           <>
             {showFeatured && (
-              <h2 className="mb-3 text-base font-semibold sm:mb-4 sm:text-lg">
-                高赞内容
-              </h2>
+              <div className="mb-3 flex justify-center sm:mt-12 sm:mb-8">
+                <img
+                  src={highRatedContentTitle}
+                  alt="高赞内容"
+                  className="h-18 w-auto object-contain sm:h-32"
+                />
+              </div>
             )}
             {/*
               非推荐分类（选中了某具体分类）下，移动端把前 4 张做成 2x2 大卡展示
               （仅 < sm 显示），让分类头部更聚焦；其余卡片照常展示。
               桌面端无此分块，全部走下方常规网格。
             */}
-            {isNonRecommendQuery && gridItems.length > 0 && (
+            {isNonRecommendQuery && visibleGridItems.length > 0 && (
               <div className="mb-3 grid grid-cols-2 gap-3 sm:hidden">
-                {gridItems.slice(0, 4).map((item) => (
+                {visibleGridItems.slice(0, 4).map((item) => (
                   <SiteCard
                     key={item.id}
                     item={item}
@@ -348,34 +370,25 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
               </div>
             )}
             <div className={SITE_GRID_CLASS}>
-              {gridItems.map((item, idx) => (
+              {visibleGridItems.map((item, idx) => (
                 <SiteCard
                   key={item.id}
                   item={item}
                   onOpen={handleOpen}
                   favorited={isFavorited(item)}
                   onToggleFavorite={onToggleFavorite}
-                  /* 非推荐分类：移动端前 4 张已在上方的 2x2 分块展示，这里隐藏避免重复 */
-                  className={
+                  /* 分批放量的断点显隐 + 非推荐分类移动端 2x2 分块去重 */
+                  className={`${gridItemClassName(idx)} ${
                     isNonRecommendQuery && idx < 4 ? 'max-sm:hidden' : ''
-                  }
+                  }`.trim()}
                 />
               ))}
-            </div>
-            {/* 底部：有数据显示「加载更多」按钮，无更多显示提示 */}
-            <div className="py-4 flex justify-center">
-              {appendLoading ? (
-                <span className=" text-slate-400">加载中…</span>
-              ) : hasMore ? (
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={() => loadMore(selectedCat, debouncedKw, PAGE_SIZE)}
-                >
-                  加载更多
-                </Button>
-              ) : (
-                <span className=" text-slate-400">没有更多了</span>
+              {/* 与最新内容一致：按钮占最后一排最后一格，加载中显示旋转图标 */}
+              {showGridMore && (
+                <ViewMoreTile
+                  loading={appendLoading}
+                  onClick={handleGridLoadMore}
+                />
               )}
             </div>
           </>

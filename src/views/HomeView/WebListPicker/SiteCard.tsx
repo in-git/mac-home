@@ -23,6 +23,7 @@ export const SiteCard: React.FC<SiteCardProps> = ({
   favorited = false,
   onToggleFavorite,
   className = '',
+  mobileImageOnly = false,
 }) => {
   const coverSrc = item.cover || item.logo;
   // 是否为新站点（发布时间在 3 天内）
@@ -60,7 +61,11 @@ export const SiteCard: React.FC<SiteCardProps> = ({
         />
       </div>
 
-      <div className="relative p-2 sm:p-2.5 flex items-center gap-3 text-left">
+      <div
+        className={`relative p-2 sm:p-2.5 flex items-center gap-3 text-left ${
+          mobileImageOnly ? 'max-sm:hidden' : ''
+        }`}
+      >
         {/* 左侧：Logo + 标题与描述 */}
         <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           <SiteAvatar item={item} />

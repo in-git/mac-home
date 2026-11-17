@@ -81,13 +81,13 @@ const DOUYIN: SocialLink = {
 export const SOCIAL_LINKS: SocialLink[] = [BILIBILI, DOUYIN];
 
 /**
- * 社交账号入口：B 站 + 抖音，并排两张品牌色卡片。
+ * 社交账号入口：B 站 + 抖音，竖向排列两张品牌色卡片。
  *
  * 目前只在桌面端左侧栏底部使用（移动端改为「关于我」弹窗内的列表）。
  * 卡片只显示品牌图标 + 平台名，整卡可点击并新标签页打开。
  */
 export const SocialLinks: React.FC = () => (
-  <div className="flex gap-2">
+  <div className="flex flex-col gap-2">
     {SOCIAL_LINKS.map((link) => (
       <a
         key={link.name}

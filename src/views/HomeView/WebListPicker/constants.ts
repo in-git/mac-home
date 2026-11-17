@@ -14,6 +14,18 @@
 export const SITE_GRID_CLASS =
   'grid gap-3 sm:gap-4 xl:gap-5 2xl:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5';
 
+/**
+ * 常规网格各断点列数，须与 `SITE_GRID_CLASS` 的列数一致。
+ * 用于「查看更多」按整排放量：卡片数 = 列数 × 排数 - 1，末位留给按钮。
+ */
+export const SITE_GRID_BREAKPOINTS = [
+  { cols: 1, hideBelow: '' },
+  { cols: 2, hideBelow: 'max-sm:hidden' },
+  { cols: 3, hideBelow: 'max-lg:hidden' },
+  { cols: 4, hideBelow: 'max-xl:hidden' },
+  { cols: 5, hideBelow: 'max-2xl:hidden' },
+] as const;
+
 /** 头条区：推荐轮播与右侧 2×2 宫格共用站点网格的列线和间距。 */
 export const FEATURED_CLASS =
   'grid gap-3 sm:gap-4 xl:gap-5 2xl:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 lg:items-stretch';
