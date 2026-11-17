@@ -34,11 +34,14 @@ export function useListScroll(options: UseListScrollOptions = {}) {
   onReachBottomRef.current = onReachBottom;
 
   const handleReachBottom = useCallback(() => {
+    // 未启用触底加载（未传 onReachBottom 或 canReachBottom=false）时直接返回：
+    // 不排 rAF、不做滚动几何计算，调用方（如网页列表改用「查看更多」分页）零开销
+    if (!onReachBottomRef.current || !canReachBottom) return;
     if (rafRef.current) return;
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = null;
       const el = scrollRef.current;
-      if (!el || !canReachBottom) return;
+      if (!el) return;
       if (el.scrollHeight - el.scrollTop - el.clientHeight < 80) {
         onReachBottomRef.current?.();
       }

@@ -6,6 +6,12 @@ import viewMoreImage from '@/assets/查看更多.webp';
 export interface GridBreakpoint {
   cols: number;
   hideBelow: string;
+  /**
+   * 该档的初始排数，缺省 BASE_ROWS。
+   * 1 列布局每张卡独占一排，公式「列数 × 排数 − 1」会退化成 1 张，
+   * 此时用更大的 baseRows 补偿：baseRows = 初始卡片数 + 1（按钮独占一排）。
+   */
+  baseRows?: number;
 }
 
 /** 默认展示 2 排，每点一次「查看更多」多放出一排 */
@@ -22,10 +28,11 @@ interface UseLoadMoreRowsOptions {
 
 /**
  * 「查看更多」分批放量，最新内容与高赞内容共用同一套规则：
- * 各断点显示的卡片数 = 列数 × 排数 - 1，末位留给「查看更多」卡片，
+ * 各断点显示的卡片数 = 列数 × (baseRows + step) - 1，末位留给「查看更多」卡片，
  * 因此该卡片始终落在最后一排最后一格。
  *
  * 移动端与 PC 只是列数不同，公式一致；断点切换由 CSS 变体完成，无需 JS 监听视口。
+ * 1 列布局（每卡一排）会导致公式退化，可用 baseRows 按档补偿，见 GridBreakpoint。
  */
 export function useLoadMoreRows<T>(
   items: T[],
@@ -48,14 +55,11 @@ export function useLoadMoreRows<T>(
     }
   }, [resetKey]);
 
-  const rows = BASE_ROWS + step;
-  const maxCols = Math.max(...breakpoints.map((b) => b.cols));
-
   // 数据不足一整排时向下对齐，避免「查看更多」前出现空缺格；
   // 数据已全部加载完（hasMore=false）则放出所有卡片，按钮也随之隐藏。
-  const counts = breakpoints.map(({ cols }) => {
+  const counts = breakpoints.map(({ cols, baseRows = BASE_ROWS }) => {
     if (!hasMore) return items.length;
-    const cap = cols * rows - 1;
+    const cap = cols * (baseRows + step) - 1;
     return Math.max(
       0,
       Math.floor((Math.min(items.length, cap) + 1) / cols) * cols - 1,
@@ -71,8 +75,14 @@ export function useLoadMoreRows<T>(
 
   const handleLoadMore = () => {
     setStep((s) => s + 1);
-    // 下一批按最大列数估算所需数据量，不足时才追加一页
-    const nextCap = maxCols * (rows + 1) - 1;
+    // 下一批按「需求最大的档」估算所需数据量（列数 × 下一排数），
+    // 已加载数据够下一批展示时不发请求
+    const nextCap = Math.max(
+      ...breakpoints.map(
+        ({ cols, baseRows = BASE_ROWS }) =>
+          cols * (baseRows + step + 1) - 1,
+      ),
+    );
     if (hasMore && !loadingMore && items.length < nextCap) {
       void onLoadMore();
     }
@@ -93,7 +103,9 @@ export const ViewMoreTile: React.FC<{
     aria-busy={loading}
     disabled={loading}
     onClick={onClick}
-    className="flex min-h-40 cursor-pointer items-center justify-center rounded-md border border-dashed border-black/10 bg-[#f8f8f8] dark:border-white/10 disabled:cursor-default"
+    /* h-full 跟随网格行高：与同行卡片同宽（同一栅格）同等高。
+       不用固定 min-h-40 —— 移动端卡片是 16:9 封面，固定高度会与卡片尺寸不一致 */
+    className="flex h-full cursor-pointer items-center justify-center rounded-md border border-dashed border-black/10 bg-[#f8f8f8] dark:border-white/10 disabled:cursor-default"
   >
     {loading ? (
       <LoaderCircle size={40} className="animate-spin text-blue-500" />

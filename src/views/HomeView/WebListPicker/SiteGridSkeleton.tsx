@@ -68,8 +68,9 @@ const CardSkeleton: React.FC = () => (
   <div className="overflow-hidden rounded-lg border border-black/5 bg-white dark:border-white/5 dark:bg-[#1C1C1E]">
     {/* 封面：与卡片封面同比例 */}
     <div className="aspect-[16/10] w-full animate-pulse bg-slate-200 dark:bg-slate-700/70" />
-    {/* 信息条：logo + 标题 + 描述 */}
-    <div className="flex items-center gap-2 p-2 sm:p-2.5">
+    {/* 信息条：logo + 标题 + 描述。移动端真实卡片走 mobileImageOnly 只留封面，
+        骨架同步隐藏，避免数据到达后高度塌陷跳动 */}
+    <div className="flex items-center gap-2 p-2 max-sm:hidden sm:p-2.5">
       <Block className="h-8 w-8 shrink-0 rounded-full" />
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <Line className="h-4 w-2/3" />

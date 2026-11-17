@@ -1,5 +1,5 @@
 import { Globe } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { SiteItem } from '@/api/site';
 import highRatedContentTitle from '@/assets/高赞内容.webp';
 import {
@@ -150,9 +150,9 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   }, [categoriesReady, fetchAggregate, fetchLatestSites]);
 
   // 滚动：仅负责按方向折叠 / 展开分类行（并通知父级）。
-  // 分页统一走网格末尾的「查看更多」卡片，与最新内容保持一致，避免触底与分批放量互相冲突
+  // 网页列表**不使用触底加载**，分页统一走网格末尾的「查看更多」卡片；
+  // 未传 onReachBottom 时 useListScroll 内不做任何触底检测。
   const { scrollRef, onScroll, scrollVisible: showCategories } = useListScroll({
-    canReachBottom: false,
     onVisibilityChange,
   });
 
@@ -202,6 +202,27 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
   });
 
   /**
+   * 点击高赞内容的「查看更多」后自动滚到页面最底部。
+   *
+   * 时机很关键：点击当下新卡片尚未渲染，此时滚到底部只会停在旧位置；
+   * 因此在「可见卡片数」变化（新一批已挂载）后统一滚一次，用户能直接看到刚加载的内容。
+   * 无论是本地放量（数据已够）还是异步追加（等待接口），都会让可见数增加，故一并覆盖。
+   */
+  const pendingScrollToBottomRef = useRef(false);
+  useEffect(() => {
+    if (!pendingScrollToBottomRef.current) return;
+    pendingScrollToBottomRef.current = false;
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  }, [visibleGridItems.length, scrollRef]);
+
+  const handleGridViewMore = useCallback(() => {
+    pendingScrollToBottomRef.current = true;
+    handleGridLoadMore();
+  }, [handleGridLoadMore]);
+
+  /**
    * 是否展示头条区（推荐轮播与最新内容）。
    *
    * 仅当**未选中任何分类**（顶部第一行的「推荐」）且**无搜索词**时展示：
@@ -210,8 +231,6 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
    * - 也正因如此，推荐数据不会随分类 / 搜索重新拉取（见上方 effect 注释）。
    */
   const showFeatured = selectedCat === ALL_CATEGORY_ID && !debouncedKw;
-  // 非推荐分类：选中了某个具体分类（而非「推荐」）
-  const isNonRecommendQuery = selectedCat !== ALL_CATEGORY_ID;
 
   /** 推荐数据前 4 条进入右侧宫格，其余进入 Banner 轮播 */
   const tileItems = showFeatured
@@ -352,23 +371,10 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
               </div>
             )}
             {/*
-              非推荐分类（选中了某具体分类）下，移动端把前 4 张做成 2x2 大卡展示
-              （仅 < sm 显示），让分类头部更聚焦；其余卡片照常展示。
-              桌面端无此分块，全部走下方常规网格。
+              移动端与「最新内容」布局保持一致：2 列封面卡（mobileImageOnly 藏起信息条），
+              桌面端照常展示完整卡片。原先额外的「移动端 2x2 大卡分块」已移除 ——
+              网格本身即为 2 列，再铺一层会重复渲染。
             */}
-            {isNonRecommendQuery && visibleGridItems.length > 0 && (
-              <div className="mb-3 grid grid-cols-2 gap-3 sm:hidden">
-                {visibleGridItems.slice(0, 4).map((item) => (
-                  <SiteCard
-                    key={item.id}
-                    item={item}
-                    onOpen={handleOpen}
-                    favorited={isFavorited(item)}
-                    onToggleFavorite={onToggleFavorite}
-                  />
-                ))}
-              </div>
-            )}
             <div className={SITE_GRID_CLASS}>
               {visibleGridItems.map((item, idx) => (
                 <SiteCard
@@ -377,17 +383,16 @@ export const WebListPicker: React.FC<WebListPickerProps> = ({
                   onOpen={handleOpen}
                   favorited={isFavorited(item)}
                   onToggleFavorite={onToggleFavorite}
-                  /* 分批放量的断点显隐 + 非推荐分类移动端 2x2 分块去重 */
-                  className={`${gridItemClassName(idx)} ${
-                    isNonRecommendQuery && idx < 4 ? 'max-sm:hidden' : ''
-                  }`.trim()}
+                  className={gridItemClassName(idx)}
+                  mobileImageOnly
                 />
               ))}
-              {/* 与最新内容一致：按钮占最后一排最后一格，加载中显示旋转图标 */}
+              {/* 与最新内容一致：按钮占最后一排最后一格，加载中显示旋转图标；
+                  点击后追加新卡片并自动滚到列表底部 */}
               {showGridMore && (
                 <ViewMoreTile
                   loading={appendLoading}
-                  onClick={handleGridLoadMore}
+                  onClick={handleGridViewMore}
                 />
               )}
             </div>

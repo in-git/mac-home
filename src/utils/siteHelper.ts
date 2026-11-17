@@ -29,9 +29,14 @@ export function openSite(
   item: SiteItem,
   onOpen?: (item: SiteItem) => void,
 ): void {
-  // 在点击事件内同步发起上报，再打开链接；不等待 Promise，避免异步跳转被拦截
+  // 在点击事件内同步发起上报，再打开链接；不等待 Promise，避免异步跳转被拦截。
+  // 上报属统计用途：同步抛错也要吞掉，绝不能中断后面的跳转调用栈。
   if (item.id) {
-    void siteApi.recordClick(item.id).catch(() => {});
+    try {
+      void siteApi.recordClick(item.id).catch(() => {});
+    } catch {
+      /* noop */
+    }
   }
 
   if (onOpen) {

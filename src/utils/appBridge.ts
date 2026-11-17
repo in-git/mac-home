@@ -28,6 +28,8 @@ interface NativeBridge {
   hideLoading?: () => void;
   /** 请求在当前 WebView 内打开链接（不新开窗口） */
   openUrl?: (url: string) => void;
+  /** 请求由系统浏览器 / 外部应用接管链接 */
+  openInExternal?: (url: string) => void;
 }
 
 /** 读取桥接对象；不存在（普通浏览器）时返回 null */
@@ -117,10 +119,20 @@ export function hideNativeLoading(): boolean {
  * 链路：
  * 1. 原生桥接 `openInExternal` —— App 内由原生发起 Intent.ACTION_VIEW，
  *    启动系统浏览器接管链接；当前 WebView 维持主页不动
- * 2. 桥接不存在（普通浏览器）→ 直接 `window.open` 新标签页
+ * 2. 桥接不存在（普通浏览器）→ 用真实的 `<a target="_blank">` 开新标签页
  *
  * 之所以放弃「同 WebView 加载」：那样会替换主页，用户从原生返回键
  * 回不到当前页，体验割裂。走系统浏览器后，原生返回可直接回到 App 主页。
+ *
+ * ── 为什么不用 window.open ────────────────────────────────
+ * `window.open(url, '_blank', 'noreferrer')` 的第三个 features 参数会让
+ * iPadOS / iOS Safari 把它判定为「弹窗」而非「新标签页」，默认开启的
+ * 拦截弹窗设置会**静默丢弃**这次调用（不抛异常、无日志），表现为点了卡片
+ * 没反应；即便用户放行，也还会弹一次「此网站正在尝试打开弹窗」询问。
+ * 换成真实链接点击后走的是导航通道，不经过弹窗判定，各浏览器行为一致。
+ *
+ * 该调用必须在点击事件内**同步**执行：WebKit 的用户手势 token 只在事件
+ * 处理栈内有效，放进 Promise / setTimeout 会丢失手势从而再次被拦截。
  *
  * 不存在失败场景：系统总会兜到一个浏览器；调用方可放心忽略返回值。
  */
@@ -131,10 +143,19 @@ export function openInExternal(url: string): boolean {
       bridge.openInExternal(url);
       return true;
     } catch (error) {
-      console.warn('[appBridge] openInExternal 调用失败，回退到 window.open', error);
+      console.warn('[appBridge] openInExternal 调用失败，回退到链接点击', error);
     }
   }
-  // 普通浏览器 / bridge 不可用：开新标签页
-  window.open(url, '_blank', 'noreferrer');
+  // 普通浏览器 / bridge 不可用：同步点击一个真实链接来开新标签页。
+  // 必须插入 DOM 后再 click —— Safari 不会派发未挂载元素的点击导航。
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
+  anchor.style.display = 'none';
+  document.body.appendChild(anchor);
+  anchor.click();
+  // 延迟移除：部分 Safari 版本同步移除会取消刚排队的导航
+  setTimeout(() => anchor.remove(), 0);
   return true;
 }
