@@ -105,7 +105,7 @@ export const ViewMoreTile: React.FC<{
     onClick={onClick}
     /* h-full 跟随网格行高：与同行卡片同宽（同一栅格）同等高。
        不用固定 min-h-40 —— 移动端卡片是 16:9 封面，固定高度会与卡片尺寸不一致 */
-    className="flex h-full cursor-pointer items-center justify-center rounded-md border border-dashed border-black/10 bg-[#f8f8f8] dark:border-white/10 disabled:cursor-default"
+    className="flex h-full cursor-pointer items-center justify-center rounded-md border border-dashed border-black/10 bg-black dark:border-white/10 disabled:cursor-default"
   >
     {loading ? (
       <LoaderCircle size={40} className="animate-spin text-blue-500" />
